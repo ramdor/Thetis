@@ -1,4 +1,4 @@
-﻿/*  ucParametricEq.cs
+/*  ucParametricEq.cs
 
 This file is part of a program that implements a Software-Defined Radio.
 
@@ -122,6 +122,7 @@ namespace Thetis
         public sealed class EqPointDataChangedEventArgs : EventArgs
         {
             private readonly int _index;
+            private readonly int _band_id;
             private readonly double _frequency_hz;
             private readonly double _gain_db;
             private readonly double _q;
@@ -130,6 +131,11 @@ namespace Thetis
             public int Index
             {
                 get { return _index; }
+            }
+
+            public int BandId
+            {
+                get { return _band_id; }
             }
 
             public double FrequencyHz
@@ -152,14 +158,15 @@ namespace Thetis
                 get { return _is_dragging; }
             }
 
-            public EqPointDataChangedEventArgs(int index, double frequency_hz, double gain_db, double q)
-                : this(index, frequency_hz, gain_db, q, false)
+            public EqPointDataChangedEventArgs(int index, int band_id, double frequency_hz, double gain_db, double q)
+                : this(index, band_id, frequency_hz, gain_db, q, false)
             {
             }
 
-            public EqPointDataChangedEventArgs(int index, double frequency_hz, double gain_db, double q, bool is_dragging)
+            public EqPointDataChangedEventArgs(int index, int band_id, double frequency_hz, double gain_db, double q, bool is_dragging)
             {
                 _index = index;
+                _band_id = band_id;
                 _frequency_hz = frequency_hz;
                 _gain_db = gain_db;
                 _q = q;
@@ -170,6 +177,7 @@ namespace Thetis
         public sealed class EqPointSelectionChangedEventArgs : EventArgs
         {
             private readonly int _index;
+            private readonly int _band_id;
             private readonly double _frequency_hz;
             private readonly double _gain_db;
             private readonly double _q;
@@ -177,6 +185,11 @@ namespace Thetis
             public int Index
             {
                 get { return _index; }
+            }
+
+            public int BandId
+            {
+                get { return _band_id; }
             }
 
             public double FrequencyHz
@@ -194,14 +207,16 @@ namespace Thetis
                 get { return _q; }
             }
 
-            public EqPointSelectionChangedEventArgs(int index, double frequency_hz, double gain_db, double q)
+            public EqPointSelectionChangedEventArgs(int index, int band_id, double frequency_hz, double gain_db, double q)
             {
                 _index = index;
+                _band_id = band_id;
                 _frequency_hz = frequency_hz;
                 _gain_db = gain_db;
                 _q = q;
             }
         }
+
         private sealed class EqJsonState
         {
             [JsonProperty("band_count")]
@@ -286,6 +301,8 @@ namespace Thetis
         private int _plot_margin_top;
         private int _plot_margin_bottom;
 
+        private double _y_axis_step_db;
+
         private int _point_radius;
         private int _hit_radius;
 
@@ -315,6 +332,19 @@ namespace Thetis
         private Color _axis_tick_color;
         private int _axis_tick_length;
 
+        private double[] _bar_chart_data;
+        private double[] _bar_chart_peak_data;
+        private long[] _bar_chart_peak_hold_until_ticks;
+        private DateTime _bar_chart_peak_last_update_utc;
+        private readonly Timer _bar_chart_peak_timer;
+        private Color _bar_chart_fill_color;
+        private int _bar_chart_fill_alpha;
+        private Color _bar_chart_peak_color;
+        private int _bar_chart_peak_alpha;
+        private bool _bar_chart_peak_hold_enabled;
+        private int _bar_chart_peak_hold_ms;
+        private double _bar_chart_peak_decay_db_per_second;
+
         public event EventHandler<EqDraggingEventArgs> PointsChanged;
         public event EventHandler<EqDraggingEventArgs> GlobalGainChanged;
         public event EventHandler<EqDraggingEventArgs> SelectedIndexChanged;
@@ -340,9 +370,11 @@ namespace Thetis
             _global_gain_db = 0.0;
 
             _plot_margin_left = 30;
-            _plot_margin_right = 18;
+            _plot_margin_right = 28;
             _plot_margin_top = 14;
             _plot_margin_bottom = 62;
+
+            _y_axis_step_db = 0.0;
 
             _point_radius = 5;
             _hit_radius = 11;
@@ -373,6 +405,21 @@ namespace Thetis
             _axis_tick_color = Color.FromArgb(80, 80, 80);
             _axis_tick_length = 6;
 
+            _bar_chart_data = null;
+            _bar_chart_peak_data = null;
+            _bar_chart_peak_hold_until_ticks = null;
+            _bar_chart_peak_last_update_utc = DateTime.UtcNow;
+            _bar_chart_fill_color = Color.FromArgb(0, 120, 255);
+            _bar_chart_fill_alpha = 120;
+            _bar_chart_peak_color = Color.FromArgb(160, 210, 255);
+            _bar_chart_peak_alpha = 230;
+            _bar_chart_peak_hold_enabled = true;
+            _bar_chart_peak_hold_ms = 1000;
+            _bar_chart_peak_decay_db_per_second = 20.0;
+            _bar_chart_peak_timer = new Timer();
+            _bar_chart_peak_timer.Interval = 33;
+            _bar_chart_peak_timer.Tick += barChartPeakTimer_Tick;
+
             _points = new List<EqPoint>();
             _points_readonly = new ReadOnlyCollection<EqPoint>(_points);
 
@@ -388,6 +435,134 @@ namespace Thetis
             ForeColor = Color.Gainsboro;
 
             resetPointsDefault();
+        }
+
+        [Category("Bar Chart")]
+        [DefaultValue(true)]
+        public bool BarChartPeakHoldEnabled
+        {
+            get { return _bar_chart_peak_hold_enabled; }
+            set
+            {
+                bool v = value;
+                if (v == _bar_chart_peak_hold_enabled) return;
+
+                _bar_chart_peak_hold_enabled = v;
+                _bar_chart_peak_last_update_utc = DateTime.UtcNow;
+
+                if (!_bar_chart_peak_hold_enabled && _bar_chart_data != null)
+                {
+                    syncBarChartPeaksToData();
+                }
+
+                updateBarChartPeakTimerState();
+                Invalidate();
+            }
+        }
+
+        [Category("Bar Chart")]
+        [DefaultValue(1000)]
+        public int BarChartPeakHoldMs
+        {
+            get { return _bar_chart_peak_hold_ms; }
+            set
+            {
+                int v = value;
+                if (v < 0) v = 0;
+                if (v == _bar_chart_peak_hold_ms) return;
+
+                _bar_chart_peak_hold_ms = v;
+            }
+        }
+
+        [Category("Bar Chart")]
+        [DefaultValue(20.0)]
+        public double BarChartPeakDecayDbPerSecond
+        {
+            get { return _bar_chart_peak_decay_db_per_second; }
+            set
+            {
+                double v = value;
+                if (double.IsNaN(v) || double.IsInfinity(v)) return;
+                if (v < 0.0) v = 0.0;
+                if (Math.Abs(v - _bar_chart_peak_decay_db_per_second) < 0.000001) return;
+
+                _bar_chart_peak_decay_db_per_second = v;
+            }
+        }
+
+        [Category("Bar Chart")]
+        public Color BarChartFillColor
+        {
+            get { return _bar_chart_fill_color; }
+            set
+            {
+                _bar_chart_fill_color = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Bar Chart")]
+        [DefaultValue(120)]
+        public int BarChartFillAlpha
+        {
+            get { return _bar_chart_fill_alpha; }
+            set
+            {
+                int v = value;
+                if (v < 0) v = 0;
+                if (v > 255) v = 255;
+                if (v == _bar_chart_fill_alpha) return;
+
+                _bar_chart_fill_alpha = v;
+                Invalidate();
+            }
+        }
+
+        [Category("Bar Chart")]
+        public Color BarChartPeakColor
+        {
+            get { return _bar_chart_peak_color; }
+            set
+            {
+                _bar_chart_peak_color = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Bar Chart")]
+        [DefaultValue(230)]
+        public int BarChartPeakAlpha
+        {
+            get { return _bar_chart_peak_alpha; }
+            set
+            {
+                int v = value;
+                if (v < 0) v = 0;
+                if (v > 255) v = 255;
+                if (v == _bar_chart_peak_alpha) return;
+
+                _bar_chart_peak_alpha = v;
+                Invalidate();
+            }
+        }
+
+        [Category("EQ")]
+        [DefaultValue(0.0)]
+        public double YAxisStepDb
+        {
+            get { return _y_axis_step_db; }
+            set
+            {
+                double v = value;
+                if (double.IsNaN(v) || double.IsInfinity(v)) return;
+                if (v < 0.0) v = 0.0;
+                if (v > 0.0 && v < 0.1) v = 0.1;
+                if (Math.Abs(v - _y_axis_step_db) < 0.000001) return;
+
+                _y_axis_step_db = v;
+                Invalidate();
+            }
         }
 
         [Category("EQ")]
@@ -471,7 +646,12 @@ namespace Thetis
                 if (v >= _db_max) return;
                 _db_min = v;
                 clampAllGains();
+                if (_bar_chart_data != null)
+                {
+                    syncBarChartPeaksToData();
+                }
                 raisePointsChanged(false);
+                raiseGlobalGainChanged(false);
                 Invalidate();
             }
         }
@@ -487,7 +667,12 @@ namespace Thetis
                 if (v <= _db_min) return;
                 _db_max = v;
                 clampAllGains();
+                if (_bar_chart_data != null)
+                {
+                    syncBarChartPeaksToData();
+                }
                 raisePointsChanged(false);
+                raiseGlobalGainChanged(false);
                 Invalidate();
             }
         }
@@ -749,12 +934,31 @@ namespace Thetis
                 Invalidate();
             }
         }
+
+        private double getYAxisStepDb()
+        {
+            if (_y_axis_step_db > 0.0) return _y_axis_step_db;
+            return chooseDbStep(_db_max - _db_min);
+        }
+
+        private double chooseDbStep(double span)
+        {
+            double s = span;
+            if (s <= 3.0) return 0.5;
+            if (s <= 6.0) return 1.0;
+            if (s <= 12.0) return 2.0;
+            if (s <= 24.0) return 3.0;
+            if (s <= 48.0) return 6.0;
+            if (s <= 96.0) return 12.0;
+            return 24.0;
+        }
+
         private void raisePointSelected(int index, EqPoint p)
         {
             if (p == null) return;
 
             EventHandler<EqPointSelectionChangedEventArgs> h = PointSelected;
-            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, p.Q));
+            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.BandId, p.FrequencyHz, p.GainDb, p.Q));
         }
 
         private void raisePointUnselected(int index, EqPoint p)
@@ -762,14 +966,75 @@ namespace Thetis
             if (p == null) return;
 
             EventHandler<EqPointSelectionChangedEventArgs> h = PointUnselected;
-            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, p.Q));
+            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.BandId, p.FrequencyHz, p.GainDb, p.Q));
         }
+
         public void ResetPoints()
         {
             resetPointsDefault();
             raisePointsChanged(false);
             Invalidate();
         }
+
+        public void DrawBarChart(double[] data)
+        {
+            if (data == null || data.Length == 0)
+            {
+                _bar_chart_data = null;
+                _bar_chart_peak_data = null;
+                _bar_chart_peak_hold_until_ticks = null;
+                updateBarChartPeakTimerState();
+                Invalidate();
+                return;
+            }
+
+            DateTime now_utc = DateTime.UtcNow;
+            applyBarChartPeakDecay(now_utc);
+
+            bool reset_peaks = _bar_chart_data == null ||
+                               _bar_chart_peak_data == null ||
+                               _bar_chart_peak_hold_until_ticks == null ||
+                               _bar_chart_data.Length != data.Length ||
+                               _bar_chart_peak_data.Length != data.Length ||
+                               _bar_chart_peak_hold_until_ticks.Length != data.Length;
+
+            _bar_chart_data = new double[data.Length];
+            Array.Copy(data, _bar_chart_data, data.Length);
+
+            if (reset_peaks)
+            {
+                _bar_chart_peak_data = new double[data.Length];
+                _bar_chart_peak_hold_until_ticks = new long[data.Length];
+            }
+
+            long hold_until_ticks = now_utc.AddMilliseconds(_bar_chart_peak_hold_ms).Ticks;
+
+            for (int i = 0; i < _bar_chart_data.Length; i++)
+            {
+                double v = clamp(_bar_chart_data[i], _db_min, _db_max);
+                _bar_chart_data[i] = v;
+
+                if (reset_peaks || !_bar_chart_peak_hold_enabled)
+                {
+                    _bar_chart_peak_data[i] = v;
+                    _bar_chart_peak_hold_until_ticks[i] = hold_until_ticks;
+                }
+                else if (v >= _bar_chart_peak_data[i])
+                {
+                    _bar_chart_peak_data[i] = v;
+                    _bar_chart_peak_hold_until_ticks[i] = hold_until_ticks;
+                }
+                else if (_bar_chart_peak_data[i] < v)
+                {
+                    _bar_chart_peak_data[i] = v;
+                }
+            }
+
+            _bar_chart_peak_last_update_utc = now_utc;
+            updateBarChartPeakTimerState();
+            Invalidate();
+        }
+
         public void GetDefaults(out double[] F, out double[] G, out double[] Q, out double global_preamp_db, out double min_hz, out double max_hz, out bool parametric_eq, out int band_count, int default_band_count = 10)
         {
             band_count = default_band_count;
@@ -796,6 +1061,119 @@ namespace Thetis
                 Q[i] = 4.0;
             }
         }
+
+        public bool SetPointHz(int band_id, double frequency_hz, bool is_dragging = false)
+        {
+            EqPoint p = findPointByBandId(band_id);
+            if (p == null) return false;
+
+            return setPointHzInternal(p, frequency_hz, is_dragging);
+        }
+
+        public int GetIndexFromBandId(int band_id)
+        {
+            for (int i = 0; i < _points.Count; i++)
+            {
+                if (_points[i].BandId == band_id) return i;
+            }
+
+            return -1;
+        }
+
+        private EqPoint findPointByBandId(int band_id)
+        {
+            for (int i = 0; i < _points.Count; i++)
+            {
+                if (_points[i].BandId == band_id) return _points[i];
+            }
+
+            return null;
+        }
+
+        private bool setPointHzInternal(EqPoint p, double frequency_hz, bool is_dragging)
+        {
+            if (p == null) return false;
+
+            int index = _points.IndexOf(p);
+            if (index < 0) return false;
+
+            double old_f = p.FrequencyHz;
+            double old_g = p.GainDb;
+            double old_q = p.Q;
+
+            double freq;
+
+            if (isFrequencyLockedIndex(index))
+            {
+                freq = getLockedFrequencyForIndex(index);
+            }
+            else
+            {
+                freq = clamp(frequency_hz, _frequency_min_hz, _frequency_max_hz);
+
+                if (!_allow_point_reorder)
+                {
+                    double min_f;
+                    double max_f;
+
+                    if (index == 0)
+                    {
+                        min_f = _frequency_min_hz;
+                        max_f = _points[1].FrequencyHz - _min_point_spacing_hz;
+                    }
+                    else if (index == _points.Count - 1)
+                    {
+                        min_f = _points[_points.Count - 2].FrequencyHz + _min_point_spacing_hz;
+                        max_f = _frequency_max_hz;
+                    }
+                    else
+                    {
+                        min_f = _points[index - 1].FrequencyHz + _min_point_spacing_hz;
+                        max_f = _points[index + 1].FrequencyHz - _min_point_spacing_hz;
+                    }
+
+                    if (max_f < min_f) max_f = min_f;
+                    freq = clamp(freq, min_f, max_f);
+                }
+            }
+
+            if (Math.Abs(p.FrequencyHz - freq) <= 0.000001) return true;
+
+            p.FrequencyHz = freq;
+
+            if (_allow_point_reorder && !isFrequencyLockedIndex(index))
+            {
+                enforceOrdering(false);
+
+                index = _points.IndexOf(p);
+
+                double min_f = _frequency_min_hz;
+                double max_f = _frequency_max_hz;
+
+                if (_points.Count > 1)
+                {
+                    if (index > 0) min_f = _points[index - 1].FrequencyHz + _min_point_spacing_hz;
+                    if (index < _points.Count - 1) max_f = _points[index + 1].FrequencyHz - _min_point_spacing_hz;
+                    if (max_f < min_f) max_f = min_f;
+                }
+
+                double clamped_freq = clamp(p.FrequencyHz, min_f, max_f);
+                if (Math.Abs(clamped_freq - p.FrequencyHz) > 0.000001) p.FrequencyHz = clamped_freq;
+
+                enforceOrdering(false);
+            }
+
+            raisePointsChanged(is_dragging);
+
+            if (Math.Abs(p.FrequencyHz - old_f) > 0.000001 || Math.Abs(p.GainDb - old_g) > 0.000001 || Math.Abs(p.Q - old_q) > 0.000001)
+            {
+                raisePointDataChangedForPoint(p, is_dragging);
+            }
+
+            Invalidate();
+            return true;
+        }
+
         public void GetPointData(int index, out double frequency_hz, out double gain_db, out double q)
         {
             frequency_hz = 0.0;
@@ -969,6 +1347,9 @@ namespace Thetis
             if (state == null) return false;
             if (state.Points == null) return false;
             if (state.Points.Count < 2) return false;
+
+            if (state.BandCount < 2) state.BandCount = state.Points.Count;
+
             if (state.BandCount < 2) return false;
             if (state.BandCount > 256) return false;
             if (state.BandCount != state.Points.Count) return false;
@@ -1010,6 +1391,7 @@ namespace Thetis
         public string SaveToJson()
         {
             EqJsonState state = new EqJsonState();
+            state.BandCount = _points.Count;
             state.ParametricEQ = _parametric_eq;
             state.GlobalGainDb = Math.Round(_global_gain_db, 1);
             state.FrequencyMinHz = Math.Round(_frequency_min_hz, 3);
@@ -1052,6 +1434,9 @@ namespace Thetis
             if (state == null) return false;
             if (state.Points == null) return false;
             if (state.Points.Count < 2) return false;
+
+            if (state.BandCount < 2) state.BandCount = state.Points.Count;
+
             if (state.BandCount < 2) return false;
             if (state.BandCount > 256) return false;
             if (state.BandCount != state.Points.Count) return false;
@@ -1153,6 +1538,20 @@ namespace Thetis
             if (_show_readout) drawReadout(g, plot);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_bar_chart_peak_timer != null)
+                {
+                    _bar_chart_peak_timer.Stop();
+                    _bar_chart_peak_timer.Dispose();
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -1160,6 +1559,8 @@ namespace Thetis
             Focus();
 
             Rectangle plot = getPlotRect();
+
+            if (e.Button != MouseButtons.Left) return;
 
             if (hitTestGlobalGainHandle(plot, e.Location))
             {
@@ -1387,6 +1788,7 @@ namespace Thetis
                 {
                     GlobalGainDb = clamp(_global_gain_db + (steps * 0.5), _db_min, _db_max);
                 }
+
                 return;
             }
 
@@ -1527,8 +1929,10 @@ namespace Thetis
 
         private int getAxisLabelMaxWidth()
         {
-            string s1 = formatDbTick(_db_min);
-            string s2 = formatDbTick(_db_max);
+            double step_db = getYAxisStepDb();
+
+            string s1 = formatDbTick(_db_min, step_db);
+            string s2 = formatDbTick(_db_max, step_db);
 
             Size sz1 = TextRenderer.MeasureText(s1, Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
             Size sz2 = TextRenderer.MeasureText(s2, Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
@@ -1555,8 +1959,9 @@ namespace Thetis
         {
             int m = _plot_margin_right;
 
-            int need = _global_handle_x_offset + (_global_handle_size * 2) + _global_hit_extra + 6;
-            if (need > m) m = need;
+            int gain_need = _global_handle_x_offset + (_global_handle_size * 2) + _global_hit_extra + 6;
+
+            if (gain_need > m) m = gain_need;
 
             if (m < 10) m = 10;
             return m;
@@ -1588,6 +1993,8 @@ namespace Thetis
                 g.FillRectangle(plot_back, plot);
             }
 
+            drawBarChart(g, plot);
+
             using (Pen grid_pen = new Pen(Color.FromArgb(45, 45, 45), 1f))
             {
                 int v_lines = 10;
@@ -1598,7 +2005,7 @@ namespace Thetis
                     g.DrawLine(grid_pen, x, plot.Top, x, plot.Bottom);
                 }
 
-                double step_db = 6.0;
+                double step_db = getYAxisStepDb();
                 double start = Math.Ceiling(_db_min / step_db) * step_db;
 
                 for (double db = start; db <= _db_max + 0.000001; db += step_db)
@@ -1612,6 +2019,64 @@ namespace Thetis
             {
                 float y0 = yFromDb(plot, 0.0);
                 g.DrawLine(zero_pen, plot.Left, y0, plot.Right, y0);
+            }
+        }
+
+        private void drawBarChart(Graphics g, Rectangle plot)
+        {
+            if (_bar_chart_data == null) return;
+            if (_bar_chart_data.Length == 0) return;
+
+            applyBarChartPeakDecay(DateTime.UtcNow);
+
+            using (SolidBrush bar_brush = new SolidBrush(Color.FromArgb(_bar_chart_fill_alpha, _bar_chart_fill_color.R, _bar_chart_fill_color.G, _bar_chart_fill_color.B)))
+            using (Pen peak_pen = new Pen(Color.FromArgb(_bar_chart_peak_alpha, _bar_chart_peak_color.R, _bar_chart_peak_color.G, _bar_chart_peak_color.B), 1f))
+            {
+                int count = _bar_chart_data.Length;
+
+                for (int i = 0; i < count; i++)
+                {
+                    int seg_left = plot.Left + (int)Math.Round(((double)i * (double)plot.Width) / (double)count);
+                    int seg_right = plot.Left + (int)Math.Round(((double)(i + 1) * (double)plot.Width) / (double)count);
+                    int seg_width = seg_right - seg_left;
+
+                    if (seg_width <= 0) continue;
+
+                    int bar_width = seg_width > 1 ? seg_width - 1 : seg_width;
+                    if (bar_width < 1) bar_width = 1;
+
+                    double db = clamp(_bar_chart_data[i], _db_min, _db_max);
+                    int top = (int)Math.Round(yFromDb(plot, db));
+                    int height = plot.Bottom - top;
+                    if (height < 1) height = 1;
+                    if (top < plot.Top)
+                    {
+                        height -= (plot.Top - top);
+                        top = plot.Top;
+                    }
+                    if (top + height > plot.Bottom)
+                    {
+                        height = plot.Bottom - top;
+                    }
+
+                    if (height > 0)
+                    {
+                        g.FillRectangle(bar_brush, seg_left, top, bar_width, height);
+                    }
+
+                    if (_bar_chart_peak_hold_enabled && _bar_chart_peak_data != null && i < _bar_chart_peak_data.Length)
+                    {
+                        double peak_db = clamp(_bar_chart_peak_data[i], _db_min, _db_max);
+                        int peak_y = (int)Math.Round(yFromDb(plot, peak_db));
+                        if (peak_y < plot.Top) peak_y = plot.Top;
+                        if (peak_y > plot.Bottom - 1) peak_y = plot.Bottom - 1;
+
+                        int peak_x2 = seg_left + bar_width - 1;
+                        if (peak_x2 < seg_left) peak_x2 = seg_left;
+
+                        g.DrawLine(peak_pen, seg_left, peak_y, peak_x2, peak_y);
+                    }
+                }
             }
         }
 
@@ -1829,11 +2294,7 @@ namespace Thetis
 
                 bool selected = (i == _selected_index);
 
-                Color base_col = p.BandColor;
-                if (base_col == Color.Empty) base_col = getBandBaseColor(i);
-                Color dot_col = _use_per_band_colours ? base_col : Color.FromArgb(90, 200, 255);
-
-                if (selected) dot_col = Color.FromArgb(255, 200, 80);
+                Color dot_col = getPointDisplayColor(i);
 
                 float r = _point_radius;
                 if (selected) r = r + 1f;
@@ -1855,7 +2316,7 @@ namespace Thetis
             using (Pen tick_pen = new Pen(_axis_tick_color, 1f))
             using (SolidBrush text_brush = new SolidBrush(_axis_text_color))
             {
-                double step_db = 6.0;
+                double step_db = getYAxisStepDb();
                 double start_db = Math.Ceiling(_db_min / step_db) * step_db;
 
                 bool drew_min = false;
@@ -1869,7 +2330,7 @@ namespace Thetis
                     float y = yFromDb(plot, db);
                     g.DrawLine(tick_pen, plot.Left - _axis_tick_length, y, plot.Left, y);
 
-                    string s = formatDbTick(db);
+                    string s = formatDbTick(db, step_db);
                     SizeF sz = g.MeasureString(s, Font);
                     float tx = plot.Left - _axis_tick_length - 4f - sz.Width;
                     float ty = y - (sz.Height * 0.5f);
@@ -1882,7 +2343,7 @@ namespace Thetis
                     float y = yFromDb(plot, db);
                     g.DrawLine(tick_pen, plot.Left - _axis_tick_length, y, plot.Left, y);
 
-                    string s = formatDbTick(db);
+                    string s = formatDbTick(db, step_db);
                     SizeF sz = g.MeasureString(s, Font);
                     float tx = plot.Left - _axis_tick_length - 4f - sz.Width;
                     float ty = y - (sz.Height * 0.5f);
@@ -1895,7 +2356,7 @@ namespace Thetis
                     float y = yFromDb(plot, db);
                     g.DrawLine(tick_pen, plot.Left - _axis_tick_length, y, plot.Left, y);
 
-                    string s = formatDbTick(db);
+                    string s = formatDbTick(db, step_db);
                     SizeF sz = g.MeasureString(s, Font);
                     float tx = plot.Left - _axis_tick_length - 4f - sz.Width;
                     float ty = y - (sz.Height * 0.5f);
@@ -1927,11 +2388,19 @@ namespace Thetis
             }
         }
 
-        private string formatDbTick(double db)
+        private string formatDbTick(double db, double step_db)
         {
+            string fmt = "0";
+            double abs_step = Math.Abs(step_db);
+
+            if (abs_step < 1.0)
+                fmt = "0.##";
+            else if (Math.Abs(abs_step - Math.Round(abs_step)) > 0.000001)
+                fmt = "0.#";
+
             if (Math.Abs(db) < 0.000001) return "0";
-            if (db > 0.0) return "+" + db.ToString("0");
-            return db.ToString("0");
+            if (db > 0.0) return "+" + db.ToString(fmt);
+            return db.ToString(fmt);
         }
 
         private string formatHzTick(double hz)
@@ -1971,22 +2440,24 @@ namespace Thetis
             if (_selected_index >= 0 && _selected_index < _points.Count)
             {
                 EqPoint p = _points[_selected_index];
-                int band_id = _selected_index + 1;
+                int band_id = p.BandId;
 
                 if (_parametric_eq)
                 {
                     s = "P" + band_id.ToString() +
                         "  F " + formatHz(p.FrequencyHz) +
                         "  G " + formatDb(p.GainDb) +
-                        "  Q " + p.Q.ToString("0.00") +
-                        "     Global " + formatDb(_global_gain_db);
+                        "  Q " + p.Q.ToString("0.00");
+
+                    s += "     Global " + formatDb(_global_gain_db);
                 }
                 else
                 {
                     s = "P" + band_id.ToString() +
                         "  F " + formatHz(p.FrequencyHz) +
-                        "  G " + formatDb(p.GainDb) +
-                        "     Global " + formatDb(_global_gain_db);
+                        "  G " + formatDb(p.GainDb);
+
+                    s += "     Global " + formatDb(_global_gain_db);
                 }
             }
             else
@@ -2057,6 +2528,119 @@ namespace Thetis
             return sum;
         }
 
+        private void barChartPeakTimer_Tick(object sender, EventArgs e)
+        {
+            if (_bar_chart_data == null || _bar_chart_data.Length == 0)
+            {
+                updateBarChartPeakTimerState();
+                return;
+            }
+
+            if (!_bar_chart_peak_hold_enabled)
+            {
+                updateBarChartPeakTimerState();
+                return;
+            }
+
+            applyBarChartPeakDecay(DateTime.UtcNow);
+            Invalidate();
+        }
+
+        private void applyBarChartPeakDecay(DateTime now_utc)
+        {
+            if (_bar_chart_data == null || _bar_chart_peak_data == null || _bar_chart_peak_hold_until_ticks == null)
+            {
+                _bar_chart_peak_last_update_utc = now_utc;
+                return;
+            }
+
+            if (_bar_chart_peak_data.Length != _bar_chart_data.Length || _bar_chart_peak_hold_until_ticks.Length != _bar_chart_data.Length)
+            {
+                syncBarChartPeaksToData();
+                _bar_chart_peak_last_update_utc = now_utc;
+                return;
+            }
+
+            double elapsed_seconds = (now_utc - _bar_chart_peak_last_update_utc).TotalSeconds;
+            if (elapsed_seconds < 0.0) elapsed_seconds = 0.0;
+            _bar_chart_peak_last_update_utc = now_utc;
+
+            if (!_bar_chart_peak_hold_enabled)
+            {
+                syncBarChartPeaksToData();
+                return;
+            }
+
+            if (elapsed_seconds <= 0.0) return;
+
+            double decay_db = _bar_chart_peak_decay_db_per_second * elapsed_seconds;
+            long now_ticks = now_utc.Ticks;
+
+            for (int i = 0; i < _bar_chart_data.Length; i++)
+            {
+                double floor_db = clamp(_bar_chart_data[i], _db_min, _db_max);
+
+                if (_bar_chart_peak_data[i] < floor_db)
+                {
+                    _bar_chart_peak_data[i] = floor_db;
+                    continue;
+                }
+
+                if (now_ticks <= _bar_chart_peak_hold_until_ticks[i]) continue;
+
+                double new_peak = _bar_chart_peak_data[i] - decay_db;
+                if (new_peak < floor_db) new_peak = floor_db;
+                _bar_chart_peak_data[i] = new_peak;
+            }
+        }
+
+        private void syncBarChartPeaksToData()
+        {
+            if (_bar_chart_data == null)
+            {
+                _bar_chart_peak_data = null;
+                _bar_chart_peak_hold_until_ticks = null;
+                return;
+            }
+
+            if (_bar_chart_peak_data == null || _bar_chart_peak_data.Length != _bar_chart_data.Length)
+            {
+                _bar_chart_peak_data = new double[_bar_chart_data.Length];
+            }
+
+            if (_bar_chart_peak_hold_until_ticks == null || _bar_chart_peak_hold_until_ticks.Length != _bar_chart_data.Length)
+            {
+                _bar_chart_peak_hold_until_ticks = new long[_bar_chart_data.Length];
+            }
+
+            long hold_until_ticks = DateTime.UtcNow.AddMilliseconds(_bar_chart_peak_hold_ms).Ticks;
+
+            for (int i = 0; i < _bar_chart_data.Length; i++)
+            {
+                _bar_chart_peak_data[i] = clamp(_bar_chart_data[i], _db_min, _db_max);
+                _bar_chart_peak_hold_until_ticks[i] = hold_until_ticks;
+            }
+        }
+
+        private void updateBarChartPeakTimerState()
+        {
+            if (_bar_chart_data != null && _bar_chart_data.Length > 0 && _bar_chart_peak_hold_enabled)
+            {
+                if (!_bar_chart_peak_timer.Enabled)
+                {
+                    _bar_chart_peak_last_update_utc = DateTime.UtcNow;
+                    _bar_chart_peak_timer.Start();
+                }
+            }
+            else
+            {
+                if (_bar_chart_peak_timer.Enabled)
+                {
+                    _bar_chart_peak_timer.Stop();
+                }
+            }
+        }
+
         private Color getBandBaseColor(int index)
         {
             int n = _default_band_palette.Length;
@@ -2064,6 +2648,20 @@ namespace Thetis
             int idx = index % n;
             if (idx < 0) idx = 0;
             return _default_band_palette[idx];
+        }
+
+        private Color getPointDisplayColor(int index)
+        {
+            EqPoint p = _points[index];
+
+            Color base_col = p.BandColor;
+            if (base_col == Color.Empty) base_col = getBandBaseColor(p.BandId - 1);
+
+            Color dot_col = _use_per_band_colours ? base_col : Color.FromArgb(90, 200, 255);
+
+            if (index == _selected_index) dot_col = Color.FromArgb(255, 200, 80);
+
+            return dot_col;
         }
 
         private string formatHz(double hz)
@@ -2363,7 +2961,7 @@ namespace Thetis
             if (idx < 0) return;
 
             EventHandler<EqPointDataChangedEventArgs> h = PointDataChanged;
-            if (h != null) h(this, new EqPointDataChangedEventArgs(idx, p.FrequencyHz, p.GainDb, p.Q, is_dragging));
+            if (h != null) h(this, new EqPointDataChangedEventArgs(idx, p.BandId, p.FrequencyHz, p.GainDb, p.Q, is_dragging));
         }
 
         private int getComputedPlotMarginBottom()

@@ -444,6 +444,12 @@
     <Compile Include="clsImgeFetcher.cs" />
     <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsMeterScriptEngine.cs" />
+    <Compile Include="frmCFCConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCFCConfig.Designer.cs">
+      <DependentUpon>frmCFCConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucParametricEq.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1011,6 +1017,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmBandwidth.resx">
       <DependentUpon>frmBandwidth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCFCConfig.resx">
+      <DependentUpon>frmCFCConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDBMan.resx">
       <DependentUpon>frmDBMan.cs</DependentUpon>

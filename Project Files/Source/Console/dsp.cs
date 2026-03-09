@@ -752,7 +752,7 @@ namespace Thetis
         public static extern void SetTXACFCOMPRun(int channel, int run);
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPprofile", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E);
+        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E, double* Gq, double* Eq);
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPosition", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFCOMPPosition(int channel, int pos);

@@ -71,6 +71,8 @@ typedef struct _cfcomp
 	double* F;
 	double* G;
 	double* E;
+	double* Qg;
+	double* Qe;
 	double* fp;
 	double* gp;
 	double* ep;

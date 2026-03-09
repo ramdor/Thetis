@@ -18291,6 +18291,9 @@ namespace Thetis
         private void setCFCProfile(object sender, EventArgs e)
         {
             if (initializing) return;
+
+            if (!chkCFC_legacy.Checked) return;
+
             const int nfreqs = 10;
             double[] F = new double[nfreqs];
             double[] G = new double[nfreqs];
@@ -18329,7 +18332,7 @@ namespace Thetis
             {
                 fixed (double* Fptr = &F[0], Gptr = &G[0], Eptr = &E[0])
                 {
-                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr);
+                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, null, null);
                 }
             }
 
@@ -21990,7 +21993,7 @@ namespace Thetis
 
         private void tmrCFCOMPGain_Tick(object sender, EventArgs e)
         {
-            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX)
+            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX || !chkCFC_legacy.Checked)
             {
                 tmrCFCOMPGain.Interval = 1000;
                 if (m_bShowingCFC)
@@ -36989,6 +36992,39 @@ namespace Thetis
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
         }
+
+        // CFC para
+        private bool _cfc_legacy = true;
+        private void chkCFC_legacy_CheckedChanged(object sender, EventArgs e)
+        {
+            _cfc_legacy = chkCFC_legacy.Checked;
+            if (_cfc_legacy)
+            {
+                pnlCFC_legacy.Visible = true;
+                picCFC.Visible = true;
+                btnCFCConfig.Visible = false;
+                picCFC.BringToFront();
+            }
+            else
+            {
+                btnCFCConfig.Parent = pnlCFC_legacy.Parent;
+                btnCFCConfig.Location = pnlCFC_legacy.Location;
+                btnCFCConfig.Visible = true;
+                pnlCFC_legacy.Visible = false;
+                picCFC.Visible = false;
+                picCFC.BringToFront();
+            }
+        }
+        private frmCFCConfig _frmCfcConfig = null;
+        private void btnCFCConfig_Click(object sender, EventArgs e)
+        {
+            if(_frmCfcConfig == null || _frmCfcConfig.IsDisposed)
+            {
+                _frmCfcConfig = new frmCFCConfig();
+            }
+            _frmCfcConfig.Show();
+        }
+        // END CFC para
     }
 
     #region FormLoactionHelper
