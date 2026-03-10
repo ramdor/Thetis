@@ -133,7 +133,7 @@ void compute_ssql_slews(SSQL a)
 void calc_ssql (SSQL a)
 {
 	a->b1 = (double*) malloc0 (a->size * sizeof (complex));
-	a->dcbl = create_cbl (1, a->size, a->in, a->b1, 0, a->rate, 0.02);
+	a->dcbl = create_cbl (1, a->size, a->in, a->b1, 0, a->rate, 0.02, 1);
 	a->ibuff = (double*) malloc0 (a->size * sizeof (double));
 	a->ftovbuff = (double*) malloc0(a->size * sizeof (double));
 	a->cvtr = create_ftov (1, a->size, a->rate, a->ftov_rsize, a->ftov_fmax, a->ibuff, a->ftovbuff);
@@ -231,7 +231,7 @@ void xssql (SSQL a)
 {
 	if (a->run)
 	{
-		xcbl (a->dcbl);											// dc block the input signal
+		xcbl (a->dcbl, 1);											// dc block the input signal (after ADC)
 		for (int i = 0; i < a->size; i++)						// extract 'I' component
 			a->ibuff[i] = a->b1[2 * i];
 		xftov (a->cvtr);										// convert frequency to voltage, ignoring amplitude

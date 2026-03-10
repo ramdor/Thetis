@@ -16232,6 +16232,8 @@ namespace Thetis
                 console.radio.GetDSPRX(0, 0).RXCBLRun = false;
                 console.radio.GetDSPRX(0, 1).RXCBLRun = false;
             }
+            console.radio.GetDSPRX(0, 0).RXCBLPosition = chkCBlock_after_rx1.Checked ? 1 : 0;
+            console.radio.GetDSPRX(0, 1).RXCBLPosition = chkCBlock_after_rx1.Checked ? 1 : 0;
         }
 
         private void chkRX2CBlock_CheckedChanged(object sender, EventArgs e)
@@ -16247,6 +16249,32 @@ namespace Thetis
                 console.radio.GetDSPRX(1, 0).RXCBLRun = false;
                 console.radio.GetDSPRX(1, 1).RXCBLRun = false;
             }
+            console.radio.GetDSPRX(1, 0).RXCBLPosition = chkCBlock_after_rx2.Checked ? 1 : 0;
+            console.radio.GetDSPRX(1, 1).RXCBLPosition = chkCBlock_after_rx2.Checked ? 1 : 0;
+        }
+
+        private void chkCBlock_before_rx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_before_rx1.Checked) return;
+            chkCBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_after_rx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_after_rx1.Checked) return;
+            chkCBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_before_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_before_rx2.Checked) return;
+            chkRX2CBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_after_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_after_rx2.Checked) return;
+            chkRX2CBlock_CheckedChanged(this, EventArgs.Empty);
         }
 
         private void btnConfigure_Click(object sender, EventArgs e)

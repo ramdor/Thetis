@@ -224,6 +224,10 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXACBLRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXACBLRun(int channel, bool run);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXACBLPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXACBLPosition(int channel, int position); //0=before AGC, 1=after
+        
+
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFIRRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFIRRun(int channel, bool run);
 
