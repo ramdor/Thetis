@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCFCConfig));
-            this.pbCFC_live_warning = new System.Windows.Forms.PictureBox();
             this.btnResetEQ = new System.Windows.Forms.ButtonTS();
             this.ucCFC_comp = new Thetis.ucParametricEq();
             this.labelTS673 = new System.Windows.Forms.LabelTS();
@@ -63,7 +61,7 @@
             this.labelTS663 = new System.Windows.Forms.LabelTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.nudCFC_cq = new System.Windows.Forms.NumericUpDownTS();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCFC_live_warning)).BeginInit();
+            this.lblOGGuide = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_f)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_posteqgain)).BeginInit();
@@ -76,25 +74,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_cq)).BeginInit();
             this.SuspendLayout();
             // 
-            // pbCFC_live_warning
-            // 
-            this.pbCFC_live_warning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbCFC_live_warning.Image = ((System.Drawing.Image)(resources.GetObject("pbCFC_live_warning.Image")));
-            this.pbCFC_live_warning.Location = new System.Drawing.Point(501, 178);
-            this.pbCFC_live_warning.Name = "pbCFC_live_warning";
-            this.pbCFC_live_warning.Size = new System.Drawing.Size(20, 20);
-            this.pbCFC_live_warning.TabIndex = 192;
-            this.pbCFC_live_warning.TabStop = false;
-            this.pbCFC_live_warning.Visible = false;
-            // 
             // btnResetEQ
             // 
             this.btnResetEQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnResetEQ.Image = null;
-            this.btnResetEQ.Location = new System.Drawing.Point(504, 387);
+            this.btnResetEQ.Location = new System.Drawing.Point(532, 387);
             this.btnResetEQ.Name = "btnResetEQ";
             this.btnResetEQ.Selectable = true;
-            this.btnResetEQ.Size = new System.Drawing.Size(52, 43);
+            this.btnResetEQ.Size = new System.Drawing.Size(84, 32);
             this.btnResetEQ.TabIndex = 202;
             this.btnResetEQ.Text = "Reset";
             this.btnResetEQ.UseVisualStyleBackColor = true;
@@ -114,7 +101,7 @@
             this.ucCFC_comp.BandShadeWeightCutoff = 0.002D;
             this.ucCFC_comp.BarChartFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(255)))));
             this.ucCFC_comp.BarChartPeakColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(210)))), ((int)(((byte)(255)))));
-            this.ucCFC_comp.DbMax = 12D;
+            this.ucCFC_comp.DbMax = 16D;
             this.ucCFC_comp.DbMin = 0D;
             this.ucCFC_comp.ForeColor = System.Drawing.Color.Gainsboro;
             this.ucCFC_comp.FrequencyMaxHz = 4000D;
@@ -131,7 +118,7 @@
             this.ucCFC_comp.ShowAxisScales = true;
             this.ucCFC_comp.ShowBandShading = true;
             this.ucCFC_comp.ShowReadout = false;
-            this.ucCFC_comp.Size = new System.Drawing.Size(481, 320);
+            this.ucCFC_comp.Size = new System.Drawing.Size(509, 320);
             this.ucCFC_comp.TabIndex = 201;
             this.ucCFC_comp.UsePerBandColours = true;
             this.ucCFC_comp.YAxisStepDb = 2D;
@@ -161,7 +148,7 @@
             65536});
             this.nudCFC_c.Location = new System.Drawing.Point(341, 7);
             this.nudCFC_c.Maximum = new decimal(new int[] {
-            12,
+            16,
             0,
             0,
             0});
@@ -336,7 +323,7 @@
             this.labelTS668.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS668.AutoSize = true;
             this.labelTS668.Image = null;
-            this.labelTS668.Location = new System.Drawing.Point(508, 95);
+            this.labelTS668.Location = new System.Drawing.Point(529, 95);
             this.labelTS668.Name = "labelTS668";
             this.labelTS668.Size = new System.Drawing.Size(27, 13);
             this.labelTS668.TabIndex = 193;
@@ -352,7 +339,7 @@
             65536});
             this.nudCFC_precomp.Location = new System.Drawing.Point(218, 7);
             this.nudCFC_precomp.Maximum = new decimal(new int[] {
-            12,
+            16,
             0,
             0,
             0});
@@ -377,7 +364,7 @@
             this.labelTS669.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS669.AutoSize = true;
             this.labelTS669.Image = null;
-            this.labelTS669.Location = new System.Drawing.Point(507, 121);
+            this.labelTS669.Location = new System.Drawing.Point(527, 121);
             this.labelTS669.Name = "labelTS669";
             this.labelTS669.Size = new System.Drawing.Size(29, 13);
             this.labelTS669.TabIndex = 194;
@@ -391,7 +378,7 @@
             0,
             0,
             0});
-            this.udCFC_low.Location = new System.Drawing.Point(541, 93);
+            this.udCFC_low.Location = new System.Drawing.Point(562, 93);
             this.udCFC_low.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -419,7 +406,7 @@
             this.radCFC_10.AutoSize = true;
             this.radCFC_10.Checked = true;
             this.radCFC_10.Image = null;
-            this.radCFC_10.Location = new System.Drawing.Point(527, 35);
+            this.radCFC_10.Location = new System.Drawing.Point(553, 35);
             this.radCFC_10.Name = "radCFC_10";
             this.radCFC_10.Size = new System.Drawing.Size(64, 17);
             this.radCFC_10.TabIndex = 174;
@@ -455,10 +442,10 @@
             // 
             this.btnResetComp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnResetComp.Image = null;
-            this.btnResetComp.Location = new System.Drawing.Point(504, 313);
+            this.btnResetComp.Location = new System.Drawing.Point(533, 324);
             this.btnResetComp.Name = "btnResetComp";
             this.btnResetComp.Selectable = true;
-            this.btnResetComp.Size = new System.Drawing.Size(52, 43);
+            this.btnResetComp.Size = new System.Drawing.Size(84, 32);
             this.btnResetComp.TabIndex = 173;
             this.btnResetComp.Text = "Reset";
             this.btnResetComp.UseVisualStyleBackColor = true;
@@ -469,7 +456,7 @@
             this.radCFC_18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radCFC_18.AutoSize = true;
             this.radCFC_18.Image = null;
-            this.radCFC_18.Location = new System.Drawing.Point(527, 58);
+            this.radCFC_18.Location = new System.Drawing.Point(553, 58);
             this.radCFC_18.Name = "radCFC_18";
             this.radCFC_18.Size = new System.Drawing.Size(64, 17);
             this.radCFC_18.TabIndex = 175;
@@ -491,7 +478,7 @@
             this.radCFC_5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radCFC_5.AutoSize = true;
             this.radCFC_5.Image = null;
-            this.radCFC_5.Location = new System.Drawing.Point(527, 12);
+            this.radCFC_5.Location = new System.Drawing.Point(553, 12);
             this.radCFC_5.Name = "radCFC_5";
             this.radCFC_5.Size = new System.Drawing.Size(58, 17);
             this.radCFC_5.TabIndex = 176;
@@ -576,7 +563,7 @@
             0,
             0,
             0});
-            this.udCFC_high.Location = new System.Drawing.Point(542, 119);
+            this.udCFC_high.Location = new System.Drawing.Point(562, 119);
             this.udCFC_high.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -638,7 +625,7 @@
             this.ucCFC_eq.ShowAxisScales = true;
             this.ucCFC_eq.ShowBandShading = true;
             this.ucCFC_eq.ShowReadout = false;
-            this.ucCFC_eq.Size = new System.Drawing.Size(481, 320);
+            this.ucCFC_eq.Size = new System.Drawing.Size(509, 320);
             this.ucCFC_eq.TabIndex = 0;
             this.ucCFC_eq.UsePerBandColours = true;
             this.ucCFC_eq.PointsChanged += new System.EventHandler<Thetis.ucParametricEq.EqDraggingEventArgs>(this.ucCFC_eq_PointsChanged);
@@ -697,11 +684,25 @@
             0});
             this.nudCFC_cq.ValueChanged += new System.EventHandler(this.nudCFC_cq_ValueChanged);
             // 
+            // lblOGGuide
+            // 
+            this.lblOGGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblOGGuide.AutoSize = true;
+            this.lblOGGuide.Location = new System.Drawing.Point(539, 672);
+            this.lblOGGuide.Name = "lblOGGuide";
+            this.lblOGGuide.Size = new System.Drawing.Size(77, 26);
+            this.lblOGGuide.TabIndex = 205;
+            this.lblOGGuide.TabStop = true;
+            this.lblOGGuide.Text = "OG CFC Guide\r\nby W1AEX";
+            this.lblOGGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lblOGGuide.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblOGGuide_LinkClicked);
+            // 
             // frmCFCConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 717);
+            this.Controls.Add(this.lblOGGuide);
             this.Controls.Add(this.labelTS1);
             this.Controls.Add(this.nudCFC_cq);
             this.Controls.Add(this.btnResetEQ);
@@ -720,7 +721,6 @@
             this.Controls.Add(this.labelTS668);
             this.Controls.Add(this.nudCFC_precomp);
             this.Controls.Add(this.labelTS669);
-            this.Controls.Add(this.pbCFC_live_warning);
             this.Controls.Add(this.udCFC_low);
             this.Controls.Add(this.radCFC_10);
             this.Controls.Add(this.chkCFC_UseQFactors);
@@ -744,7 +744,6 @@
             this.Text = "CFC Config";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCFCConfig_FormClosing);
             this.VisibleChanged += new System.EventHandler(this.frmCFCConfig_VisibleChanged);
-            ((System.ComponentModel.ISupportInitialize)(this.pbCFC_live_warning)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_f)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_posteqgain)).EndInit();
@@ -785,7 +784,6 @@
         private System.Windows.Forms.RadioButtonTS radCFC_18;
         private System.Windows.Forms.LabelTS labelTS662;
         private System.Windows.Forms.RadioButtonTS radCFC_10;
-        private System.Windows.Forms.PictureBox pbCFC_live_warning;
         private System.Windows.Forms.NumericUpDownTS nudCFC_precomp;
         private System.Windows.Forms.NumericUpDownTS nudCFC_selected_band;
         private System.Windows.Forms.LabelTS labelTS667;
@@ -795,5 +793,6 @@
         private System.Windows.Forms.ButtonTS btnResetEQ;
         private System.Windows.Forms.LabelTS labelTS1;
         private System.Windows.Forms.NumericUpDownTS nudCFC_cq;
+        private System.Windows.Forms.LinkLabel lblOGGuide;
     }
 }

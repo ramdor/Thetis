@@ -1461,13 +1461,14 @@ namespace Thetis
             if (double.IsNaN(state.FrequencyMaxHz) || double.IsInfinity(state.FrequencyMaxHz)) return false;
             if (state.FrequencyMaxHz <= state.FrequencyMinHz) return false;
 
+            bool any_changed = false;
+
             if (state.BandCount != _points.Count)
             {
+                any_changed = true;
                 _band_count = state.BandCount;
                 resetPointsDefault();
             }
-
-            bool any_changed = false;
 
             bool old_param = _parametric_eq;
             double old_global = _global_gain_db;

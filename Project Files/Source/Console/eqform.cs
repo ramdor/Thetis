@@ -2061,6 +2061,8 @@ namespace Thetis
             Common.HightlightControl(tbRXEQ9, bHighlight);
             Common.HightlightControl(tbRXEQ10, bHighlight);
             //
+            Common.HightlightControl(pnlParaEQ, bHighlight);
+            Common.HightlightControl(pnlParaEQ2, bHighlight);
         }
 
         public int NumBands

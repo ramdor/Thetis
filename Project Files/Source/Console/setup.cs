@@ -3536,6 +3536,7 @@ namespace Thetis
             Common.HightlightControl(udPhRotFreq, bHighlight);
             Common.HightlightControl(udPHROTStages, bHighlight);
             Common.HightlightControl(chkPHROTReverse, bHighlight);
+            CFCConfigForm.HighlightTXProfileSaveItems(bHighlight);
 
             Common.HightlightControl(tbCFCPRECOMP, bHighlight);
             Common.HightlightControl(tbCFC0, bHighlight);
@@ -37075,7 +37076,15 @@ namespace Thetis
         }
         private void btnCFCConfig_Click(object sender, EventArgs e)
         {
-            CFCConfigForm.Show(this);
+            if (!CFCConfigForm.Visible)
+            {
+                CFCConfigForm.Show(this);
+                Common.ForceFormOnScreen(CFCConfigForm);
+            }
+            else
+            {
+                Common.ForceFormOnScreen(CFCConfigForm);
+            }
         }
         private void closeCFCConfig()
         {

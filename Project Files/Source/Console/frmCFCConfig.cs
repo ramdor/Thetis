@@ -96,6 +96,8 @@ namespace Thetis
             if (radCFC_5.Checked) bands = 5;
             else if (radCFC_18.Checked) bands = 18;
 
+            nudCFC_selected_band.Maximum = bands;
+
             ucCFC_comp.BandCount = bands;
             ucCFC_eq.BandCount = bands;
         }
@@ -356,7 +358,7 @@ namespace Thetis
             //profile
             unsafe
             {
-                fixed (double* Fptr = &cf[0], Gptr = &cg[0], Eptr = &eg[0], GQptr  = &cq[0], EQptr = &eq[0])
+                fixed (double* Fptr = &cf[0], Gptr = &cg[0], Eptr = &eg[0], GQptr = &cq[0], EQptr = &eq[0])
                 {
                     WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, GQptr, EQptr);
                 }
@@ -384,10 +386,10 @@ namespace Thetis
                 int endIndex = (int)(stop * binsPerHz);
                 int startIndex = (int)(start * binsPerHz);
                 int len = endIndex - startIndex + 1;
-                if(_cfc_data == null || _cfc_data.Length != len)
+                if (_cfc_data == null || _cfc_data.Length != len)
                 {
                     _cfc_data = new double[len];
-                }                
+                }
 
                 int i = 0;
                 for (int n = startIndex; n <= endIndex; n++)
@@ -455,11 +457,13 @@ namespace Thetis
         {
             ucCFC_comp.ParametricEQ = chkCFC_UseQFactors.Checked;
             ucCFC_eq.ParametricEQ = ucCFC_comp.ParametricEQ;
+
+            setCFCProfile(-1, false);
         }
 
         public string ConfigData
         {
-            get 
+            get
             {
                 try
                 {
@@ -479,40 +483,67 @@ namespace Thetis
                 try
                 {
                     string exp = Common.Decompress_gzip(value);
-                    string[] parts = exp.Split(new string[] { "<SEP>" }, 2, StringSplitOptions.None);
-                    if (parts.Length == 2)
+                    if (!string.IsNullOrEmpty(exp))
                     {
-                        string j1 = parts[0];
-                        string j2 = parts[1];
-
-                        bool ok = ucCFC_comp.LoadFromJson(j1);
-                        ok |= ucCFC_eq.LoadFromJson(j2);
-
-                        if (ok)
+                        string[] parts = exp.Split(new string[] { "<SEP>" }, 2, StringSplitOptions.None);
+                        if (parts.Length == 2)
                         {
-                            _ignore_udpates = true;
-                            if (ucCFC_comp.BandCount == 5) radCFC_5.Checked = true;
-                            if (ucCFC_comp.BandCount == 18) radCFC_18.Checked = true;
-                            else radCFC_10.Checked = true;
+                            string j1 = parts[0];
+                            string j2 = parts[1];
 
-                            chkCFC_UseQFactors.Checked = ucCFC_comp.ParametricEQ;
+                            bool ok = ucCFC_comp.LoadFromJson(j1);
+                            ok |= ucCFC_eq.LoadFromJson(j2);
 
-                            udCFC_low.Value = (decimal)ucCFC_comp.FrequencyMinHz;
-                            udCFC_high.Value = (decimal)ucCFC_comp.FrequencyMaxHz;
-                            _ignore_udpates = false;
+                            if (ok)
+                            {
+                                _ignore_udpates = true;
+                                switch (ucCFC_comp.BandCount)
+                                {
+                                    case 5:
+                                        radCFC_5.Checked = true;
+                                        nudCFC_selected_band.Maximum = 5;
+                                        break;
+                                    case 10:
+                                        radCFC_10.Checked = true;
+                                        nudCFC_selected_band.Maximum = 10;
+                                        break;
+                                    case 18:
+                                        radCFC_18.Checked = true;
+                                        nudCFC_selected_band.Maximum = 18;
+                                        break;
+                                }
 
-                            setCFCProfile(-1, false);
+                                chkCFC_UseQFactors.Checked = ucCFC_comp.ParametricEQ;
 
-                            return;
+                                udCFC_low.Value = (decimal)ucCFC_comp.FrequencyMinHz;
+                                udCFC_high.Value = (decimal)ucCFC_comp.FrequencyMaxHz;
+                                _ignore_udpates = false;
+
+                                setCFCProfile(-1, false);
+
+                                _selected_index_comp = -1;
+                                _selected_index_eq = -1;
+                                updateSelected(null);
+
+                                return;
+                            }
                         }
                     }
                 }
                 catch { }
 
+                radCFC_10.Checked = true;
+                ucCFC_comp.BandCount = 10;
+                nudCFC_selected_band.Maximum = 10;
                 ucCFC_comp.GlobalGainDb = 0;
                 ucCFC_comp.ResetPoints();
+                ucCFC_eq.BandCount = 10;
                 ucCFC_eq.GlobalGainDb = 0;
                 ucCFC_eq.ResetPoints();
+
+                _selected_index_comp = -1;
+                _selected_index_eq = -1;
+                updateSelected(null);
             }
         }
 
@@ -530,6 +561,15 @@ namespace Thetis
                     setCFCProfile(-1, false);
                 }
             }
+        }
+        public void HighlightTXProfileSaveItems(bool bHighlight)
+        {
+            Common.HightlightControl(this, bHighlight);
+        }
+
+        private void lblOGGuide_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Common.OpenUri("https://www.w1aex.com/anan/CFC_Audio_Tools/CFC_Audio_Tools.html");
         }
     }
 }
