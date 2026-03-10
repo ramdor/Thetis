@@ -24,6 +24,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] textcolor field added to TCI json payload for changing the spot colour text. Details here : https://github.com/ramdor/Thetis/commit/a9ce28bc62b612b1405d4eaf5d21cb12458ff802
 - [add] IsSWL and SWLSecondsToLive added to TCI json payload for spots. Details here : 
 - [add] option to show active peaks on transmit. Note, the setting is in Display RX1/RX2 tab, not the Display TX tab
+- [add] options added to the DC block to remove it before or after AGC (found in Setup->DSP->AM/SAM)
 - [change] better handing of DirectX failure
 - [change] if cpu% fails to show due to PerformanceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformanceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum

@@ -3973,9 +3973,10 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBEqualiserForm:           // show equaliser form
-                    if (EQForm == null || EQForm.IsDisposed)
-                        EQForm = new EQForm(this);
-                    Invoke(new MethodInvoker(EQForm.Show));
+                    //if (EQForm == null || EQForm.IsDisposed)
+                    //    EQForm = new EQForm(this);
+                    //Invoke(new MethodInvoker(EQForm.Show));
+                    equalizerToolStripMenuItem_Click(this, EventArgs.Empty);
                     break;
 
                 case EButtonBarActions.eBBDisplaySettingsForm:    // show the display settings form

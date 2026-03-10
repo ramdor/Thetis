@@ -39667,7 +39667,7 @@ namespace Thetis
                 this.CollapseDisplay(true);
             }
         }
-
+        private bool _eq_form_show_rx = true; // used by paraeq to show either rx or tx
         private void equalizerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (EQForm == null || EQForm.IsDisposed)
@@ -39676,12 +39676,14 @@ namespace Thetis
             {
                 EQForm.Invoke(new MethodInvoker(() =>
                 {
+                    EQForm.ParaEQShowRX = _eq_form_show_rx;
                     EQForm.Show();
                     EQForm.Focus();
                 }));
             }
             else
             {
+                EQForm.ParaEQShowRX = _eq_form_show_rx;
                 EQForm.Show();
                 EQForm.Focus();
             }
@@ -45087,12 +45089,20 @@ namespace Thetis
 
         private void chkRXEQ_MouseDown(object sender, MouseEventArgs e)
         {
-            if (IsRightButton(e)) equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            if (IsRightButton(e))
+            {
+                _eq_form_show_rx = true;
+                equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            }
         }
 
         private void chkTXEQ_MouseDown(object sender, MouseEventArgs e)
         {
-            if (IsRightButton(e)) equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            if (IsRightButton(e))
+            {
+                _eq_form_show_rx = false;
+                equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            }
         }
 
         private void chkFWCATUBypass_MouseDown(object sender, MouseEventArgs e)
@@ -47050,7 +47060,10 @@ namespace Thetis
 
             switch (form)
             {
-                case "setup": /*setupToolStripMenuItem_Click(this, e);*/ setupToolStripMenuItem1_Click(this, e); break;
+                case "setup": /*setupToolStripMenuItem_Click(this, e);*/
+                    _eq_form_show_rx = true;
+                    setupToolStripMenuItem1_Click(this, e); 
+                    break;
                 case "memory": memoryToolStripMenuItem_Click(this, e); break;
                 case "wave": waveToolStripMenuItem_Click(this, e); break;
                 case "equaliser": equalizerToolStripMenuItem_Click(this, e); break;
@@ -50360,7 +50373,10 @@ namespace Thetis
                 case OtherButtonId.FORM_DBMAN: databaseManagerToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_MEMORY: memoryToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_WAVE: waveToolStripMenuItem_Click(this, EventArgs.Empty); break;
-                case OtherButtonId.FORM_EQ: equalizerToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_EQ:
+                    _eq_form_show_rx = true;
+                    equalizerToolStripMenuItem_Click(this, EventArgs.Empty); 
+                    break;
                 case OtherButtonId.FORM_XVTR: xVTRsToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_CWX: cWXToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_DIVERSITY: showHideDiversity(true); break;

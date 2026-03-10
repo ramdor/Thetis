@@ -687,10 +687,9 @@
             // lblOGGuide
             // 
             this.lblOGGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblOGGuide.AutoSize = true;
-            this.lblOGGuide.Location = new System.Drawing.Point(539, 672);
+            this.lblOGGuide.Location = new System.Drawing.Point(527, 666);
             this.lblOGGuide.Name = "lblOGGuide";
-            this.lblOGGuide.Size = new System.Drawing.Size(77, 26);
+            this.lblOGGuide.Size = new System.Drawing.Size(89, 32);
             this.lblOGGuide.TabIndex = 205;
             this.lblOGGuide.TabStop = true;
             this.lblOGGuide.Text = "OG CFC Guide\r\nby W1AEX";

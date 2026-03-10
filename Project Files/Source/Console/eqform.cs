@@ -177,6 +177,8 @@ namespace Thetis
         private double[] _tempTX_G;
         private double[] _tempTX_Q;
         private int _tempTX_BandCount;
+
+        private bool _paraeq_show_rx;
         #endregion
 
         #region Constructor and Destructor
@@ -187,6 +189,7 @@ namespace Thetis
             InitializeComponent();
             console = c;
 
+            _paraeq_show_rx = true;
             _state = new ParaEQState(this);
 
             ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _state.RX_minHz, out _state.RX_maxHz, out _state.RX_ParametricEQ, out _state.RX_BandCount, 10);
@@ -3579,6 +3582,20 @@ namespace Thetis
             {
                 setupTimer(true);
             }
+        }
+
+        public new void Show()
+        {
+            if (_paraeq_show_rx) radParaEQ_RX.Checked = true;
+            else radParaEQ_TX.Checked = true;
+
+            base.Show();
+        }
+
+        public bool ParaEQShowRX
+        {
+            get { return _paraeq_show_rx; }
+            set { _paraeq_show_rx = value; }
         }
     }
 }
