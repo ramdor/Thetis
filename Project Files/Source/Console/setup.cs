@@ -37190,7 +37190,9 @@ namespace Thetis
             for (int i = 0; i < forms.Count; i++)
             {
                 Form f = forms[i];
+                if (f.WindowState != FormWindowState.Normal) f.WindowState = FormWindowState.Normal;
                 f.Location = new Point(x, y);
+                Common.ForceFormOnScreen(f);
                 x += step;
                 y += step;
             }
