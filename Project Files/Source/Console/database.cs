@@ -4537,6 +4537,8 @@ namespace Thetis
             t.Columns.Add("CFCEqFreq8", typeof(int));
             t.Columns.Add("CFCEqFreq9", typeof(int));
 
+            t.Columns.Add("CFCParaEQData", typeof(string));            
+
             #region Default
 
             DataRow dr = t.NewRow();
@@ -4762,6 +4764,8 @@ namespace Thetis
             dr["CFCEqFreq7"] = 4000;
             dr["CFCEqFreq8"] = 5000;
             dr["CFCEqFreq9"] = 10000;
+
+            dr["CFCParaEQData"] = "";
 
             t.Rows.Add(dr);
 
@@ -4990,6 +4994,8 @@ namespace Thetis
             dr["CFCEqFreq7"] = 4000;
             dr["CFCEqFreq8"] = 5000;
             dr["CFCEqFreq9"] = 10000;
+
+            dr["CFCParaEQData"] = "";
 
             t.Rows.Add(dr);
 
@@ -5220,6 +5226,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5448,6 +5456,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5674,6 +5684,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -5902,6 +5914,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6128,6 +6142,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -6356,6 +6372,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6582,6 +6600,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -6810,6 +6830,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7036,6 +7058,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -7264,6 +7288,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7490,6 +7516,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -7718,6 +7746,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7944,6 +7974,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -8172,6 +8204,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8398,6 +8432,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -8626,6 +8662,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 2900;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8852,6 +8890,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 2000;
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 3100;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -9080,6 +9120,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 3350;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -9306,6 +9348,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 3000;
                 dr["CFCEqFreq8"] = 4000;
                 dr["CFCEqFreq9"] = 5000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 

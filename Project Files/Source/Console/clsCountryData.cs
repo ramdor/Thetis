@@ -105,18 +105,18 @@ namespace Thetis
 
             return bestMatch;
         }
-        private static void build()
-        {
-            _prefixDataList = new List<PrefixData>();
-            string plistPath = "C:\\Users\\Richie\\Downloads\\cty_plist-3436\\cty.plist"; //xml version
-            LoadPrefixes(plistPath);
+        //private static void build()
+        //{
+        //    _prefixDataList = new List<PrefixData>();
+        //    string plistPath = "C:\\Users\\Richie\\Downloads\\cty_plist-3436\\cty.plist"; //xml version
+        //    LoadPrefixes(plistPath);
 
-            string serializedData = Common.SerializeToBase64<List<PrefixData>>(_prefixDataList);
+        //    string serializedData = Common.SerializeToBase64<List<PrefixData>>(_prefixDataList);
 
-            string directoryPath = Path.GetDirectoryName(plistPath);
-            string outputPath = Path.Combine(directoryPath, "cty.txt");
-            File.WriteAllText(outputPath, serializedData);
-        }
+        //    string directoryPath = Path.GetDirectoryName(plistPath);
+        //    string outputPath = Path.Combine(directoryPath, "cty.txt");
+        //    File.WriteAllText(outputPath, serializedData);
+        //}
         private static void LoadPrefixes(string filePath)
         {
             XmlDocument xmlDoc = new XmlDocument();

@@ -284,6 +284,7 @@ namespace Thetis
         private double _db_max;
 
         private double _global_gain_db;
+        private bool _global_gain_is_horiz_line;
 
         private int _selected_index;
         private int _drag_index;
@@ -368,6 +369,7 @@ namespace Thetis
             _db_max = 24.0;
 
             _global_gain_db = 0.0;
+            _global_gain_is_horiz_line = false;
 
             _plot_margin_left = 30;
             _plot_margin_right = 28;
@@ -691,6 +693,21 @@ namespace Thetis
                 if (_dragging_global_gain) _drag_dirty_global_gain = true;
 
                 raiseGlobalGainChanged(isDraggingNow());
+                Invalidate();
+            }
+        }
+
+        [Category("EQ")]
+        [DefaultValue(false)]
+        public bool GlobalGainIsHorizLine
+        {
+            get { return _global_gain_is_horiz_line; }
+            set
+            {
+                bool v = value;
+                if (v == _global_gain_is_horiz_line) return;
+
+                _global_gain_is_horiz_line = v;
                 Invalidate();
             }
         }
@@ -2020,6 +2037,16 @@ namespace Thetis
                 float y0 = yFromDb(plot, 0.0);
                 g.DrawLine(zero_pen, plot.Left, y0, plot.Right, y0);
             }
+
+            if (_global_gain_is_horiz_line)
+            {
+                using (Pen global_gain_pen = new Pen(Color.FromArgb(180, Color.White), 1.5f))
+                {
+                    global_gain_pen.DashStyle = DashStyle.Dash;
+                    float y = yFromDb(plot, _global_gain_db);
+                    g.DrawLine(global_gain_pen, plot.Left, y, plot.Right, y);
+                }
+            }
         }
 
         private void drawBarChart(Graphics g, Rectangle plot)
@@ -2247,7 +2274,7 @@ namespace Thetis
                 double f = _frequency_min_hz + t * (_frequency_max_hz - _frequency_min_hz);
 
                 double db = responseDbAtFrequency(f);
-                db = db + _global_gain_db;
+                if (!_global_gain_is_horiz_line) db = db + _global_gain_db;
 
                 float x = plot.Left + (float)(t * plot.Width);
                 float y = yFromDb(plot, db);

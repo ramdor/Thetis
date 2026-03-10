@@ -10,6 +10,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] new radio discovery and networking system/config added to setup. The old method has been removed. Your old radio IP settings will be lost if you have those set. Please see this video [TODO]
 - [add] Network Settings documentation pdf added for the change network settings. Can be found in shortcuts, or via the About box manual links
 - [add] entirely new recording/playback system added. New tab in Setup->Audio->Recording. New container gadget item, voice record/play, and cat support. ZZJS (stop record/play), ZZJR (record to slot N) ZZJR005; , ZZJP (playback slot N)  ZZJP005;
+- [add] new 5/10/18 band Parametric EQ ui for TX and RX eq, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
+- [add] new 5/10/18 band EQ Parametric EQ ui for CFC, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
 - [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required.
 - [add] now possible to select channel (both, left, right) for cmasio mic input
 - [add] debug/test option to ignore ATT offset in displays and signal meters. Thetis identifies as an Icom !
@@ -27,7 +29,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum
 - [change] wave form has been removed, replaced by new recording/playback system
 - [change] quick record wavs have now moved to a quickrecord folder in the Audio->Recording audio storage path
-- [change] auto rx step attenuation will only happen when there has been 400ms of adc overload and it moves from a yellow to red warning
+- [change] auto rx step attenuation will only happen when there has been at least 400ms of adc overload and it moves from a yellow to red warning
 - [change] removed -SWL[n] tag support from TCI spot mode field, added support to JSON tagged data
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots

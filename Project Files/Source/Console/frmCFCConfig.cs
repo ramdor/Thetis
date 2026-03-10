@@ -1,4 +1,44 @@
-﻿using System;
+﻿/*  frmCFCConfig.cs
+
+This file is part of a program that implements a Software-Defined Radio.
+
+This code/file can be found on GitHub : https://github.com/ramdor/Thetis
+
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+The author can be reached by email at
+
+mw0lge@grange-lane.co.uk
+*/
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,6 +64,8 @@ namespace Thetis
         private bool _ignore_udpates;
         private bool _ignore_unselected;
 
+        private bool _active;
+
         public frmCFCConfig()
         {
             _CFCCompValues = new double[1025];
@@ -37,21 +79,21 @@ namespace Thetis
 
             _busy = false;
 
-            setTimer();
+            _active = false;
 
             InitializeComponent();
-        }
 
-        private void frmCFCConfig_Load(object sender, EventArgs e)
-        {
+            Common.RestoreForm(this, "CFCConfig", false);
+            Common.ForceFormOnScreen(this);
 
+            updateSelected(null);
+            setTimer();
         }
 
         private void radCFC_bands_CheckedChanged(object sender, EventArgs e)
         {
             int bands = 10;
             if (radCFC_5.Checked) bands = 5;
-            else if (radCFC_10.Checked) bands = 10;
             else if (radCFC_18.Checked) bands = 18;
 
             ucCFC_comp.BandCount = bands;
@@ -83,36 +125,65 @@ namespace Thetis
         private void nudCFC_f_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            int index = ucCFC_comp.SelectedIndex;
+            ucCFC_comp.GetPointData(index, out double f, out double g, out double q);
+            f = (double)nudCFC_f.Value;
+            ucCFC_comp.SetPointData(index, f, g, q);
         }
 
         private void nudCFC_precomp_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            ucCFC_comp.GlobalGainDb = (double)nudCFC_precomp.Value;
         }
 
         private void nudCFC_c_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            int index = ucCFC_comp.SelectedIndex;
+            ucCFC_comp.GetPointData(index, out double f, out double g, out double q);
+            g = (double)nudCFC_c.Value;
+            ucCFC_comp.SetPointData(index, f, g, q);
         }
 
         private void nudCFC_posteqgain_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            ucCFC_eq.GlobalGainDb = (double)nudCFC_posteqgain.Value;
         }
 
         private void nudCFC_gain_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            int index = ucCFC_eq.SelectedIndex;
+            ucCFC_eq.GetPointData(index, out double f, out double g, out double q);
+            g = (double)nudCFC_gain.Value;
+            ucCFC_eq.SetPointData(index, f, g, q);
         }
 
         private void nudCFC_q_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            int index = ucCFC_eq.SelectedIndex;
+            ucCFC_eq.GetPointData(index, out double f, out double g, out double q);
+            q = (double)nudCFC_q.Value;
+            ucCFC_eq.SetPointData(index, f, g, q);
         }
 
         private void nudCFC_cq_ValueChanged(object sender, EventArgs e)
         {
             if (_ignore_udpates) return;
+
+            int index = ucCFC_comp.SelectedIndex;
+            ucCFC_comp.GetPointData(index, out double f, out double g, out double q);
+            q = (double)nudCFC_cq.Value;
+            ucCFC_comp.SetPointData(index, f, g, q);
         }
 
         private void ucCFC_comp_GlobalGainChanged(object sender, ucParametricEq.EqDraggingEventArgs e)
@@ -226,13 +297,15 @@ namespace Thetis
         private void updateSelected(ucParametricEq.EqPointSelectionChangedEventArgs e)
         {
             //enable/disable controls
-            nudCFC_f.Enabled = (_selected_index_comp != -1);
-            nudCFC_precomp.Enabled = (_selected_index_comp != -1);
-            nudCFC_c.Enabled = (_selected_index_comp != -1);
+            bool enable = (_selected_index_comp != -1);
+            nudCFC_f.Enabled = enable;
+            nudCFC_precomp.Enabled = enable;
+            nudCFC_c.Enabled = enable;
+            nudCFC_cq.Enabled = enable;
 
-            nudCFC_posteqgain.Enabled = (_selected_index_eq != -1);
-            nudCFC_gain.Enabled = (_selected_index_eq != -1);
-            nudCFC_q.Enabled = (_selected_index_eq != -1);
+            nudCFC_posteqgain.Enabled = enable;
+            nudCFC_gain.Enabled = enable;
+            nudCFC_q.Enabled = enable;
 
             if (SelectedIndex == -1 || e == null) return;
 
@@ -270,6 +343,7 @@ namespace Thetis
             _ignore_udpates = false;
 
             if (just_text) return;
+            if (!_active) return;
 
             //pre comp
             WDSP.SetTXACFCOMPPrecomp(WDSP.id(1, 0), pre_comp);
@@ -368,6 +442,94 @@ namespace Thetis
             _ignore_unselected = false;
 
             setCFCProfile(ucCFC_eq.SelectedIndex, true);
+        }
+
+        private void frmCFCConfig_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true;
+            Common.SaveForm(this, "CFCConfig");
+        }
+
+        private void chkCFC_UseQFactors_CheckedChanged(object sender, EventArgs e)
+        {
+            ucCFC_comp.ParametricEQ = chkCFC_UseQFactors.Checked;
+            ucCFC_eq.ParametricEQ = ucCFC_comp.ParametricEQ;
+        }
+
+        public string ConfigData
+        {
+            get 
+            {
+                try
+                {
+                    string j1 = ucCFC_comp.SaveToJson();
+                    string j2 = ucCFC_eq.SaveToJson();
+                    string total = j1 + "<SEP>" + j2;
+                    string comp = Common.Compress_gzip(total);
+                    return comp;
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+            set
+            {
+                try
+                {
+                    string exp = Common.Decompress_gzip(value);
+                    string[] parts = exp.Split(new string[] { "<SEP>" }, 2, StringSplitOptions.None);
+                    if (parts.Length == 2)
+                    {
+                        string j1 = parts[0];
+                        string j2 = parts[1];
+
+                        bool ok = ucCFC_comp.LoadFromJson(j1);
+                        ok |= ucCFC_eq.LoadFromJson(j2);
+
+                        if (ok)
+                        {
+                            _ignore_udpates = true;
+                            if (ucCFC_comp.BandCount == 5) radCFC_5.Checked = true;
+                            if (ucCFC_comp.BandCount == 18) radCFC_18.Checked = true;
+                            else radCFC_10.Checked = true;
+
+                            chkCFC_UseQFactors.Checked = ucCFC_comp.ParametricEQ;
+
+                            udCFC_low.Value = (decimal)ucCFC_comp.FrequencyMinHz;
+                            udCFC_high.Value = (decimal)ucCFC_comp.FrequencyMaxHz;
+                            _ignore_udpates = false;
+
+                            setCFCProfile(-1, false);
+
+                            return;
+                        }
+                    }
+                }
+                catch { }
+
+                ucCFC_comp.GlobalGainDb = 0;
+                ucCFC_comp.ResetPoints();
+                ucCFC_eq.GlobalGainDb = 0;
+                ucCFC_eq.ResetPoints();
+            }
+        }
+
+        public bool Active
+        {
+            get
+            {
+                return _active;
+            }
+            set
+            {
+                _active = value;
+                if (_active)
+                {
+                    setCFCProfile(-1, false);
+                }
+            }
         }
     }
 }

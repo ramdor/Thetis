@@ -4431,6 +4431,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
+            this.pnlCFC = new System.Windows.Forms.PanelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5532,6 +5533,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.pnlCFC.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -45154,12 +45156,9 @@
             // tpDSPCFC
             // 
             this.tpDSPCFC.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPCFC.Controls.Add(this.pnlCFC);
             this.tpDSPCFC.Controls.Add(this.chkCFC_legacy);
-            this.tpDSPCFC.Controls.Add(this.picCFC);
             this.tpDSPCFC.Controls.Add(this.pnlCFC_legacy);
-            this.tpDSPCFC.Controls.Add(this.labelTS607);
-            this.tpDSPCFC.Controls.Add(this.labelTS606);
-            this.tpDSPCFC.Controls.Add(this.udCFCPicDBPerLine);
             this.tpDSPCFC.Controls.Add(this.grpPhRot);
             this.tpDSPCFC.Controls.Add(this.chkCFCPeqEnable);
             this.tpDSPCFC.Controls.Add(this.chkCFCEnable);
@@ -45188,7 +45187,7 @@
             // picCFC
             // 
             this.picCFC.BackColor = System.Drawing.Color.Black;
-            this.picCFC.Location = new System.Drawing.Point(428, 73);
+            this.picCFC.Location = new System.Drawing.Point(0, 28);
             this.picCFC.Name = "picCFC";
             this.picCFC.Size = new System.Drawing.Size(290, 129);
             this.picCFC.TabIndex = 175;
@@ -45996,7 +45995,7 @@
             // 
             this.labelTS607.AutoSize = true;
             this.labelTS607.Image = null;
-            this.labelTS607.Location = new System.Drawing.Point(620, 52);
+            this.labelTS607.Location = new System.Drawing.Point(192, 7);
             this.labelTS607.Name = "labelTS607";
             this.labelTS607.Size = new System.Drawing.Size(13, 13);
             this.labelTS607.TabIndex = 179;
@@ -46006,7 +46005,7 @@
             // 
             this.labelTS606.AutoSize = true;
             this.labelTS606.Image = null;
-            this.labelTS606.Location = new System.Drawing.Point(691, 52);
+            this.labelTS606.Location = new System.Drawing.Point(263, 7);
             this.labelTS606.Name = "labelTS606";
             this.labelTS606.Size = new System.Drawing.Size(20, 13);
             this.labelTS606.TabIndex = 178;
@@ -46019,7 +46018,7 @@
             0,
             0,
             0});
-            this.udCFCPicDBPerLine.Location = new System.Drawing.Point(639, 50);
+            this.udCFCPicDBPerLine.Location = new System.Drawing.Point(211, 5);
             this.udCFCPicDBPerLine.Maximum = new decimal(new int[] {
             50,
             0,
@@ -70213,6 +70212,19 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
+            // pnlCFC
+            // 
+            this.pnlCFC.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlCFC.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlCFC.Controls.Add(this.picCFC);
+            this.pnlCFC.Controls.Add(this.udCFCPicDBPerLine);
+            this.pnlCFC.Controls.Add(this.labelTS606);
+            this.pnlCFC.Controls.Add(this.labelTS607);
+            this.pnlCFC.Location = new System.Drawing.Point(426, 44);
+            this.pnlCFC.Name = "pnlCFC";
+            this.pnlCFC.Size = new System.Drawing.Size(293, 160);
+            this.pnlCFC.TabIndex = 113;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71592,6 +71604,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.pnlCFC.ResumeLayout(false);
+            this.pnlCFC.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -76026,5 +76040,6 @@
         private PanelTS pnlCFC_legacy;
         private CheckBoxTS chkCFC_legacy;
         private ButtonTS btnCFCConfig;
+        private PanelTS pnlCFC;
     }
 }

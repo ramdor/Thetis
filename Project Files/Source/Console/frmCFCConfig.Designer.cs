@@ -120,11 +120,12 @@
             this.ucCFC_comp.FrequencyMaxHz = 4000D;
             this.ucCFC_comp.FrequencyMinHz = 0D;
             this.ucCFC_comp.GlobalGainDb = 0D;
+            this.ucCFC_comp.GlobalGainIsHorizLine = true;
             this.ucCFC_comp.Location = new System.Drawing.Point(12, 36);
             this.ucCFC_comp.MinPointSpacingHz = 5D;
             this.ucCFC_comp.Name = "ucCFC_comp";
             this.ucCFC_comp.ParametricEQ = true;
-            this.ucCFC_comp.QMax = 30D;
+            this.ucCFC_comp.QMax = 20D;
             this.ucCFC_comp.QMin = 0.2D;
             this.ucCFC_comp.SelectedIndex = -1;
             this.ucCFC_comp.ShowAxisScales = true;
@@ -160,15 +161,15 @@
             65536});
             this.nudCFC_c.Location = new System.Drawing.Point(341, 7);
             this.nudCFC_c.Maximum = new decimal(new int[] {
-            24,
+            12,
             0,
             0,
             0});
             this.nudCFC_c.Minimum = new decimal(new int[] {
-            24,
             0,
             0,
-            -2147483648});
+            0,
+            0});
             this.nudCFC_c.Name = "nudCFC_c";
             this.nudCFC_c.Size = new System.Drawing.Size(49, 20);
             this.nudCFC_c.TabIndex = 198;
@@ -351,15 +352,15 @@
             65536});
             this.nudCFC_precomp.Location = new System.Drawing.Point(218, 7);
             this.nudCFC_precomp.Maximum = new decimal(new int[] {
-            24,
+            12,
             0,
             0,
             0});
             this.nudCFC_precomp.Minimum = new decimal(new int[] {
-            24,
             0,
             0,
-            -2147483648});
+            0,
+            0});
             this.nudCFC_precomp.Name = "nudCFC_precomp";
             this.nudCFC_precomp.Size = new System.Drawing.Size(49, 20);
             this.nudCFC_precomp.TabIndex = 189;
@@ -438,6 +439,7 @@
             this.chkCFC_UseQFactors.TabIndex = 172;
             this.chkCFC_UseQFactors.Text = "Use Q Factors";
             this.chkCFC_UseQFactors.UseVisualStyleBackColor = true;
+            this.chkCFC_UseQFactors.CheckedChanged += new System.EventHandler(this.chkCFC_UseQFactors_CheckedChanged);
             // 
             // labelTS662
             // 
@@ -630,7 +632,7 @@
             this.ucCFC_eq.MinPointSpacingHz = 5D;
             this.ucCFC_eq.Name = "ucCFC_eq";
             this.ucCFC_eq.ParametricEQ = true;
-            this.ucCFC_eq.QMax = 30D;
+            this.ucCFC_eq.QMax = 20D;
             this.ucCFC_eq.QMin = 0.2D;
             this.ucCFC_eq.SelectedIndex = -1;
             this.ucCFC_eq.ShowAxisScales = true;
@@ -735,11 +737,12 @@
             this.Controls.Add(this.ucCFC_eq);
             this.Controls.Add(this.labelTS663);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximumSize = new System.Drawing.Size(1024, 756);
             this.MinimumSize = new System.Drawing.Size(640, 756);
             this.Name = "frmCFCConfig";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "CFC Config";
-            this.Load += new System.EventHandler(this.frmCFCConfig_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCFCConfig_FormClosing);
             this.VisibleChanged += new System.EventHandler(this.frmCFCConfig_VisibleChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pbCFC_live_warning)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).EndInit();
