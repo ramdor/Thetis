@@ -333,6 +333,7 @@ namespace Thetis
             this.RXANFPosition = rx.rx_anf_position;
             this.RXANRPosition = rx.rx_anr_position;
             this.RXCBLRun = rx.rx_cbl_run;
+            this.RXCBLPosition = rx.rx_cbl_position;
             this.RXAMDFadeLevel = rx.rx_amd_fadelevel;
             this.RXAMDSBMode = rx.rx_amd_sbmode;
             this.RXBandpassWindow = rx.rx_bandpass_window;
@@ -435,6 +436,7 @@ namespace Thetis
             RXANFPosition = rx_anf_position;
             RXANRPosition = rx_anr_position;
             RXCBLRun = rx_cbl_run;
+            RXCBLPosition = rx_cbl_position;
             RXAMDFadeLevel = rx_amd_fadelevel;
             RXAMDSBMode = rx_amd_sbmode;
             RXBandpassWindow = rx_bandpass_window;
@@ -1651,6 +1653,25 @@ namespace Thetis
                     {
                         WDSP.SetRXACBLRun(WDSP.id(thread, subrx), value);
                         rx_cbl_run_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private int rx_cbl_position_dsp = 1; //0=before agc, 1=after
+        private int rx_cbl_position = 1;
+        public int RXCBLPosition
+        {
+            get { return rx_cbl_position; }
+            set
+            {
+                rx_cbl_position = value;
+                if (update)
+                {
+                    if (value != rx_cbl_position_dsp || force)
+                    {
+                        WDSP.SetRXACBLPosition(WDSP.id(thread, subrx), value);
+                        rx_cbl_position_dsp = value;
                     }
                 }
             }

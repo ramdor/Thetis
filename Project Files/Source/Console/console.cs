@@ -645,7 +645,7 @@ namespace Thetis
 
             LogTool.AddLogEntry("Dll's checked ok");
 
-            bool reposition_conosle_setup = requires_reposition(); // check for ctrl+alt+shift keycombo to reset console and setup position futher down
+            bool reposition_conosle_and_setup = requires_reposition(); // check for ctrl+alt+shift keycombo to reset console and setup position futher down
 
             string app_data_path = "";
 
@@ -868,7 +868,28 @@ namespace Thetis
 
             TimeOutTimerManager.Initialise(this);
 
-            InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
+            try
+            {
+                InitConsole();                                  // Initialize all forms and main variables  INIT_SLOW
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("does not belong to table", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string msg = "The database is incorrectly configured for this version of Thetis.\n\n" +
+                        "This is most likely because the database has not yet been updated.\n\n" +
+                        "Try holding left CTRL as you start up Thetis,\n" +
+                        "and keep it held until you see a message.";
+                    MessageBox.Show(msg, "Database Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                    _exitConsoleInDispose = false;
+                    Environment.Exit(1);
+                    return;
+                }
+
+                throw;
+            }
 
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
@@ -1047,7 +1068,7 @@ namespace Thetis
             }
             _pause_DisplayThread = false;
 
-            if (reposition_conosle_setup)
+            if (reposition_conosle_and_setup)
             {
                 this.Location = new Point(100, 100);
                 if (!IsSetupFormNull) SetupForm.Location = new Point(160, 160);
@@ -1491,6 +1512,7 @@ namespace Thetis
                         MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
+
                 Application.Exit();
             }
 
@@ -2696,137 +2718,61 @@ namespace Thetis
 
             shutdownLogStringToPath("Leaving ExitConsole()");
         }
-
-        public void SaveState()
+        public string StateListToBase64()
         {
-            // Automatically saves all control settings to the database in the tab
-            // pages on this form of the following types: CheckBox, ComboBox,
-            // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
-
-            if (DB.Merged) return; // prevent saving as we want to ignore everything
-
+            List<string> a = GetStateList();
+            string s64 = Common.SerializeToBase64<List<string>>(a);
+            return s64;
+        }
+        public List<string> GetStateList()
+        {
             string s;
-
-            if (_current_breakin_mode == BreakIn.QSK) QSKEnabled = false; // Just to save the non-qsk settings, but leaving the button alone
-            chkPower.Checked = false;		// turn off the power first
-
-            //[2.10.3.7]MW0LGE control names to always save, some were being missed if disabled
+            //control names to always save, some were being missed if disabled
             List<string> always_save = new List<string>();
             always_save.Add(chkVFOLock.Name);
             always_save.Add(chkVFOBLock.Name);
             always_save.Add(chkVFOSync.Name);
-            //
 
             List<string> a = new List<string>();
 
-            foreach (Control c in this.Controls)			// For each control
+            foreach (Control c in this.Controls)
             {
-                // if it is a groupbox or panel, check for sub controls
                 if (c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(PanelTS))
                 {
-                    foreach (Control c2 in c.Controls)	// for each sub-control
-                    {	// check to see if it is a value type we need to save
-                        if (c2.Enabled || always_save.Contains(c2.Name))
-                        {
-                            if (c2.GetType() == typeof(CheckBoxTS))
-                                a.Add(c2.Name + "/" + ((CheckBoxTS)c2).Checked.ToString());
-                            else if (c2.GetType() == typeof(ComboBoxTS))
-                            {
-                                if (((ComboBoxTS)c2).Items.Count > 0)
-                                    a.Add(c2.Name + "/" + ((ComboBoxTS)c2).Text);
-                            }
-                            else if (c2.GetType() == typeof(NumericUpDownTS))
-                                a.Add(c2.Name + "/" + ((NumericUpDownTS)c2).Value.ToString());
-                            else if (c2.GetType() == typeof(RadioButtonTS))
-                                a.Add(c2.Name + "/" + ((RadioButtonTS)c2).Checked.ToString());
-                            else if (c2.GetType() == typeof(TextBoxTS))
-                            {
-                                if (((TextBoxTS)c2).ReadOnly == false)
-                                    a.Add(c2.Name + "/" + ((TextBoxTS)c2).Text);
-                            }
-                            else if (c2.GetType() == typeof(TrackBarTS))
-                                a.Add(c2.Name + "/" + ((TrackBarTS)c2).Value.ToString());
-                            else if (c2.GetType() == typeof(PrettyTrackBar))
-                                a.Add(c2.Name + "/" + ((PrettyTrackBar)c2).Value.ToString());
-#if(DEBUG)
-                            else if (c2.GetType() == typeof(GroupBox) ||
-                                c2.GetType() == typeof(CheckBox) ||
-                                c2.GetType() == typeof(ComboBox) ||
-                                c2.GetType() == typeof(NumericUpDown) ||
-                                c2.GetType() == typeof(RadioButton) ||
-                                c2.GetType() == typeof(TextBox) ||
-                                c2.GetType() == typeof(TrackBar))
-                                Debug.WriteLine(this.Name + " -> " + c2.Name + " needs to be converted to a Thread Safe control.");
-#endif
-                        }
-                        else
-                            Debug.Print("Not saving : " + c2.Name);
-                    }
+                    foreach (Control c2 in c.Controls)
+                        addControlState(a, c2, always_save, true, true);
                 }
-                else // it is not a group box
-                {	// check to see if it is a value type we need to save
-                    if (c.Enabled || always_save.Contains(c.Name))
-                    {
-                        if (c.GetType() == typeof(CheckBoxTS))
-                            a.Add(c.Name + "/" + ((CheckBoxTS)c).Checked.ToString());
-                        else if (c.GetType() == typeof(ComboBoxTS))
-                        {
-                            if (((ComboBoxTS)c).SelectedIndex >= 0)
-                                a.Add(c.Name + "/" + ((ComboBoxTS)c).Text);
-                        }
-                        else if (c.GetType() == typeof(NumericUpDownTS))
-                            a.Add(c.Name + "/" + ((NumericUpDownTS)c).Value.ToString());
-                        else if (c.GetType() == typeof(RadioButtonTS))
-                            a.Add(c.Name + "/" + ((RadioButtonTS)c).Checked.ToString());
-                        else if (c.GetType() == typeof(TextBoxTS))
-                        {
-                            if (((TextBoxTS)c).ReadOnly == false)
-                                a.Add(c.Name + "/" + ((TextBoxTS)c).Text);
-                        }
-                        else if (c.GetType() == typeof(TrackBarTS))
-                            a.Add(c.Name + "/" + ((TrackBarTS)c).Value.ToString());
-                        else if (c.GetType() == typeof(PrettyTrackBar))
-                            a.Add(c.Name + "/" + ((PrettyTrackBar)c).Value.ToString());
-#if(DEBUG)
-                        else if (c.GetType() == typeof(GroupBox) ||
-                            c.GetType() == typeof(CheckBox) ||
-                            c.GetType() == typeof(ComboBox) ||
-                            c.GetType() == typeof(NumericUpDown) ||
-                            c.GetType() == typeof(RadioButton) ||
-                            c.GetType() == typeof(TextBox) ||
-                            c.GetType() == typeof(TrackBar))
-                            Debug.WriteLine(this.Name + " -> " + c.Name + " needs to be converted to a Thread Safe control.");
-#endif
-                    }
+                else
+                {
+                    addControlState(a, c, always_save, false, false);
                 }
             }
 
-            a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString()); // removed from saved data as restored from att per band
+            a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString());
             a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
-            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE            
+            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString());
 
-            a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString()); // MW0LGE [2.9.0.8] used incase protocol changes from last time. Used in audio.cs tp reset PS feedback level
-            a.Add("last_radio_hardware/" + Audio.LastRadioHardware.ToString()); // as above, but hardware related
+            a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString());
+            a.Add("last_radio_hardware/" + Audio.LastRadioHardware.ToString());
 
             a.Add("nr_selected/" + nr_selected_to_text());
 
             a.Add("chkNB_checkstate/" + chkNB.CheckState.ToString());
             a.Add("chkRX2NB_checkstate/" + chkRX2NB.CheckState.ToString());
             a.Add("chkQSK_checkstate/" + chkQSK.CheckState.ToString());
-            a.Add("chkSquelch_checkstate/" + chkSquelch.CheckState.ToString()); //MW0LGE [2.9.0.8]
+            a.Add("chkSquelch_checkstate/" + chkSquelch.CheckState.ToString());
             a.Add("chkRX2Squelch_checkstate/" + chkRX2Squelch.CheckState.ToString());
 
-            a.Add("rx1_display_cal_offset/" + _rx1_display_cal_offset.ToString()); //[2.10.3.9]MW0LGE maintaining max precision
+            a.Add("rx1_display_cal_offset/" + _rx1_display_cal_offset.ToString());
             a.Add("rx1_meter_cal_offset/" + _rx1_meter_cal_offset);
 
-            a.Add("rx2_display_cal_offset/" + _rx2_display_cal_offset.ToString());  //[2.10.3.9]MW0LGE maintaining max precision
+            a.Add("rx2_display_cal_offset/" + _rx2_display_cal_offset.ToString());
             a.Add("rx2_meter_cal_offset/" + _rx2_meter_cal_offset);
 
-            a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);		// save quick memory settings
+            a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);
             a.Add("quick_save_mode/" + (int)quick_save_mode);
             a.Add("quick_save_filter/" + (int)quick_save_filter);
 
-            //Squelch Save
             a.Add("rx1_squelch_state/" + _rx1_squelch_state.ToString());
             a.Add("rx1_fm_squelch_state/" + _rx1_fm_squelch_state.ToString());
             a.Add("rx1_squelch_threshold_scroll/" + rx1_squelch_threshold_scroll);
@@ -2844,7 +2790,7 @@ namespace Thetis
             a.Add("click_tune_rx2_display/" + _click_tune_rx2_display);
             a.Add("VFOBFreq/" + VFOBFreq);
 
-            a.Add("VFOASubFreq/" + m_dVFOASubFreq);  // MW0LGE_21a
+            a.Add("VFOASubFreq/" + m_dVFOASubFreq);
 
             a.Add("CentreRX2Frequency/" + CentreRX2Frequency);
             a.Add("diversity_gain_160m/" + diversity_gain_160m);
@@ -3003,27 +2949,23 @@ namespace Thetis
             a.Add("rx2_display_grid_min_xvtr/" + rx2_display_grid_min_xvtr);
 
             for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
-            {	// save filter settings per mode
+            {
                 for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
-                {
                     a.Add("rx1_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx1_filters[m].ToString(f));
-                }
+
                 a.Add("last_rx1_filter[" + m.ToString() + "]/" + rx1_filters[m].LastFilter.ToString());
             }
 
             for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
-            {	// save filter settings per mode
+            {
                 for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
-                {
                     a.Add("rx2_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx2_filters[m].ToString(f));
-                }
+
                 a.Add("last_rx2_filter[" + m.ToString() + "]/" + rx2_filters[m].LastFilter.ToString());
             }
 
             for (int i = 0; i < MNotchDB.Count; i++)
-            {
                 a.Add("mnotchdb[" + i + "]/" + MNotchDB.NotchFromIndex(i).ToString());
-            }
 
             for (int i = 0; i < (int)Band.LAST; i++)
             {
@@ -3139,7 +3081,6 @@ namespace Thetis
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            //MW0LGE_21k9d
             for (int rx = 0; rx < 2; rx++)
             {
                 if (rx == 0)
@@ -3147,7 +3088,11 @@ namespace Thetis
                 else
                     s = "rx2_ztbdata";
 
-                string s1 = "", s2 = "", s3 = "", s4 = "";
+                string s1 = "";
+                string s2 = "";
+                string s3 = "";
+                string s4 = "";
+
                 for (int i = 0; i < (int)Band.LAST; i++)
                 {
                     ztb_data ztb = ztb_data_by_band[rx][i];
@@ -3156,26 +3101,27 @@ namespace Thetis
                     s3 += ztb.ZoomSliderPosition.ToString() + "|";
                     s4 += ztb.Initalised + "|";
                 }
+
                 s1 = s1.Substring(0, s1.Length - 1);
                 s2 = s2.Substring(0, s2.Length - 1);
                 s3 = s3.Substring(0, s3.Length - 1);
                 s4 = s4.Substring(0, s4.Length - 1);
+
                 a.Add(s + "_cf/" + s1);
                 a.Add(s + "_ps/" + s2);
                 a.Add(s + "_zs/" + s3);
                 a.Add(s + "_init/" + s4);
             }
-            //
 
             s = "rx_meter_cal_offset_by_radio/";
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                s += (rx_meter_cal_offset_by_radio[i]).ToString() + "|"; //[2.10.3.9]MW0LGE maintaining max precision
+                s += rx_meter_cal_offset_by_radio[i].ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
             s = "rx_display_cal_offset_by_radio/";
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                s += (rx_display_cal_offset_by_radio[i]).ToString() + "|"; //[2.10.3.9]MW0LGE maintaining max precision
+                s += rx_display_cal_offset_by_radio[i].ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
@@ -3189,29 +3135,26 @@ namespace Thetis
             for (int i = (int)PreampMode.FIRST + 1; i < (int)PreampMode.LAST; i++)
                 a.Add("rx1_preamp_offset[" + i.ToString() + "]/" + rx1_preamp_offset[i].ToString("f3"));
 
-            a.Add("wheel_tune_index/" + tune_step_index.ToString());		// Save wheel tune value
+            a.Add("wheel_tune_index/" + tune_step_index.ToString());
 
-            //MW0LGE_21j
             s = "wheel_tune_index_by_mode/";
             for (int i = 0; i < (int)DSPMode.LAST; i++)
                 s += ((int)m_nTuneStepsByMode[i]).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
-            //
 
-            a.Add("infoBar_flip/" + infoBar.CurrentFlip.ToString()); //MW0LGE_21k9rc4 info bar currentflip
-            a.Add("infoBar_button1/" + ((int)infoBar.Button1Action).ToString()); //MW0LGE_[2.9.0.6] change to in, to prevent getstate issues if enaum names change
+            a.Add("infoBar_flip/" + infoBar.CurrentFlip.ToString());
+            a.Add("infoBar_button1/" + ((int)infoBar.Button1Action).ToString());
             a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
-            a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
+            a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4"));
 
-            a.Add("auto_start_forms/" + getAutoStartData()); //[2.10.3.6]MW0LGE
+            a.Add("auto_start_forms/" + getAutoStartData());
 
-            a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
+            a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());
             a.Add("vfob_filter/" + ((int)vfob_filter).ToString());
 
             a.Add("RX1MeterPaddingRatio/" + m_fMeterPadRatio.ToString());
 
-            //MW0LGE_21d drop shadow
             Rectangle r = new Rectangle(this.Left, this.Top, this.Width, this.Height);
             if (this.WindowState == FormWindowState.Maximized)
             {
@@ -3222,58 +3165,693 @@ namespace Thetis
                 r.Height -= ds.Height;
             }
 
-            if (this.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+            if (this.WindowState != FormWindowState.Minimized)
             {
-                a.Add("console_top/" + r.Top.ToString());       // save form positions
+                a.Add("console_top/" + r.Top.ToString());
                 a.Add("console_left/" + r.Left.ToString());
                 a.Add("console_width/" + r.Width.ToString());
                 a.Add("console_height/" + r.Height.ToString());
             }
-            a.Add("console_state/" + ((int)this.WindowState).ToString()); //MW0LGE_21 window state
 
-            if (!IsSetupFormNull) // very rare case where setup form is null on exit, and would cause another instance
-                                  // why null on exit? not sure yet. TODO
+            a.Add("console_state/" + ((int)this.WindowState).ToString());
+
+            if (!IsSetupFormNull)
             {
-                if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+                if (SetupForm.WindowState != FormWindowState.Minimized)
                 {
                     a.Add("setup_top/" + SetupForm.Top.ToString());
                     a.Add("setup_left/" + SetupForm.Left.ToString());
                 }
             }
 
-            a.Add("IncludeWindowBorders/" + m_bIncludeWindowBorders);   // used in status bar resize form calcs
-            a.Add("PanafallSplitBarPerc/" + Display.PanafallSplitBarPerc.ToString());  // the percentage of displayheight that is used in panafall rx1 only
+            a.Add("IncludeWindowBorders/" + m_bIncludeWindowBorders);
+            a.Add("PanafallSplitBarPerc/" + Display.PanafallSplitBarPerc.ToString());
 
-            //--
             a.Add("DumpCap_WireSharkPath/" + DumpCap.WireSharkPath);
             a.Add("DumpCap_Interface/" + DumpCap.Interface.ToString());
             a.Add("DumpCap_NegativeOnly/" + DumpCap.KillOnNegativeSeqOnly.ToString());
             a.Add("DumpCap_ClearFolderOnRestart/" + DumpCap.ClearFolderOnRestart.ToString());
-            //--
+
             a.Add("SeqLog_ShowWarningOnNegativeOnly/" + m_frmSeqLog.StatusBarWarningOnNegativeOnly);
-            //--
             a.Add("CPU_ShowSystem/" + m_bShowSystemCPUUsage);
-            //--
 
             a.Add("saved_rx_only/" + saved_rx_only.ToString());
             a.Add("mon_recall/" + mon_recall.ToString());
 
             string ver_num = Common.GetVerNum();
-            a.Add("Version/" + this.Text);		// save the current version
-            a.Add("VersionNumber/" + ver_num);      // Thetis version number in a.b.c format
-            a.Add("BandTextID/" + current_region);  // TURF Region
-            //a.Add("Metis_IP_address/" + NetworkIO.HpSdrHwIpAddress.ToString(nfi));
-            //a.Add("EthernetHostIPAddress/" + NetworkIO.EthernetHostIPAddress.ToString(nfi));
+            a.Add("Version/" + this.Text);
+            a.Add("VersionNumber/" + ver_num);
+            a.Add("BandTextID/" + current_region);
 
             a.Add("PruneBackups/" + DBMan.PruneBackups.ToString());
 
-            DB.PurgeNotches();                  // remove old notches from DB
-                                                // this is done because we have not stored an upper limit the number of notches
-                                                // and if we had 20 in there before, and now only write 3, how do we know?
-                                                // as it will still be [0]..[19]
-
-            DB.SaveVars("State", a, true);		// save the values to the DB
+            return a;
         }
+
+        private void addControlState(List<string> a, Control c, List<string> always_save, bool combo_use_items_count, bool print_not_saving)
+        {
+            if (!(c.Enabled || always_save.Contains(c.Name)))
+            {
+                if (print_not_saving)
+                    Debug.Print("Not saving : " + c.Name);
+                return;
+            }
+
+            if (c.GetType() == typeof(CheckBoxTS))
+                a.Add(c.Name + "/" + ((CheckBoxTS)c).Checked.ToString());
+            else if (c.GetType() == typeof(ComboBoxTS))
+            {
+                ComboBoxTS combo = (ComboBoxTS)c;
+
+                if (combo_use_items_count)
+                {
+                    if (combo.Items.Count > 0)
+                        a.Add(c.Name + "/" + combo.Text);
+                }
+                else
+                {
+                    if (combo.SelectedIndex >= 0)
+                        a.Add(c.Name + "/" + combo.Text);
+                }
+            }
+            else if (c.GetType() == typeof(NumericUpDownTS))
+                a.Add(c.Name + "/" + ((NumericUpDownTS)c).Value.ToString());
+            else if (c.GetType() == typeof(RadioButtonTS))
+                a.Add(c.Name + "/" + ((RadioButtonTS)c).Checked.ToString());
+            else if (c.GetType() == typeof(TextBoxTS))
+            {
+                TextBoxTS text_box = (TextBoxTS)c;
+                if (text_box.ReadOnly == false)
+                    a.Add(c.Name + "/" + text_box.Text);
+            }
+            else if (c.GetType() == typeof(TrackBarTS))
+                a.Add(c.Name + "/" + ((TrackBarTS)c).Value.ToString());
+            else if (c.GetType() == typeof(PrettyTrackBar))
+                a.Add(c.Name + "/" + ((PrettyTrackBar)c).Value.ToString());
+#if (DEBUG)
+            else if (c.GetType() == typeof(GroupBox) ||
+                c.GetType() == typeof(CheckBox) ||
+                c.GetType() == typeof(ComboBox) ||
+                c.GetType() == typeof(NumericUpDown) ||
+                c.GetType() == typeof(RadioButton) ||
+                c.GetType() == typeof(TextBox) ||
+                c.GetType() == typeof(TrackBar))
+                Debug.WriteLine(this.Name + " -> " + c.Name + " needs to be converted to a Thread Safe control.");
+#endif
+        }
+
+        public void SaveState()
+        {
+            if (DB.Merged) return;
+
+            if (_current_breakin_mode == BreakIn.QSK)
+                QSKEnabled = false;
+
+            chkPower.Checked = false;
+
+            List<string> a = GetStateList();
+
+            DB.PurgeNotches();
+            DB.SaveVars("State", a, true);
+        }
+
+        //        public void SaveState()
+        //        {
+        //            // Automatically saves all control settings to the database in the tab
+        //            // pages on this form of the following types: CheckBox, ComboBox,
+        //            // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
+
+        //            if (DB.Merged) return; // prevent saving as we want to ignore everything
+
+        //            string s;
+
+        //            if (_current_breakin_mode == BreakIn.QSK) QSKEnabled = false; // Just to save the non-qsk settings, but leaving the button alone
+        //            chkPower.Checked = false;		// turn off the power first
+
+        //            //[2.10.3.7]MW0LGE control names to always save, some were being missed if disabled
+        //            List<string> always_save = new List<string>();
+        //            always_save.Add(chkVFOLock.Name);
+        //            always_save.Add(chkVFOBLock.Name);
+        //            always_save.Add(chkVFOSync.Name);
+        //            //
+
+        //            List<string> a = new List<string>();
+
+        //            foreach (Control c in this.Controls)			// For each control
+        //            {
+        //                // if it is a groupbox or panel, check for sub controls
+        //                if (c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(PanelTS))
+        //                {
+        //                    foreach (Control c2 in c.Controls)	// for each sub-control
+        //                    {	// check to see if it is a value type we need to save
+        //                        if (c2.Enabled || always_save.Contains(c2.Name))
+        //                        {
+        //                            if (c2.GetType() == typeof(CheckBoxTS))
+        //                                a.Add(c2.Name + "/" + ((CheckBoxTS)c2).Checked.ToString());
+        //                            else if (c2.GetType() == typeof(ComboBoxTS))
+        //                            {
+        //                                if (((ComboBoxTS)c2).Items.Count > 0)
+        //                                    a.Add(c2.Name + "/" + ((ComboBoxTS)c2).Text);
+        //                            }
+        //                            else if (c2.GetType() == typeof(NumericUpDownTS))
+        //                                a.Add(c2.Name + "/" + ((NumericUpDownTS)c2).Value.ToString());
+        //                            else if (c2.GetType() == typeof(RadioButtonTS))
+        //                                a.Add(c2.Name + "/" + ((RadioButtonTS)c2).Checked.ToString());
+        //                            else if (c2.GetType() == typeof(TextBoxTS))
+        //                            {
+        //                                if (((TextBoxTS)c2).ReadOnly == false)
+        //                                    a.Add(c2.Name + "/" + ((TextBoxTS)c2).Text);
+        //                            }
+        //                            else if (c2.GetType() == typeof(TrackBarTS))
+        //                                a.Add(c2.Name + "/" + ((TrackBarTS)c2).Value.ToString());
+        //                            else if (c2.GetType() == typeof(PrettyTrackBar))
+        //                                a.Add(c2.Name + "/" + ((PrettyTrackBar)c2).Value.ToString());
+        //#if(DEBUG)
+        //                            else if (c2.GetType() == typeof(GroupBox) ||
+        //                                c2.GetType() == typeof(CheckBox) ||
+        //                                c2.GetType() == typeof(ComboBox) ||
+        //                                c2.GetType() == typeof(NumericUpDown) ||
+        //                                c2.GetType() == typeof(RadioButton) ||
+        //                                c2.GetType() == typeof(TextBox) ||
+        //                                c2.GetType() == typeof(TrackBar))
+        //                                Debug.WriteLine(this.Name + " -> " + c2.Name + " needs to be converted to a Thread Safe control.");
+        //#endif
+        //                        }
+        //                        else
+        //                            Debug.Print("Not saving : " + c2.Name);
+        //                    }
+        //                }
+        //                else // it is not a group box
+        //                {	// check to see if it is a value type we need to save
+        //                    if (c.Enabled || always_save.Contains(c.Name))
+        //                    {
+        //                        if (c.GetType() == typeof(CheckBoxTS))
+        //                            a.Add(c.Name + "/" + ((CheckBoxTS)c).Checked.ToString());
+        //                        else if (c.GetType() == typeof(ComboBoxTS))
+        //                        {
+        //                            if (((ComboBoxTS)c).SelectedIndex >= 0)
+        //                                a.Add(c.Name + "/" + ((ComboBoxTS)c).Text);
+        //                        }
+        //                        else if (c.GetType() == typeof(NumericUpDownTS))
+        //                            a.Add(c.Name + "/" + ((NumericUpDownTS)c).Value.ToString());
+        //                        else if (c.GetType() == typeof(RadioButtonTS))
+        //                            a.Add(c.Name + "/" + ((RadioButtonTS)c).Checked.ToString());
+        //                        else if (c.GetType() == typeof(TextBoxTS))
+        //                        {
+        //                            if (((TextBoxTS)c).ReadOnly == false)
+        //                                a.Add(c.Name + "/" + ((TextBoxTS)c).Text);
+        //                        }
+        //                        else if (c.GetType() == typeof(TrackBarTS))
+        //                            a.Add(c.Name + "/" + ((TrackBarTS)c).Value.ToString());
+        //                        else if (c.GetType() == typeof(PrettyTrackBar))
+        //                            a.Add(c.Name + "/" + ((PrettyTrackBar)c).Value.ToString());
+        //#if(DEBUG)
+        //                        else if (c.GetType() == typeof(GroupBox) ||
+        //                            c.GetType() == typeof(CheckBox) ||
+        //                            c.GetType() == typeof(ComboBox) ||
+        //                            c.GetType() == typeof(NumericUpDown) ||
+        //                            c.GetType() == typeof(RadioButton) ||
+        //                            c.GetType() == typeof(TextBox) ||
+        //                            c.GetType() == typeof(TrackBar))
+        //                            Debug.WriteLine(this.Name + " -> " + c.Name + " needs to be converted to a Thread Safe control.");
+        //#endif
+        //                    }
+        //                }
+        //            }
+
+        //            a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString()); // removed from saved data as restored from att per band
+        //            a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
+        //            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE            
+
+        //            a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString()); // MW0LGE [2.9.0.8] used incase protocol changes from last time. Used in audio.cs tp reset PS feedback level
+        //            a.Add("last_radio_hardware/" + Audio.LastRadioHardware.ToString()); // as above, but hardware related
+
+        //            a.Add("nr_selected/" + nr_selected_to_text());
+
+        //            a.Add("chkNB_checkstate/" + chkNB.CheckState.ToString());
+        //            a.Add("chkRX2NB_checkstate/" + chkRX2NB.CheckState.ToString());
+        //            a.Add("chkQSK_checkstate/" + chkQSK.CheckState.ToString());
+        //            a.Add("chkSquelch_checkstate/" + chkSquelch.CheckState.ToString()); //MW0LGE [2.9.0.8]
+        //            a.Add("chkRX2Squelch_checkstate/" + chkRX2Squelch.CheckState.ToString());
+
+        //            a.Add("rx1_display_cal_offset/" + _rx1_display_cal_offset.ToString()); //[2.10.3.9]MW0LGE maintaining max precision
+        //            a.Add("rx1_meter_cal_offset/" + _rx1_meter_cal_offset);
+
+        //            a.Add("rx2_display_cal_offset/" + _rx2_display_cal_offset.ToString());  //[2.10.3.9]MW0LGE maintaining max precision
+        //            a.Add("rx2_meter_cal_offset/" + _rx2_meter_cal_offset);
+
+        //            a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);		// save quick memory settings
+        //            a.Add("quick_save_mode/" + (int)quick_save_mode);
+        //            a.Add("quick_save_filter/" + (int)quick_save_filter);
+
+        //            //Squelch Save
+        //            a.Add("rx1_squelch_state/" + _rx1_squelch_state.ToString());
+        //            a.Add("rx1_fm_squelch_state/" + _rx1_fm_squelch_state.ToString());
+        //            a.Add("rx1_squelch_threshold_scroll/" + rx1_squelch_threshold_scroll);
+        //            a.Add("rx1_fm_squelch_threshold_scroll/" + rx1_fm_squelch_threshold_scroll);
+        //            a.Add("rx1_voice_squelch_threshold_scroll/" + rx1_voice_squelch_threshold_scroll);
+        //            a.Add("rx2_squelch_state/" + _rx2_squelch_state.ToString());
+        //            a.Add("rx2_fm_squelch_state/" + _rx2_fm_squelch_state.ToString());
+        //            a.Add("rx2_squelch_threshold_scroll/" + rx2_squelch_threshold_scroll);
+        //            a.Add("rx2_fm_squelch_threshold_scroll/" + rx2_fm_squelch_threshold_scroll);
+        //            a.Add("rx2_voice_squelch_threshold_scroll/" + rx2_voice_squelch_threshold_scroll);
+
+        //            a.Add("click_tune_display/" + _click_tune_display);
+        //            a.Add("VFOAFreq/" + VFOAFreq);
+        //            a.Add("CentreFrequency/" + CentreFrequency);
+        //            a.Add("click_tune_rx2_display/" + _click_tune_rx2_display);
+        //            a.Add("VFOBFreq/" + VFOBFreq);
+
+        //            a.Add("VFOASubFreq/" + m_dVFOASubFreq);  // MW0LGE_21a
+
+        //            a.Add("CentreRX2Frequency/" + CentreRX2Frequency);
+        //            a.Add("diversity_gain_160m/" + diversity_gain_160m);
+        //            a.Add("diversity_gain_r2_160m/" + diversity_gain_r2_160m);
+        //            a.Add("diversity_phase_160m/" + diversity_phase_160m);
+        //            a.Add("diversity_gain_80m/" + diversity_gain_80m);
+        //            a.Add("diversity_gain_r2_80m/" + diversity_gain_r2_80m);
+        //            a.Add("diversity_phase_80m/" + diversity_phase_80m);
+        //            a.Add("diversity_gain_60m/" + diversity_gain_60m);
+        //            a.Add("diversity_gain_r2_60m/" + diversity_gain_r2_60m);
+        //            a.Add("diversity_phase_60m/" + diversity_phase_60m);
+        //            a.Add("diversity_gain_40m/" + diversity_gain_40m);
+        //            a.Add("diversity_gain_r2_40m/" + diversity_gain_r2_40m);
+        //            a.Add("diversity_phase_40m/" + diversity_phase_40m);
+        //            a.Add("diversity_gain_30m/" + diversity_gain_30m);
+        //            a.Add("diversity_gain_r2_30m/" + diversity_gain_r2_30m);
+        //            a.Add("diversity_phase_30m/" + diversity_phase_30m);
+        //            a.Add("diversity_gain_20m/" + diversity_gain_20m);
+        //            a.Add("diversity_gain_r2_20m/" + diversity_gain_r2_20m);
+        //            a.Add("diversity_phase_20m/" + diversity_phase_20m);
+        //            a.Add("diversity_gain_17m/" + diversity_gain_17m);
+        //            a.Add("diversity_gain_r2_17m/" + diversity_gain_r2_17m);
+        //            a.Add("diversity_phase_17m/" + diversity_phase_17m);
+        //            a.Add("diversity_gain_15m/" + diversity_gain_15m);
+        //            a.Add("diversity_gain_r2_15m/" + diversity_gain_r2_15m);
+        //            a.Add("diversity_phase_15m/" + diversity_phase_15m);
+        //            a.Add("diversity_gain_12m/" + diversity_gain_12m);
+        //            a.Add("diversity_gain_r2_12m/" + diversity_gain_r2_12m);
+        //            a.Add("diversity_phase_12m/" + diversity_phase_12m);
+        //            a.Add("diversity_gain_10m/" + diversity_gain_10m);
+        //            a.Add("diversity_gain_r2_10m/" + diversity_gain_r2_10m);
+        //            a.Add("diversity_phase_10m/" + diversity_phase_10m);
+        //            a.Add("diversity_gain_6m/" + diversity_gain_6m);
+        //            a.Add("diversity_gain_r2_6m/" + diversity_gain_r2_6m);
+        //            a.Add("diversity_phase_6m/" + diversity_phase_6m);
+        //            a.Add("diversity_gain_wwv/" + diversity_gain_wwv);
+        //            a.Add("diversity_gain_r2_wwv/" + diversity_gain_r2_wwv);
+        //            a.Add("diversity_phase_wwv/" + diversity_phase_wwv);
+        //            a.Add("diversity_gain_gen/" + diversity_gain_gen);
+        //            a.Add("diversity_gain_r2_gen/" + diversity_gain_r2_gen);
+        //            a.Add("diversity_phase_gen/" + diversity_phase_gen);
+        //            a.Add("diversity_gain_xvtr/" + diversity_gain_xvtr);
+        //            a.Add("diversity_gain_r2_xvtr/" + diversity_gain_r2_xvtr);
+        //            a.Add("diversity_phase_xvtr/" + diversity_phase_xvtr);
+        //            a.Add("waterfall_high_threshold_160m/" + waterfall_high_threshold_160m);
+        //            a.Add("waterfall_low_threshold_160m/" + waterfall_low_threshold_160m);
+        //            a.Add("waterfall_high_threshold_80m/" + waterfall_high_threshold_80m);
+        //            a.Add("waterfall_low_threshold_80m/" + waterfall_low_threshold_80m);
+        //            a.Add("waterfall_high_threshold_60m/" + waterfall_high_threshold_60m);
+        //            a.Add("waterfall_low_threshold_60m/" + waterfall_low_threshold_60m);
+        //            a.Add("waterfall_high_threshold_40m/" + waterfall_high_threshold_40m);
+        //            a.Add("waterfall_low_threshold_40m/" + waterfall_low_threshold_40m);
+        //            a.Add("waterfall_high_threshold_30m/" + waterfall_high_threshold_30m);
+        //            a.Add("waterfall_low_threshold_30m/" + waterfall_low_threshold_30m);
+        //            a.Add("waterfall_high_threshold_20m/" + waterfall_high_threshold_20m);
+        //            a.Add("waterfall_low_threshold_20m/" + waterfall_low_threshold_20m);
+        //            a.Add("waterfall_high_threshold_17m/" + waterfall_high_threshold_17m);
+        //            a.Add("waterfall_low_threshold_17m/" + waterfall_low_threshold_17m);
+        //            a.Add("waterfall_high_threshold_15m/" + waterfall_high_threshold_15m);
+        //            a.Add("waterfall_low_threshold_15m/" + waterfall_low_threshold_15m);
+        //            a.Add("waterfall_high_threshold_12m/" + waterfall_high_threshold_12m);
+        //            a.Add("waterfall_low_threshold_12m/" + waterfall_low_threshold_12m);
+        //            a.Add("waterfall_high_threshold_10m/" + waterfall_high_threshold_10m);
+        //            a.Add("waterfall_low_threshold_10m/" + waterfall_low_threshold_10m);
+        //            a.Add("waterfall_high_threshold_6m/" + waterfall_high_threshold_6m);
+        //            a.Add("waterfall_low_threshold_6m/" + waterfall_low_threshold_6m);
+        //            a.Add("waterfall_high_threshold_wwv/" + waterfall_high_threshold_wwv);
+        //            a.Add("waterfall_low_threshold_wwv/" + waterfall_low_threshold_wwv);
+        //            a.Add("waterfall_high_threshold_gen/" + waterfall_high_threshold_gen);
+        //            a.Add("waterfall_low_threshold_gen/" + waterfall_low_threshold_gen);
+        //            a.Add("waterfall_high_threshold_xvtr/" + waterfall_high_threshold_xvtr);
+        //            a.Add("waterfall_low_threshold_xvtr/" + waterfall_low_threshold_xvtr);
+        //            a.Add("rx2_waterfall_high_threshold_160m/" + rx2_waterfall_high_threshold_160m);
+        //            a.Add("rx2_waterfall_low_threshold_160m/" + rx2_waterfall_low_threshold_160m);
+        //            a.Add("rx2_waterfall_high_threshold_80m/" + rx2_waterfall_high_threshold_80m);
+        //            a.Add("rx2_waterfall_low_threshold_80m/" + rx2_waterfall_low_threshold_80m);
+        //            a.Add("rx2_waterfall_high_threshold_60m/" + rx2_waterfall_high_threshold_60m);
+        //            a.Add("rx2_waterfall_low_threshold_60m/" + rx2_waterfall_low_threshold_60m);
+        //            a.Add("rx2_waterfall_high_threshold_40m/" + rx2_waterfall_high_threshold_40m);
+        //            a.Add("rx2_waterfall_low_threshold_40m/" + rx2_waterfall_low_threshold_40m);
+        //            a.Add("rx2_waterfall_high_threshold_30m/" + rx2_waterfall_high_threshold_30m);
+        //            a.Add("rx2_waterfall_low_threshold_30m/" + rx2_waterfall_low_threshold_30m);
+        //            a.Add("rx2_waterfall_high_threshold_20m/" + rx2_waterfall_high_threshold_20m);
+        //            a.Add("rx2_waterfall_low_threshold_20m/" + rx2_waterfall_low_threshold_20m);
+        //            a.Add("rx2_waterfall_high_threshold_17m/" + rx2_waterfall_high_threshold_17m);
+        //            a.Add("rx2_waterfall_low_threshold_17m/" + rx2_waterfall_low_threshold_17m);
+        //            a.Add("rx2_waterfall_high_threshold_15m/" + rx2_waterfall_high_threshold_15m);
+        //            a.Add("rx2_waterfall_low_threshold_15m/" + rx2_waterfall_low_threshold_15m);
+        //            a.Add("rx2_waterfall_high_threshold_12m/" + rx2_waterfall_high_threshold_12m);
+        //            a.Add("rx2_waterfall_low_threshold_12m/" + rx2_waterfall_low_threshold_12m);
+        //            a.Add("rx2_waterfall_high_threshold_10m/" + rx2_waterfall_high_threshold_10m);
+        //            a.Add("rx2_waterfall_low_threshold_10m/" + rx2_waterfall_low_threshold_10m);
+        //            a.Add("rx2_waterfall_high_threshold_6m/" + rx2_waterfall_high_threshold_6m);
+        //            a.Add("rx2_waterfall_low_threshold_6m/" + rx2_waterfall_low_threshold_6m);
+        //            a.Add("rx2_waterfall_high_threshold_wwv/" + rx2_waterfall_high_threshold_wwv);
+        //            a.Add("rx2_waterfall_low_threshold_wwv/" + rx2_waterfall_low_threshold_wwv);
+        //            a.Add("rx2_waterfall_high_threshold_gen/" + rx2_waterfall_high_threshold_gen);
+        //            a.Add("rx2_waterfall_low_threshold_gen/" + rx2_waterfall_low_threshold_gen);
+        //            a.Add("rx2_waterfall_high_threshold_xvtr/" + rx2_waterfall_high_threshold_xvtr);
+        //            a.Add("rx2_waterfall_low_threshold_xvtr/" + rx2_waterfall_low_threshold_xvtr);
+        //            a.Add("display_grid_max_160m/" + display_grid_max_160m);
+        //            a.Add("display_grid_min_160m/" + display_grid_min_160m);
+        //            a.Add("display_grid_max_80m/" + display_grid_max_80m);
+        //            a.Add("display_grid_min_80m/" + display_grid_min_80m);
+        //            a.Add("display_grid_max_60m/" + display_grid_max_60m);
+        //            a.Add("display_grid_min_60m/" + display_grid_min_60m);
+        //            a.Add("display_grid_max_40m/" + display_grid_max_40m);
+        //            a.Add("display_grid_min_40m/" + display_grid_min_40m);
+        //            a.Add("display_grid_max_30m/" + display_grid_max_30m);
+        //            a.Add("display_grid_min_30m/" + display_grid_min_30m);
+        //            a.Add("display_grid_max_20m/" + display_grid_max_20m);
+        //            a.Add("display_grid_min_20m/" + display_grid_min_20m);
+        //            a.Add("display_grid_max_17m/" + display_grid_max_17m);
+        //            a.Add("display_grid_min_17m/" + display_grid_min_17m);
+        //            a.Add("display_grid_max_15m/" + display_grid_max_15m);
+        //            a.Add("display_grid_min_15m/" + display_grid_min_15m);
+        //            a.Add("display_grid_max_12m/" + display_grid_max_12m);
+        //            a.Add("display_grid_min_12m/" + display_grid_min_12m);
+        //            a.Add("display_grid_max_10m/" + display_grid_max_10m);
+        //            a.Add("display_grid_min_10m/" + display_grid_min_10m);
+        //            a.Add("display_grid_max_6m/" + display_grid_max_6m);
+        //            a.Add("display_grid_min_6m/" + display_grid_min_6m);
+        //            a.Add("display_grid_max_wwv/" + display_grid_max_wwv);
+        //            a.Add("display_grid_min_wwv/" + display_grid_min_wwv);
+        //            a.Add("display_grid_max_gen/" + display_grid_max_gen);
+        //            a.Add("display_grid_min_gen/" + display_grid_min_gen);
+        //            a.Add("display_grid_max_xvtr/" + display_grid_max_xvtr);
+        //            a.Add("display_grid_min_xvtr/" + display_grid_min_xvtr);
+        //            a.Add("rx2_display_grid_max_160m/" + rx2_display_grid_max_160m);
+        //            a.Add("rx2_display_grid_min_160m/" + rx2_display_grid_min_160m);
+        //            a.Add("rx2_display_grid_max_80m/" + rx2_display_grid_max_80m);
+        //            a.Add("rx2_display_grid_min_80m/" + rx2_display_grid_min_80m);
+        //            a.Add("rx2_display_grid_max_60m/" + rx2_display_grid_max_60m);
+        //            a.Add("rx2_display_grid_min_60m/" + rx2_display_grid_min_60m);
+        //            a.Add("rx2_display_grid_max_40m/" + rx2_display_grid_max_40m);
+        //            a.Add("rx2_display_grid_min_40m/" + rx2_display_grid_min_40m);
+        //            a.Add("rx2_display_grid_max_30m/" + rx2_display_grid_max_30m);
+        //            a.Add("rx2_display_grid_min_30m/" + rx2_display_grid_min_30m);
+        //            a.Add("rx2_display_grid_max_20m/" + rx2_display_grid_max_20m);
+        //            a.Add("rx2_display_grid_min_20m/" + rx2_display_grid_min_20m);
+        //            a.Add("rx2_display_grid_max_17m/" + rx2_display_grid_max_17m);
+        //            a.Add("rx2_display_grid_min_17m/" + rx2_display_grid_min_17m);
+        //            a.Add("rx2_display_grid_max_15m/" + rx2_display_grid_max_15m);
+        //            a.Add("rx2_display_grid_min_15m/" + rx2_display_grid_min_15m);
+        //            a.Add("rx2_display_grid_max_12m/" + rx2_display_grid_max_12m);
+        //            a.Add("rx2_display_grid_min_12m/" + rx2_display_grid_min_12m);
+        //            a.Add("rx2_display_grid_max_10m/" + rx2_display_grid_max_10m);
+        //            a.Add("rx2_display_grid_min_10m/" + rx2_display_grid_min_10m);
+        //            a.Add("rx2_display_grid_max_6m/" + rx2_display_grid_max_6m);
+        //            a.Add("rx2_display_grid_min_6m/" + rx2_display_grid_min_6m);
+        //            a.Add("rx2_display_grid_max_wwv/" + rx2_display_grid_max_wwv);
+        //            a.Add("rx2_display_grid_min_wwv/" + rx2_display_grid_min_wwv);
+        //            a.Add("rx2_display_grid_max_gen/" + rx2_display_grid_max_gen);
+        //            a.Add("rx2_display_grid_min_gen/" + rx2_display_grid_min_gen);
+        //            a.Add("rx2_display_grid_max_xvtr/" + rx2_display_grid_max_xvtr);
+        //            a.Add("rx2_display_grid_min_xvtr/" + rx2_display_grid_min_xvtr);
+
+        //            for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
+        //            {	// save filter settings per mode
+        //                for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
+        //                {
+        //                    a.Add("rx1_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx1_filters[m].ToString(f));
+        //                }
+        //                a.Add("last_rx1_filter[" + m.ToString() + "]/" + rx1_filters[m].LastFilter.ToString());
+        //            }
+
+        //            for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
+        //            {	// save filter settings per mode
+        //                for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
+        //                {
+        //                    a.Add("rx2_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx2_filters[m].ToString(f));
+        //                }
+        //                a.Add("last_rx2_filter[" + m.ToString() + "]/" + rx2_filters[m].LastFilter.ToString());
+        //            }
+
+        //            for (int i = 0; i < MNotchDB.Count; i++)
+        //            {
+        //                a.Add("mnotchdb[" + i + "]/" + MNotchDB.NotchFromIndex(i).ToString());
+        //            }
+
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //            {
+        //                s = "rx1_level_table[" + i + "]/";
+        //                for (int j = 0; j < 3; j++)
+        //                    s += rx1_level_table[i][j].ToString("f3") + "|";
+        //                s = s.Substring(0, s.Length - 1);
+        //                a.Add(s);
+        //            }
+
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //            {
+        //                s = "rx2_level_table[" + i + "]/";
+        //                for (int j = 0; j < 3; j++)
+        //                    s += rx2_level_table[i][j].ToString("f3") + "|";
+        //                s = s.Substring(0, s.Length - 1);
+        //                a.Add(s);
+        //            }
+
+        //            rx1_preamp_by_band[(int)rx1_band] = rx1_preamp_mode;
+        //            s = "rx1_preamp_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += ((int)rx1_preamp_by_band[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
+        //            s = "rx2_preamp_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += ((int)rx2_preamp_by_band[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            setRX1stepAttenuatorForBand(rx1_band, _rx1_attenuator_data);
+        //            s = "rx1_step_attenuator_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += getRX1stepAttenuatorForBand((Band)i).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
+        //            s = "rx2_step_attenuator_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += getRX2stepAttenuatorForBand((Band)i).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "tx_step_attenuator_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += getTXstepAttenuatorForBand((Band)i).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "power_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += power_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "tunePower_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += tunePower_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "limitPower_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += limitPower_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "limitTunePower_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += limitTunePower_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "fm_tx_offset_by_band_mhz/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += fm_tx_offset_by_band_mhz[i].ToString("R") + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "rx1_agct_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += rx1_agct_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "rx2_agct_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += rx2_agct_by_band[i].ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            rx1_agcm_by_band[(int)rx1_band] = RX1AGCMode;
+        //            s = "rx1_agcm_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += ((int)rx1_agcm_by_band[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            rx2_agcm_by_band[(int)rx2_band] = RX2AGCMode;
+        //            s = "rx2_agcm_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += ((int)rx2_agcm_by_band[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "diversity_rx1_ref_by_band/";
+        //            for (int i = 0; i < (int)Band.LAST; i++)
+        //                s += Convert.ToUInt16(diversity_rx1_ref_by_band[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            //MW0LGE_21k9d
+        //            for (int rx = 0; rx < 2; rx++)
+        //            {
+        //                if (rx == 0)
+        //                    s = "rx1_ztbdata";
+        //                else
+        //                    s = "rx2_ztbdata";
+
+        //                string s1 = "", s2 = "", s3 = "", s4 = "";
+        //                for (int i = 0; i < (int)Band.LAST; i++)
+        //                {
+        //                    ztb_data ztb = ztb_data_by_band[rx][i];
+        //                    s1 += ztb.CentreFrequency.ToString() + "|";
+        //                    s2 += ztb.PanSliderPosition.ToString() + "|";
+        //                    s3 += ztb.ZoomSliderPosition.ToString() + "|";
+        //                    s4 += ztb.Initalised + "|";
+        //                }
+        //                s1 = s1.Substring(0, s1.Length - 1);
+        //                s2 = s2.Substring(0, s2.Length - 1);
+        //                s3 = s3.Substring(0, s3.Length - 1);
+        //                s4 = s4.Substring(0, s4.Length - 1);
+        //                a.Add(s + "_cf/" + s1);
+        //                a.Add(s + "_ps/" + s2);
+        //                a.Add(s + "_zs/" + s3);
+        //                a.Add(s + "_init/" + s4);
+        //            }
+        //            //
+
+        //            s = "rx_meter_cal_offset_by_radio/";
+        //            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+        //                s += (rx_meter_cal_offset_by_radio[i]).ToString() + "|"; //[2.10.3.9]MW0LGE maintaining max precision
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            s = "rx_display_cal_offset_by_radio/";
+        //            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+        //                s += (rx_display_cal_offset_by_radio[i]).ToString() + "|"; //[2.10.3.9]MW0LGE maintaining max precision
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+
+        //            a.Add("panelBandHF.Visible/" + _bands_HF_selected);
+        //            a.Add("panelBandVHF.Visible/" + _bands_VHF_selected);
+        //            a.Add("panelBandGEN.Visible/" + _bands_GEN_selected);
+        //            a.Add("iscollapsed/" + _iscollapsed);
+        //            a.Add("isexpanded/" + _isexpanded);
+        //            a.Add("diversity/" + _diversity2);
+
+        //            for (int i = (int)PreampMode.FIRST + 1; i < (int)PreampMode.LAST; i++)
+        //                a.Add("rx1_preamp_offset[" + i.ToString() + "]/" + rx1_preamp_offset[i].ToString("f3"));
+
+        //            a.Add("wheel_tune_index/" + tune_step_index.ToString());		// Save wheel tune value
+
+        //            //MW0LGE_21j
+        //            s = "wheel_tune_index_by_mode/";
+        //            for (int i = 0; i < (int)DSPMode.LAST; i++)
+        //                s += ((int)m_nTuneStepsByMode[i]).ToString() + "|";
+        //            s = s.Substring(0, s.Length - 1);
+        //            a.Add(s);
+        //            //
+
+        //            a.Add("infoBar_flip/" + infoBar.CurrentFlip.ToString()); //MW0LGE_21k9rc4 info bar currentflip
+        //            a.Add("infoBar_button1/" + ((int)infoBar.Button1Action).ToString()); //MW0LGE_[2.9.0.6] change to in, to prevent getstate issues if enaum names change
+        //            a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
+        //            a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
+
+        //            a.Add("auto_start_forms/" + getAutoStartData()); //[2.10.3.6]MW0LGE
+
+        //            a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
+        //            a.Add("vfob_filter/" + ((int)vfob_filter).ToString());
+
+        //            a.Add("RX1MeterPaddingRatio/" + m_fMeterPadRatio.ToString());
+
+        //            //MW0LGE_21d drop shadow
+        //            Rectangle r = new Rectangle(this.Left, this.Top, this.Width, this.Height);
+        //            if (this.WindowState == FormWindowState.Maximized)
+        //            {
+        //                Size ds = DropShadowSize;
+        //                r.X += ds.Width / 2;
+        //                r.Y += ds.Height / 2;
+        //                r.Width -= ds.Width;
+        //                r.Height -= ds.Height;
+        //            }
+
+        //            if (this.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+        //            {
+        //                a.Add("console_top/" + r.Top.ToString());       // save form positions
+        //                a.Add("console_left/" + r.Left.ToString());
+        //                a.Add("console_width/" + r.Width.ToString());
+        //                a.Add("console_height/" + r.Height.ToString());
+        //            }
+        //            a.Add("console_state/" + ((int)this.WindowState).ToString()); //MW0LGE_21 window state
+
+        //            if (!IsSetupFormNull) // very rare case where setup form is null on exit, and would cause another instance
+        //                                  // why null on exit? not sure yet. TODO
+        //            {
+        //                if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+        //                {
+        //                    a.Add("setup_top/" + SetupForm.Top.ToString());
+        //                    a.Add("setup_left/" + SetupForm.Left.ToString());
+        //                }
+        //            }
+
+        //            a.Add("IncludeWindowBorders/" + m_bIncludeWindowBorders);   // used in status bar resize form calcs
+        //            a.Add("PanafallSplitBarPerc/" + Display.PanafallSplitBarPerc.ToString());  // the percentage of displayheight that is used in panafall rx1 only
+
+        //            //--
+        //            a.Add("DumpCap_WireSharkPath/" + DumpCap.WireSharkPath);
+        //            a.Add("DumpCap_Interface/" + DumpCap.Interface.ToString());
+        //            a.Add("DumpCap_NegativeOnly/" + DumpCap.KillOnNegativeSeqOnly.ToString());
+        //            a.Add("DumpCap_ClearFolderOnRestart/" + DumpCap.ClearFolderOnRestart.ToString());
+        //            //--
+        //            a.Add("SeqLog_ShowWarningOnNegativeOnly/" + m_frmSeqLog.StatusBarWarningOnNegativeOnly);
+        //            //--
+        //            a.Add("CPU_ShowSystem/" + m_bShowSystemCPUUsage);
+        //            //--
+
+        //            a.Add("saved_rx_only/" + saved_rx_only.ToString());
+        //            a.Add("mon_recall/" + mon_recall.ToString());
+
+        //            string ver_num = Common.GetVerNum();
+        //            a.Add("Version/" + this.Text);		// save the current version
+        //            a.Add("VersionNumber/" + ver_num);      // Thetis version number in a.b.c format
+        //            a.Add("BandTextID/" + current_region);  // TURF Region
+        //            //a.Add("Metis_IP_address/" + NetworkIO.HpSdrHwIpAddress.ToString(nfi));
+        //            //a.Add("EthernetHostIPAddress/" + NetworkIO.EthernetHostIPAddress.ToString(nfi));
+
+        //            a.Add("PruneBackups/" + DBMan.PruneBackups.ToString());
+
+        //            DB.PurgeNotches();                  // remove old notches from DB
+        //                                                // this is done because we have not stored an upper limit the number of notches
+        //                                                // and if we had 20 in there before, and now only write 3, how do we know?
+        //                                                // as it will still be [0]..[19]
+
+        //            DB.SaveVars("State", a, true);		// save the values to the DB
+        //        }
 
         private FormWindowState m_WindowState = FormWindowState.Normal;
         public void GetState()
@@ -40599,7 +41177,7 @@ namespace Thetis
                 this.CollapseDisplay(true);
             }
         }
-
+        private bool _eq_form_show_rx = true; // used by paraeq to show either rx or tx
         private void equalizerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (EQForm == null || EQForm.IsDisposed)
@@ -40608,12 +41186,14 @@ namespace Thetis
             {
                 EQForm.Invoke(new MethodInvoker(() =>
                 {
+                    EQForm.ParaEQShowRX = _eq_form_show_rx;
                     EQForm.Show();
                     EQForm.Focus();
                 }));
             }
             else
             {
+                EQForm.ParaEQShowRX = _eq_form_show_rx;
                 EQForm.Show();
                 EQForm.Focus();
             }
@@ -46035,12 +46615,20 @@ namespace Thetis
 
         private void chkRXEQ_MouseDown(object sender, MouseEventArgs e)
         {
-            if (IsRightButton(e)) equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            if (IsRightButton(e))
+            {
+                _eq_form_show_rx = true;
+                equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            }
         }
 
         private void chkTXEQ_MouseDown(object sender, MouseEventArgs e)
         {
-            if (IsRightButton(e)) equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            if (IsRightButton(e))
+            {
+                _eq_form_show_rx = false;
+                equalizerToolStripMenuItem_Click(null, EventArgs.Empty);
+            }
         }
 
         private void chkFWCATUBypass_MouseDown(object sender, MouseEventArgs e)
@@ -48083,7 +48671,10 @@ namespace Thetis
 
             switch (form)
             {
-                case "setup": /*setupToolStripMenuItem_Click(this, e);*/ setupToolStripMenuItem1_Click(this, e); break;
+                case "setup": /*setupToolStripMenuItem_Click(this, e);*/
+                    _eq_form_show_rx = true;
+                    setupToolStripMenuItem1_Click(this, e); 
+                    break;
                 case "memory": memoryToolStripMenuItem_Click(this, e); break;
                 case "wave": waveToolStripMenuItem_Click(this, e); break;
                 case "equaliser": equalizerToolStripMenuItem_Click(this, e); break;
@@ -51397,7 +51988,10 @@ namespace Thetis
                 case OtherButtonId.FORM_DBMAN: databaseManagerToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_MEMORY: memoryToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_WAVE: waveToolStripMenuItem_Click(this, EventArgs.Empty); break;
-                case OtherButtonId.FORM_EQ: equalizerToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_EQ:
+                    _eq_form_show_rx = true;
+                    equalizerToolStripMenuItem_Click(this, EventArgs.Empty); 
+                    break;
                 case OtherButtonId.FORM_XVTR: xVTRsToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_CWX: cWXToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_DIVERSITY: showHideDiversity(true); break;
@@ -53544,6 +54138,12 @@ namespace Thetis
                 toolStripStatusLabel_play_record.Visible = false;
             }
         }
+
+        // add a button to obtain this string, it is used by Database merge
+        //private void buttonTS1_Click(object sender, EventArgs e)
+        //{
+        //    Debug.Print(StateListToBase64());
+        //}
         //
     }
 

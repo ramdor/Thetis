@@ -2470,9 +2470,6 @@ namespace Thetis
             chkRX2GainSpectrumLine_CheckedChanged(this, e);
             chkRX2HangSpectrumLine_CheckedChanged(this, e);
 
-            chkCFCDisplayAutoScale_CheckedChanged(this, e);
-            udCFCPicDBPerLine_ValueChanged(this, e);
-
             chkCWAutoSwitchMode_CheckedChanged(this, e);
             chkAutoModeSwitchCWReturn_CheckedChanged(this, e);
 
@@ -2795,11 +2792,12 @@ namespace Thetis
             chkMNFAutoIncrease_CheckedChanged(this, e);
 
             // CFCompressor
+            chkCFCDisplayAutoScale_CheckedChanged(this, e);
+            udCFCPicDBPerLine_ValueChanged(this, e);
+            chkCFC_legacy_CheckedChanged(this, e);
             chkCFCEnable_CheckedChanged(this, e);
-            setCFCProfile(this, e);
-            tbCFCPRECOMP_Scroll(this, e);
             chkCFCPeqEnable_CheckedChanged(this, e);
-            tbCFCPEG_Scroll(this, e);
+            setLegacyCFCProfile();
 
             // Phase Rotator
             chkPHROTEnable_CheckedChanged(this, e);
@@ -3214,6 +3212,8 @@ namespace Thetis
                     if (isTXProfileSettingDifferent<int>(dr, "CFCPostEqGain" + (i - 12).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
                 for (int i = 22; i < 32; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "CFCEqFreq" + (i - 22).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
+
+                if (isTXProfileSettingDifferent<string>(dr, "CFCParaEQData", CFCConfigForm.ConfigData, out sReportOut)) sReport += "CFC data changed\n";                
             }
 
             return sReport;
@@ -3418,6 +3418,9 @@ namespace Thetis
                     if (DB.ConvertFromDBVal<int>(dr["CFCPostEqGain" + (i - 12).ToString()]) != cfceq[i]) return true;
                 for (int i = 22; i < 32; i++)
                     if (DB.ConvertFromDBVal<int>(dr["CFCEqFreq" + (i - 22).ToString()]) != cfceq[i]) return true;
+
+                if (DB.ConvertFromDBVal<string>(dr["CFCParaEQData"]) != CFCConfigForm.ConfigData) return true;
+
             }
 
             return false;
@@ -3564,6 +3567,7 @@ namespace Thetis
             Common.HightlightControl(udPhRotFreq, bHighlight);
             Common.HightlightControl(udPHROTStages, bHighlight);
             Common.HightlightControl(chkPHROTReverse, bHighlight);
+            CFCConfigForm.HighlightTXProfileSaveItems(bHighlight);
 
             Common.HightlightControl(tbCFCPRECOMP, bHighlight);
             Common.HightlightControl(tbCFC0, bHighlight);
@@ -3776,6 +3780,8 @@ namespace Thetis
                 dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
             for (int i = 22; i < 32; i++)
                 dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
+
+            dr["CFCParaEQData"] = CFCConfigForm.ConfigData;
         }
 
         public void SaveTXProfileData()
@@ -6052,9 +6058,7 @@ namespace Thetis
                 udCFC8.Value = Math.Max(udCFC8.Minimum, Math.Min(udCFC8.Maximum, value[30]));
                 udCFC9.Value = Math.Max(udCFC9.Minimum, Math.Min(udCFC9.Maximum, value[31]));
 
-                tbCFCPRECOMP_Scroll(this, EventArgs.Empty);
-                tbCFCPEG_Scroll(this, EventArgs.Empty);
-                setCFCProfile(this, EventArgs.Empty);
+                setLegacyCFCProfile();
 
                 // nasty, if only the value changed event had been used instead
                 setDBtip(tbCFCPRECOMP);
@@ -9454,6 +9458,7 @@ namespace Thetis
 
             console.EQForm.ParaEQRXData = (string)dr["RXParaEQData"];
             console.EQForm.ParaEQTXData = (string)dr["TXParaEQData"];
+
             console.EQForm.TXEQEnabled = (bool)dr["TXEQEnabled"];
             console.EQForm.NumBands = (int)dr["TXEQNumBands"];
 
@@ -9645,6 +9650,7 @@ namespace Thetis
                 cfceq[i] = (int)dr["CFCEqFreq" + (i - 22).ToString()];
 
             CFCCOMPEQ = cfceq;
+            CFCConfigForm.ConfigData = (string)dr["CFCParaEQData"];
 
             chkAudioEnableVAC.Checked = (bool)dr["VAC1_On"];    // moved here after setting to off MW0LGE_21k9d
             chkAudioVACAutoEnable.Checked = (bool)dr["VAC1_Auto_On"]; //[2.10.1.0] MW0LGE moved here
@@ -11535,6 +11541,7 @@ namespace Thetis
             WaitForSaveLoad();
             m_objSaveLoadThread = null;
 
+            closeCFCConfig();
             this.Hide(); //MW0LGE_21d deadlock potential
 
             m_objSaveLoadThread = new Thread(new ThreadStart(PreSaveOptions))
@@ -11570,6 +11577,8 @@ namespace Thetis
                 Priority = ThreadPriority.Lowest
             };
             m_objSaveLoadThread.Start();
+
+            closeCFCConfig();
             this.Hide();
         }
 
@@ -11624,9 +11633,11 @@ namespace Thetis
 
                 e.Cancel = true;
                 return;
-            }
+            }            
 
             console.SetFocusMaster(true);
+
+            closeCFCConfig();
             this.Hide();
             e.Cancel = true;
         }
@@ -16541,6 +16552,8 @@ namespace Thetis
                 console.radio.GetDSPRX(0, 0).RXCBLRun = false;
                 console.radio.GetDSPRX(0, 1).RXCBLRun = false;
             }
+            console.radio.GetDSPRX(0, 0).RXCBLPosition = chkCBlock_after_rx1.Checked ? 1 : 0;
+            console.radio.GetDSPRX(0, 1).RXCBLPosition = chkCBlock_after_rx1.Checked ? 1 : 0;
         }
 
         private void chkRX2CBlock_CheckedChanged(object sender, EventArgs e)
@@ -16556,6 +16569,32 @@ namespace Thetis
                 console.radio.GetDSPRX(1, 0).RXCBLRun = false;
                 console.radio.GetDSPRX(1, 1).RXCBLRun = false;
             }
+            console.radio.GetDSPRX(1, 0).RXCBLPosition = chkCBlock_after_rx2.Checked ? 1 : 0;
+            console.radio.GetDSPRX(1, 1).RXCBLPosition = chkCBlock_after_rx2.Checked ? 1 : 0;
+        }
+
+        private void chkCBlock_before_rx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_before_rx1.Checked) return;
+            chkCBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_after_rx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_after_rx1.Checked) return;
+            chkCBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_before_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_before_rx2.Checked) return;
+            chkRX2CBlock_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkCBlock_after_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || !chkCBlock_after_rx2.Checked) return;
+            chkRX2CBlock_CheckedChanged(this, EventArgs.Empty);
         }
 
         private void btnConfigure_Click(object sender, EventArgs e)
@@ -18610,6 +18649,9 @@ namespace Thetis
         private void setCFCProfile(object sender, EventArgs e)
         {
             if (initializing) return;
+
+            if (!chkCFC_legacy.Checked) return;
+
             const int nfreqs = 10;
             double[] F = new double[nfreqs];
             double[] G = new double[nfreqs];
@@ -18648,11 +18690,11 @@ namespace Thetis
             {
                 fixed (double* Fptr = &F[0], Gptr = &G[0], Eptr = &E[0])
                 {
-                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr);
+                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, null, null);
                 }
             }
 
-            setDBtip(sender);
+            if (e != EventArgs.Empty) setDBtip(sender);
 
             picCFC.Invalidate();
         }
@@ -22885,7 +22927,7 @@ namespace Thetis
 
         private void tmrCFCOMPGain_Tick(object sender, EventArgs e)
         {
-            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX)
+            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX || !chkCFC_legacy.Checked)
             {
                 tmrCFCOMPGain.Interval = 1000;
                 if (m_bShowingCFC)
@@ -37984,6 +38026,78 @@ namespace Thetis
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
         }
+
+        // CFC para
+        private bool _cfc_legacy = true;
+        private void chkCFC_legacy_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            _cfc_legacy = chkCFC_legacy.Checked;
+            if (_cfc_legacy)
+            {
+                CFCConfigForm.Active = false;
+
+                closeCFCConfig();
+                pnlCFC_legacy.Visible = true;
+                pnlCFC.Visible = true;
+                btnCFCConfig.Visible = false;
+                pnlCFC.BringToFront();
+
+                setLegacyCFCProfile();
+            }
+            else
+            {
+                btnCFCConfig.Parent = pnlCFC_legacy.Parent;
+                btnCFCConfig.Location = pnlCFC_legacy.Location;
+                btnCFCConfig.Visible = true;
+                pnlCFC_legacy.Visible = false;
+                pnlCFC.Visible = false;
+
+                CFCConfigForm.Active = true;
+            }
+        }
+        private frmCFCConfig _frmCfcConfig = null;
+        private frmCFCConfig CFCConfigForm
+        {
+            get
+            {
+                if (_frmCfcConfig == null || _frmCfcConfig.IsDisposed)
+                {
+                    _frmCfcConfig = new frmCFCConfig();
+                }
+                return _frmCfcConfig;
+            }
+        }
+        private void btnCFCConfig_Click(object sender, EventArgs e)
+        {
+            if (!CFCConfigForm.Visible)
+            {
+                CFCConfigForm.Show(this);
+                Common.ForceFormOnScreen(CFCConfigForm);
+            }
+            else
+            {
+                Common.ForceFormOnScreen(CFCConfigForm);
+            }
+        }
+        private void closeCFCConfig()
+        {
+            // direct not via CFCConfigForm so we dont create if one does not exist
+            if (_frmCfcConfig != null && !_frmCfcConfig.IsDisposed)
+            {
+                _frmCfcConfig.Close();
+            }
+        }
+        private void setLegacyCFCProfile()
+        {
+            if (!chkCFC_legacy.Checked) return;
+
+            tbCFCPRECOMP_Scroll(this, EventArgs.Empty);
+            tbCFCPEG_Scroll(this, EventArgs.Empty);
+            setCFCProfile(this, EventArgs.Empty);
+        }
+        // END CFC para
     }
 
     #region FormLoactionHelper
@@ -38071,7 +38185,9 @@ namespace Thetis
             for (int i = 0; i < forms.Count; i++)
             {
                 Form f = forms[i];
+                if (f.WindowState != FormWindowState.Normal) f.WindowState = FormWindowState.Normal;
                 f.Location = new Point(x, y);
+                Common.ForceFormOnScreen(f);
                 x += step;
                 y += step;
             }

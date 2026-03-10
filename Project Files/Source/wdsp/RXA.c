@@ -419,14 +419,15 @@ void create_rxa (int channel)
 		0);												// specmode
 
 	// carrier block
-	rxa[channel].cbl.p = create_cbl (
+	rxa[channel].cbl.p = create_cbl(
 		0,												// run - needed only if set to ON
 		ch[channel].dsp_size,							// buffer size
 		rxa[channel].midbuff,							// pointer to input buffer
 		rxa[channel].midbuff,							// pointer to output buffer
 		0,												// mode
 		ch[channel].dsp_rate,							// sample rate
-		0.02);											// tau
+		0.02,											// tau
+		1);												// position 0 = before AGC, 1 = after agc
 
 	// double-pole CW filter
 	rxa[channel].doublepole.p = create_doublepole (
@@ -659,6 +660,7 @@ void xrxa (int channel)
 	xrnnr (rxa[channel].rnnr.p, 0);	// NR3 + NR4 support (nr3)
     xsbnr (rxa[channel].sbnr.p, 0);	// NR3 + NR4 support (nr4)
 	xbandpass (rxa[channel].bp1.p, 0);
+	xcbl(rxa[channel].cbl.p, 0);	// [2.10.3.13]MW0LGE carrier removal before AGC
 	xwcpagc (rxa[channel].agc.p);
 	xanf (rxa[channel].anf.p, 1);
 	xanr (rxa[channel].anr.p, 1);
@@ -668,7 +670,7 @@ void xrxa (int channel)
 	xbandpass (rxa[channel].bp1.p, 1);
 	xmeter (rxa[channel].agcmeter.p);
 	xsiphon (rxa[channel].sip1.p, 0);
-	xcbl (rxa[channel].cbl.p);
+	xcbl (rxa[channel].cbl.p, 1);	// carrier removal after AGC (default)
 	xdoublepole (rxa[channel].doublepole.p, 0);
 	xmatched (rxa[channel].matched.p, 0);
 	xgaussian (rxa[channel].gaussian.p, 0);
