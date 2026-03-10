@@ -328,6 +328,7 @@
             0,
             0,
             0});
+            this.nudCFC_selected_band.ValueChanged += new System.EventHandler(this.nudCFC_selected_band_ValueChanged);
             // 
             // labelTS668
             // 

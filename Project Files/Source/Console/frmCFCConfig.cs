@@ -22,6 +22,7 @@ namespace Thetis
         private double[] _cfc_data;
 
         private bool _ignore_udpates;
+        private bool _ignore_unselected;
 
         public frmCFCConfig()
         {
@@ -29,6 +30,7 @@ namespace Thetis
             _cfc_data = null;
 
             _ignore_udpates = false;
+            _ignore_unselected = false;
 
             _selected_index_eq = -1;
             _selected_index_comp = -1;
@@ -156,6 +158,8 @@ namespace Thetis
 
         private void ucCFC_comp_PointUnselected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
         {
+            if (_ignore_unselected) return;
+
             _selected_index_comp = -1;
             ucCFC_eq.SelectedIndex = -1;
             updateSelected(null);
@@ -204,6 +208,8 @@ namespace Thetis
 
         private void ucCFC_eq_PointUnselected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
         {
+            if (_ignore_unselected) return;
+
             _selected_index_eq = -1;
             ucCFC_comp.SelectedIndex = -1;
             updateSelected(null);
@@ -350,6 +356,18 @@ namespace Thetis
         {
             ucCFC_eq.GlobalGainDb = 0;
             ucCFC_eq.ResetPoints();
+        }
+
+        private void nudCFC_selected_band_ValueChanged(object sender, EventArgs e)
+        {
+            if (_ignore_udpates) return;
+
+            _ignore_unselected = true;
+            ucCFC_comp.SelectedIndex = (int)(nudCFC_selected_band.Value - 1);
+            ucCFC_eq.SelectedIndex = ucCFC_comp.SelectedIndex;
+            _ignore_unselected = false;
+
+            setCFCProfile(ucCFC_eq.SelectedIndex, true);
         }
     }
 }

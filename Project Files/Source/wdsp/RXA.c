@@ -659,6 +659,7 @@ void xrxa (int channel)
 	xrnnr (rxa[channel].rnnr.p, 0);	// NR3 + NR4 support (nr3)
     xsbnr (rxa[channel].sbnr.p, 0);	// NR3 + NR4 support (nr4)
 	xbandpass (rxa[channel].bp1.p, 0);
+	xcbl(rxa[channel].cbl.p); //[2.10.3.13]MW0LGE - moved before agc from below
 	xwcpagc (rxa[channel].agc.p);
 	xanf (rxa[channel].anf.p, 1);
 	xanr (rxa[channel].anr.p, 1);
@@ -668,7 +669,7 @@ void xrxa (int channel)
 	xbandpass (rxa[channel].bp1.p, 1);
 	xmeter (rxa[channel].agcmeter.p);
 	xsiphon (rxa[channel].sip1.p, 0);
-	xcbl (rxa[channel].cbl.p);
+	//xcbl (rxa[channel].cbl.p); //[2.10.3.13]MW0LGE - moved before agc above
 	xdoublepole (rxa[channel].doublepole.p, 0);
 	xmatched (rxa[channel].matched.p, 0);
 	xgaussian (rxa[channel].gaussian.p, 0);
