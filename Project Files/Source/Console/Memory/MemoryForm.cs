@@ -1387,15 +1387,35 @@ namespace Thetis
         private void buttonTS1_Click(object sender, EventArgs e)
         {
             //[2.10.3.6]MW0LGE uncommented so that the recording folder is shown. Fixes #457
-            string argument = @"/root," + wave_folder;
-           // Debug.WriteLine("path===:" + wave_folder);
+            //string argument = @"/root," + wave_folder;
+            //Debug.WriteLine("path===:" + wave_folder);
 
-            System.Diagnostics.Process.Start("explorer.exe", argument);
+            //System.Diagnostics.Process.Start("explorer.exe", argument);
 
-          //  Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
-          //  WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
-          //  Debug.WriteLine("WaveControl.scheduleNameMP3 " + WaveControl.scheduleName1);
+            //Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
+            //WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
+            //Debug.WriteLine("WaveControl.scheduleNameMP3 " + WaveControl.scheduleName1);
 
+
+            string fullPath = Path.Combine(console.ARP.AudioFolder, "scheduled");
+            try
+            {
+                //if not there make it
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
         }
 
         // ke9ns add  NOT USED AT THE MOMENT
