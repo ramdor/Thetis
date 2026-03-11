@@ -245,9 +245,9 @@ namespace Thetis
 
                 if (this.IsHandleCreated)
                 {
-                    Common.UseImmersiveDarkMode(this.Handle, _dark_mode);
+                    bool ok = Common.UseImmersiveDarkMode(this.Handle, _dark_mode);
 
-                    if (_dark_mode)
+                    if (_dark_mode && ok)
                     {
                         this.BackColor = Color.FromArgb(64, 64, 64);
                         picRadar.BackColor = Color.FromArgb(64, 64, 64);
@@ -258,7 +258,7 @@ namespace Thetis
                         picRadar.BackColor = SystemColors.Control;
                     }
 
-                    applyControlStyles(this, _dark_mode);
+                    applyControlStyles(this, _dark_mode && ok);
                 }
             }
         }

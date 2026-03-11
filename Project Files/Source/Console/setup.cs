@@ -27919,18 +27919,24 @@ namespace Thetis
         private void chkConsoleDarkModeTitleBar_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+
+            bool dark_mode = chkConsoleDarkModeTitleBar.Checked;
+
             if (console != null)
             {
-                bool consoleOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
+                bool consoleOk = Common.UseImmersiveDarkMode(console.Handle, dark_mode);
+
                 if (sender != this) // only invalidate if user changed
                 {
                     if (consoleOk) console.Invalidate();
-
-                    if (console.diversityForm != null)
-                    {
-                        console.diversityForm.DarkMode = chkConsoleDarkModeTitleBar.Checked;
-                    }
                 }
+
+                if (console.diversityForm != null)
+                {
+                    console.diversityForm.DarkMode = dark_mode;
+                }
+
+                console.DarkModeChangedHandlers?.Invoke(dark_mode);
             }
         }
         public bool DarkMode

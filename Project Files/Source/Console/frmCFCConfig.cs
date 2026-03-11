@@ -571,5 +571,11 @@ namespace Thetis
         {
             Common.OpenUri("https://www.w1aex.com/anan/CFC_Audio_Tools/CFC_Audio_Tools.html");
         }
+
+        private void chkLogScale_CheckedChanged(object sender, EventArgs e)
+        {
+            ucCFC_comp.LogScale = chkLogScale.Checked;
+            ucCFC_eq.LogScale = ucCFC_comp.LogScale;
+        }
     }
 }
