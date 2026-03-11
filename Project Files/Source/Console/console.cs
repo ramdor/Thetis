@@ -44555,6 +44555,7 @@ namespace Thetis
         public delegate void SQLChanged(int rx, SquelchState old_state, SquelchState new_state);
         public delegate void CWXShown(bool shown);
         public delegate void GlobalKeyPress(Keys keycode);
+        public delegate void DarkModeChanged(bool dark_mode);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -44694,6 +44695,8 @@ namespace Thetis
 
         public GlobalKeyPress GlobalKeyPressUpHandlers;
         public GlobalKeyPress GlobalKeyPressDownHandlers;
+
+        public DarkModeChanged DarkModeChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

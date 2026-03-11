@@ -955,6 +955,7 @@ namespace Thetis
             this.ucParametricEq1.SelectedIndex = -1;
             this.ucParametricEq1.ShowAxisScales = true;
             this.ucParametricEq1.ShowBandShading = true;
+            this.ucParametricEq1.ShowDotReadings = true;
             this.ucParametricEq1.ShowReadout = false;
             this.ucParametricEq1.Size = new System.Drawing.Size(530, 411);
             this.ucParametricEq1.TabIndex = 6;

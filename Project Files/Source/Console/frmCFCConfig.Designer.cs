@@ -28,6 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.lblOGGuide = new System.Windows.Forms.LinkLabel();
+            this.chkLogScale = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
+            this.nudCFC_cq = new System.Windows.Forms.NumericUpDownTS();
             this.btnResetEQ = new System.Windows.Forms.ButtonTS();
             this.ucCFC_comp = new Thetis.ucParametricEq();
             this.labelTS673 = new System.Windows.Forms.LabelTS();
@@ -59,10 +63,7 @@
             this.labelTS666 = new System.Windows.Forms.LabelTS();
             this.ucCFC_eq = new Thetis.ucParametricEq();
             this.labelTS663 = new System.Windows.Forms.LabelTS();
-            this.labelTS1 = new System.Windows.Forms.LabelTS();
-            this.nudCFC_cq = new System.Windows.Forms.NumericUpDownTS();
-            this.lblOGGuide = new System.Windows.Forms.LinkLabel();
-            this.chkLogScale = new System.Windows.Forms.CheckBoxTS();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCFC_cq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_f)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_posteqgain)).BeginInit();
@@ -72,8 +73,71 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_gain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_q)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC_high)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCFC_cq)).BeginInit();
             this.SuspendLayout();
+            // 
+            // lblOGGuide
+            // 
+            this.lblOGGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblOGGuide.Location = new System.Drawing.Point(527, 666);
+            this.lblOGGuide.Name = "lblOGGuide";
+            this.lblOGGuide.Size = new System.Drawing.Size(89, 32);
+            this.lblOGGuide.TabIndex = 205;
+            this.lblOGGuide.TabStop = true;
+            this.lblOGGuide.Text = "OG CFC Guide\r\nby W1AEX";
+            this.lblOGGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lblOGGuide.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblOGGuide_LinkClicked);
+            // 
+            // chkLogScale
+            // 
+            this.chkLogScale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLogScale.Image = null;
+            this.chkLogScale.Location = new System.Drawing.Point(527, 155);
+            this.chkLogScale.Name = "chkLogScale";
+            this.chkLogScale.Size = new System.Drawing.Size(84, 17);
+            this.chkLogScale.TabIndex = 206;
+            this.chkLogScale.Text = "Log scale";
+            this.chkLogScale.UseVisualStyleBackColor = true;
+            this.chkLogScale.CheckedChanged += new System.EventHandler(this.chkLogScale_CheckedChanged);
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.AutoSize = true;
+            this.labelTS1.Image = null;
+            this.labelTS1.Location = new System.Drawing.Point(423, 11);
+            this.labelTS1.Name = "labelTS1";
+            this.labelTS1.Size = new System.Drawing.Size(15, 13);
+            this.labelTS1.TabIndex = 204;
+            this.labelTS1.Text = "Q";
+            // 
+            // nudCFC_cq
+            // 
+            this.nudCFC_cq.DecimalPlaces = 2;
+            this.nudCFC_cq.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudCFC_cq.Location = new System.Drawing.Point(444, 7);
+            this.nudCFC_cq.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudCFC_cq.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            this.nudCFC_cq.Name = "nudCFC_cq";
+            this.nudCFC_cq.Size = new System.Drawing.Size(49, 20);
+            this.nudCFC_cq.TabIndex = 203;
+            this.nudCFC_cq.TinyStep = false;
+            this.nudCFC_cq.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudCFC_cq.ValueChanged += new System.EventHandler(this.nudCFC_cq_ValueChanged);
             // 
             // btnResetEQ
             // 
@@ -118,6 +182,7 @@
             this.ucCFC_comp.SelectedIndex = -1;
             this.ucCFC_comp.ShowAxisScales = true;
             this.ucCFC_comp.ShowBandShading = true;
+            this.ucCFC_comp.ShowDotReadings = true;
             this.ucCFC_comp.ShowReadout = false;
             this.ucCFC_comp.Size = new System.Drawing.Size(509, 320);
             this.ucCFC_comp.TabIndex = 201;
@@ -625,6 +690,7 @@
             this.ucCFC_eq.SelectedIndex = -1;
             this.ucCFC_eq.ShowAxisScales = true;
             this.ucCFC_eq.ShowBandShading = true;
+            this.ucCFC_eq.ShowDotReadings = true;
             this.ucCFC_eq.ShowReadout = false;
             this.ucCFC_eq.Size = new System.Drawing.Size(509, 320);
             this.ucCFC_eq.TabIndex = 0;
@@ -644,70 +710,6 @@
             this.labelTS663.Size = new System.Drawing.Size(20, 13);
             this.labelTS663.TabIndex = 183;
             this.labelTS663.Text = "dB";
-            // 
-            // labelTS1
-            // 
-            this.labelTS1.AutoSize = true;
-            this.labelTS1.Image = null;
-            this.labelTS1.Location = new System.Drawing.Point(423, 11);
-            this.labelTS1.Name = "labelTS1";
-            this.labelTS1.Size = new System.Drawing.Size(15, 13);
-            this.labelTS1.TabIndex = 204;
-            this.labelTS1.Text = "Q";
-            // 
-            // nudCFC_cq
-            // 
-            this.nudCFC_cq.DecimalPlaces = 2;
-            this.nudCFC_cq.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.nudCFC_cq.Location = new System.Drawing.Point(444, 7);
-            this.nudCFC_cq.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudCFC_cq.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            65536});
-            this.nudCFC_cq.Name = "nudCFC_cq";
-            this.nudCFC_cq.Size = new System.Drawing.Size(49, 20);
-            this.nudCFC_cq.TabIndex = 203;
-            this.nudCFC_cq.TinyStep = false;
-            this.nudCFC_cq.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.nudCFC_cq.ValueChanged += new System.EventHandler(this.nudCFC_cq_ValueChanged);
-            // 
-            // lblOGGuide
-            // 
-            this.lblOGGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblOGGuide.Location = new System.Drawing.Point(527, 666);
-            this.lblOGGuide.Name = "lblOGGuide";
-            this.lblOGGuide.Size = new System.Drawing.Size(89, 32);
-            this.lblOGGuide.TabIndex = 205;
-            this.lblOGGuide.TabStop = true;
-            this.lblOGGuide.Text = "OG CFC Guide\r\nby W1AEX";
-            this.lblOGGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.lblOGGuide.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblOGGuide_LinkClicked);
-            // 
-            // chkLogScale
-            // 
-            this.chkLogScale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkLogScale.Image = null;
-            this.chkLogScale.Location = new System.Drawing.Point(527, 155);
-            this.chkLogScale.Name = "chkLogScale";
-            this.chkLogScale.Size = new System.Drawing.Size(84, 17);
-            this.chkLogScale.TabIndex = 206;
-            this.chkLogScale.Text = "Log scale";
-            this.chkLogScale.UseVisualStyleBackColor = true;
-            this.chkLogScale.CheckedChanged += new System.EventHandler(this.chkLogScale_CheckedChanged);
             // 
             // frmCFCConfig
             // 
@@ -757,6 +759,7 @@
             this.Text = "CFC Config";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCFCConfig_FormClosing);
             this.VisibleChanged += new System.EventHandler(this.frmCFCConfig_VisibleChanged);
+            ((System.ComponentModel.ISupportInitialize)(this.nudCFC_cq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_f)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_posteqgain)).EndInit();
@@ -766,7 +769,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_gain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_q)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC_high)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCFC_cq)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -318,6 +318,7 @@ namespace Thetis
         private bool _parametric_eq;
 
         private bool _show_readout;
+        private bool _show_dot_readings;
 
         private int _global_handle_x_offset;
         private int _global_handle_size;
@@ -393,6 +394,7 @@ namespace Thetis
             _parametric_eq = true;
 
             _show_readout = true;
+            _show_dot_readings = false;
 
             _global_handle_x_offset = 6;
             _global_handle_size = 10;
@@ -737,6 +739,21 @@ namespace Thetis
             set
             {
                 _show_readout = value;
+                Invalidate();
+            }
+        }
+
+        [Category("EQ")]
+        [DefaultValue(false)]
+        public bool ShowDotReadings
+        {
+            get { return _show_dot_readings; }
+            set
+            {
+                bool v = value;
+                if (v == _show_dot_readings) return;
+
+                _show_dot_readings = v;
                 Invalidate();
             }
         }
@@ -2381,7 +2398,89 @@ namespace Thetis
                 {
                     g.DrawEllipse(outline, x - r, y - r, r * 2f, r * 2f);
                 }
+
+                if (_show_dot_readings && _dragging_point && i == _drag_index)
+                {
+                    drawDotReading(g, plot, p, x, y, r);
+                }
             }
+        }
+
+        private void drawDotReading(Graphics g, Rectangle plot, EqPoint p, float dot_x, float dot_y, float dot_radius)
+        {
+            string text = "F " + formatDotReadingHz(p.FrequencyHz) + "   G " + formatDotReadingDb(p.GainDb);
+            if (_parametric_eq) text += "   Q " + p.Q.ToString("0.00");
+
+            Size text_size = TextRenderer.MeasureText(text, Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+
+            int pad_x = 8;
+            int pad_y = 5;
+            int radius = 8;
+            float gap = 8f;
+            float side_gap = 14f;
+            float edge_pad = 2f;
+            float plot_center_x = plot.Left + (plot.Width * 0.5f);
+            bool prefer_left = dot_x >= plot_center_x;
+
+            RectangleF panel = new RectangleF(0f, 0f,
+                                              text_size.Width + (pad_x * 2),
+                                              text_size.Height + (pad_y * 2));
+
+            panel.X = dot_x - (panel.Width * 0.5f);
+            panel.Y = dot_y - dot_radius - gap - panel.Height;
+
+            bool flip_below = panel.Y < plot.Top + edge_pad;
+            if (flip_below)
+            {
+                panel.Y = dot_y + dot_radius + gap;
+                panel.X = prefer_left ? (dot_x - side_gap - panel.Width) : (dot_x + side_gap);
+            }
+
+            if (panel.Bottom > plot.Bottom - edge_pad)
+            {
+                panel.Y = dot_y - dot_radius - gap - panel.Height;
+                panel.X = dot_x - (panel.Width * 0.5f);
+            }
+
+            if (panel.X < plot.Left + edge_pad) panel.X = plot.Left + edge_pad;
+            if (panel.Right > plot.Right - edge_pad) panel.X = plot.Right - edge_pad - panel.Width;
+            if (panel.Y < plot.Top + edge_pad) panel.Y = plot.Top + edge_pad;
+            if (panel.Bottom > plot.Bottom - edge_pad) panel.Y = plot.Bottom - edge_pad - panel.Height;
+
+            using (GraphicsPath path = createRoundedRectPath(panel, radius))
+            using (SolidBrush panel_brush = new SolidBrush(Color.FromArgb(150, 18, 18, 18)))
+            using (Pen panel_pen = new Pen(Color.FromArgb(90, 255, 220, 120), 1f))
+            using (SolidBrush text_brush = new SolidBrush(Color.FromArgb(255, 235, 90)))
+            {
+                g.FillPath(panel_brush, path);
+                g.DrawPath(panel_pen, path);
+                g.DrawString(text, Font, text_brush, panel.X + pad_x, panel.Y + pad_y);
+            }
+        }
+
+        private GraphicsPath createRoundedRectPath(RectangleF rect, float radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            float d = radius * 2f;
+
+            if (d > rect.Width) d = rect.Width;
+            if (d > rect.Height) d = rect.Height;
+            if (d < 2f)
+            {
+                path.AddRectangle(rect);
+                return path;
+            }
+
+            RectangleF arc = new RectangleF(rect.X, rect.Y, d, d);
+            path.AddArc(arc, 180f, 90f);
+            arc.X = rect.Right - d;
+            path.AddArc(arc, 270f, 90f);
+            arc.Y = rect.Bottom - d;
+            path.AddArc(arc, 0f, 90f);
+            arc.X = rect.X;
+            path.AddArc(arc, 90f, 90f);
+            path.CloseFigure();
+            return path;
         }
 
         private void drawAxisScales(Graphics g, Rectangle plot)
@@ -2772,7 +2871,18 @@ namespace Thetis
             return hz.ToString("0") + " Hz";
         }
 
+        private string formatDotReadingHz(double hz)
+        {
+            return hz.ToString("0") + " Hz";
+        }
+
         private string formatDb(double db)
+        {
+            string sign = db >= 0.0 ? "+" : "";
+            return sign + db.ToString("0.0") + " dB";
+        }
+
+        private string formatDotReadingDb(double db)
         {
             string sign = db >= 0.0 ? "+" : "";
             return sign + db.ToString("0.0") + " dB";
