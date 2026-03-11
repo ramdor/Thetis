@@ -12080,6 +12080,53 @@ namespace Thetis
                 //{
                 //    WaveForm.checkBoxRecord.Checked = value; // start recording
                 //}
+
+                if (value)
+                {
+                    ARP.StopPlayback(out _);
+                    ARP.StopRecord(out _);
+
+                    RecordingDetails details = new RecordingDetails()
+                    {
+                        Band = BandStackManager.BandToString(RX1Band),
+                        Frequency = VFOAFreq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+                        Mode = RX1DSPMode.ToString(),
+                        UtcTime = DateTime.UtcNow,
+                    };
+
+                    int bitdepth;
+                    switch (ARP.BitDepthMode)
+                    {
+                        case AudioBitDepthMode.Pcm8:
+                            bitdepth = 8;
+                            break;
+                        case AudioBitDepthMode.Pcm16:
+                            bitdepth = 16;
+                            break;
+                        case AudioBitDepthMode.Pcm24:
+                            bitdepth = 24;
+                            break;
+                        case AudioBitDepthMode.Pcm32:
+                        case AudioBitDepthMode.IeeeFloat32:
+                            bitdepth = 32;
+                            break;
+                        default:
+                            bitdepth = 0;
+                            break;
+                    }
+                    int rate = ARP.SampleRate;
+
+                    string datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                    string file = file = $"{details.Mode}_{details.Frequency}MHz_[{bitdepth.ToString()}bits_{rate.ToString()}Hz]_{datetime}.wav";
+                    string file_path = Path.Combine(ARP.AudioFolder, "scheduled", file);
+
+                    ARP.RecordToFileFromWDSP("scheduled", file_path, 0, out string error, true, details, true);
+                }
+                else
+                {
+                    ARP.StopPlayback(out _);
+                    ARP.StopRecord(out _);
+                }
             }
         }
 
