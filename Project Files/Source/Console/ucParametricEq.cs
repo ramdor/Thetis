@@ -225,6 +225,7 @@ namespace Thetis
             [JsonProperty("parametric_eq")]
             public bool ParametricEQ { get; set; }
 
+
             [JsonProperty("global_gain_db")]
             public double GlobalGainDb { get; set; }
 
@@ -332,6 +333,7 @@ namespace Thetis
         private Color _axis_text_color;
         private Color _axis_tick_color;
         private int _axis_tick_length;
+        private bool _log_scale;
 
         private double[] _bar_chart_data;
         private double[] _bar_chart_peak_data;
@@ -406,6 +408,7 @@ namespace Thetis
             _axis_text_color = Color.FromArgb(170, 170, 170);
             _axis_tick_color = Color.FromArgb(80, 80, 80);
             _axis_tick_length = 6;
+            _log_scale = false;
 
             _bar_chart_data = null;
             _bar_chart_peak_data = null;
@@ -633,6 +636,21 @@ namespace Thetis
                 rescaleFrequencies(old_min, old_max, _frequency_min_hz, _frequency_max_hz);
                 enforceOrdering(true);
                 raisePointsChanged(false);
+                Invalidate();
+            }
+        }
+
+        [Category("EQ")]
+        [DefaultValue(false)]
+        public bool LogScale
+        {
+            get { return _log_scale; }
+            set
+            {
+                bool v = value;
+                if (v == _log_scale) return;
+
+                _log_scale = v;
                 Invalidate();
             }
         }
@@ -2015,12 +2033,24 @@ namespace Thetis
 
             using (Pen grid_pen = new Pen(Color.FromArgb(45, 45, 45), 1f))
             {
-                int v_lines = 10;
-                for (int i = 0; i <= v_lines; i++)
+                if (_log_scale)
                 {
-                    float t = (float)i / (float)v_lines;
-                    int x = plot.Left + (int)Math.Round(t * plot.Width);
-                    g.DrawLine(grid_pen, x, plot.Top, x, plot.Bottom);
+                    List<double> ticks = getLogFrequencyTicks(plot);
+                    for (int i = 0; i < ticks.Count; i++)
+                    {
+                        float x = xFromFreq(plot, ticks[i]);
+                        g.DrawLine(grid_pen, x, plot.Top, x, plot.Bottom);
+                    }
+                }
+                else
+                {
+                    int v_lines = 10;
+                    for (int i = 0; i <= v_lines; i++)
+                    {
+                        float t = (float)i / (float)v_lines;
+                        int x = plot.Left + (int)Math.Round(t * plot.Width);
+                        g.DrawLine(grid_pen, x, plot.Top, x, plot.Bottom);
+                    }
                 }
 
                 double step_db = getYAxisStepDb();
@@ -2064,8 +2094,23 @@ namespace Thetis
 
                 for (int i = 0; i < count; i++)
                 {
-                    int seg_left = plot.Left + (int)Math.Round(((double)i * (double)plot.Width) / (double)count);
-                    int seg_right = plot.Left + (int)Math.Round(((double)(i + 1) * (double)plot.Width) / (double)count);
+                    int seg_left;
+                    int seg_right;
+
+                    if (_log_scale)
+                    {
+                        double edge_left_f = frequencyFromNormalizedPosition((double)i / (double)count);
+                        double edge_right_f = frequencyFromNormalizedPosition((double)(i + 1) / (double)count);
+
+                        seg_left = (int)Math.Round(xFromFreq(plot, edge_left_f));
+                        seg_right = (int)Math.Round(xFromFreq(plot, edge_right_f));
+                    }
+                    else
+                    {
+                        seg_left = plot.Left + (int)Math.Round(((double)i * (double)plot.Width) / (double)count);
+                        seg_right = plot.Left + (int)Math.Round(((double)(i + 1) * (double)plot.Width) / (double)count);
+                    }
+
                     int seg_width = seg_right - seg_left;
 
                     if (seg_width <= 0) continue;
@@ -2155,7 +2200,7 @@ namespace Thetis
                         double band_db = 0.0;
                         if (w >= _band_shade_weight_cutoff) band_db = p.GainDb * w;
 
-                        float x = plot.Left + (float)(t * plot.Width);
+                        float x = _log_scale ? xFromFreq(plot, f) : (plot.Left + (float)(t * plot.Width));
                         float y = yFromDb(plot, band_db);
                         poly[i + 1] = new PointF(x, y);
                     }
@@ -2272,12 +2317,12 @@ namespace Thetis
             for (int i = 0; i < samples; i++)
             {
                 double t = (double)i / (double)(samples - 1);
-                double f = _frequency_min_hz + t * (_frequency_max_hz - _frequency_min_hz);
+                double f = _log_scale ? frequencyFromNormalizedPosition(t) : (_frequency_min_hz + t * (_frequency_max_hz - _frequency_min_hz));
 
                 double db = responseDbAtFrequency(f);
                 if (!_global_gain_is_horiz_line) db = db + _global_gain_db;
 
-                float x = plot.Left + (float)(t * plot.Width);
+                float x = _log_scale ? xFromFreq(plot, f) : (plot.Left + (float)(t * plot.Width));
                 float y = yFromDb(plot, db);
                 pts[i] = new PointF(x, y);
             }
@@ -2394,24 +2439,43 @@ namespace Thetis
                 double span = _frequency_max_hz - _frequency_min_hz;
                 if (span <= 0.0) span = 1.0;
 
-                double step_f = chooseFrequencyStep(span);
-                double first = Math.Ceiling(_frequency_min_hz / step_f) * step_f;
-
                 float tick_top = plot.Bottom;
                 float tick_bottom = plot.Bottom + _axis_tick_length;
 
                 float labels_y = plot.Bottom + _axis_tick_length + 2f;
 
-                for (double f = first; f <= _frequency_max_hz + 0.000001; f += step_f)
+                if (_log_scale)
                 {
-                    float x = xFromFreq(plot, f);
-                    g.DrawLine(tick_pen, x, tick_top, x, tick_bottom);
+                    List<double> ticks = getLogFrequencyTicks(plot);
+                    for (int i = 0; i < ticks.Count; i++)
+                    {
+                        double f = ticks[i];
+                        float x = xFromFreq(plot, f);
+                        g.DrawLine(tick_pen, x, tick_top, x, tick_bottom);
 
-                    string s = formatHzTick(f);
-                    SizeF sz = g.MeasureString(s, Font);
-                    float tx = x - (sz.Width * 0.5f);
-                    float ty = labels_y;
-                    g.DrawString(s, Font, text_brush, tx, ty);
+                        string s = formatHzTick(f);
+                        SizeF sz = g.MeasureString(s, Font);
+                        float tx = x - (sz.Width * 0.5f);
+                        float ty = labels_y;
+                        g.DrawString(s, Font, text_brush, tx, ty);
+                    }
+                }
+                else
+                {
+                    double step_f = chooseFrequencyStep(span);
+                    double first = Math.Ceiling(_frequency_min_hz / step_f) * step_f;
+
+                    for (double f = first; f <= _frequency_max_hz + 0.000001; f += step_f)
+                    {
+                        float x = xFromFreq(plot, f);
+                        g.DrawLine(tick_pen, x, tick_top, x, tick_bottom);
+
+                        string s = formatHzTick(f);
+                        SizeF sz = g.MeasureString(s, Font);
+                        float tx = x - (sz.Width * 0.5f);
+                        float ty = labels_y;
+                        g.DrawString(s, Font, text_brush, tx, ty);
+                    }
                 }
             }
         }
@@ -2433,8 +2497,18 @@ namespace Thetis
 
         private string formatHzTick(double hz)
         {
-            if (hz >= 1000.0) return (hz / 1000.0).ToString("0.#") + "k";
-            return hz.ToString("0");
+            double abs_hz = Math.Abs(hz);
+
+            if (abs_hz >= 1000.0)
+            {
+                double khz = hz / 1000.0;
+                if (Math.Abs(khz) >= 10.0) return khz.ToString("0.#") + "k";
+                return khz.ToString("0.##") + "k";
+            }
+
+            if (abs_hz >= 100.0) return hz.ToString("0");
+            if (abs_hz >= 10.0) return hz.ToString("0.#");
+            return hz.ToString("0.##");
         }
 
         private double chooseFrequencyStep(double span)
@@ -2747,22 +2821,16 @@ namespace Thetis
 
         private float xFromFreq(Rectangle plot, double frequency_hz)
         {
-            double span = _frequency_max_hz - _frequency_min_hz;
-            if (span <= 0.0) span = 1.0;
-            double t = (frequency_hz - _frequency_min_hz) / span;
-            if (t < 0.0) t = 0.0;
-            if (t > 1.0) t = 1.0;
+            double t = getNormalizedFrequencyPosition(frequency_hz);
             return plot.Left + (float)(t * plot.Width);
         }
 
         private double freqFromX(Rectangle plot, int x)
         {
-            double span = _frequency_max_hz - _frequency_min_hz;
-            if (span <= 0.0) span = 1.0;
             double t = ((double)x - (double)plot.Left) / (double)plot.Width;
             if (t < 0.0) t = 0.0;
             if (t > 1.0) t = 1.0;
-            return _frequency_min_hz + t * span;
+            return frequencyFromNormalizedPosition(t);
         }
 
         private float yFromDb(Rectangle plot, double db)
@@ -2788,6 +2856,179 @@ namespace Thetis
             if (v < min) return min;
             if (v > max) return max;
             return v;
+        }
+
+        private double getLogFrequencyCentreHz()
+        {
+            return getLogFrequencyCentreHz(_frequency_min_hz, _frequency_max_hz);
+        }
+
+        private double getLogFrequencyCentreHz(double min_hz, double max_hz)
+        {
+            double span = max_hz - min_hz;
+            if (span <= 0.0) return min_hz;
+            return min_hz + (span * 0.125);
+        }
+
+        private double getNormalizedFrequencyPosition(double frequency_hz)
+        {
+            return getNormalizedFrequencyPosition(frequency_hz, _frequency_min_hz, _frequency_max_hz, _log_scale);
+        }
+
+        private double getNormalizedFrequencyPosition(double frequency_hz, double min_hz, double max_hz)
+        {
+            return getNormalizedFrequencyPosition(frequency_hz, min_hz, max_hz, _log_scale);
+        }
+
+        private double getNormalizedFrequencyPosition(double frequency_hz, double min_hz, double max_hz, bool use_log_scale)
+        {
+            double span = max_hz - min_hz;
+            if (span <= 0.0) return 0.0;
+
+            double f = clamp(frequency_hz, min_hz, max_hz);
+            double u = (f - min_hz) / span;
+
+            if (!use_log_scale)
+            {
+                return u;
+            }
+
+            double centre_ratio = (getLogFrequencyCentreHz(min_hz, max_hz) - min_hz) / span;
+            double shape = getLogFrequencyShape(centre_ratio);
+            if (shape <= 0.0)
+            {
+                return u;
+            }
+
+            return Math.Log(1.0 + (shape * u)) / Math.Log(1.0 + shape);
+        }
+
+        private double frequencyFromNormalizedPosition(double t)
+        {
+            return frequencyFromNormalizedPosition(t, _frequency_min_hz, _frequency_max_hz, _log_scale);
+        }
+
+        private double frequencyFromNormalizedPosition(double t, double min_hz, double max_hz)
+        {
+            return frequencyFromNormalizedPosition(t, min_hz, max_hz, _log_scale);
+        }
+
+        private double frequencyFromNormalizedPosition(double t, double min_hz, double max_hz, bool use_log_scale)
+        {
+            if (t < 0.0) t = 0.0;
+            if (t > 1.0) t = 1.0;
+
+            double span = max_hz - min_hz;
+            if (span <= 0.0) return min_hz;
+
+            if (!use_log_scale)
+            {
+                return min_hz + (t * span);
+            }
+
+            double centre_ratio = (getLogFrequencyCentreHz(min_hz, max_hz) - min_hz) / span;
+            double shape = getLogFrequencyShape(centre_ratio);
+            if (shape <= 0.0)
+            {
+                return min_hz + (t * span);
+            }
+
+            double u = (Math.Exp(t * Math.Log(1.0 + shape)) - 1.0) / shape;
+            return min_hz + (u * span);
+        }
+
+        private double getLogFrequencyShape(double centre_ratio)
+        {
+            double r = centre_ratio;
+            if (r <= 0.0 || r >= 1.0) return 0.0;
+            if (Math.Abs(r - 0.5) < 0.0000001) return 0.0;
+
+            double shape = (1.0 - (2.0 * r)) / (r * r);
+            if (shape < 0.0) return 0.0;
+            return shape;
+        }
+
+        private List<double> getLogFrequencyTicks(Rectangle plot)
+        {
+            List<double> candidates = new List<double>();
+
+            addLogFrequencyTickCandidate(candidates, _frequency_min_hz);
+            addLogFrequencyTickCandidate(candidates, getLogFrequencyCentreHz());
+            addLogFrequencyTickCandidate(candidates, _frequency_max_hz);
+
+            if (_frequency_min_hz <= 0.0 && _frequency_max_hz >= 0.0)
+            {
+                addLogFrequencyTickCandidate(candidates, 0.0);
+            }
+
+            double positive_min = _frequency_min_hz > 0.0 ? _frequency_min_hz : 1.0;
+            double positive_max = _frequency_max_hz;
+
+            if (positive_max > 0.0)
+            {
+                int exp_min = (int)Math.Floor(Math.Log10(positive_min));
+                int exp_max = (int)Math.Ceiling(Math.Log10(positive_max));
+                double[] multipliers = new double[] { 1.0, 2.0, 5.0 };
+
+                for (int exp = exp_min; exp <= exp_max; exp++)
+                {
+                    double decade = Math.Pow(10.0, exp);
+                    for (int i = 0; i < multipliers.Length; i++)
+                    {
+                        addLogFrequencyTickCandidate(candidates, multipliers[i] * decade);
+                    }
+                }
+            }
+
+            candidates.Sort();
+
+            List<double> unique = new List<double>();
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                double f = candidates[i];
+                if (unique.Count > 0 && Math.Abs(unique[unique.Count - 1] - f) < 0.000001) continue;
+                unique.Add(f);
+            }
+
+            if (unique.Count <= 2) return unique;
+
+            List<double> filtered = new List<double>();
+            double min_spacing_px = 28.0;
+
+            for (int i = 0; i < unique.Count; i++)
+            {
+                double f = unique[i];
+                bool keep = (i == 0) || (i == unique.Count - 1);
+
+                if (!keep)
+                {
+                    float x = xFromFreq(plot, f);
+                    bool far_enough = true;
+
+                    for (int j = 0; j < filtered.Count; j++)
+                    {
+                        float kept_x = xFromFreq(plot, filtered[j]);
+                        if (Math.Abs(x - kept_x) < min_spacing_px)
+                        {
+                            far_enough = false;
+                            break;
+                        }
+                    }
+
+                    keep = far_enough;
+                }
+
+                if (keep) filtered.Add(f);
+            }
+
+            return filtered;
+        }
+
+        private void addLogFrequencyTickCandidate(List<double> ticks, double frequency_hz)
+        {
+            if (double.IsNaN(frequency_hz) || double.IsInfinity(frequency_hz)) return;
+            if (frequency_hz < _frequency_min_hz || frequency_hz > _frequency_max_hz) return;
+            ticks.Add(frequency_hz);
         }
 
         private void resetPointsDefault()

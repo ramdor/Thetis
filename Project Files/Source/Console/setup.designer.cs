@@ -45338,7 +45338,7 @@
             this.chkCFC_legacy.Size = new System.Drawing.Size(61, 17);
             this.chkCFC_legacy.TabIndex = 181;
             this.chkCFC_legacy.Text = "Legacy";
-            this.toolTip1.SetToolTip(this.chkCFC_legacy, "Enable/Disable the Continuous Frequency Compression");
+            this.toolTip1.SetToolTip(this.chkCFC_legacy, "Use the legacy controls");
             this.chkCFC_legacy.UseVisualStyleBackColor = true;
             this.chkCFC_legacy.CheckedChanged += new System.EventHandler(this.chkCFC_legacy_CheckedChanged);
             // 

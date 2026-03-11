@@ -177,7 +177,7 @@ namespace Thetis
         private double[] _tempTX_G;
         private double[] _tempTX_Q;
         private int _tempTX_BandCount;
-
+        private CheckBoxTS chkLogScale;
         private bool _paraeq_show_rx;
         #endregion
 
@@ -237,15 +237,19 @@ namespace Thetis
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EQForm));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.pnlParaEQ2 = new System.Windows.Forms.PanelTS();
             this.pbParaEQ_live_warning = new System.Windows.Forms.PictureBox();
+            this.chkPanaEQ_live = new System.Windows.Forms.CheckBoxTS();
+            this.lblRXEQ9 = new System.Windows.Forms.LabelTS();
+            this.lblRXEQ5 = new System.Windows.Forms.LabelTS();
+            this.lblRXEQ1 = new System.Windows.Forms.LabelTS();
+            this.pnlParaEQ2 = new System.Windows.Forms.PanelTS();
+            this.chkLogScale = new System.Windows.Forms.CheckBoxTS();
             this.panelTS1 = new System.Windows.Forms.PanelTS();
             this.radParaEQ_5 = new System.Windows.Forms.RadioButtonTS();
             this.radParaEQ_10 = new System.Windows.Forms.RadioButtonTS();
             this.radParaEQ_18 = new System.Windows.Forms.RadioButtonTS();
             this.chkUseQFactors = new System.Windows.Forms.CheckBoxTS();
             this.udParaEQ_low = new System.Windows.Forms.NumericUpDownTS();
-            this.chkPanaEQ_live = new System.Windows.Forms.CheckBoxTS();
             this.udParaEQ_high = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
@@ -311,7 +315,6 @@ namespace Thetis
             this.tbRXEQ10 = new System.Windows.Forms.TrackBarTS();
             this.lblRXEQ7 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ8 = new System.Windows.Forms.LabelTS();
-            this.lblRXEQ9 = new System.Windows.Forms.LabelTS();
             this.tbRXEQ7 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ8 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ9 = new System.Windows.Forms.TrackBarTS();
@@ -319,7 +322,6 @@ namespace Thetis
             this.tbRXEQ5 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ6 = new System.Windows.Forms.TrackBarTS();
             this.lblRXEQ4 = new System.Windows.Forms.LabelTS();
-            this.lblRXEQ5 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ6 = new System.Windows.Forms.LabelTS();
             this.picRXEQ = new System.Windows.Forms.PictureBox();
             this.btnRXEQReset = new System.Windows.Forms.ButtonTS();
@@ -327,7 +329,6 @@ namespace Thetis
             this.tbRXEQ1 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ2 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ3 = new System.Windows.Forms.TrackBarTS();
-            this.lblRXEQ1 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ2 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ3 = new System.Windows.Forms.LabelTS();
             this.lblRXEQPreamp = new System.Windows.Forms.LabelTS();
@@ -335,8 +336,8 @@ namespace Thetis
             this.lblRXEQ15db = new System.Windows.Forms.LabelTS();
             this.lblRXEQ0dB = new System.Windows.Forms.LabelTS();
             this.lblRXEQminus12db = new System.Windows.Forms.LabelTS();
-            this.pnlParaEQ2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).BeginInit();
+            this.pnlParaEQ2.SuspendLayout();
             this.panelTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udParaEQ_low)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udParaEQ_high)).BeginInit();
@@ -384,23 +385,6 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQPreamp)).BeginInit();
             this.SuspendLayout();
             // 
-            // pnlParaEQ2
-            // 
-            this.pnlParaEQ2.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.pnlParaEQ2.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.pnlParaEQ2.Controls.Add(this.pbParaEQ_live_warning);
-            this.pnlParaEQ2.Controls.Add(this.panelTS1);
-            this.pnlParaEQ2.Controls.Add(this.chkUseQFactors);
-            this.pnlParaEQ2.Controls.Add(this.udParaEQ_low);
-            this.pnlParaEQ2.Controls.Add(this.chkPanaEQ_live);
-            this.pnlParaEQ2.Controls.Add(this.udParaEQ_high);
-            this.pnlParaEQ2.Controls.Add(this.labelTS1);
-            this.pnlParaEQ2.Controls.Add(this.labelTS2);
-            this.pnlParaEQ2.Location = new System.Drawing.Point(789, 7);
-            this.pnlParaEQ2.Name = "pnlParaEQ2";
-            this.pnlParaEQ2.Size = new System.Drawing.Size(316, 73);
-            this.pnlParaEQ2.TabIndex = 8;
-            // 
             // pbParaEQ_live_warning
             // 
             this.pbParaEQ_live_warning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -414,6 +398,84 @@ namespace Thetis
         " be degraded. Switching live off will\r\ncause the changes to apply after you fini" +
         "sh dragging/adjusting.");
             this.pbParaEQ_live_warning.Visible = false;
+            // 
+            // chkPanaEQ_live
+            // 
+            this.chkPanaEQ_live.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPanaEQ_live.Image = null;
+            this.chkPanaEQ_live.Location = new System.Drawing.Point(39, 47);
+            this.chkPanaEQ_live.Name = "chkPanaEQ_live";
+            this.chkPanaEQ_live.Size = new System.Drawing.Size(84, 17);
+            this.chkPanaEQ_live.TabIndex = 165;
+            this.chkPanaEQ_live.Text = "Live Update";
+            this.toolTip1.SetToolTip(this.chkPanaEQ_live, "Warning: Having live updates may cause slowdown whilst the EQ change is being pro" +
+        "cessed.");
+            this.chkPanaEQ_live.UseVisualStyleBackColor = true;
+            this.chkPanaEQ_live.CheckedChanged += new System.EventHandler(this.chkPanaEQ_live_CheckedChanged);
+            // 
+            // lblRXEQ9
+            // 
+            this.lblRXEQ9.Image = null;
+            this.lblRXEQ9.Location = new System.Drawing.Point(400, 56);
+            this.lblRXEQ9.Name = "lblRXEQ9";
+            this.lblRXEQ9.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ9.TabIndex = 123;
+            this.lblRXEQ9.Text = "High";
+            this.lblRXEQ9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ9, "1500-6000Hz");
+            // 
+            // lblRXEQ5
+            // 
+            this.lblRXEQ5.Image = null;
+            this.lblRXEQ5.Location = new System.Drawing.Point(240, 56);
+            this.lblRXEQ5.Name = "lblRXEQ5";
+            this.lblRXEQ5.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ5.TabIndex = 116;
+            this.lblRXEQ5.Text = "Mid";
+            this.lblRXEQ5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ5, "400-1500Hz");
+            // 
+            // lblRXEQ1
+            // 
+            this.lblRXEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRXEQ1.Image = null;
+            this.lblRXEQ1.Location = new System.Drawing.Point(80, 56);
+            this.lblRXEQ1.Name = "lblRXEQ1";
+            this.lblRXEQ1.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ1.TabIndex = 43;
+            this.lblRXEQ1.Text = "Low";
+            this.lblRXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ1, "0-400Hz");
+            // 
+            // pnlParaEQ2
+            // 
+            this.pnlParaEQ2.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ2.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ2.Controls.Add(this.chkLogScale);
+            this.pnlParaEQ2.Controls.Add(this.pbParaEQ_live_warning);
+            this.pnlParaEQ2.Controls.Add(this.panelTS1);
+            this.pnlParaEQ2.Controls.Add(this.chkUseQFactors);
+            this.pnlParaEQ2.Controls.Add(this.udParaEQ_low);
+            this.pnlParaEQ2.Controls.Add(this.chkPanaEQ_live);
+            this.pnlParaEQ2.Controls.Add(this.udParaEQ_high);
+            this.pnlParaEQ2.Controls.Add(this.labelTS1);
+            this.pnlParaEQ2.Controls.Add(this.labelTS2);
+            this.pnlParaEQ2.Location = new System.Drawing.Point(789, 7);
+            this.pnlParaEQ2.Name = "pnlParaEQ2";
+            this.pnlParaEQ2.Size = new System.Drawing.Size(316, 73);
+            this.pnlParaEQ2.TabIndex = 8;
+            // 
+            // chkLogScale
+            // 
+            this.chkLogScale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLogScale.Image = null;
+            this.chkLogScale.Location = new System.Drawing.Point(39, 6);
+            this.chkLogScale.Name = "chkLogScale";
+            this.chkLogScale.Size = new System.Drawing.Size(84, 17);
+            this.chkLogScale.TabIndex = 172;
+            this.chkLogScale.Text = "Log scale";
+            this.chkLogScale.UseVisualStyleBackColor = true;
+            this.chkLogScale.CheckedChanged += new System.EventHandler(this.chkLogScale_CheckedChanged);
             // 
             // panelTS1
             // 
@@ -506,20 +568,6 @@ namespace Thetis
             0,
             0});
             this.udParaEQ_low.ValueChanged += new System.EventHandler(this.nudParaEQ_low_ValueChanged);
-            // 
-            // chkPanaEQ_live
-            // 
-            this.chkPanaEQ_live.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkPanaEQ_live.Image = null;
-            this.chkPanaEQ_live.Location = new System.Drawing.Point(39, 47);
-            this.chkPanaEQ_live.Name = "chkPanaEQ_live";
-            this.chkPanaEQ_live.Size = new System.Drawing.Size(84, 17);
-            this.chkPanaEQ_live.TabIndex = 165;
-            this.chkPanaEQ_live.Text = "Live Update";
-            this.toolTip1.SetToolTip(this.chkPanaEQ_live, "Warning: Having live updates may cause slowdown whilst the EQ change is being pro" +
-        "cessed.");
-            this.chkPanaEQ_live.UseVisualStyleBackColor = true;
-            this.chkPanaEQ_live.CheckedChanged += new System.EventHandler(this.chkPanaEQ_live_CheckedChanged);
             // 
             // udParaEQ_high
             // 
@@ -890,10 +938,12 @@ namespace Thetis
             this.ucParametricEq1.BandShadeAlpha = 70;
             this.ucParametricEq1.BandShadeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
             this.ucParametricEq1.BandShadeWeightCutoff = 0.002D;
+            this.ucParametricEq1.BarChartFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(255)))));
+            this.ucParametricEq1.BarChartPeakColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(210)))), ((int)(((byte)(255)))));
             this.ucParametricEq1.DbMax = 24D;
             this.ucParametricEq1.DbMin = -24D;
             this.ucParametricEq1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.ucParametricEq1.FrequencyMaxHz = 4000D;
+            this.ucParametricEq1.FrequencyMaxHz = 2700D;
             this.ucParametricEq1.FrequencyMinHz = 0D;
             this.ucParametricEq1.GlobalGainDb = 0D;
             this.ucParametricEq1.Location = new System.Drawing.Point(3, 75);
@@ -1657,17 +1707,6 @@ namespace Thetis
             this.lblRXEQ8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblRXEQ8.Visible = false;
             // 
-            // lblRXEQ9
-            // 
-            this.lblRXEQ9.Image = null;
-            this.lblRXEQ9.Location = new System.Drawing.Point(400, 56);
-            this.lblRXEQ9.Name = "lblRXEQ9";
-            this.lblRXEQ9.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ9.TabIndex = 123;
-            this.lblRXEQ9.Text = "High";
-            this.lblRXEQ9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ9, "1500-6000Hz");
-            // 
             // tbRXEQ7
             // 
             this.tbRXEQ7.AutoSize = false;
@@ -1764,17 +1803,6 @@ namespace Thetis
             this.lblRXEQ4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblRXEQ4.Visible = false;
             // 
-            // lblRXEQ5
-            // 
-            this.lblRXEQ5.Image = null;
-            this.lblRXEQ5.Location = new System.Drawing.Point(240, 56);
-            this.lblRXEQ5.Name = "lblRXEQ5";
-            this.lblRXEQ5.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ5.TabIndex = 116;
-            this.lblRXEQ5.Text = "Mid";
-            this.lblRXEQ5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ5, "400-1500Hz");
-            // 
             // lblRXEQ6
             // 
             this.lblRXEQ6.Image = null;
@@ -1859,18 +1887,6 @@ namespace Thetis
             this.tbRXEQ3.TabIndex = 6;
             this.tbRXEQ3.TickFrequency = 3;
             this.tbRXEQ3.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
-            // 
-            // lblRXEQ1
-            // 
-            this.lblRXEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRXEQ1.Image = null;
-            this.lblRXEQ1.Location = new System.Drawing.Point(80, 56);
-            this.lblRXEQ1.Name = "lblRXEQ1";
-            this.lblRXEQ1.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ1.TabIndex = 43;
-            this.lblRXEQ1.Text = "Low";
-            this.lblRXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ1, "0-400Hz");
             // 
             // lblRXEQ2
             // 
@@ -1962,9 +1978,9 @@ namespace Thetis
             this.Text = "Equalizer Settings";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.EQForm_Closing);
             this.VisibleChanged += new System.EventHandler(this.EQForm_VisibleChanged);
+            ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).EndInit();
             this.pnlParaEQ2.ResumeLayout(false);
             this.pnlParaEQ2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).EndInit();
             this.panelTS1.ResumeLayout(false);
             this.panelTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udParaEQ_low)).EndInit();
@@ -3596,6 +3612,11 @@ namespace Thetis
         {
             get { return _paraeq_show_rx; }
             set { _paraeq_show_rx = value; }
+        }
+
+        private void chkLogScale_CheckedChanged(object sender, EventArgs e)
+        {
+            ucParametricEq1.LogScale = chkLogScale.Checked;
         }
     }
 }

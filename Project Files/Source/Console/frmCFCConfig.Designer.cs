@@ -62,6 +62,7 @@
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.nudCFC_cq = new System.Windows.Forms.NumericUpDownTS();
             this.lblOGGuide = new System.Windows.Forms.LinkLabel();
+            this.chkLogScale = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_c)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_f)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCFC_posteqgain)).BeginInit();
@@ -172,7 +173,7 @@
             // 
             this.chkCFC_PanaEQ_live.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkCFC_PanaEQ_live.Image = null;
-            this.chkCFC_PanaEQ_live.Location = new System.Drawing.Point(527, 181);
+            this.chkCFC_PanaEQ_live.Location = new System.Drawing.Point(527, 201);
             this.chkCFC_PanaEQ_live.Name = "chkCFC_PanaEQ_live";
             this.chkCFC_PanaEQ_live.Size = new System.Drawing.Size(84, 17);
             this.chkCFC_PanaEQ_live.TabIndex = 188;
@@ -420,7 +421,7 @@
             this.chkCFC_UseQFactors.Checked = true;
             this.chkCFC_UseQFactors.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkCFC_UseQFactors.Image = null;
-            this.chkCFC_UseQFactors.Location = new System.Drawing.Point(527, 162);
+            this.chkCFC_UseQFactors.Location = new System.Drawing.Point(527, 178);
             this.chkCFC_UseQFactors.Name = "chkCFC_UseQFactors";
             this.chkCFC_UseQFactors.Size = new System.Drawing.Size(94, 17);
             this.chkCFC_UseQFactors.TabIndex = 172;
@@ -696,11 +697,24 @@
             this.lblOGGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.lblOGGuide.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblOGGuide_LinkClicked);
             // 
+            // chkLogScale
+            // 
+            this.chkLogScale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLogScale.Image = null;
+            this.chkLogScale.Location = new System.Drawing.Point(527, 155);
+            this.chkLogScale.Name = "chkLogScale";
+            this.chkLogScale.Size = new System.Drawing.Size(84, 17);
+            this.chkLogScale.TabIndex = 206;
+            this.chkLogScale.Text = "Log scale";
+            this.chkLogScale.UseVisualStyleBackColor = true;
+            this.chkLogScale.CheckedChanged += new System.EventHandler(this.chkLogScale_CheckedChanged);
+            // 
             // frmCFCConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 717);
+            this.Controls.Add(this.chkLogScale);
             this.Controls.Add(this.lblOGGuide);
             this.Controls.Add(this.labelTS1);
             this.Controls.Add(this.nudCFC_cq);
@@ -736,7 +750,7 @@
             this.Controls.Add(this.ucCFC_eq);
             this.Controls.Add(this.labelTS663);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MaximumSize = new System.Drawing.Size(1024, 756);
+            this.MaximumSize = new System.Drawing.Size(4096, 756);
             this.MinimumSize = new System.Drawing.Size(640, 756);
             this.Name = "frmCFCConfig";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
@@ -793,5 +807,6 @@
         private System.Windows.Forms.LabelTS labelTS1;
         private System.Windows.Forms.NumericUpDownTS nudCFC_cq;
         private System.Windows.Forms.LinkLabel lblOGGuide;
+        private System.Windows.Forms.CheckBoxTS chkLogScale;
     }
 }
