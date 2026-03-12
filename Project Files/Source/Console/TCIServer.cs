@@ -201,6 +201,97 @@ namespace Thetis
         public double[] Samples;
     }
 
+    internal sealed class TCIPendingFloatBuffer
+    {
+        private float[] m_buffer;
+        private int m_readIndex;
+        private int m_count;
+
+        public TCIPendingFloatBuffer(int initialCapacity = 16)
+        {
+            m_buffer = new float[Math.Max(16, initialCapacity)];
+        }
+
+        public int Count
+        {
+            get { return m_count; }
+        }
+
+        public void Enqueue(float[] source, int sourceOffset, int count)
+        {
+            if (source == null || count <= 0)
+                return;
+
+            EnsureCapacity(count);
+            Array.Copy(source, sourceOffset, m_buffer, m_readIndex + m_count, count);
+            m_count += count;
+        }
+
+        public void CopyTo(float[] destination, int destinationOffset, int count)
+        {
+            if (count <= 0)
+                return;
+
+            Array.Copy(m_buffer, m_readIndex, destination, destinationOffset, count);
+        }
+
+        public float Peek(int index)
+        {
+            return m_buffer[m_readIndex + index];
+        }
+
+        public void Advance(int count)
+        {
+            if (count <= 0)
+                return;
+
+            if (count >= m_count)
+            {
+                m_readIndex = 0;
+                m_count = 0;
+                return;
+            }
+
+            m_readIndex += count;
+            m_count -= count;
+
+            if (m_count == 0)
+            {
+                m_readIndex = 0;
+            }
+            else if (m_readIndex >= m_buffer.Length / 2)
+            {
+                Array.Copy(m_buffer, m_readIndex, m_buffer, 0, m_count);
+                m_readIndex = 0;
+            }
+        }
+
+        private void EnsureCapacity(int additionalCount)
+        {
+            int requiredCount = m_count + additionalCount;
+            if (m_readIndex + requiredCount <= m_buffer.Length)
+                return;
+
+            if (requiredCount <= m_buffer.Length)
+            {
+                Array.Copy(m_buffer, m_readIndex, m_buffer, 0, m_count);
+                m_readIndex = 0;
+                return;
+            }
+
+            int newLength = m_buffer.Length;
+            while (newLength < requiredCount)
+                newLength *= 2;
+
+            float[] newBuffer = new float[newLength];
+            if (m_count > 0)
+                Array.Copy(m_buffer, m_readIndex, newBuffer, 0, m_count);
+
+            m_buffer = newBuffer;
+            m_readIndex = 0;
+        }
+    }
+
     public class TCPIPtciSocketListener
 	{
 		//
@@ -256,8 +347,8 @@ namespace Thetis
         private readonly HashSet<int> m_iqStreamEnabled = new HashSet<int>();
         private readonly HashSet<int> m_audioStreamEnabled = new HashSet<int>();
         private readonly Queue<TCIQueuedTxAudio> m_txAudioQueue = new Queue<TCIQueuedTxAudio>();
-        private readonly Dictionary<int, List<float>> m_rxAudioLeftPending = new Dictionary<int, List<float>>();
-        private readonly Dictionary<int, List<float>> m_rxAudioRightPending = new Dictionary<int, List<float>>();
+        private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioLeftPending = new Dictionary<int, TCIPendingFloatBuffer>();
+        private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioRightPending = new Dictionary<int, TCIPendingFloatBuffer>();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
 		private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
@@ -2575,42 +2666,62 @@ namespace Thetis
             }
         }
 
-        private static void writeUInt32(List<byte> buffer, uint value)
+        private static void writeUInt32(byte[] buffer, int offset, uint value)
         {
-            buffer.AddRange(BitConverter.GetBytes(value));
+            buffer[offset] = (byte)(value & 0xFF);
+            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
+            buffer[offset + 2] = (byte)((value >> 16) & 0xFF);
+            buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
         }
 
         private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload)
         {
-            List<byte> payload = new List<byte>(64 + (samplePayload?.Length ?? 0));
-            writeUInt32(payload, (uint)receiver);
-            writeUInt32(payload, (uint)sampleRate);
-            writeUInt32(payload, (uint)sampleType);
-            writeUInt32(payload, 0);
-            writeUInt32(payload, 0);
-            writeUInt32(payload, (uint)length);
-            writeUInt32(payload, (uint)streamType);
-            writeUInt32(payload, (uint)channels);
-            for (int i = 0; i < 8; i++) writeUInt32(payload, 0);
-            if (samplePayload != null && samplePayload.Length > 0) payload.AddRange(samplePayload);
-            return payload.ToArray();
+            int samplePayloadLength = samplePayload != null ? samplePayload.Length : 0;
+            byte[] payload = new byte[64 + samplePayloadLength];
+            int offset = 0;
+
+            writeUInt32(payload, offset, (uint)receiver); offset += 4;
+            writeUInt32(payload, offset, (uint)sampleRate); offset += 4;
+            writeUInt32(payload, offset, (uint)sampleType); offset += 4;
+            writeUInt32(payload, offset, 0); offset += 4;
+            writeUInt32(payload, offset, 0); offset += 4;
+            writeUInt32(payload, offset, (uint)length); offset += 4;
+            writeUInt32(payload, offset, (uint)streamType); offset += 4;
+            writeUInt32(payload, offset, (uint)channels); offset += 4;
+
+            for (int i = 0; i < 8; i++, offset += 4)
+                writeUInt32(payload, offset, 0);
+
+            if (samplePayloadLength > 0)
+                Buffer.BlockCopy(samplePayload, 0, payload, 64, samplePayloadLength);
+
+            return payload;
         }
 
         private byte[] encodeSamples(float[] samples, TCISampleType sampleType)
         {
-            if (samples == null) return Array.Empty<byte>();
-            byte[] data = new byte[samples.Length * getBytesPerSample(sampleType)];
+            if (samples == null || samples.Length == 0)
+                return Array.Empty<byte>();
+
+            int bytesPerSample = getBytesPerSample(sampleType);
+            byte[] data = new byte[samples.Length * bytesPerSample];
+
+            if (sampleType == TCISampleType.FLOAT32)
+            {
+                Buffer.BlockCopy(samples, 0, data, 0, data.Length);
+                return data;
+            }
+
             int offset = 0;
             for (int i = 0; i < samples.Length; i++)
             {
-                float rawSample = samples[i];
-                float clippedSample = Math.Max(-1.0f, Math.Min(1.0f, rawSample));
+                float clippedSample = Math.Max(-1.0f, Math.Min(1.0f, samples[i]));
                 switch (sampleType)
                 {
                     case TCISampleType.INT16:
                         short s16 = (short)Math.Round(clippedSample * short.MaxValue);
-                        Buffer.BlockCopy(BitConverter.GetBytes(s16), 0, data, offset, 2);
-                        offset += 2;
+                        data[offset++] = (byte)(s16 & 0xFF);
+                        data[offset++] = (byte)((s16 >> 8) & 0xFF);
                         break;
                     case TCISampleType.INT24:
                         int s24 = (int)Math.Round(clippedSample * 8388607.0f);
@@ -2620,13 +2731,10 @@ namespace Thetis
                         break;
                     case TCISampleType.INT32:
                         int s32 = (int)Math.Round(clippedSample * int.MaxValue);
-                        Buffer.BlockCopy(BitConverter.GetBytes(s32), 0, data, offset, 4);
-                        offset += 4;
-                        break;
-                    case TCISampleType.FLOAT32:
-                    default:
-                        Buffer.BlockCopy(BitConverter.GetBytes(rawSample), 0, data, offset, 4);
-                        offset += 4;
+                        data[offset++] = (byte)(s32 & 0xFF);
+                        data[offset++] = (byte)((s32 >> 8) & 0xFF);
+                        data[offset++] = (byte)((s32 >> 16) & 0xFF);
+                        data[offset++] = (byte)((s32 >> 24) & 0xFF);
                         break;
                 }
             }
@@ -2772,23 +2880,25 @@ namespace Thetis
 
             lock (m_objRxAudioLock)
             {
-                if (!m_rxAudioLeftPending.TryGetValue(receiver, out List<float> leftPending))
+                if (!m_rxAudioLeftPending.TryGetValue(receiver, out TCIPendingFloatBuffer leftPending))
                 {
-                    leftPending = new List<float>(samples * 2);
+                    leftPending = new TCIPendingFloatBuffer(samples * 2);
                     m_rxAudioLeftPending[receiver] = leftPending;
                 }
 
-                if (!m_rxAudioRightPending.TryGetValue(receiver, out List<float> rightPending))
+                if (!m_rxAudioRightPending.TryGetValue(receiver, out TCIPendingFloatBuffer rightPending))
                 {
-                    rightPending = new List<float>(samples * 2);
+                    rightPending = new TCIPendingFloatBuffer(samples * 2);
                     m_rxAudioRightPending[receiver] = rightPending;
                 }
 
-                for (int i = 0; i < samples; i++)
-                {
-                    leftPending.Add(left[i]);
-                    rightPending.Add(right != null && i < right.Length ? right[i] : left[i]);
-                }
+                leftPending.Enqueue(left, 0, samples);
+
+                int rightSamples = right != null ? Math.Min(samples, right.Length) : 0;
+                if (rightSamples > 0)
+                    rightPending.Enqueue(right, 0, rightSamples);
+                if (rightSamples < samples)
+                    rightPending.Enqueue(left, rightSamples, samples - rightSamples);
 
                 while (true)
                 {
@@ -2802,25 +2912,25 @@ namespace Thetis
 						packetSamples = m_audioStreamSamples;
 					}
 
-                    if (packetSamples <= 0 || leftPending.Count < packetSamples)
+                    if (packetSamples <= 0 || leftPending.Count < packetSamples || rightPending.Count < packetSamples)
                         break;
 
 					float[] interleaved = channels <= 1 ? new float[packetSamples] : new float[packetSamples * 2];
 					if (channels <= 1)
 					{
-						leftPending.CopyTo(0, interleaved, 0, packetSamples);
+						leftPending.CopyTo(interleaved, 0, packetSamples);
 					}
 					else
 					{
 						for (int i = 0; i < packetSamples; i++)
 						{
-							interleaved[2 * i] = leftPending[i];
-							interleaved[2 * i + 1] = rightPending[i];
+							interleaved[2 * i] = leftPending.Peek(i);
+							interleaved[2 * i + 1] = rightPending.Peek(i);
 						}
 					}
 
-					leftPending.RemoveRange(0, packetSamples);
-					rightPending.RemoveRange(0, packetSamples);
+					leftPending.Advance(packetSamples);
+					rightPending.Advance(packetSamples);
 
 					byte[] encoded = encodeSamples(interleaved, sampleType);
 					sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, channels, encoded));

@@ -445,11 +445,15 @@ namespace Thetis
 
         public static RadioProtocol CurrentRadioProtocol { get; set; }
         private static readonly object m_objTCIStreamQueueLock = new object();
+        private static readonly object m_objTCIStreamPoolLock = new object();
         private static readonly object m_objTCIIQResamplerLock = new object();
         private static readonly int[] m_tciIQResamplerInputRates = new int[cmRCVR];
         private static readonly int[] m_tciIQResamplerOutputRates = new int[cmRCVR];
         unsafe private static void*[] m_tciIQResamplerI = new void*[cmRCVR];
         unsafe private static void*[] m_tciIQResamplerQ = new void*[cmRCVR];
+        private static readonly Dictionary<int, Stack<float[]>> m_tciFloatBufferPool = new Dictionary<int, Stack<float[]>>();
+        private static readonly Stack<TCIIQBlock> m_tciIQBlockPool = new Stack<TCIIQBlock>();
+        private static readonly Stack<TCIAudioBlock> m_tciAudioBlockPool = new Stack<TCIAudioBlock>();
         private static readonly Queue<TCIIQBlock> m_tciIQQueue = new Queue<TCIIQBlock>();
         private static readonly Queue<TCIAudioBlock> m_tciAudioQueue = new Queue<TCIAudioBlock>();
         private static Thread m_tciRxThread;
@@ -467,6 +471,8 @@ namespace Thetis
         private const int TCI_TX_MAX_OUTSTANDING = 64;
         private const int TCI_TX_EXTRA_BUFFER_MS = 50;
         private const int TCI_MAX_IQ_STREAM_RATE = 384000;
+        private const int TCI_MAX_POOLED_BLOCKS = 64;
+        private const int TCI_MAX_POOLED_BUFFERS_PER_SIZE = 32;
         private static volatile bool m_runTCIStreamThreads = false;
 
         private static Console _console = null;
@@ -1181,10 +1187,28 @@ namespace Thetis
         private static void ServiceTCIRxStreams(TCPIPtciServer server)
         {
             while (tryDequeueTCIIQ(out TCIIQBlock iqBlock))
-                server.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
+            {
+                try
+                {
+                    server.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
+                }
+                finally
+                {
+                    returnTCIIQBlock(iqBlock);
+                }
+            }
 
             while (tryDequeueTCIAudio(out TCIAudioBlock audioBlock))
-                server.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
+            {
+                try
+                {
+                    server.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
+                }
+                finally
+                {
+                    returnTCIAudioBlock(audioBlock);
+                }
+            }
         }
 
         private static void TCITxThreadProc()
@@ -1499,12 +1523,104 @@ namespace Thetis
             }
         }
 
+        private static float[] rentTCIFloatBuffer(int length)
+        {
+            if (length <= 0)
+                return Array.Empty<float>();
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciFloatBufferPool.TryGetValue(length, out Stack<float[]> pool) && pool.Count > 0)
+                    return pool.Pop();
+            }
+
+            return new float[length];
+        }
+
+        private static void returnTCIFloatBuffer(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0)
+                return;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (!m_tciFloatBufferPool.TryGetValue(buffer.Length, out Stack<float[]> pool))
+                {
+                    pool = new Stack<float[]>();
+                    m_tciFloatBufferPool[buffer.Length] = pool;
+                }
+
+                if (pool.Count < TCI_MAX_POOLED_BUFFERS_PER_SIZE)
+                    pool.Push(buffer);
+            }
+        }
+
+        private static TCIIQBlock rentTCIIQBlock()
+        {
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciIQBlockPool.Count > 0)
+                    return m_tciIQBlockPool.Pop();
+            }
+
+            return new TCIIQBlock();
+        }
+
+        private static void returnTCIIQBlock(TCIIQBlock block)
+        {
+            if (block == null)
+                return;
+
+            returnTCIFloatBuffer(block.Samples);
+            block.Receiver = 0;
+            block.SampleRate = 0;
+            block.ComplexSamples = 0;
+            block.Samples = null;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciIQBlockPool.Count < TCI_MAX_POOLED_BLOCKS)
+                    m_tciIQBlockPool.Push(block);
+            }
+        }
+
+        private static TCIAudioBlock rentTCIAudioBlock()
+        {
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciAudioBlockPool.Count > 0)
+                    return m_tciAudioBlockPool.Pop();
+            }
+
+            return new TCIAudioBlock();
+        }
+
+        private static void returnTCIAudioBlock(TCIAudioBlock block)
+        {
+            if (block == null)
+                return;
+
+            returnTCIFloatBuffer(block.Left);
+            returnTCIFloatBuffer(block.Right);
+            block.Receiver = 0;
+            block.SampleRate = 0;
+            block.SamplesPerChannel = 0;
+            block.Left = null;
+            block.Right = null;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciAudioBlockPool.Count < TCI_MAX_POOLED_BLOCKS)
+                    m_tciAudioBlockPool.Push(block);
+            }
+        }
+
         private static void enqueueTCIIQ(TCIIQBlock block)
         {
             lock (m_objTCIStreamQueueLock)
             {
                 while (m_tciIQQueue.Count >= 32)
-                    m_tciIQQueue.Dequeue();
+                    returnTCIIQBlock(m_tciIQQueue.Dequeue());
                 m_tciIQQueue.Enqueue(block);
             }
         }
@@ -1514,7 +1630,7 @@ namespace Thetis
             lock (m_objTCIStreamQueueLock)
             {
                 while (m_tciAudioQueue.Count >= 128)
-                    m_tciAudioQueue.Dequeue();
+                    returnTCIAudioBlock(m_tciAudioQueue.Dequeue());
                 m_tciAudioQueue.Enqueue(block);
             }
         }
@@ -1557,7 +1673,7 @@ namespace Thetis
             int inputRate = GetInputRate(0, id);
             int outputRate = inputRate > TCI_MAX_IQ_STREAM_RATE ? TCI_MAX_IQ_STREAM_RATE : inputRate;
             bool iqSwap = server.IQSwap;
-            float[] iq = new float[nsamples * 2];
+            float[] iq = rentTCIFloatBuffer(nsamples * 2);
             for (int i = 0; i < nsamples; i++)
             {
                 iq[2 * i] = (float)data[2 * i];
@@ -1565,18 +1681,26 @@ namespace Thetis
             }
 
             if (inputRate > TCI_MAX_IQ_STREAM_RATE)
-                iq = resampleTCIIQSamples(id, iq, inputRate, outputRate);
+            {
+                float[] resampled = resampleTCIIQSamples(id, iq, inputRate, outputRate);
+                if (!object.ReferenceEquals(resampled, iq))
+                    returnTCIFloatBuffer(iq);
+                iq = resampled;
+            }
 
             int complexSamples = iq != null ? iq.Length / 2 : 0;
-            if (complexSamples <= 0) return;
-
-            enqueueTCIIQ(new TCIIQBlock()
+            if (complexSamples <= 0)
             {
-                Receiver = id,
-                SampleRate = outputRate,
-                ComplexSamples = complexSamples,
-                Samples = iq
-            });
+                returnTCIFloatBuffer(iq);
+                return;
+            }
+
+            TCIIQBlock block = rentTCIIQBlock();
+            block.Receiver = id;
+            block.SampleRate = outputRate;
+            block.ComplexSamples = complexSamples;
+            block.Samples = iq;
+            enqueueTCIIQ(block);
         }
 
         private static unsafe void OnTCIRxAudioOutSamples(int id, int nsamples, double* data)
@@ -1584,22 +1708,21 @@ namespace Thetis
             TCPIPtciServer server = console != null ? console.TCIServer : null;
             if (server == null || data == null || nsamples <= 0) return;
 
-            float[] left = new float[nsamples];
-            float[] right = new float[nsamples];
+            float[] left = rentTCIFloatBuffer(nsamples);
+            float[] right = rentTCIFloatBuffer(nsamples);
             for (int i = 0; i < nsamples; i++)
             {
                 left[i] = (float)data[2 * i];
                 right[i] = (float)data[2 * i + 1];
             }
 
-            enqueueTCIAudio(new TCIAudioBlock()
-            {
-                Receiver = id,
-                SampleRate = GetChannelOutputRate(0, id),
-                SamplesPerChannel = nsamples,
-                Left = left,
-                Right = right
-            });
+            TCIAudioBlock block = rentTCIAudioBlock();
+            block.Receiver = id;
+            block.SampleRate = GetChannelOutputRate(0, id);
+            block.SamplesPerChannel = nsamples;
+            block.Left = left;
+            block.Right = right;
+            enqueueTCIAudio(block);
         }
 
         private static unsafe void OnTCITxAudioInSamples(int nsamples, double* data)
