@@ -1535,6 +1535,7 @@ namespace Thetis
 
                 bool wantsActiveTciPtt = useTciAudio && bOK && bMox && (!alreadyMox || alreadyActiveTciPtt);
                 bool ownsActiveTciPtt = false;
+
                 if (wantsActiveTciPtt)
                     ownsActiveTciPtt = m_server?.TryAcquireActiveTxAudioListener(this) ?? true;
                 else
@@ -1545,14 +1546,16 @@ namespace Thetis
                     m_txUsesTCIAudio = useTciAudio;
                     m_tciPttActive = wantsActiveTciPtt && ownsActiveTciPtt;
                 }
+
                 if (!m_tciPttActive)
                     clearQueuedTxAudio();
+
 				if (bOK)
 				{
 					if (bMox && alreadyMox)
                     {
                         m_server?.RefreshTxAudioSourceState();
-            m_server?.RefreshStreamRunState();
+						m_server?.RefreshStreamRunState();
                         return;
                     }
 
@@ -1574,8 +1577,8 @@ namespace Thetis
 					}
 				}
 
-                m_server?.RefreshTxAudioSourceState();
-            m_server?.RefreshStreamRunState();
+				m_server?.RefreshTxAudioSourceState();
+				m_server?.RefreshStreamRunState();
 			}
 			else if (bOK && args.Length == 1)
             {
