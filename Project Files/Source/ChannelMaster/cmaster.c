@@ -378,7 +378,7 @@ void xcmaster (int stream)
 
 	case 1:  // standard transmitter
 		tx = txid (stream);
-		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// tci tx audio
+		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// from tci tx audio
 		{
 			if (pcm->InboundTCITxAudio)
 				(*pcm->InboundTCITxAudio)(pcm->xcm_insize[stream], pcm->in[stream]);

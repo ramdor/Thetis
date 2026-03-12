@@ -191,12 +191,6 @@ namespace Thetis
     }
 
 
-    internal enum TCITxStreamBinaryMode
-    {
-        Unknown = 0,
-        Modern19,
-        Legacy18
-    }
     internal sealed class TCIQueuedTxAudio
     {
         public int Receiver;
@@ -266,15 +260,12 @@ namespace Thetis
         private readonly Dictionary<int, List<float>> m_rxAudioRightPending = new Dictionary<int, List<float>>();
         private int m_iqSampleRate = 48000;
         private int m_audioSampleRate = 48000;
-        private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
-        private int m_audioStreamChannels = 2;
-        private int m_audioStreamSamples = 2048;
+		private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
+		private int m_audioStreamChannels = 2;
+		private int m_audioStreamSamples = 2048;
         private int m_txStreamAudioBufferingMs = 50;
         private bool m_txUsesTCIAudio = false;
         private bool m_tciPttActive = false;
-        private TCITxStreamBinaryMode m_txStreamBinaryMode = TCITxStreamBinaryMode.Unknown;
-        private int m_txChronoWithoutAudioCount = 0;
-        private const int TCI_TX_LEGACY_FALLBACK_CHRONO_COUNT = 4;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
 		{
 			_console = c;
@@ -1263,8 +1254,6 @@ namespace Thetis
 			{
 				m_txUsesTCIAudio = false;
                 m_tciPttActive = false;
-                m_txStreamBinaryMode = TCITxStreamBinaryMode.Unknown;
-                m_txChronoWithoutAudioCount = 0;
 			}
 			clearQueuedTxAudio();
 			server?.RefreshTxAudioSourceState();
@@ -2315,6 +2304,7 @@ namespace Thetis
 				sendTune(rx, console.ThreadSafeTCIAccessor.TUN);
             }
 		}
+
 		private void handleRXEnable(string[] args)
         {
 			int rx = 0;
@@ -2349,6 +2339,7 @@ namespace Thetis
                 }
 			}
 		}
+
 		private void parseTextFrame(string msg)
         {
 			//Debug.Print("TCI Msg : " + msg);
@@ -2643,54 +2634,6 @@ namespace Thetis
             return complex;
         }
 
-        private static TCITxStreamBinaryMode detectTxStreamBinaryMode(int channels, int length, int actualValueCount)
-        {
-            if (channels == 1 || channels == 2)
-                return TCITxStreamBinaryMode.Modern19;
-
-            if (channels == 0 && length > 0)
-            {
-                if (actualValueCount == length || actualValueCount == length * 2)
-                    return TCITxStreamBinaryMode.Legacy18;
-            }
-
-            return TCITxStreamBinaryMode.Unknown;
-        }
-
-        private static int inferLegacyTxChannels(int length, int actualValueCount)
-        {
-            if (length > 0 && actualValueCount == length * 2)
-                return 2;
-
-            return 1;
-        }
-
-        private TCITxStreamBinaryMode getTxChronoBinaryMode()
-        {
-            lock (m_objStreamLock)
-            {
-                if (m_txStreamBinaryMode != TCITxStreamBinaryMode.Unknown)
-                    return m_txStreamBinaryMode;
-
-                m_txChronoWithoutAudioCount++;
-                if (m_txChronoWithoutAudioCount >= TCI_TX_LEGACY_FALLBACK_CHRONO_COUNT)
-                    return TCITxStreamBinaryMode.Legacy18;
-
-                return TCITxStreamBinaryMode.Modern19;
-            }
-        }
-
-        private void noteInboundTxAudioBinaryMode(TCITxStreamBinaryMode mode)
-        {
-            lock (m_objStreamLock)
-            {
-                if (mode != TCITxStreamBinaryMode.Unknown)
-                    m_txStreamBinaryMode = mode;
-
-                m_txChronoWithoutAudioCount = 0;
-            }
-        }
-
         private void sendIQSampleRate(int sampleRate)
         {
             sendTextFrame("iq_samplerate:" + sampleRate.ToString() + ";");
@@ -2721,7 +2664,7 @@ namespace Thetis
             sendTextFrame("tx_stream_audio_buffering:" + milliseconds.ToString() + ";");
         }
 
-        internal bool WantsIQStream(int receiver)
+        private bool wantsIQStream(int receiver)
         {
             lock (m_objStreamLock)
             {
@@ -2729,7 +2672,7 @@ namespace Thetis
             }
         }
 
-        internal bool WantsAudioStream(int receiver)
+        private bool wantsAudioStream(int receiver)
         {
             lock (m_objStreamLock)
             {
@@ -2740,7 +2683,7 @@ namespace Thetis
         internal void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
         {
             if (iqSamples == null) return;
-            if (!WantsIQStream(receiver)) return;
+            if (!wantsIQStream(receiver)) return;
             if (complexSamples < 0) complexSamples = iqSamples.Length / 2;
 
             byte[] encoded = encodeSamples(iqSamples, TCISampleType.FLOAT32);
@@ -2749,7 +2692,7 @@ namespace Thetis
 
         internal void PublishRxAudioSamples(int receiver, int sampleRate, float[] left, float[] right, int samples = -1)
         {
-            if (!WantsAudioStream(receiver) || left == null) return;
+            if (!wantsAudioStream(receiver) || left == null) return;
             if (samples < 0) samples = left.Length;
             if (samples <= 0) return;
             if (samples > left.Length) samples = left.Length;
@@ -2826,10 +2769,8 @@ namespace Thetis
                 sampleType = m_audioSampleType;
             }
 
-            TCITxStreamBinaryMode mode = getTxChronoBinaryMode();
-            int requestLength = mode == TCITxStreamBinaryMode.Legacy18 ? samples : samples * Math.Max(1, channels);
-            int wireChannels = mode == TCITxStreamBinaryMode.Legacy18 ? 0 : channels;
-            sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, requestLength, TCIStreamType.TX_CHRONO, wireChannels, Array.Empty<byte>()));
+			int requestLength = samples;// samples * Math.Max(1, channels);
+            sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, requestLength, TCIStreamType.TX_CHRONO, channels, Array.Empty<byte>()));
         }
 
         internal bool UsesTCITxAudio()
@@ -2839,7 +2780,6 @@ namespace Thetis
                 return m_txUsesTCIAudio;
             }
         }
-
 
         internal bool UsesActiveTCITxAudio()
         {
@@ -2874,11 +2814,6 @@ namespace Thetis
             {
                 m_txAudioQueue.Clear();
             }
-
-            lock (m_objStreamLock)
-            {
-                m_txChronoWithoutAudioCount = 0;
-            }
         }
 
         internal bool TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio)
@@ -2898,50 +2833,69 @@ namespace Thetis
 
         private void handleBinaryFrame(byte[] payload)
         {
-            if (payload == null || payload.Length < 64) return;
+            if (payload == null || payload.Length < 64)
+                return;
 
             int receiver = BitConverter.ToInt32(payload, 0);
             int sampleRate = BitConverter.ToInt32(payload, 4);
             TCISampleType sampleType = (TCISampleType)BitConverter.ToUInt32(payload, 8);
             int length = BitConverter.ToInt32(payload, 20);
             TCIStreamType streamType = (TCIStreamType)BitConverter.ToUInt32(payload, 24);
-            int channels = BitConverter.ToInt32(payload, 28);
+            int headerChannels = BitConverter.ToInt32(payload, 28);
+
+            if (streamType != TCIStreamType.TX_AUDIO_STREAM || length <= 0)
+                return;
+
             int bytesPerSample = getBytesPerSample(sampleType);
-            int expectedDataBytes = Math.Max(0, length) * bytesPerSample;
             int dataOffset = 64;
             int actualDataBytes = payload.Length - dataOffset;
-
-            if (payload.Length < dataOffset + expectedDataBytes) return;
-            if (streamType != TCIStreamType.TX_AUDIO_STREAM) return;
-            if (actualDataBytes < bytesPerSample) return;
+            if (actualDataBytes < bytesPerSample)
+                return;
 
             int actualValueCount = actualDataBytes / bytesPerSample;
-            TCITxStreamBinaryMode detectedMode = detectTxStreamBinaryMode(channels, length, actualValueCount);
 
+            int channels;
             int decodedValueCount;
-            if (detectedMode == TCITxStreamBinaryMode.Legacy18)
+
+            bool modernHeader = (headerChannels == 1 || headerChannels == 2);
+
+            if (modernHeader)
             {
-                channels = inferLegacyTxChannels(length, actualValueCount);
-                decodedValueCount = actualValueCount;
+                channels = headerChannels;
+                decodedValueCount = Math.Min(length, actualValueCount);
+
+                if (channels > 1)
+                    decodedValueCount -= decodedValueCount % channels;
             }
             else
             {
-                if (channels < 1)
+                // legacy/JTDX
+                // no real channels field
+                // if payload is twice length, first 'length' floats are valid stereo-interleaved audio
+                if (actualValueCount >= length * 2)
+                    channels = 2;
+                else
                     channels = 1;
 
-                decodedValueCount = Math.Max(0, length);
-            if (channels > 1 && actualValueCount == decodedValueCount * channels)
-                decodedValueCount = actualValueCount;
-            else if (actualValueCount < decodedValueCount || decodedValueCount <= 0)
-                decodedValueCount = actualValueCount;
+                decodedValueCount = Math.Min(length, actualValueCount);
+
+                if (channels > 1)
+                    decodedValueCount -= decodedValueCount % channels;
             }
 
-            if (channels > 1)
-                decodedValueCount -= decodedValueCount % channels;
-            if (decodedValueCount <= 0) return;
+            if (decodedValueCount <= 0)
+                return;
 
             float[] decoded = decodeSamples(payload, dataOffset, decodedValueCount, sampleType);
+
+            //for (int i = 0; i < decoded.Length; i++)
+            //{
+            //    if (float.IsNaN(decoded[i]) || float.IsInfinity(decoded[i]))
+            //        decoded[i] = 0.0f;
+            //}
+
             int complexSamples = channels <= 1 ? decoded.Length : decoded.Length / channels;
+
             TCIQueuedTxAudio queuedAudio = new TCIQueuedTxAudio()
             {
                 Receiver = receiver,
@@ -2951,8 +2905,6 @@ namespace Thetis
                 ComplexSamples = complexSamples,
                 Samples = convertStreamSamplesToComplex(decoded, channels)
             };
-
-            noteInboundTxAudioBinaryMode(detectedMode);
 
             lock (m_objTxQueueLock)
             {

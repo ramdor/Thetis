@@ -110,6 +110,7 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "getCMAstate", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetCMAstate();
 
+        // tci
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIIQ", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpOutboundTCIIQ(TCIStreamSamples del);
 
@@ -118,9 +119,9 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpInboundTCITxAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpInboundTCITxAudio(TCITxInput del);
+        // end tci
 
         // router
-
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void LoadRouterAll(void* ptr, int id, int sources, int calls, int varvals, 
             int* nstreams, int* function, int* callid);
@@ -1097,9 +1098,13 @@ namespace Thetis
         unsafe public static void SendCallbacks()
         {
             SendCBPushVox(0, PushVoxDel);
+
+            //tci
             SendpOutboundTCIIQ(TCIIQDel);
             SendpOutboundTCIAudio(TCIAudioDel);
             SendpInboundTCITxAudio(TCITxInDel);
+            //
+
             EnsureTCIStreamThreads();
             WaveThing.initWaves();
             Scope.initScope();
@@ -1430,17 +1435,17 @@ namespace Thetis
         // vox
         // declare a delegate that is of the same form as the function which it is to encapsulate
         unsafe public delegate void PushVox(int channel, int active);
-        unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);
-        unsafe public delegate void TCITxInput(int nsamples, double* data);
         // assign the function 'VOX.PushVox' to an instance of the delegate 'PushVox'
         unsafe private static PushVox PushVoxDel = VOX.PushVox;
-        unsafe private static TCIStreamSamples TCIIQDel = OnTCIIQSamples;
-        unsafe private static TCIStreamSamples TCIAudioDel = OnTCIAudioSamples;
-        unsafe private static TCITxInput TCITxInDel = OnTCITxAudioInput;
         // set-up a method definition to send the function pointer to the dll
         [DllImport("ChannelMaster.dll", EntryPoint = "SendCBPushVox", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBPushVox(int id, PushVox Del);
 
+        unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);
+        unsafe public delegate void TCITxInput(int nsamples, double* data);
+        unsafe private static TCIStreamSamples TCIIQDel = OnTCIIQSamples;
+        unsafe private static TCIStreamSamples TCIAudioDel = OnTCIAudioSamples;
+        unsafe private static TCITxInput TCITxInDel = OnTCITxAudioInput;
         private static unsafe void OnTCIIQSamples(int id, int nsamples, double* data)
         {
             Console console = Audio.console;
