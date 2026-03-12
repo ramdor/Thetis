@@ -1294,6 +1294,7 @@ namespace Thetis
                 m_tciPttActive = false;
 			}
 			clearQueuedTxAudio();
+            server?.ReleaseActiveTxAudioListener(this);
 			server?.RefreshTxAudioSourceState();
             m_server?.RefreshStreamRunState();
 			if (m_client != null)
@@ -1530,8 +1531,19 @@ namespace Thetis
                 lock (m_objStreamLock)
                 {
                     alreadyActiveTciPtt = m_tciPttActive;
+                }
+
+                bool wantsActiveTciPtt = useTciAudio && bOK && bMox && (!alreadyMox || alreadyActiveTciPtt);
+                bool ownsActiveTciPtt = false;
+                if (wantsActiveTciPtt)
+                    ownsActiveTciPtt = m_server?.TryAcquireActiveTxAudioListener(this) ?? true;
+                else
+                    m_server?.ReleaseActiveTxAudioListener(this);
+
+                lock (m_objStreamLock)
+                {
                     m_txUsesTCIAudio = useTciAudio;
-                    m_tciPttActive = useTciAudio && bOK && bMox && (!alreadyMox || alreadyActiveTciPtt);
+                    m_tciPttActive = wantsActiveTciPtt && ownsActiveTciPtt;
                 }
                 if (!m_tciPttActive)
                     clearQueuedTxAudio();
@@ -2853,17 +2865,27 @@ namespace Thetis
                 sampleRate = m_audioSampleRate;
                 samples = m_audioStreamSamples;
                 bufferingMs = m_txStreamAudioBufferingMs;
-                return m_txUsesTCIAudio;
+                return m_tciPttActive;
             }
         }
 
 
         internal void SyncTciPttToMox(bool expectedMox)
         {
+            bool releaseOwner = false;
             lock (m_objStreamLock)
             {
                 if (!expectedMox)
+                {
+                    releaseOwner = m_tciPttActive;
                     m_tciPttActive = false;
+            }
+        }
+
+            if (releaseOwner)
+            {
+                clearQueuedTxAudio();
+                m_server?.ReleaseActiveTxAudioListener(this);
             }
         }
         private void clearQueuedTxAudio()
@@ -3247,6 +3269,7 @@ namespace Thetis
 		private Thread m_serverThread = null;
 		private Thread m_purgingThread = null;
 		private List<TCPIPtciSocketListener> m_socketListenersList = null;
+        private TCPIPtciSocketListener m_activeTxAudioListener = null;
 		private Object m_objLocker = new Object();
 		private bool m_bSleepingInPurge = false;
 		private bool m_bDelegatesAdded = false;
@@ -4130,6 +4153,50 @@ namespace Thetis
             }
         }
 
+        private TCPIPtciSocketListener GetActiveTxAudioListenerLocked()
+        {
+            if (m_server == null || m_socketListenersList == null)
+            {
+                m_activeTxAudioListener = null;
+                return null;
+            }
+
+            if (m_activeTxAudioListener != null && !m_socketListenersList.Contains(m_activeTxAudioListener))
+                m_activeTxAudioListener = null;
+
+            return m_activeTxAudioListener;
+        }
+
+        internal bool TryAcquireActiveTxAudioListener(TCPIPtciSocketListener socketListener)
+        {
+            lock (m_objLocker)
+            {
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                if (activeListener != null && !activeListener.UsesActiveTCITxAudio())
+                {
+                    m_activeTxAudioListener = null;
+                    activeListener = null;
+                }
+
+                if (activeListener == null || activeListener == socketListener)
+                {
+                    m_activeTxAudioListener = socketListener;
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal void ReleaseActiveTxAudioListener(TCPIPtciSocketListener socketListener)
+        {
+            lock (m_objLocker)
+            {
+                if (m_activeTxAudioListener == socketListener)
+                    m_activeTxAudioListener = null;
+            }
+        }
+
         internal bool UsesTCITxAudio()
         {
             lock (m_objLocker)
@@ -4151,16 +4218,9 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
-                if (m_server == null || m_socketListenersList == null) return false;
-
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-                {
-                    if (socketListener != null && socketListener.UsesActiveTCITxAudio())
-                        return true;
-                }
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                return activeListener != null && activeListener.UsesActiveTCITxAudio();
             }
-
-            return false;
         }
         internal bool TryGetTxAudioRequestSettings(out int sampleRate, out int samples, out int bufferingMs)
         {
@@ -4170,17 +4230,13 @@ namespace Thetis
 
             lock (m_objLocker)
             {
-                if (m_server == null || m_socketListenersList == null) return false;
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                if (activeListener == null)
+                    return false;
 
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-                {
-                    if (socketListener != null && socketListener.TryGetTxAudioRequestSettings(out sampleRate, out samples, out bufferingMs))
-                        return true;
+                return activeListener.TryGetTxAudioRequestSettings(out sampleRate, out samples, out bufferingMs);
                 }
             }
-
-            return false;
-        }
 
         internal void RefreshTxAudioSourceState()
         {
@@ -4191,12 +4247,10 @@ namespace Thetis
         {           
             lock (m_objLocker)
             {
-                if (m_server == null || m_socketListenersList == null) return;
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                if (activeListener == null) return;
 
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-                {
-                    socketListener.SendTxChrono(receiver);
-                }
+                activeListener.SendTxChrono(receiver);
             }
         }
 
@@ -4204,19 +4258,9 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
-                if (m_server == null || m_socketListenersList == null)
-                {
-                    queuedAudio = null;
-                    return false;
-                }
-
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-                {
-                    if (socketListener.TryDequeueTxAudio(out queuedAudio))
-                    {
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                if (activeListener != null && activeListener.TryDequeueTxAudio(out queuedAudio))
                         return true;
-                    }
-                }
             }
 
             queuedAudio = null;
