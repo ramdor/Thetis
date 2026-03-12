@@ -64,4 +64,6 @@ extern void cm_main (void *pargs);
 
 extern void SetCMRingOutsize (int id, int size);
 
+
 #endif
+

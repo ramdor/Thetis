@@ -184,6 +184,8 @@ void xpipe (int stream, int pos, double** buffs)
 			xscope(rx, 0, ppip->rbuff[rx]);														// scope
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
+			if (pip.OutboundTCIAudio)
+				(*pip.OutboundTCIAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);
 			break;
 		}
 	}
@@ -203,6 +205,8 @@ void xpipe (int stream, int pos, double** buffs)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
+			if (pip.OutboundTCIAudio)
+				(*pip.OutboundTCIAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);
 			break;
 		}
 	}
@@ -211,10 +215,13 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // MIC data
-			xplaywave(0, 1, buff);																// wav player 0
-			xplaywave(1, 1, buff);																// wav player 1
-			if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
-			if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
+			if (!_InterlockedAnd (&pcm->xmtr[0].use_tci_audio, 1))								// stop vacs and playback if tci TX audio is active
+			{
+				xplaywave(0, 1, buff);															// wav player 0
+				xplaywave(1, 1, buff);															// wav player 1
+				if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
+				if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
+			}
 			xrecordwave(0, 1, 0, buff);															// wav recorder 0 //[2.10.3.6]MW0LGE moved after vac
 			xrecordwave(1, 1, 0, buff);															// wav recorder 1
 			break;
@@ -299,6 +306,12 @@ PORT
 void SetTopPan3Run (int run)
 {
 	_InterlockedExchange (&pip.rcvr[0].top_pan3_run, run);
+}
+
+PORT
+void SendpOutboundTCIAudio(void (*Outbound)(int id, int nsamples, double* buff))
+{
+	pip.OutboundTCIAudio = Outbound;
 }
 
 PORT

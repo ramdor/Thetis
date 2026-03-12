@@ -2901,11 +2901,7 @@ namespace Thetis
                 pnlParaEQ2.Location = p2Loc;
                 pnlParaEQ2.Visible = true;
 
-                radParaEQ_RXTX_CheckedChanged(sender, e);
-                _state.RXenabled = console.RXEQ;
-                _state.TXenabled = console.TXEQ;
-                
-                radParaEQ_CheckedChanged(sender, e);
+                radParaEQ_RXTX_CheckedChanged(sender, e);                
                 chkUseQFactors_CheckedChanged(sender, e);
 
                 pnlParaEQ.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
@@ -3128,16 +3124,24 @@ namespace Thetis
 
             if (_state.RXselected)
             {
-                ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _state.RX_minHz, out _state.RX_maxHz, out _state.RX_ParametricEQ, out _state.RX_BandCount, bc);
+                ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _, out _, out _, out _, bc, _state.RX_minHz, _state.RX_maxHz);
                 _state.RX_BandCount = bc;
+
+                ucParametricEq1.SetPointsData(_state.RX_F, _state.RX_G, _state.RX_Q);
+                ucParametricEq1.GlobalGainDb = _state.RX_Preamp;
             }
             else
             {
-                ucParametricEq1.GetDefaults(out _state.TX_F, out _state.TX_G, out _state.TX_Q, out _state.TX_Preamp, out _state.TX_minHz, out _state.TX_maxHz, out _state.TX_ParametricEQ, out _state.TX_BandCount, bc);
+                ucParametricEq1.GetDefaults(out _state.TX_F, out _state.TX_G, out _state.TX_Q, out _state.TX_Preamp, out _, out _, out _, out _, bc, _state.TX_minHz, _state.TX_maxHz);
                 _state.TX_BandCount = bc;
+
+                ucParametricEq1.SetPointsData(_state.TX_F, _state.TX_G, _state.TX_Q);
+                ucParametricEq1.GlobalGainDb = _state.TX_Preamp;
             }
-            nudParaEQ_selected_band.Maximum = bc;
+
             ucParametricEq1.BandCount = bc;
+
+            setParaEQData();
 
             setupWDSPdataFromParaEQ(_state.RXselected);            
         }

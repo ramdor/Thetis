@@ -37,6 +37,7 @@ typedef struct _pipe
 	void (__stdcall *create_Scope)(int id);
 	void (__stdcall *create_WaveRecord)(int id);
 	void (__stdcall *create_WavePlay)(int id);
+	void (*OutboundTCIAudio)(int id, int nsamples, double* buff);	// pointer to callback with per-receiver audio samples
 	struct // receiver items
 	{
 		volatile long top_pan3_run;
@@ -65,5 +66,7 @@ void create_pipe();
 void destroy_pipe();
 
 void xpipe (int stream, int pos, double** buff);
+
+extern __declspec(dllexport) void SendpOutboundTCIAudio(void (*Outbound)(int id, int nsamples, double* buff));
 
 #endif
