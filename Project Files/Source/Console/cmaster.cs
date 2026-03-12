@@ -112,10 +112,10 @@ namespace Thetis
 
         // tci
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIIQ", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SendpOutboundTCIIQ(TCIStreamSamples del);
+        public static extern void SendpOutboundTCIRxIQ(TCIStreamSamples del);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIAudio", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SendpOutboundTCIAudio(TCIStreamSamples del);
+        public static extern void SendpOutboundTCIRxAudio(TCIStreamSamples del);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpInboundTCITxAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpInboundTCITxAudio(TCITxInput del);
@@ -248,6 +248,9 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXVAC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXVAC(int txid, int txvac);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRun(int active);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXTCIAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXTCIAudio(int txid, int active);
@@ -442,6 +445,11 @@ namespace Thetis
 
         public static RadioProtocol CurrentRadioProtocol { get; set; }
         private static readonly object m_objTCIStreamQueueLock = new object();
+        private static readonly object m_objTCIIQResamplerLock = new object();
+        private static readonly int[] m_tciIQResamplerInputRates = new int[cmRCVR];
+        private static readonly int[] m_tciIQResamplerOutputRates = new int[cmRCVR];
+        unsafe private static void*[] m_tciIQResamplerI = new void*[cmRCVR];
+        unsafe private static void*[] m_tciIQResamplerQ = new void*[cmRCVR];
         private static readonly Queue<TCIIQBlock> m_tciIQQueue = new Queue<TCIIQBlock>();
         private static readonly Queue<TCIAudioBlock> m_tciAudioQueue = new Queue<TCIAudioBlock>();
         private static Thread m_tciRxThread;
@@ -458,7 +466,10 @@ namespace Thetis
         unsafe private static void* m_tciTxResampler = null;
         private const int TCI_TX_MAX_OUTSTANDING = 64;
         private const int TCI_TX_EXTRA_BUFFER_MS = 50;
+        private const int TCI_MAX_IQ_STREAM_RATE = 384000;
         private static volatile bool m_runTCIStreamThreads = false;
+
+        private static Console _console = null;
         #endregion
 
         #region logic calls
@@ -1094,15 +1105,27 @@ namespace Thetis
         }
         #endregion
 
-        #region callbacks       
+        #region callbacks
+        private static Console console
+        {
+            get
+            {
+                if (_console == null)
+                {
+                    _console = Audio.console;
+                }
+                return _console;
+            }
+        }
+
         unsafe public static void SendCallbacks()
         {
             SendCBPushVox(0, PushVoxDel);
 
             //tci
-            SendpOutboundTCIIQ(TCIIQDel);
-            SendpOutboundTCIAudio(TCIAudioDel);
-            SendpInboundTCITxAudio(TCITxInDel);
+            SendpOutboundTCIRxIQ(TCIRxIQOutDel);
+            SendpOutboundTCIRxAudio(TCIRxAudioOutDel);
+            SendpInboundTCITxAudio(TCITxAudioInDel);
             //
 
             EnsureTCIStreamThreads();
@@ -1110,6 +1133,12 @@ namespace Thetis
             Scope.initScope();
         }
 
+        #region TCI Audio
+        unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);
+        unsafe public delegate void TCITxInput(int nsamples, double* data);
+        unsafe private static TCIStreamSamples TCIRxIQOutDel = OnTCIRxIQOutSamples;
+        unsafe private static TCIStreamSamples TCIRxAudioOutDel = OnTCIRxAudioOutSamples;
+        unsafe private static TCITxInput TCITxAudioInDel = OnTCITxAudioInSamples;
         private static void EnsureTCIStreamThreads()
         {
             m_runTCIStreamThreads = true;
@@ -1139,7 +1168,6 @@ namespace Thetis
             {
                 try
                 {
-                    Console console = Audio.console;
                     TCPIPtciServer server = console != null ? console.TCIServer : null;
                     if (server != null)
                         ServiceTCIRxStreams(server);
@@ -1152,10 +1180,10 @@ namespace Thetis
 
         private static void ServiceTCIRxStreams(TCPIPtciServer server)
         {
-            while (TryDequeueTCIIQ(out TCIIQBlock iqBlock))
+            while (tryDequeueTCIIQ(out TCIIQBlock iqBlock))
                 server.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
 
-            while (TryDequeueTCIAudio(out TCIAudioBlock audioBlock))
+            while (tryDequeueTCIAudio(out TCIAudioBlock audioBlock))
                 server.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
         }
 
@@ -1165,7 +1193,6 @@ namespace Thetis
             {
                 try
                 {
-                    Console console = Audio.console;
                     TCPIPtciServer server = console != null ? console.TCIServer : null;
                     ServiceTCITxProtocol(console, server);
                 }
@@ -1179,11 +1206,11 @@ namespace Thetis
         {
             if (console == null || server == null || !server.UsesActiveTCITxAudio() || !Audio.MOX)
             {
-                ResetTCITxState();
+                resetTCITxState();
                 return;
             }
 
-            int receiver = GetActiveTCITxReceiver(console);
+            int receiver = Audio.RX2Enabled && Audio.VFOBTX ? 1 : 0;
             int targetRate = GetInputRate(1, 0);
             if (targetRate <= 0)
                 targetRate = 48000;
@@ -1198,7 +1225,7 @@ namespace Thetis
             }
 
             if (resetForStateChange)
-                ResetTCITxState();
+                resetTCITxState();
 
             lock (m_objTCITxStateLock)
             {
@@ -1208,7 +1235,7 @@ namespace Thetis
 
             if (!server.TryGetTxAudioRequestSettings(out int requestRate, out int requestSamples, out int bufferingMs))
             {
-                ResetTCITxState();
+                resetTCITxState();
                 return;
             }
 
@@ -1227,7 +1254,7 @@ namespace Thetis
                 if (queuedAudio == null || queuedAudio.Receiver != receiver)
                     continue;
 
-                QueueTCITxAudio(queuedAudio, targetRate);
+                queueTCITxAudio(queuedAudio, targetRate);
             }
 
             int txBlock = GetBuffSize(targetRate);
@@ -1279,15 +1306,7 @@ namespace Thetis
             }
         }
 
-        private static int GetActiveTCITxReceiver(Console console)
-        {
-            if (console == null)
-                return 0;
-
-            return console.ThreadSafeTCIAccessor.RX2Enabled && console.ThreadSafeTCIAccessor.VFOBTX ? 1 : 0;
-        }
-
-        private static void ResetTCITxState()
+        private static void resetTCITxState()
         {
             lock (m_objTCITxStateLock)
             {
@@ -1307,7 +1326,7 @@ namespace Thetis
             }
         }
 
-        private static void QueueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate)
+        private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate)
         {
             if (queuedAudio == null || queuedAudio.Samples == null || queuedAudio.ComplexSamples <= 0)
                 return;
@@ -1328,7 +1347,7 @@ namespace Thetis
                     mono[i] = (float)(queuedAudio.Samples[2 * i] + queuedAudio.Samples[2 * i + 1]);
             }
 
-            float[] output = ResampleTCITxSamples(mono, queuedAudio.SampleRate, targetRate);
+            float[] output = resampleTCITxSamples(mono, queuedAudio.SampleRate, targetRate);
             if (output == null || output.Length == 0)
                 return;
 
@@ -1339,7 +1358,7 @@ namespace Thetis
             }
         }
 
-        private static unsafe float[] ResampleTCITxSamples(float[] input, int inputRate, int targetRate)
+        private static unsafe float[] resampleTCITxSamples(float[] input, int inputRate, int targetRate)
         {
             if (input == null || input.Length == 0)
                 return Array.Empty<float>();
@@ -1383,7 +1402,104 @@ namespace Thetis
             }
         }
 
-        private static void EnqueueTCIIQ(TCIIQBlock block)
+        private static unsafe void destroyTCIIQResampler(int receiver)
+        {
+            if (receiver < 0 || receiver >= cmRCVR)
+                return;
+
+            if (m_tciIQResamplerI[receiver] != null)
+            {
+                WDSP.destroy_resampleFV(m_tciIQResamplerI[receiver]);
+                m_tciIQResamplerI[receiver] = null;
+            }
+
+            if (m_tciIQResamplerQ[receiver] != null)
+            {
+                WDSP.destroy_resampleFV(m_tciIQResamplerQ[receiver]);
+                m_tciIQResamplerQ[receiver] = null;
+            }
+
+            m_tciIQResamplerInputRates[receiver] = 0;
+            m_tciIQResamplerOutputRates[receiver] = 0;
+        }
+
+        private static unsafe float[] resampleTCIIQSamples(int receiver, float[] input, int inputRate, int targetRate)
+        {
+            if (input == null || input.Length == 0)
+                return Array.Empty<float>();
+
+            if (receiver < 0 || receiver >= cmRCVR || inputRate <= 0 || targetRate <= 0)
+                return input;
+
+            if (inputRate <= targetRate)
+            {
+                lock (m_objTCIIQResamplerLock)
+                {
+                    destroyTCIIQResampler(receiver);
+                }
+                return input;
+            }
+
+            int complexSamples = input.Length / 2;
+            if (complexSamples <= 0)
+                return Array.Empty<float>();
+
+            float[] iInput = new float[complexSamples];
+            float[] qInput = new float[complexSamples];
+            for (int i = 0; i < complexSamples; i++)
+            {
+                iInput[i] = input[2 * i];
+                qInput[i] = input[2 * i + 1];
+            }
+
+            lock (m_objTCIIQResamplerLock)
+            {
+                if (m_tciIQResamplerI[receiver] == null ||
+                    m_tciIQResamplerQ[receiver] == null ||
+                    m_tciIQResamplerInputRates[receiver] != inputRate ||
+                    m_tciIQResamplerOutputRates[receiver] != targetRate)
+                {
+                    destroyTCIIQResampler(receiver);
+                    m_tciIQResamplerI[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
+                    m_tciIQResamplerQ[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
+                    m_tciIQResamplerInputRates[receiver] = inputRate;
+                    m_tciIQResamplerOutputRates[receiver] = targetRate;
+                }
+
+                int maxOutputSamples = Math.Max(
+                    complexSamples + 64,
+                    (int)Math.Ceiling((double)complexSamples * targetRate / inputRate) + 64);
+
+                float[] iOutput = new float[maxOutputSamples];
+                float[] qOutput = new float[maxOutputSamples];
+                int iOutputSamples = 0;
+                int qOutputSamples = 0;
+
+                fixed (float* pIInput = iInput)
+                fixed (float* pQInput = qInput)
+                fixed (float* pIOutput = iOutput)
+                fixed (float* pQOutput = qOutput)
+                {
+                    WDSP.xresampleFV(pIInput, pIOutput, complexSamples, &iOutputSamples, m_tciIQResamplerI[receiver]);
+                    WDSP.xresampleFV(pQInput, pQOutput, complexSamples, &qOutputSamples, m_tciIQResamplerQ[receiver]);
+                }
+
+                int outputSamples = Math.Min(iOutputSamples, qOutputSamples);
+                if (outputSamples <= 0)
+                    return Array.Empty<float>();
+
+                float[] output = new float[outputSamples * 2];
+                for (int i = 0; i < outputSamples; i++)
+                {
+                    output[2 * i] = iOutput[i];
+                    output[2 * i + 1] = qOutput[i];
+                }
+
+                return output;
+            }
+        }
+
+        private static void enqueueTCIIQ(TCIIQBlock block)
         {
             lock (m_objTCIStreamQueueLock)
             {
@@ -1393,7 +1509,7 @@ namespace Thetis
             }
         }
 
-        private static void EnqueueTCIAudio(TCIAudioBlock block)
+        private static void enqueueTCIAudio(TCIAudioBlock block)
         {
             lock (m_objTCIStreamQueueLock)
             {
@@ -1403,7 +1519,7 @@ namespace Thetis
             }
         }
 
-        private static bool TryDequeueTCIIQ(out TCIIQBlock block)
+        private static bool tryDequeueTCIIQ(out TCIIQBlock block)
         {
             lock (m_objTCIStreamQueueLock)
             {
@@ -1418,7 +1534,7 @@ namespace Thetis
             return false;
         }
 
-        private static bool TryDequeueTCIAudio(out TCIAudioBlock block)
+        private static bool tryDequeueTCIAudio(out TCIAudioBlock block)
         {
             lock (m_objTCIStreamQueueLock)
             {
@@ -1432,45 +1548,39 @@ namespace Thetis
             block = null;
             return false;
         }
-        // vox
-        // declare a delegate that is of the same form as the function which it is to encapsulate
-        unsafe public delegate void PushVox(int channel, int active);
-        // assign the function 'VOX.PushVox' to an instance of the delegate 'PushVox'
-        unsafe private static PushVox PushVoxDel = VOX.PushVox;
-        // set-up a method definition to send the function pointer to the dll
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBPushVox", CallingConvention = CallingConvention.Cdecl)]
-        unsafe public static extern void SendCBPushVox(int id, PushVox Del);
 
-        unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);
-        unsafe public delegate void TCITxInput(int nsamples, double* data);
-        unsafe private static TCIStreamSamples TCIIQDel = OnTCIIQSamples;
-        unsafe private static TCIStreamSamples TCIAudioDel = OnTCIAudioSamples;
-        unsafe private static TCITxInput TCITxInDel = OnTCITxAudioInput;
-        private static unsafe void OnTCIIQSamples(int id, int nsamples, double* data)
+        private static unsafe void OnTCIRxIQOutSamples(int id, int nsamples, double* data)
         {
-            Console console = Audio.console;
             TCPIPtciServer server = console != null ? console.TCIServer : null;
             if (server == null || data == null || nsamples <= 0) return;
 
+            int inputRate = GetInputRate(0, id);
+            int outputRate = inputRate > TCI_MAX_IQ_STREAM_RATE ? TCI_MAX_IQ_STREAM_RATE : inputRate;
+            bool iqSwap = server.IQSwap;
             float[] iq = new float[nsamples * 2];
             for (int i = 0; i < nsamples; i++)
             {
                 iq[2 * i] = (float)data[2 * i];
-                iq[2 * i + 1] = (float)data[2 * i + 1];
+                iq[2 * i + 1] = iqSwap ? (float)-data[2 * i + 1] : (float)data[2 * i + 1];
             }
 
-            EnqueueTCIIQ(new TCIIQBlock()
+            if (inputRate > TCI_MAX_IQ_STREAM_RATE)
+                iq = resampleTCIIQSamples(id, iq, inputRate, outputRate);
+
+            int complexSamples = iq != null ? iq.Length / 2 : 0;
+            if (complexSamples <= 0) return;
+
+            enqueueTCIIQ(new TCIIQBlock()
             {
                 Receiver = id,
-                SampleRate = GetInputRate(0, id),
-                ComplexSamples = nsamples,
+                SampleRate = outputRate,
+                ComplexSamples = complexSamples,
                 Samples = iq
             });
         }
 
-        private static unsafe void OnTCIAudioSamples(int id, int nsamples, double* data)
+        private static unsafe void OnTCIRxAudioOutSamples(int id, int nsamples, double* data)
         {
-            Console console = Audio.console;
             TCPIPtciServer server = console != null ? console.TCIServer : null;
             if (server == null || data == null || nsamples <= 0) return;
 
@@ -1482,7 +1592,7 @@ namespace Thetis
                 right[i] = (float)data[2 * i + 1];
             }
 
-            EnqueueTCIAudio(new TCIAudioBlock()
+            enqueueTCIAudio(new TCIAudioBlock()
             {
                 Receiver = id,
                 SampleRate = GetChannelOutputRate(0, id),
@@ -1492,7 +1602,7 @@ namespace Thetis
             });
         }
 
-        private static unsafe void OnTCITxAudioInput(int nsamples, double* data)
+        private static unsafe void OnTCITxAudioInSamples(int nsamples, double* data)
         {
             if (data == null || nsamples <= 0)
                 return;
@@ -1531,6 +1641,16 @@ namespace Thetis
                 }
             }
         }
+        #endregion
+
+        // vox
+        // declare a delegate that is of the same form as the function which it is to encapsulate
+        unsafe public delegate void PushVox(int channel, int active);
+        // assign the function 'VOX.PushVox' to an instance of the delegate 'PushVox'
+        unsafe private static PushVox PushVoxDel = VOX.PushVox;
+        // set-up a method definition to send the function pointer to the dll
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBPushVox", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void SendCBPushVox(int id, PushVox Del);
 
         #endregion
 

@@ -170,6 +170,8 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0:	// IQ data
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pcm->OutboundTCIIQ)
+				(*pcm->OutboundTCIIQ)(rx, pcm->xcm_insize[stream], buff);						// to TCI
 			xplaywave(rx, 0, buff);																// wav player
 			xrecordwave(rx, 0, 0, buff);														// wav recorder
 			xsiphonEXT(rx, buff);																// siphon for phase2 display
@@ -184,7 +186,7 @@ void xpipe (int stream, int pos, double** buffs)
 			xscope(rx, 0, ppip->rbuff[rx]);														// scope
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
-			if (pip.OutboundTCIAudio)
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIAudio)
 				(*pip.OutboundTCIAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);			// to TCI
 			break;
 		}
@@ -194,6 +196,8 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // IQ data
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pcm->OutboundTCIIQ)
+				(*pcm->OutboundTCIIQ)(rx, pcm->xcm_insize[stream], buff);						// to TCI
 			xplaywave(rx, 0, buff);																// wav player
 			xrecordwave(rx, 0, 0, buff);														// wav recorder
 			xvacOUT(rx, 0, buff);																// data to VAC
@@ -205,7 +209,7 @@ void xpipe (int stream, int pos, double** buffs)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
-			if (pip.OutboundTCIAudio)
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIAudio)
 				(*pip.OutboundTCIAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);			// to TCI
 			break;
 		}

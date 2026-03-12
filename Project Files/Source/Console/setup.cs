@@ -7160,12 +7160,12 @@ namespace Thetis
                 console.InitFFTFillTime(1);//[2.10.1.0]MW0LGE
             }
 
+            if (console != null) console.SetHWSampleRateSetting(1, new_rate);
+
             if (console != null && ((new_rate != old_rate) || initializing || m_bForceAudio))
             {
                 console.HWSampleRateChangedHandlers?.Invoke(1, old_rate, new_rate);
             }
-
-            if (console != null) console.SetHWSampleRateSetting(1, new_rate);
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7239,12 +7239,12 @@ namespace Thetis
 
             console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
 
+            if (console != null) console.SetHWSampleRateSetting(2, new_rate);
+
             if (console != null && ((new_rate != old_rate) || initializing || m_bForceAudio))
             {
                 console.HWSampleRateChangedHandlers?.Invoke(2, old_rate, new_rate);
             }
-
-            if (console != null) console.SetHWSampleRateSetting(2, new_rate);
         }
 
         private void comboAudioSampleRate2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -37107,6 +37107,16 @@ namespace Thetis
             tbCFCPRECOMP_Scroll(this, EventArgs.Empty);
             tbCFCPEG_Scroll(this, EventArgs.Empty);
             setCFCProfile(this, EventArgs.Empty);
+        }
+
+        private void chkTCISwapIQ_CheckedChanged(object sender, EventArgs e)
+        {
+            if (console.TCIServer != null) console.TCIServer.IQSwap = chkTCISwapIQ.Checked;
+        }
+
+        private void chkTCIAlwaysStreamIQ_CheckedChanged(object sender, EventArgs e)
+        {
+            if (console.TCIServer != null) console.TCIServer.AlwaysStreamIQ = chkTCIAlwaysStreamIQ.Checked;
         }
         // END CFC para
     }

@@ -258,7 +258,7 @@ namespace Thetis
         private readonly Queue<TCIQueuedTxAudio> m_txAudioQueue = new Queue<TCIQueuedTxAudio>();
         private readonly Dictionary<int, List<float>> m_rxAudioLeftPending = new Dictionary<int, List<float>>();
         private readonly Dictionary<int, List<float>> m_rxAudioRightPending = new Dictionary<int, List<float>>();
-        private int m_iqSampleRate = 48000;
+        private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
 		private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
 		private int m_audioStreamChannels = 2;
@@ -274,6 +274,10 @@ namespace Thetis
 			m_client = client;
 			m_stream = client.GetStream();
 			m_audioStreamSamples = getDefaultAudioStreamSamples(m_audioSampleRate);
+			for (int i = 0; i < m_hwSampleRate.Length; i++)
+			{
+				m_hwSampleRate[i] = cmaster.GetInputRate(0, i);
+            }
 		}
 		~TCPIPtciSocketListener()
 		{
@@ -316,15 +320,48 @@ namespace Thetis
 			sendRXEnable(1, enabled);
 			sendTXEnable(1, enabled && !console.ThreadSafeTCIAccessor.MOX);
 		}
-		public void SampleRateChange(int rx, int oldSampleRate, int newSampleRate)
+		public void HWSampleRateChange(int rx, int oldSampleRate, int newSampleRate)
         {
 			if (m_disconnected) return;
-			if (rx == 1)
+
+            int publishedRate;
+			lock (m_objStreamLock)
 			{
-				int halfSample = newSampleRate / 2;
-				sendIFLimits(-halfSample, halfSample);
+                int index = rx - 1;
+                if (index >= 0 && index < m_hwSampleRate.Length)
+                    m_hwSampleRate[index] = newSampleRate;
+
+                publishedRate = getPublishedIQSampleRateLocked();
 			}
-		}
+			
+            sendIQSampleRate(publishedRate);
+
+            //int halfSample = publishedRate / 2;
+            //sendIFLimits(-halfSample, halfSample);
+            int halfSample = console.ThreadSafeTCIAccessor.SampleRateRX1 / 2;
+            sendIFLimits(-halfSample, halfSample); // only VFOA/rx1
+        }
+
+        private int getPublishedIQSampleRate()
+        {
+            lock (m_objStreamLock)
+            {
+                return getPublishedIQSampleRateLocked();
+            }
+        }
+
+        private int getPublishedIQSampleRateLocked()
+        {
+            int maxRate = 48000;
+            for (int i = 0; i < m_hwSampleRate.Length; i++)
+            {
+                if (m_hwSampleRate[i] > maxRate)
+                    maxRate = m_hwSampleRate[i];
+            }
+
+            return Math.Min(maxRate, 384000);
+        }
+
 		public void DrivePowerChange(int rx, int newPower, bool tune)
         {
 			if (m_disconnected) return;
@@ -966,7 +1003,7 @@ namespace Thetis
             sendTune(0, console.ThreadSafeTCIAccessor.TUN && !(console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
             sendTune(1, console.ThreadSafeTCIAccessor.TUN && (console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
 
-			sendIQSampleRate(m_iqSampleRate);
+			sendIQSampleRate(getPublishedIQSampleRate());
 			sendAudioSampleRate(m_audioSampleRate);
 			sendAudioStreamSampleType(m_audioSampleType);
 			sendAudioStreamChannels(m_audioStreamChannels);
@@ -1012,9 +1049,9 @@ namespace Thetis
 
 			string sCW;
 			if (m_server != null)
-				sCW = m_server.CWLUbecomesCW ? "cwl, cwu, cw" : "cwl, cwu";
+				sCW = m_server.CWLUbecomesCW ? "cwl,cwu,cw" : "cwl,cwu";
 			else
-				sCW = "cwl, cwu";
+				sCW = "cwl,cwu";
 
 			sendTextFrame("modulations_list:" + ("am,sam,dsb,lsb,usb,nfm,fm,digl,digu," + sCW).ToUpper() + ";"); // MW0LGE_22b modulations are upper in sun, so replicate
 
@@ -1023,6 +1060,7 @@ namespace Thetis
 			sendTextFrame("ready;");
 
 			Debug.Print("SENT INIT DATA");
+            m_server?.RefreshStreamRunState();
 		}
 		private int findEndOfHeader(byte[] bytes)
 		{
@@ -1257,6 +1295,7 @@ namespace Thetis
 			}
 			clearQueuedTxAudio();
 			server?.RefreshTxAudioSourceState();
+            m_server?.RefreshStreamRunState();
 			if (m_client != null)
 			{
                 if (m_tmVFOtimer != null)
@@ -1501,6 +1540,7 @@ namespace Thetis
 					if (bMox && alreadyMox)
                     {
                         m_server?.RefreshTxAudioSourceState();
+            m_server?.RefreshStreamRunState();
                         return;
                     }
 
@@ -1523,6 +1563,7 @@ namespace Thetis
 				}
 
                 m_server?.RefreshTxAudioSourceState();
+            m_server?.RefreshStreamRunState();
 			}
 			else if (bOK && args.Length == 1)
             {
@@ -2473,7 +2514,7 @@ namespace Thetis
                         handleMONVolume(null, false);
                         break;
                     case "iq_samplerate":
-                        sendIQSampleRate(m_iqSampleRate);
+                        sendIQSampleRate(getPublishedIQSampleRate());
                         break;
                     case "audio_samplerate":
                         sendAudioSampleRate(m_audioSampleRate);
@@ -2636,7 +2677,10 @@ namespace Thetis
 
         private void sendIQSampleRate(int sampleRate)
         {
-            sendTextFrame("iq_samplerate:" + sampleRate.ToString() + ";");
+			if (sampleRate < 48000) sampleRate = 48000;
+			if (sampleRate > 384000) sampleRate = 384000; // iq can only go up to that
+
+			sendTextFrame("iq_samplerate:" + sampleRate.ToString() + ";");
         }
 
         private void sendAudioSampleRate(int sampleRate)
@@ -2668,6 +2712,7 @@ namespace Thetis
         {
             lock (m_objStreamLock)
             {
+				if (m_server != null && m_server.AlwaysStreamIQ) return true;
                 return m_iqStreamEnabled.Contains(receiver);
             }
         }
@@ -2677,6 +2722,19 @@ namespace Thetis
             lock (m_objStreamLock)
             {
                 return m_audioStreamEnabled.Contains(receiver);
+            }
+        }
+
+        internal bool IsReadyForStreaming()
+        {
+            return m_bWebSocket && !m_disconnected;
+        }
+
+        internal bool WantsAnyRxStream()
+        {
+            lock (m_objStreamLock)
+            {
+                return m_iqStreamEnabled.Count > 0 || m_audioStreamEnabled.Count > 0;
             }
         }
 
@@ -2917,10 +2975,34 @@ namespace Thetis
             if (args.Length != 1) return;
             if (int.TryParse(args[0], out int sampleRate))
             {
-                if (sampleRate == 48000 || sampleRate == 96000 || sampleRate == 192000 || sampleRate == 384000)
-                    m_iqSampleRate = sampleRate;
+				//just echo out that we have changed to keep client happy
+				//
+                //if (sampleRate == 48000 || sampleRate == 96000 || sampleRate == 192000 || sampleRate == 384000)
+                //{
+				//	for (int i = 0; i < m_hwSampleRate.Length; i++)
+				//	{
+				//		m_hwSampleRate[i] = sampleRate;
+				//		applyIQSampleRateToReceiver(0, sampleRate);
+				//	}
+                //}
+                sendIQSampleRate(sampleRate);
             }
-            sendIQSampleRate(m_iqSampleRate);
+        }
+
+        private int getCurrentMaxHWSampleRate()
+        {
+			int max = 48000;
+            try
+            {
+                for (int receiver = 0; receiver < cmaster.CMrcvr; receiver++)
+                {
+                    int sampleRate = cmaster.GetInputRate(0, receiver);
+					if (sampleRate > max) max = sampleRate;
+                }
+            }
+            catch { }
+
+			return max;
         }
 
         private void handleAudioSampleRate(string[] args)
@@ -2943,6 +3025,40 @@ namespace Thetis
                 if (enable) m_iqStreamEnabled.Add(receiver);
                 else m_iqStreamEnabled.Remove(receiver);
             }
+			// not used atm due to the TCI protocol not having per RX IQ sample rate
+			// here for the future
+            //if (enable)
+            //    applyIQSampleRateToReceiver(receiver, m_iqSampleRate);
+
+            m_server?.RefreshStreamRunState();
+        }
+
+        private void applyIQSampleRateToReceiver(int receiver, int sampleRate)
+        {
+            Console localConsole = console;
+            if (localConsole == null || sampleRate <= 0) return;
+
+            MethodInvoker applyRate = delegate
+            {
+                if (!localConsole.IsSetupFormNull)
+                {
+                    if (receiver == 0)
+                    {
+                        if (localConsole.SetupForm.GetHWSampleRate(1) != sampleRate)
+                            localConsole.SetupForm.SetHWSampleRate(1, sampleRate);
+                    }
+                    else if (receiver == 1)
+                    {
+                        if (localConsole.ThreadSafeTCIAccessor.RX2Enabled && localConsole.SetupForm.GetHWSampleRate(2) != sampleRate)
+                            localConsole.SetupForm.SetHWSampleRate(2, sampleRate);
+                    }
+                }
+            };
+
+            if (localConsole.InvokeRequired)
+                localConsole.Invoke(applyRate);
+            else
+                applyRate();
         }
 
         private void handleAudioStart(string[] args, bool enable)
@@ -2965,6 +3081,7 @@ namespace Thetis
             }
 
             sendAudioStartStop(receiver, enable);
+            m_server?.RefreshStreamRunState();
         }
 
         private void handleAudioStreamSampleType(string[] args)
@@ -3136,8 +3253,10 @@ namespace Thetis
 		private int m_nRateLimit = 0;
 		private bool m_bEmulateSunSDR2Pro = false;
 		private bool m_bEmulateExpertSDR3Protocol = false;
+        private bool m_bIQSwap = true;
+        private bool m_bAlwaysStreamIQ = false;
 
-		private frmLog _log;
+        private frmLog _log;
 
 		private Console console
 		{
@@ -3259,7 +3378,17 @@ namespace Thetis
 			get { return m_bEmulateExpertSDR3Protocol; }
 			set { m_bEmulateExpertSDR3Protocol = value; }
 		}
-		public void StartServer(Console c, int rateLimit = 0)
+        public bool IQSwap
+        {
+            get { return m_bIQSwap; }
+            set { m_bIQSwap = value; }
+        }
+        public bool AlwaysStreamIQ
+        {
+            get { return m_bAlwaysStreamIQ; }
+            set { m_bAlwaysStreamIQ = value; RefreshStreamRunState(); }
+        }
+        public void StartServer(Console c, int rateLimit = 0)
 		{
 			if (m_server != null)
 			{
@@ -3297,6 +3426,7 @@ namespace Thetis
 				_console = c;
 
 				m_socketListenersList = new List<TCPIPtciSocketListener>();
+                cmaster.SetTCIRun(0);
 
                 if (console != null && !m_bDelegatesAdded)
 				{
@@ -3313,7 +3443,7 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.SplitChangedHandlers += OnSplitChanged;
 					console.ThreadSafeTCIAccessor.TuneChangedHandlers += OnTuneChanged;
 					console.ThreadSafeTCIAccessor.DrivePowerChangedHandlers += OnDrivePowerChanged;
-					console.ThreadSafeTCIAccessor.SampleRateChangedHandlers += OnSampleRateChanged;
+					console.ThreadSafeTCIAccessor.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
 					console.ThreadSafeTCIAccessor.ThetisFocusChangedHandlers += OnThetisFocusChanged;
 					console.ThreadSafeTCIAccessor.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
 					console.ThreadSafeTCIAccessor.SpotClickedHandlers += OnSpotClicked;
@@ -3401,7 +3531,7 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.SplitChangedHandlers -= OnSplitChanged;
 					console.ThreadSafeTCIAccessor.TuneChangedHandlers -= OnTuneChanged;
 					console.ThreadSafeTCIAccessor.DrivePowerChangedHandlers -= OnDrivePowerChanged;
-					console.ThreadSafeTCIAccessor.SampleRateChangedHandlers -= OnSampleRateChanged;
+					console.ThreadSafeTCIAccessor.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
 					console.ThreadSafeTCIAccessor.ThetisFocusChangedHandlers -= OnThetisFocusChanged;
 					console.ThreadSafeTCIAccessor.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
 					console.ThreadSafeTCIAccessor.SpotClickedHandlers -= OnSpotClicked;
@@ -3446,18 +3576,19 @@ namespace Thetis
 
 				// Stop All clients.
 				StopAllSocketListers();
+                cmaster.SetTCIRun(0);
 			}
 		}
 
 		public int ClientsConnected
         {
-            get {
-				if(m_server == null || m_socketListenersList == null) return 0;
-
+            get {				
 				int nRet = 0;
 				lock (m_objLocker)
 				{
-					foreach(TCPIPtciSocketListener socketListener in m_socketListenersList)
+                    if (m_server == null || m_socketListenersList == null) return nRet;
+
+                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                     {
 						if (!socketListener.IsDisconnected()) nRet++;
                     }
@@ -3581,10 +3712,12 @@ namespace Thetis
 
 		private void ClientConnectedHandler()
 		{
+            RefreshStreamRunState();
 			ClientConnectedHandlers?.Invoke();
 		}
 		private void ClientDisconnectedHandler()
         {
+            RefreshStreamRunState();
 			ClientDisconnectedHandlers?.Invoke();
         }
 		private void ClientErrorHandler(SocketException se)
@@ -3640,7 +3773,9 @@ namespace Thetis
 
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.VFOChange(vfod);
 				}
@@ -3650,7 +3785,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.MoxChange(rx, oldMox, newMox);
 					socketListener.SyncTciPttToMox(newMox);
@@ -3664,6 +3801,8 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.SyncTciPttToMox(expectedMox);
@@ -3676,7 +3815,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.ModeChange(rx,oldMode,newMode, oldBand, newBand);
 				}
@@ -3686,7 +3827,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+				if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.BandChange(rx, oldBand, newBand);
 				}
@@ -3711,6 +3854,8 @@ namespace Thetis
             };
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.CentreChange(vfod);
@@ -3721,7 +3866,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.FilterChange(rx, oldFilter, newFilter, band, low, high);
 				}
@@ -3731,7 +3878,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.FilterEdgesChange(rx, filter, band, low, high);
 				}
@@ -3741,7 +3890,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.PowerChange(oldPower, newPower);
 				}
@@ -3751,7 +3902,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.ThetisFocusChange(focus);
 				}
@@ -3761,19 +3914,23 @@ namespace Thetis
         {
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.RX2EnabledChange(enabled);
 				}
 			}
 		}
-		private void OnSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
+		private void OnHWSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
-					socketListener.SampleRateChange(rx, oldSampleRate, newSampleRate);
+					socketListener.HWSampleRateChange(rx, oldSampleRate, newSampleRate);
 				}
 			}
 		}
@@ -3781,7 +3938,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.DrivePowerChange(rx, newPower, tune);
 				}
@@ -3791,7 +3950,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.TuneChange(rx, oldTune, newTune);
 				}
@@ -3801,7 +3962,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.SplitChange(rx, newSplit);
 				}
@@ -3812,7 +3975,9 @@ namespace Thetis
 		{
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
 					socketListener.ClickedOnSpot(callsign, frequencyHz); // also send legacy command (EESDR3 does this)	MW0LGE [2.9.0.8]																	
                     socketListener.ClickedOnSpot(callsign, frequencyHz, rx, vfoB ? 1 : 0);
@@ -3823,6 +3988,8 @@ namespace Thetis
 		{
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MuteChanged(rx, newState);
@@ -3833,6 +4000,8 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MONChanged(newState);
@@ -3843,6 +4012,8 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
+				if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MONVolumeChanged(newVolume);
@@ -3871,6 +4042,8 @@ namespace Thetis
 
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.TXFrequencyChange(vfod);
@@ -3887,11 +4060,11 @@ namespace Thetis
 			if (_log != null) _log.Hide();
 		}
 		public void SendSpotSimulationClickToAll(string callsign, long freq)
-		{
-            if (m_server == null || m_socketListenersList == null) return;
-
+		{            
             lock (m_objLocker)
 			{
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
 					socketListener.ClickedOnSpot(callsign, freq);
@@ -3899,12 +4072,44 @@ namespace Thetis
                 }
             }
 		}
-        public void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
+        internal void RefreshStreamRunState()
         {
-            if (m_server == null || m_socketListenersList == null) return;
+            bool run = false;
 
             lock (m_objLocker)
             {
+                if (m_server != null && m_socketListenersList != null)
+                {
+                    bool hasReadyClient = false;
+
+                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                    {
+                        if (socketListener == null || !socketListener.IsReadyForStreaming())
+                            continue;
+
+                        hasReadyClient = true;
+
+                        if (socketListener.WantsAnyRxStream())
+                        {
+                            run = true;
+                            break;
+                        }
+                    }
+
+                    if (!run && hasReadyClient && m_bAlwaysStreamIQ)
+                        run = true;
+                }
+            }
+
+            cmaster.SetTCIRun(run ? 1 : 0);
+        }
+
+        public void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
+        {            
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.PublishIQSamples(receiver, sampleRate, iqSamples, complexSamples);
@@ -3913,11 +4118,11 @@ namespace Thetis
         }
 
         public void PublishRxAudioSamples(int receiver, int sampleRate, float[] left, float[] right, int samples = -1)
-        {
-            if (m_server == null || m_socketListenersList == null) return;
-
+        {            
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.PublishRxAudioSamples(receiver, sampleRate, left, right, samples);
@@ -3927,10 +4132,10 @@ namespace Thetis
 
         internal bool UsesTCITxAudio()
         {
-            if (m_server == null || m_socketListenersList == null) return false;
-
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return false;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     if (socketListener != null && socketListener.UsesTCITxAudio())
@@ -3944,10 +4149,10 @@ namespace Thetis
 
         internal bool UsesActiveTCITxAudio()
         {
-            if (m_server == null || m_socketListenersList == null) return false;
-
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return false;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     if (socketListener != null && socketListener.UsesActiveTCITxAudio())
@@ -3963,10 +4168,10 @@ namespace Thetis
             samples = 0;
             bufferingMs = 0;
 
-            if (m_server == null || m_socketListenersList == null) return false;
-
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return false;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     if (socketListener != null && socketListener.TryGetTxAudioRequestSettings(out sampleRate, out samples, out bufferingMs))
@@ -3983,11 +4188,11 @@ namespace Thetis
         }
 
         public void SendTxChrono(int receiver)
-        {
-            if (m_server == null || m_socketListenersList == null) return;
-
+        {           
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.SendTxChrono(receiver);
@@ -3997,14 +4202,14 @@ namespace Thetis
 
         internal bool TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio)
         {
-			if (m_server == null || m_socketListenersList == null)
-			{
-                queuedAudio = null;
-                return false;
-            }				
-
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null)
+                {
+                    queuedAudio = null;
+                    return false;
+                }
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     if (socketListener.TryDequeueTxAudio(out queuedAudio))

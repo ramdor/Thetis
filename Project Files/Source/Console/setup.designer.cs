@@ -3612,6 +3612,8 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkTCIAlwaysStreamIQ = new System.Windows.Forms.CheckBoxTS();
+            this.chkTCISwapIQ = new System.Windows.Forms.CheckBoxTS();
             this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
             this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
             this.btnShowLog = new System.Windows.Forms.ButtonTS();
@@ -57853,6 +57855,8 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkTCIAlwaysStreamIQ);
+            this.grpTCIServer.Controls.Add(this.chkTCISwapIQ);
             this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
             this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
             this.grpTCIServer.Controls.Add(this.btnShowLog);
@@ -57891,6 +57895,35 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // chkTCIAlwaysStreamIQ
+            // 
+            this.chkTCIAlwaysStreamIQ.AutoSize = true;
+            this.chkTCIAlwaysStreamIQ.Image = null;
+            this.chkTCIAlwaysStreamIQ.Location = new System.Drawing.Point(260, 104);
+            this.chkTCIAlwaysStreamIQ.Name = "chkTCIAlwaysStreamIQ";
+            this.chkTCIAlwaysStreamIQ.Size = new System.Drawing.Size(107, 17);
+            this.chkTCIAlwaysStreamIQ.TabIndex = 114;
+            this.chkTCIAlwaysStreamIQ.Text = "Always stream IQ";
+            this.toolTip1.SetToolTip(this.chkTCIAlwaysStreamIQ, "Some older software do ot sent IQ_START so IQ streaming will not start.\r\nUse this" +
+        " option to always stream it.");
+            this.chkTCIAlwaysStreamIQ.UseVisualStyleBackColor = true;
+            this.chkTCIAlwaysStreamIQ.CheckedChanged += new System.EventHandler(this.chkTCIAlwaysStreamIQ_CheckedChanged);
+            // 
+            // chkTCISwapIQ
+            // 
+            this.chkTCISwapIQ.AutoSize = true;
+            this.chkTCISwapIQ.Checked = true;
+            this.chkTCISwapIQ.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTCISwapIQ.Image = null;
+            this.chkTCISwapIQ.Location = new System.Drawing.Point(260, 85);
+            this.chkTCISwapIQ.Name = "chkTCISwapIQ";
+            this.chkTCISwapIQ.Size = new System.Drawing.Size(67, 17);
+            this.chkTCISwapIQ.TabIndex = 113;
+            this.chkTCISwapIQ.Text = "Swap IQ";
+            this.toolTip1.SetToolTip(this.chkTCISwapIQ, "Swap IQ. This should normally be on.");
+            this.chkTCISwapIQ.UseVisualStyleBackColor = true;
+            this.chkTCISwapIQ.CheckedChanged += new System.EventHandler(this.chkTCISwapIQ_CheckedChanged);
             // 
             // lblToggleToUseTCI
             // 
@@ -76137,5 +76170,7 @@
         private PanelTS panelTS9;
         private RadioButtonTS chkCBlock_after_rx2;
         private RadioButtonTS chkCBlock_before_rx2;
+        private CheckBoxTS chkTCIAlwaysStreamIQ;
+        private CheckBoxTS chkTCISwapIQ;
     }
 }
