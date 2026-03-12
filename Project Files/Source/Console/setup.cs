@@ -38033,6 +38033,12 @@ namespace Thetis
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
         }
 
+        // MI0BOT: Controls if the audio over the Over Protocol 1. There was a fudge to correct a problem in some HPSDR hardware
+        private void chkSwapAudioChannels_CheckedChanged(object sender, EventArgs e)
+        {
+            int swap = chkSwapAudioChannels.Checked ? 1 : 0;
+            NetworkIO.SwapAudioChannels(swap);
+        }
         // CFC para
         private bool _cfc_legacy = true;
         private void chkCFC_legacy_CheckedChanged(object sender, EventArgs e)

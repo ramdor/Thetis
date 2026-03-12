@@ -106,7 +106,9 @@ typedef struct CACHE_ALIGN _radionet
 	WSANETWORKEVENTS wsaProcessEvents;
 
 	int hardware_LEDs;
-	int reset_on_disconnect;	// MI0BOT: Reset on software disconnect
+	int reset_on_disconnect;		// MI0BOT: Reset on software disconnect
+	int swap_audio_channels;	    // MI0BOT: Control to swap the left and right audio channels send over P1
+
 
 	struct _i2c	// MI0BOT: I2C data structure for HL2
 	{

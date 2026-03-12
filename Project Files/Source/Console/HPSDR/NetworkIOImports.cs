@@ -384,6 +384,9 @@ namespace Thetis
         public static extern void SetResetOnDisconnect(int bit);                                // MI0BIT: Control reset on network disconnect
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SwapAudioChannels(int bit);                                   // MI0BIT: Control to swap the left and right audio channels send over P1
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int I2CReadInitiate(int bus, int address, int control);            // MI0BIT: I2C read start for HL2
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]

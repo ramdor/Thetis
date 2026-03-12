@@ -1227,12 +1227,17 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 		if (!XmitBit) memset(prn->outIQbufp, 0, sizeof(complex) * 126);
 		// WriteAudio (30.0, 48000, 126, prn->outIQbufp, 3);
 		// WriteAudio (60.0, 48000, 126, prn->outLRbufp, 3);
-		for (i = 0; i < 4 * 63; i += 2)			// swap L & R audio; firmware bug fix
+
+		if (prn->swap_audio_channels)				// To cater for different firmware at the hardware, allow control of audio channels swapping
 		{
-			swap = pbuffs[0][i + 0];
-			pbuffs[0][i + 0] = pbuffs[0][i + 1];
-			pbuffs[0][i + 1] = swap;
+			for (i = 0; i < 4 * 63; i += 2)			// swap L & R audio; firmware bug fix
+			{
+				swap = pbuffs[0][i + 0];
+				pbuffs[0][i + 0] = pbuffs[0][i + 1];
+				pbuffs[0][i + 1] = swap;
+			}
 		}
+
 		for (i = 0; i < 2 * 63; i++)				// for each sample from both sets, 8 bytes per
 			for (j = 0; j < 2; j++)					// for a sample from each set, 4 bytes per
 				for (k = 0; k < 2; k++)				// for each component of the sample, 2 per

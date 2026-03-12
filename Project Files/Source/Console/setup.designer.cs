@@ -414,6 +414,7 @@
             this.chkVFOsync_freq = new System.Windows.Forms.CheckBoxTS();
             this.tpHL2Options = new System.Windows.Forms.TabPage();
             this.groupBoxHL2RXOptions = new System.Windows.Forms.GroupBoxTS();
+            this.chkSwapAudioChannels = new System.Windows.Forms.CheckBoxTS();
             this.labelCl2Freq = new System.Windows.Forms.LabelTS();
             this.udCl2Freq = new System.Windows.Forms.NumericUpDownTS();
             this.chkCl2Enable = new System.Windows.Forms.CheckBoxTS();
@@ -11064,6 +11065,7 @@
             // 
             // groupBoxHL2RXOptions
             // 
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkSwapAudioChannels);
             this.groupBoxHL2RXOptions.Controls.Add(this.labelCl2Freq);
             this.groupBoxHL2RXOptions.Controls.Add(this.udCl2Freq);
             this.groupBoxHL2RXOptions.Controls.Add(this.chkCl2Enable);
@@ -11077,10 +11079,26 @@
             this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2BandVolts);
             this.groupBoxHL2RXOptions.Location = new System.Drawing.Point(12, 15);
             this.groupBoxHL2RXOptions.Name = "groupBoxHL2RXOptions";
-            this.groupBoxHL2RXOptions.Size = new System.Drawing.Size(236, 148);
+            this.groupBoxHL2RXOptions.Size = new System.Drawing.Size(236, 170);
             this.groupBoxHL2RXOptions.TabIndex = 3;
             this.groupBoxHL2RXOptions.TabStop = false;
             this.groupBoxHL2RXOptions.Text = "Hermes Lite Options";
+            // 
+            // chkSwapAudioChannels
+            // 
+            this.chkSwapAudioChannels.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkSwapAudioChannels.Image = null;
+            this.chkSwapAudioChannels.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.chkSwapAudioChannels.Location = new System.Drawing.Point(8, 145);
+            this.chkSwapAudioChannels.Name = "chkSwapAudioChannels";
+            this.chkSwapAudioChannels.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkSwapAudioChannels.Size = new System.Drawing.Size(143, 20);
+            this.chkSwapAudioChannels.TabIndex = 185;
+            this.chkSwapAudioChannels.Text = "Swap Audio Channels";
+            this.chkSwapAudioChannels.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.chkSwapAudioChannels, "Swap the audio channels sent ot the HL2");
+            this.chkSwapAudioChannels.UseVisualStyleBackColor = true;
+            this.chkSwapAudioChannels.CheckedChanged += new System.EventHandler(this.chkSwapAudioChannels_CheckedChanged);
             // 
             // labelCl2Freq
             // 
@@ -76865,6 +76883,7 @@
         private CheckBoxTS chkRecording_playkeybind;
         private TextBoxTS txtRecording_playkeybind;
         private LabelTS labelTS653;
+        private CheckBoxTS chkSwapAudioChannels;
         private ScrollableControl scrollableControl2;
         private CheckBoxTS chkRecording_ignore_play_tempchanges;
         private LabelTS labelTS655;
