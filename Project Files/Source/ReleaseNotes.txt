@@ -36,6 +36,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] auto rx step attenuation will only happen when there has been at least 400ms of adc overload and it moves from a yellow to red warning
 - [change] removed -SWL[n] tag support from TCI spot mode field, added support to JSON tagged data
 - [change] DB merge code changed such that it attempts to pull all state settings from the source database into the new database if possible
+- [change] wave form removed from other buttons, replaced with amp view
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots
 - [fix] diversity form now fades in along side console window at start up
@@ -44,6 +45,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] issues handling the highprio network packet (1025) meant that ADC overloads could be missed. This is now resolved
 - [fix] fixed issues with 40/30 and 12/10 bfp ranges in setup causing crashes
 - [fix] fixed issue where some modes had spaces in the TCI modulation outbound message
+- [fix] TCI server can now handle concatenated TCI commands
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
