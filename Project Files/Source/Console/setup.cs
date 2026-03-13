@@ -22467,7 +22467,7 @@ namespace Thetis
         }
         private void chkForgetRX2VfoBVFOinfo_CheckedChanged(object sender, EventArgs e)
         {
-            if (console.TCIServer != null) console.TCIServer.ReplaceRX2VFObToVFOa = chkForgetRX2VfoBVFOinfo.Checked;
+            if (console.TCIServer != null) console.TCIServer.ReplaceRX2VFObIfCopyBtoA = chkForgetRX2VfoBVFOinfo.Checked;
         }
         private void chkUseRX1vfoaForRX2vfoa_CheckedChanged(object sender, EventArgs e)
         {

@@ -148,6 +148,164 @@ mw0lge@grange-lane.co.uk
 // ready;
 //
 
+//from initial connect to ExpertSDR3 version 1.1.7
+//protocol: ExpertSDR3,2.0;
+//device: SunSDR2PRO;
+//receive_only: false;
+//trx_count: 2;
+//channels_count: 2;
+//vfo_limits: 0,160000000;
+//if_limits: -19531,19531;
+//modulations_list: AM,LSB, USB, CW, NFM, WSPR, FT8, FT4, JT65, JT9, RTTY, BPSK, DIGL, DIGU, WFM, DRM;
+//iq_samplerate: 48000;
+//audio_samplerate: 48000;
+//volume: 0;
+//mute: false;
+//mon_volume: 0;
+//mon_enable: false;
+//digl_offset: 0;
+//digu_offset: 0;
+//dds: 0,3520000;
+//dds: 1,3520000;
+//if:0,0,0;
+//if:0,1,0;
+//if:1,0,0;
+//if:1,1,0;
+//vfo: 0,0,3520000;
+//vfo: 0,1,3520000;
+//vfo: 1,0,3520000;
+//vfo: 1,1,3520000;
+//modulation: 0,LSB;
+//modulation: 1,LSB;
+//agc_mode: 0,normal;
+//agc_gain: 0,100;
+//agc_mode: 1,normal;
+//agc_gain: 1,100;
+//rx_filter_band: 0,-3500,-40;
+//rx_filter_band: 1,-3500,-40;
+//rx_nb_enable: 0,false;
+//rx_nb_param: 0,70,20;
+//rx_nb_enable: 1,false;
+//rx_nb_param: 1,70,20;
+//rx_bin_enable: 0,false;
+//rx_bin_enable: 1,false;
+//rx_nr_enable: 0,false;
+//rx_nr_enable: 1,false;
+//rx_anc_enable: 0,false;
+//rx_anc_enable: 1,false;
+//rx_anf_enable: 0,false;
+//rx_anf_enable: 1,false;
+//rx_apf_enable: 0,false;
+//rx_apf_enable: 1,false;
+//rx_dse_enable: 0,false;
+//rx_dse_enable: 1,false;
+//rx_nf_enable: 0,false;
+//rx_nf_enable: 1,false;
+//rx_enable: 1,false;
+//tx_enable: 0,true;
+//tx_enable: 1,true;
+//lock:0,false;
+//lock:1,false;
+//rx_channel_enable: 0,1,false;
+//rit_enable: 0,false;
+//xit_enable: 0,false;
+//split_enable: 0,false;
+//rit_offset: 0,0;
+//xit_offset: 0,0;
+//sql_enable: 0,false;
+//sql_level: 0,-80;
+//rx_mute: 0,false;
+//rx_volume: 0,0,0;
+//rx_balance: 0,0,0;
+//rx_volume: 0,1,0;
+//rx_balance: 0,1,0;
+//rx_channel_enable: 1,1,false;
+//rit_enable: 1,false;
+//xit_enable: 1,false;
+//split_enable: 1,false;
+//rit_offset: 1,0;
+//xit_offset: 1,0;
+//sql_enable: 1,false;
+//sql_level: 1,-80;
+//rx_mute: 1,false;
+//rx_volume: 1,0,0;
+//rx_balance: 1,0,0;
+//rx_volume: 1,1,0;
+//rx_balance: 1,1,0;
+//cw_macros_speed: 30;
+//cw_macros_delay: 10;
+//cw_keyer_speed: 30;
+//drive: 0,0;
+//tune_drive: 0,0;
+//drive: 1,0;
+//tune_drive: 1,0;
+//trx: 0,false;
+//tune: 0,false;
+//iq_stop: 0;
+//trx: 1,false;
+//tune: 1,false;
+//iq_stop: 1;
+//app_focus: false;
+//tx_frequency: 3520000;
+//audio_stream_sample_type: float32;
+//audio_stream_channels: 2;
+//start;
+//vfo_lock: 0,0,false;
+//vfo_lock: 0,1,false;
+//vfo_lock: 1,0,false;
+//vfo_lock: 1,1,false;
+//ready;
+
+//from Thetis 2.10.3.9 dev3n5
+//protocol: ExpertSDR3,2.0;
+//device: SunSDR2PRO;
+//receive_only: false;
+//trx_count: 2;
+//channels_count: 2;
+//vfo_limits: 0,61440000;
+//if_limits: -192000,192000;
+//modulations_list: AM,SAM, DSB, LSB, USB, NFM, FM, DIGL, DIGU, CWL, CWU;
+//dds: 0,7074000;
+//dds: 1,14026729;
+//if:0,0,3532;
+//if:0,1,0;
+//if:1,1,600;
+//if:1,1,600;
+//vfo: 0,0,7070468;
+//vfo: 0,1,14027329;
+//vfo: 1,0,14027329;
+//vfo: 1,1,14027329;
+//tx_frequency: 7070468;
+//tx_frequency_thetis: 7070468,b40m,false,false;
+//modulation: 0,DIGU;
+//modulation: 1,CWU;
+//rx_filter_band: 0,0,3000;
+//rx_filter_band: 1,475,725;
+//rx_enable: 0,true;
+//rx_enable: 1,false;
+//split_enable: 0,false;
+//split_enable: 1,false;
+//tx_enable: 0,true;
+//tx_enable: 1,false;
+//trx: 0,false;
+//trx: 1,false;
+//tune: 0,false;
+//tune: 1,false;
+//iq_samplerate: 384000;
+//audio_samplerate: 48000;
+//audio_stream_sample_type: float32;
+//audio_stream_channels: 2;
+//audio_stream_samples: 2048;
+//tx_stream_audio_buffering: 50;
+//mute: false;
+//rx_mute: 0,false;
+//rx_mute: 1,false;
+//mon_enable: false;
+//mon_volume: -30.0;
+//start;
+//ready;
+
+
 using System;
 using System.Text;
 using System.Net;
@@ -1455,13 +1613,21 @@ namespace Thetis
 			sendTXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
 			sendTXEnable(1, bRX2Enabled && !console.ThreadSafeTCIAccessor.MOX);
 
+            sendRxChannelEnable(0, 0, true);
+            sendRxChannelEnable(0, 1, console.ThreadSafeTCIAccessor.GetSubRX(1));
+            sendRxChannelEnable(1, 0, bRX2Enabled);
+			sendRxChannelEnable(1, 1, false); // no sub rx on rx2
+
             sendMOX(0, console.ThreadSafeTCIAccessor.MOX && !(console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
             sendMOX(1, console.ThreadSafeTCIAccessor.MOX && (console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
 
             sendTune(0, console.ThreadSafeTCIAccessor.TUN && !(console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
             sendTune(1, console.ThreadSafeTCIAccessor.TUN && (console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
 
-			sendIQSampleRate(getPublishedIQSampleRate());
+            sendIQStartStop(0, false);
+            sendIQStartStop(1, false);
+
+            sendIQSampleRate(getPublishedIQSampleRate());
 			sendAudioSampleRate(m_audioSampleRate);
 			sendAudioStreamSampleType(m_audioSampleType);
 			sendAudioStreamChannels(m_audioStreamChannels);
@@ -2915,101 +3081,223 @@ namespace Thetis
 			}
 		}
 
-		private void parseTextFrame(string msg)
+        private List<string> splitTextCommands(string msg)
         {
-			//Debug.Print("TCI Msg : " + msg);
+            List<string> result = new List<string>();
 
-			if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, msg);
+            if (string.IsNullOrWhiteSpace(msg))
+                return result;
 
-			if (msg.EndsWith(";")) msg = msg.Substring(0, msg.Length - 1);
+            int start = 0;
+            bool current_is_spot = false;
+            bool spot_json_started = false;
+            bool in_quotes = false;
+            bool escape_next = false;
+            int brace_depth = 0;
 
-			string[] parts = msg.Split(':');
+            for (int i = 0; i < msg.Length; i++)
+            {
+                char ch = msg[i];
 
-			bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
+                if (!current_is_spot && ch == ':')
+                {
+                    string cmd_name = msg.Substring(start, i - start).Trim();
+                    current_is_spot = cmd_name.Equals("spot", StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (current_is_spot &&
+                    !spot_json_started &&
+                    ch == '[' &&
+                    i + 6 < msg.Length &&
+                    string.Compare(msg, i, "[json]{", 0, 7, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    spot_json_started = true;
+                    brace_depth = 1;
+                    in_quotes = false;
+                    escape_next = false;
+                    i += 6;
+                    continue;
+                }
+
+                if (spot_json_started)
+                {
+                    if (escape_next)
+                    {
+                        escape_next = false;
+                        continue;
+                    }
+
+                    if (ch == '\\')
+                    {
+                        escape_next = true;
+                        continue;
+                    }
+
+                    if (ch == '"')
+                    {
+                        in_quotes = !in_quotes;
+                        continue;
+                    }
+
+                    if (!in_quotes)
+                    {
+                        if (ch == '{')
+                        {
+                            brace_depth++;
+                        }
+                        else if (ch == '}')
+                        {
+                            brace_depth--;
+
+                            if (brace_depth <= 0)
+                            {
+                                spot_json_started = false;
+                                brace_depth = 0;
+                            }
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (ch == ';')
+                {
+                    string part = msg.Substring(start, i - start).Trim();
+
+                    if (part.Length > 0)
+                        result.Add(part);
+
+                    start = i + 1;
+                    current_is_spot = false;
+                    spot_json_started = false;
+                    in_quotes = false;
+                    escape_next = false;
+                    brace_depth = 0;
+                }
+            }
+
+            if (start < msg.Length)
+            {
+                string tail = msg.Substring(start).Trim();
+
+                if (tail.Length > 0)
+                    result.Add(tail);
+            }
+
+            return result;
+        }
+
+        private void parseTextFrame(string msg)
+        {
+            if (string.IsNullOrWhiteSpace(msg))
+                return;
+
+            List<string> commands = splitTextCommands(msg);
+
+            if (commands.Count > 1)
+            {
+                for (int i = 0; i < commands.Count; i++)
+                    parseTextFrame(commands[i]);
+
+                return;
+            }
+
+            if (commands.Count == 1)
+                msg = commands[0];
+
+            //Debug.Print("TCI Msg : " + msg);
+
+            if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, msg);
+
+            if (msg.EndsWith(";")) msg = msg.Substring(0, msg.Length - 1).Trim();
+
+            string[] parts = msg.Split(new char[] { ':' }, 2);
+
+            bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
 
             if (parts.Length == 2 || json_spot)
             {
-				string cmd = parts[0].ToLower().Trim();
-				string[] args = parts[1].Split(',');
+                string cmd = parts[0].ToLower().Trim();
+                string[] args = parts[1].Split(',');
 
-				switch (cmd)
+                switch (cmd)
                 {
-					case "modulation":
-						handleModulationMessage(args);
-						break;
-					case "vfo":
-						handleVFOMessage(args);
-						break;
-					case "trx":
-						handleTrxMessage(args);
-						break;
-					case "split_enable":
-						handleSplitEnableMessage(args);
-						break;
-					case "tune":
-						handleTune(args);
-						break;
-					case "rx_enable":
-						handleRXEnable(args);
-						break;
-					case "dds":
-						handleDDS(args);
-						break;
-					case "iq_samplerate":
-						handleIQSampleRate(args);
-						break;
-					case "audio_samplerate":
-						handleAudioSampleRate(args);
-						break;
-					case "iq_start":
-						handleIQStart(args, true);
-						break;
-					case "iq_stop":
-						handleIQStart(args, false);
-						break;
-					case "audio_start":
-						handleAudioStart(args, true);
-						break;
-					case "audio_stop":
-						handleAudioStart(args, false);
-						break;
-					case "audio_stream_sample_type":
-						handleAudioStreamSampleType(args);
-						break;
-					case "audio_stream_channels":
-						handleAudioStreamChannels(args);
-						break;
-					case "audio_stream_samples":
-						handleAudioStreamSamples(args);
-						break;
-					case "tx_stream_audio_buffering":
-						handleTxStreamAudioBuffering(args);
-						break;
-					case "if":
-						handleIF(args);
-						break;
-					case "spot":
-						handleSpot(args, json_spot, msg);
-						break;
-					case "spot_delete":
-						handleDeleteSpot(args);
-						break;
-					case "drive":
-						handleDrive(args);
-						break;
-					case "tune_drive":
-						handleTuneDrive(args);
-						break;
-					case "mute":
+                    case "modulation":
+                        handleModulationMessage(args);
+                        break;
+                    case "vfo":
+                        handleVFOMessage(args);
+                        break;
+                    case "trx":
+                        handleTrxMessage(args);
+                        break;
+                    case "split_enable":
+                        handleSplitEnableMessage(args);
+                        break;
+                    case "tune":
+                        handleTune(args);
+                        break;
+                    case "rx_enable":
+                        handleRXEnable(args);
+                        break;
+                    case "dds":
+                        handleDDS(args);
+                        break;
+                    case "iq_samplerate":
+                        handleIQSampleRate(args);
+                        break;
+                    case "audio_samplerate":
+                        handleAudioSampleRate(args);
+                        break;
+                    case "iq_start":
+                        handleIQStart(args, true);
+                        break;
+                    case "iq_stop":
+                        handleIQStart(args, false);
+                        break;
+                    case "audio_start":
+                        handleAudioStart(args, true);
+                        break;
+                    case "audio_stop":
+                        handleAudioStart(args, false);
+                        break;
+                    case "audio_stream_sample_type":
+                        handleAudioStreamSampleType(args);
+                        break;
+                    case "audio_stream_channels":
+                        handleAudioStreamChannels(args);
+                        break;
+                    case "audio_stream_samples":
+                        handleAudioStreamSamples(args);
+                        break;
+                    case "tx_stream_audio_buffering":
+                        handleTxStreamAudioBuffering(args);
+                        break;
+                    case "if":
+                        handleIF(args);
+                        break;
+                    case "spot":
+                        handleSpot(args, json_spot, msg);
+                        break;
+                    case "spot_delete":
+                        handleDeleteSpot(args);
+                        break;
+                    case "drive":
+                        handleDrive(args);
+                        break;
+                    case "tune_drive":
+                        handleTuneDrive(args);
+                        break;
+                    case "mute":
                         handleMute(args);
-						break;
+                        break;
                     case "rx_mute":
                         handleMuteRX(args);
-						break;
-					case "mon_volume":
-						handleMONVolume(args);
-						break;
-					case "mon_enable":
+                        break;
+                    case "mon_volume":
+                        handleMONVolume(args);
+                        break;
+                    case "mon_enable":
                         handleMONEnable(args);
                         break;
                     case "line_out_start":
@@ -3017,30 +3305,33 @@ namespace Thetis
                         break;
                     case "line_out_stop":
                         handleLineOutStop(args);
-						break;
-					case "spot_simulate_click": // bespoke command to Thetis
-						handleSpotSimulateClick(args);
-						break;
-					case "rx_filter_band":
-						handleRxFilterBand(args);
-						break;
+                        break;
+                    case "spot_simulate_click":
+                        handleSpotSimulateClick(args);
+                        break;
+                    case "rx_filter_band":
+                        handleRxFilterBand(args);
+                        break;
+                    case "rx_channel_enable":
+                        handleRxChannelEnable(args);
+                        break;
                 }
             }
-			else if (parts.Length == 1)
+            else if (parts.Length == 1)
             {
-				string cmd = parts[0].ToLower().Trim();
-				// just command
-				switch (cmd)
+                string cmd = parts[0].ToLower().Trim();
+                // just command
+                switch (cmd)
                 {
-					case "start":
-						handleStart();
-						break;
-					case "stop":
-						handleStop();
-						break;
-					case "set_in_focus":
-						handleSetInFocus();
-						break;
+                    case "start":
+                        handleStart();
+                        break;
+                    case "stop":
+                        handleStop();
+                        break;
+                    case "set_in_focus":
+                        handleSetInFocus();
+                        break;
                     case "mute":
                         handleMute(null, false);
                         break;
@@ -3059,12 +3350,167 @@ namespace Thetis
                     case "tx_stream_audio_buffering":
                         sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
                         break;
-					case "spot_clear":
-						handleSpotClear();
-						break;
+                    case "spot_clear":
+                        handleSpotClear();
+                        break;
                 }
             }
-		}
+        }
+
+
+        //private void parseTextFrame(string msg)
+        //      {
+        //	//Debug.Print("TCI Msg : " + msg);
+
+        //	if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, msg);
+
+        //	if (msg.EndsWith(";")) msg = msg.Substring(0, msg.Length - 1).Trim();
+
+        //	string[] parts = msg.Split(':');
+
+        //	bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
+
+        //          if (parts.Length == 2 || json_spot)
+        //          {
+        //		string cmd = parts[0].ToLower().Trim();
+        //		string[] args = parts[1].Split(',');
+
+        //		switch (cmd)
+        //              {
+        //			case "modulation":
+        //				handleModulationMessage(args);
+        //				break;
+        //			case "vfo":
+        //				handleVFOMessage(args);
+        //				break;
+        //			case "trx":
+        //				handleTrxMessage(args);
+        //				break;
+        //			case "split_enable":
+        //				handleSplitEnableMessage(args);
+        //				break;
+        //			case "tune":
+        //				handleTune(args);
+        //				break;
+        //			case "rx_enable":
+        //				handleRXEnable(args);
+        //				break;
+        //			case "dds":
+        //				handleDDS(args);
+        //				break;
+        //			case "iq_samplerate":
+        //				handleIQSampleRate(args);
+        //				break;
+        //			case "audio_samplerate":
+        //				handleAudioSampleRate(args);
+        //				break;
+        //			case "iq_start":
+        //				handleIQStart(args, true);
+        //				break;
+        //			case "iq_stop":
+        //				handleIQStart(args, false);
+        //				break;
+        //			case "audio_start":
+        //				handleAudioStart(args, true);
+        //				break;
+        //			case "audio_stop":
+        //				handleAudioStart(args, false);
+        //				break;
+        //			case "audio_stream_sample_type":
+        //				handleAudioStreamSampleType(args);
+        //				break;
+        //			case "audio_stream_channels":
+        //				handleAudioStreamChannels(args);
+        //				break;
+        //			case "audio_stream_samples":
+        //				handleAudioStreamSamples(args);
+        //				break;
+        //			case "tx_stream_audio_buffering":
+        //				handleTxStreamAudioBuffering(args);
+        //				break;
+        //			case "if":
+        //				handleIF(args);
+        //				break;
+        //			case "spot":
+        //				handleSpot(args, json_spot, msg);
+        //				break;
+        //			case "spot_delete":
+        //				handleDeleteSpot(args);
+        //				break;
+        //			case "drive":
+        //				handleDrive(args);
+        //				break;
+        //			case "tune_drive":
+        //				handleTuneDrive(args);
+        //				break;
+        //			case "mute":
+        //                      handleMute(args);
+        //				break;
+        //                  case "rx_mute":
+        //                      handleMuteRX(args);
+        //				break;
+        //			case "mon_volume":
+        //				handleMONVolume(args);
+        //				break;
+        //			case "mon_enable":
+        //                      handleMONEnable(args);
+        //                      break;
+        //                  case "line_out_start":
+        //                      handleLineOutStart(args);
+        //                      break;
+        //                  case "line_out_stop":
+        //                      handleLineOutStop(args);
+        //				break;
+        //			case "spot_simulate_click": // bespoke command to Thetis
+        //				handleSpotSimulateClick(args);
+        //				break;
+        //			case "rx_filter_band":
+        //				handleRxFilterBand(args);
+        //				break;
+        //			case "rx_channel_enable":
+        //				handleRxChannelEnable(args);
+        //				break;
+        //              }
+        //          }
+        //	else if (parts.Length == 1)
+        //          {
+        //		string cmd = parts[0].ToLower().Trim();
+        //		// just command
+        //		switch (cmd)
+        //              {
+        //			case "start":
+        //				handleStart();
+        //				break;
+        //			case "stop":
+        //				handleStop();
+        //				break;
+        //			case "set_in_focus":
+        //				handleSetInFocus();
+        //				break;
+        //                  case "mute":
+        //                      handleMute(null, false);
+        //                      break;
+        //                  case "mon_enable":
+        //                      handleMONEnable(null, false);
+        //                      break;
+        //                  case "mon_volume":
+        //                      handleMONVolume(null, false);
+        //                      break;
+        //                  case "iq_samplerate":
+        //                      sendIQSampleRate(getPublishedIQSampleRate());
+        //                      break;
+        //                  case "audio_samplerate":
+        //                      sendAudioSampleRate(m_audioSampleRate);
+        //                      break;
+        //                  case "tx_stream_audio_buffering":
+        //                      sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
+        //                      break;
+        //			case "spot_clear":
+        //				handleSpotClear();
+        //				break;
+        //              }
+        //          }
+        //}
 
         private static int getDefaultAudioStreamSamples(int sampleRate)
         {
@@ -3649,10 +4095,15 @@ namespace Thetis
             }
 			// not used atm due to the TCI protocol not having per RX IQ sample rate
 			// here for the future
-            //if (enable)
-            //    applyIQSampleRateToReceiver(receiver, m_iqSampleRate);
+			//if (enable)
+			//    applyIQSampleRateToReceiver(receiver, m_iqSampleRate);
 
+			sendIQStartStop(receiver, enable);
             m_server?.RefreshStreamRunState();
+        }
+        private void sendIQStartStop(int receiver, bool enable)
+        {
+            sendTextFrame((enable ? "iq_start:" : "iq_stop:") + receiver.ToString() + ";");
         }
 
         private void applyIQSampleRateToReceiver(int receiver, int sampleRate)
@@ -3683,6 +4134,50 @@ namespace Thetis
                 applyRate();
         }
 
+		private void handleRxChannelEnable(string[] args)
+		{
+            if (args.Length < 2 || args.Length > 3) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+			if(args.Length == 2)
+			{
+                if (!int.TryParse(args[1], out int channel)) return;
+
+				//get
+				bool enabled = false;
+                switch (receiver)
+				{
+					case 0:
+						enabled = channel == 0 ? true : console.ThreadSafeTCIAccessor.GetSubRX(1);
+                        break;
+					case 1:
+						//just return rx2 state as no subrx
+						enabled = channel == 0 ? console.ThreadSafeTCIAccessor.RX2Enabled : false;
+                        break;
+				}
+				sendRxChannelEnable(receiver, channel, enabled);
+			}
+			else
+			{
+                //set len 3
+                if (!int.TryParse(args[1], out int channel)) return;
+                if (!bool.TryParse(args[2], out bool enabled)) return;
+
+				if (receiver == 0 && channel == 1)  // rx1 sub rx, cant disable rx1
+				{
+					console.ThreadSafeTCIAccessor.SetSubRX(1, enabled);
+				}
+				else if(receiver == 1) // main or sub will set state
+				{
+					console.ThreadSafeTCIAccessor.RX2Enabled = enabled;
+				}
+
+                sendRxChannelEnable(receiver, channel, enabled);
+            }
+        }
+		private void sendRxChannelEnable(int rx, int channel, bool enabled)
+		{
+            sendTextFrame("rx_channel_enable:" + rx.ToString() + "," + channel.ToString() + "," + enabled.ToString().ToLower() + ";");
+        }
         private void handleAudioStart(string[] args, bool enable)
         {
             if (args.Length != 1) return;
@@ -3973,7 +4468,7 @@ namespace Thetis
 			set { m_bCopyRX2VFObToVFOa = value;	}
         }
         private bool _replace_if_copy_RX2VFObToVFOa = false;
-        public bool ReplaceRX2VFObToVFOa
+        public bool ReplaceRX2VFObIfCopyBtoA
         {
 			get { return _replace_if_copy_RX2VFObToVFOa; }
 			set { _replace_if_copy_RX2VFObToVFOa = value; }
