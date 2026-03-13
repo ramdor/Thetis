@@ -173,6 +173,13 @@ namespace Thetis
         DEFAULT = 99
     }
 
+    public enum TCITxStereoInputMode
+    {
+        Left = 0,
+        Right,
+        Both
+    }
+
     internal enum TCIStreamType : uint
     {
         IQ_STREAM = 0,
@@ -307,6 +314,14 @@ namespace Thetis
             public string LogText;
         }
 
+        private sealed class TCIRxAudioResamplerState
+        {
+            public int InputRate;
+            public int OutputRate;
+            public IntPtr LeftResampler = IntPtr.Zero;
+            public IntPtr RightResampler = IntPtr.Zero;
+        }
+
 		//
 		public delegate void ClientConnected();
 		public delegate void ClientDisconnected();
@@ -371,11 +386,13 @@ namespace Thetis
         private readonly Dictionary<string, TCIOutboundFrame> m_outboundCoalescedFrames = new Dictionary<string, TCIOutboundFrame>();
         private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioLeftPending = new Dictionary<int, TCIPendingFloatBuffer>();
         private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioRightPending = new Dictionary<int, TCIPendingFloatBuffer>();
+        private readonly Dictionary<int, TCIRxAudioResamplerState> m_rxAudioResamplers = new Dictionary<int, TCIRxAudioResamplerState>();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
 		private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
 		private int m_audioStreamChannels = 2;
 		private int m_audioStreamSamples = 2048;
+        private bool m_audioStreamSamplesExplicitlySet = false;
         private int m_txStreamAudioBufferingMs = 50;
         private bool m_txUsesTCIAudio = false;
         private bool m_tciPttActive = false;
@@ -473,6 +490,144 @@ namespace Thetis
             }
 
             return Math.Min(maxRate, 384000);
+        }
+
+        private unsafe void destroyRxAudioResamplerState(TCIRxAudioResamplerState state)
+        {
+            if (state == null)
+                return;
+
+            if (state.LeftResampler != IntPtr.Zero)
+            {
+                WDSP.destroy_resampleFV(state.LeftResampler.ToPointer());
+                state.LeftResampler = IntPtr.Zero;
+            }
+
+            if (state.RightResampler != IntPtr.Zero)
+            {
+                WDSP.destroy_resampleFV(state.RightResampler.ToPointer());
+                state.RightResampler = IntPtr.Zero;
+            }
+
+            state.InputRate = 0;
+            state.OutputRate = 0;
+        }
+
+        private void clearRxAudioStateForReceiver(int receiver)
+        {
+            lock (m_objRxAudioLock)
+            {
+                m_rxAudioLeftPending.Remove(receiver);
+                m_rxAudioRightPending.Remove(receiver);
+
+                if (m_rxAudioResamplers.TryGetValue(receiver, out TCIRxAudioResamplerState state))
+                {
+                    destroyRxAudioResamplerState(state);
+                    m_rxAudioResamplers.Remove(receiver);
+                }
+            }
+        }
+
+        private void clearRxAudioStreamState()
+        {
+            lock (m_objRxAudioLock)
+            {
+                m_rxAudioLeftPending.Clear();
+                m_rxAudioRightPending.Clear();
+
+                foreach (TCIRxAudioResamplerState state in m_rxAudioResamplers.Values)
+                    destroyRxAudioResamplerState(state);
+
+                m_rxAudioResamplers.Clear();
+            }
+        }
+
+        private unsafe int resampleRxAudioSamples(int receiver, int inputRate, int targetRate, float[] left, float[] right, int samples, out float[] leftOut, out float[] rightOut)
+        {
+            leftOut = left;
+            rightOut = right ?? left;
+
+            if (left == null || samples <= 0)
+                return 0;
+
+            if (inputRate <= 0 || targetRate <= 0 || inputRate == targetRate)
+                return Math.Min(samples, left.Length);
+
+            if (!m_rxAudioResamplers.TryGetValue(receiver, out TCIRxAudioResamplerState state))
+            {
+                state = new TCIRxAudioResamplerState();
+                m_rxAudioResamplers[receiver] = state;
+            }
+
+            if (state.LeftResampler == IntPtr.Zero ||
+                state.RightResampler == IntPtr.Zero ||
+                state.InputRate != inputRate ||
+                state.OutputRate != targetRate)
+            {
+                destroyRxAudioResamplerState(state);
+                state.LeftResampler = (IntPtr)WDSP.create_resampleFV(inputRate, targetRate);
+                state.RightResampler = (IntPtr)WDSP.create_resampleFV(inputRate, targetRate);
+                state.InputRate = inputRate;
+                state.OutputRate = targetRate;
+            }
+
+            if (state.LeftResampler == IntPtr.Zero || state.RightResampler == IntPtr.Zero)
+                return Math.Min(samples, left.Length);
+
+            float[] rightSource = right;
+            if (rightSource == null || rightSource.Length < samples)
+            {
+                rightSource = new float[samples];
+                int copied = 0;
+                if (right != null && right.Length > 0)
+                {
+                    copied = Math.Min(samples, right.Length);
+                    Array.Copy(right, 0, rightSource, 0, copied);
+                }
+
+                if (copied < samples)
+                    Array.Copy(left, copied, rightSource, copied, samples - copied);
+            }
+
+            int maxOutputSamples = Math.Max(
+                samples + 64,
+                (int)Math.Ceiling((double)samples * targetRate / inputRate) + 64);
+
+            float[] leftOutput = new float[maxOutputSamples];
+            float[] rightOutput = new float[maxOutputSamples];
+            int leftOutputSamples = 0;
+            int rightOutputSamples = 0;
+
+            fixed (float* pLeftInput = left)
+            fixed (float* pRightInput = rightSource)
+            fixed (float* pLeftOutput = leftOutput)
+            fixed (float* pRightOutput = rightOutput)
+            {
+                WDSP.xresampleFV(pLeftInput, pLeftOutput, samples, &leftOutputSamples, state.LeftResampler.ToPointer());
+                WDSP.xresampleFV(pRightInput, pRightOutput, samples, &rightOutputSamples, state.RightResampler.ToPointer());
+            }
+
+            int outputSamples = Math.Min(leftOutputSamples, rightOutputSamples);
+            if (outputSamples <= 0)
+            {
+                leftOut = Array.Empty<float>();
+                rightOut = Array.Empty<float>();
+                return 0;
+            }
+
+            if (outputSamples != leftOutput.Length)
+            {
+                float[] resizedLeft = new float[outputSamples];
+                float[] resizedRight = new float[outputSamples];
+                Array.Copy(leftOutput, resizedLeft, outputSamples);
+                Array.Copy(rightOutput, resizedRight, outputSamples);
+                leftOutput = resizedLeft;
+                rightOutput = resizedRight;
+            }
+
+            leftOut = leftOutput;
+            rightOut = rightOutput;
+            return outputSamples;
         }
 
 		public void DrivePowerChange(int rx, int newPower, bool tune)
@@ -1595,6 +1750,7 @@ namespace Thetis
                 m_tciPttActive = false;
 			}
 			clearQueuedTxAudio();
+            clearRxAudioStreamState();
             server?.ReleaseActiveTxAudioListener(this);
 			server?.RefreshTxAudioSourceState();
             m_server?.RefreshStreamRunState();
@@ -3153,8 +3309,28 @@ namespace Thetis
             if (samples <= 0) return;
             if (samples > left.Length) samples = left.Length;
 
+            TCISampleType sampleType;
+            int channels;
+            int packetSamples;
+            int targetSampleRate;
+            lock (m_objStreamLock)
+            {
+                sampleType = m_audioSampleType;
+                channels = m_audioStreamChannels;
+                packetSamples = m_audioStreamSamples;
+                targetSampleRate = m_audioSampleRate;
+            }
+
             lock (m_objRxAudioLock)
             {
+                if (sampleRate != targetSampleRate)
+                {
+                    samples = resampleRxAudioSamples(receiver, sampleRate, targetSampleRate, left, right, samples, out left, out right);
+                    sampleRate = targetSampleRate;
+                    if (samples <= 0)
+                        return;
+                }
+
                 if (!m_rxAudioLeftPending.TryGetValue(receiver, out TCIPendingFloatBuffer leftPending))
                 {
                     leftPending = new TCIPendingFloatBuffer(samples * 2);
@@ -3177,16 +3353,6 @@ namespace Thetis
 
                 while (true)
                 {
-					TCISampleType sampleType;
-					int channels;
-							int packetSamples;
-					lock (m_objStreamLock)
-					{
-						sampleType = m_audioSampleType;
-						channels = m_audioStreamChannels;
-						packetSamples = m_audioStreamSamples;
-					}
-
                     if (packetSamples <= 0 || leftPending.Count < packetSamples || rightPending.Count < packetSamples)
                         break;
 
@@ -3418,12 +3584,58 @@ namespace Thetis
         private void handleAudioSampleRate(string[] args)
         {
             if (args.Length != 1) return;
+            bool samplesChanged = false;
+            int audioSampleRate;
+            int audioStreamSamples;
+            bool rateChanged = false;
+
             if (int.TryParse(args[0], out int sampleRate))
             {
                 if (sampleRate == 8000 || sampleRate == 12000 || sampleRate == 24000 || sampleRate == 48000)
+                {
+                    lock (m_objStreamLock)
+                    {
+                        rateChanged = m_audioSampleRate != sampleRate;
                     m_audioSampleRate = sampleRate;
+
+                        if (!m_audioStreamSamplesExplicitlySet)
+                        {
+                            int defaultSamples = getDefaultAudioStreamSamples(sampleRate);
+                            if (m_audioStreamSamples != defaultSamples)
+                            {
+                                m_audioStreamSamples = defaultSamples;
+                                samplesChanged = true;
+                            }
+                        }
+
+                        audioSampleRate = m_audioSampleRate;
+                        audioStreamSamples = m_audioStreamSamples;
+                    }
+                }
+                else
+                {
+                    lock (m_objStreamLock)
+                    {
+                        audioSampleRate = m_audioSampleRate;
+                        audioStreamSamples = m_audioStreamSamples;
+                    }
+                }
             }
-            sendAudioSampleRate(m_audioSampleRate);
+            else
+            {
+                lock (m_objStreamLock)
+                {
+                    audioSampleRate = m_audioSampleRate;
+                    audioStreamSamples = m_audioStreamSamples;
+                }
+            }
+
+            if (rateChanged)
+                clearRxAudioStreamState();
+
+            sendAudioSampleRate(audioSampleRate);
+            if (samplesChanged)
+                sendAudioStreamSamples(audioStreamSamples);
         }
 
         private void handleIQStart(string[] args, bool enable)
@@ -3482,13 +3694,7 @@ namespace Thetis
             }
 
             if (!enable)
-            {
-                lock (m_objRxAudioLock)
-                {
-                    m_rxAudioLeftPending.Remove(receiver);
-                    m_rxAudioRightPending.Remove(receiver);
-                }
-            }
+                clearRxAudioStateForReceiver(receiver);
 
             sendAudioStartStop(receiver, enable);
             m_server?.RefreshStreamRunState();
@@ -3530,12 +3736,34 @@ namespace Thetis
         private void handleAudioStreamSamples(string[] args)
         {
             if (args.Length != 1) return;
+            int audioStreamSamples;
             if (int.TryParse(args[0], out int samples))
             {
                 if (samples >= 100 && samples <= 2048)
+                {
+                    lock (m_objStreamLock)
+                    {
                     m_audioStreamSamples = samples;
+                        m_audioStreamSamplesExplicitlySet = true;
+                        audioStreamSamples = m_audioStreamSamples;
+                    }
+                }
+                else
+                {
+                    lock (m_objStreamLock)
+                    {
+                        audioStreamSamples = m_audioStreamSamples;
+                    }
             }
-            sendAudioStreamSamples(m_audioStreamSamples);
+            }
+            else
+            {
+                lock (m_objStreamLock)
+                {
+                    audioStreamSamples = m_audioStreamSamples;
+                }
+            }
+            sendAudioStreamSamples(audioStreamSamples);
         }
 
         private void handleTxStreamAudioBuffering(string[] args)
@@ -3666,6 +3894,7 @@ namespace Thetis
 		private bool m_bEmulateExpertSDR3Protocol = false;
         private bool m_bIQSwap = true;
         private bool m_bAlwaysStreamIQ = false;
+        private TCITxStereoInputMode m_txStereoInputMode = TCITxStereoInputMode.Both;
 
         private frmLog _log;
 
@@ -3798,6 +4027,11 @@ namespace Thetis
         {
             get { return m_bAlwaysStreamIQ; }
             set { m_bAlwaysStreamIQ = value; RefreshStreamRunState(); }
+        }
+        public TCITxStereoInputMode TXStereoInputMode
+        {
+            get { return m_txStereoInputMode; }
+            set { m_txStereoInputMode = value; }
         }
         public void StartServer(Console c, int rateLimit = 0)
 		{

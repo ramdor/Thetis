@@ -431,7 +431,7 @@ textoverlay and ledindicitaor meter items. You can use %discord_general=N% and
 %discord_bot=N% to view the history, where 0 is newest, 1 is the previous etc.
 
 You do not need to be a member of discord to use this functionality but there are lots
-of us there and you can interact with many channles and actively view the
+of us there and you can interact with many channels and actively view the
 #thetis-bot channel to see what is going on.</value>
   </data>
   <data name="picMultiMeterRotatorControlInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

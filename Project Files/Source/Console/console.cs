@@ -50806,7 +50806,7 @@ namespace Thetis
                 case OtherButtonId.PS_A: PSA = !PSA; break;
                 case OtherButtonId.REC: QuickRec = !QuickRec; break;
                 case OtherButtonId.PLAY: QuickPlay = !QuickPlay; break;
-                case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
+                //case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
                 case OtherButtonId.NR: incrementNR(rx); break;
                 case OtherButtonId.ANF: SetANF(rx, !GetANF(rx)); break;
                 case OtherButtonId.NB:
@@ -51000,7 +51000,10 @@ namespace Thetis
                 case OtherButtonId.FORM_SETUP: setupToolStripMenuItem1_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_DBMAN: databaseManagerToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_MEMORY: memoryToolStripMenuItem_Click(this, EventArgs.Empty); break;
-                case OtherButtonId.FORM_WAVE: waveToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_AMPVIEW:
+                    // show ampview
+                    showOnStartup("ampview"); // use this to show it
+                    break;
                 case OtherButtonId.FORM_EQ:
                     _eq_form_show_rx = true;
                     equalizerToolStripMenuItem_Click(this, EventArgs.Empty); 
@@ -51148,7 +51151,7 @@ namespace Thetis
                     SetupForm.ShowSetupTab(Setup.SetupTab.OC_Tab);
                     break;
                 case OtherButtonId.WAVE_RECORD:
-                    DoOtherButtonAction(rx, OtherButtonId.FORM_WAVE, MouseButtons.Left, true);
+                    //DoOtherButtonAction(rx, OtherButtonId.FORM_WAVE, MouseButtons.Left, true);
                     break;
                 case OtherButtonId.DITHER:
                 case OtherButtonId.RANDOM:
@@ -51421,7 +51424,7 @@ namespace Thetis
                 case OtherButtonId.PS_A: return PSA;
                 case OtherButtonId.REC: return QuickRec;
                 case OtherButtonId.PLAY: return QuickPlay;
-                case OtherButtonId.WAVE_RECORD: return WaveRecord;
+                //case OtherButtonId.WAVE_RECORD: return WaveRecord;
                 case OtherButtonId.NR: return GetSelectedNR(rx) != 0;
                 case OtherButtonId.ANF: return GetANF(rx);
                 case OtherButtonId.NB: return GetSelectedNB(rx) != 0;

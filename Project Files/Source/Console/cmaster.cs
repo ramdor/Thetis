@@ -1278,7 +1278,7 @@ namespace Thetis
                 if (queuedAudio == null || queuedAudio.Receiver != receiver)
                     continue;
 
-                queueTCITxAudio(queuedAudio, targetRate);
+                queueTCITxAudio(queuedAudio, targetRate, server.TXStereoInputMode);
             }
 
             int txBlock = GetBuffSize(targetRate);
@@ -1350,7 +1350,7 @@ namespace Thetis
             }
         }
 
-        private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate)
+        private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate, TCITxStereoInputMode stereoInputMode)
         {
             if (queuedAudio == null || queuedAudio.Samples == null || queuedAudio.ComplexSamples <= 0)
                 return;
@@ -1368,7 +1368,24 @@ namespace Thetis
             else
             {
                 for (int i = 0; i < complexSamples; i++)
-                    mono[i] = (float)(queuedAudio.Samples[2 * i] + queuedAudio.Samples[2 * i + 1]);
+                {
+                    double left = queuedAudio.Samples[2 * i];
+                    double right = queuedAudio.Samples[2 * i + 1];
+
+                    switch (stereoInputMode)
+                    {
+                        case TCITxStereoInputMode.Left:
+                            mono[i] = (float)left;
+                            break;
+                        case TCITxStereoInputMode.Right:
+                            mono[i] = (float)right;
+                            break;
+                        case TCITxStereoInputMode.Both:
+                        default:
+                            mono[i] = (float)((left + right) * 0.5);
+                            break;
+                    }
+                }
             }
 
             float[] output = resampleTCITxSamples(mono, queuedAudio.SampleRate, targetRate);

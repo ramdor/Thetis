@@ -37111,12 +37111,30 @@ namespace Thetis
 
         private void chkTCISwapIQ_CheckedChanged(object sender, EventArgs e)
         {
-            if (console.TCIServer != null) console.TCIServer.IQSwap = chkTCISwapIQ.Checked;
+            if (console != null && console.TCIServer != null) console.TCIServer.IQSwap = chkTCISwapIQ.Checked;
         }
 
         private void chkTCIAlwaysStreamIQ_CheckedChanged(object sender, EventArgs e)
         {
-            if (console.TCIServer != null) console.TCIServer.AlwaysStreamIQ = chkTCIAlwaysStreamIQ.Checked;
+            if (console != null && console.TCIServer != null) console.TCIServer.AlwaysStreamIQ = chkTCIAlwaysStreamIQ.Checked;
+        }
+
+        private void radTCITXchannel_CheckedChanged(object sender, EventArgs e)
+        {
+            if (console == null || console.TCIServer == null) return;
+
+            if (radTCITXchannel_L.Checked) 
+            {
+                console.TCIServer.TXStereoInputMode = TCITxStereoInputMode.Left;
+            }
+            else if (radTCITXchannel_R.Checked)
+            {
+                console.TCIServer.TXStereoInputMode = TCITxStereoInputMode.Right;
+            }
+            else
+            {
+                console.TCIServer.TXStereoInputMode = TCITxStereoInputMode.Both;
+            }
         }
         // END CFC para
     }
