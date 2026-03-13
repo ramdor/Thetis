@@ -294,6 +294,19 @@ namespace Thetis
 
     public class TCPIPtciSocketListener
 	{
+        private enum TCIOutboundPriority
+        {
+            Urgent = 0,
+            Binary = 1,
+            Control = 2
+        }
+
+        private sealed class TCIOutboundFrame
+        {
+            public byte[] Frame;
+            public string LogText;
+        }
+
 		//
 		public delegate void ClientConnected();
 		public delegate void ClientDisconnected();
@@ -331,6 +344,7 @@ namespace Thetis
 		private bool m_markedForDeletion = false;
 		private bool m_bWebSocket = false;
 		private Thread m_VFODataThread = null;
+        private Thread m_sendThread = null;
 		private TCPIPtciServer m_server = null;
 		private int m_nRateLimit;
         private LinkedList<VFOData> m_vfoDataList = new LinkedList<VFOData>();
@@ -342,11 +356,19 @@ namespace Thetis
         private Stopwatch m_swTXFrequency = new Stopwatch();
         private System.Threading.Timer m_tmTXFrequency;
         private readonly object m_objStreamLock = new object();
+        private readonly object m_objOutboundLock = new object();
         private readonly object m_objTxQueueLock = new object();
         private readonly object m_objRxAudioLock = new object();
+        private readonly AutoResetEvent m_outboundFrameEvent = new AutoResetEvent(false);
         private readonly HashSet<int> m_iqStreamEnabled = new HashSet<int>();
         private readonly HashSet<int> m_audioStreamEnabled = new HashSet<int>();
         private readonly Queue<TCIQueuedTxAudio> m_txAudioQueue = new Queue<TCIQueuedTxAudio>();
+        private readonly Queue<TCIOutboundFrame> m_outboundUrgentFrames = new Queue<TCIOutboundFrame>();
+        private readonly Queue<TCIOutboundFrame> m_outboundBinaryFrames = new Queue<TCIOutboundFrame>();
+        private readonly Queue<TCIOutboundFrame> m_outboundControlFrames = new Queue<TCIOutboundFrame>();
+        private readonly Queue<string> m_outboundCoalescedOrder = new Queue<string>();
+        private readonly HashSet<string> m_outboundCoalescedKeys = new HashSet<string>();
+        private readonly Dictionary<string, TCIOutboundFrame> m_outboundCoalescedFrames = new Dictionary<string, TCIOutboundFrame>();
         private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioLeftPending = new Dictionary<int, TCIPendingFloatBuffer>();
         private readonly Dictionary<int, TCIPendingFloatBuffer> m_rxAudioRightPending = new Dictionary<int, TCIPendingFloatBuffer>();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
@@ -579,7 +601,7 @@ namespace Thetis
 			if (m_disconnected) return;
 			lock (m_objVFODataLock)
 			{
-				//limitList();
+				limitList();
 				m_vfoDataList.AddLast(vfod);
 			}
 		}
@@ -588,7 +610,7 @@ namespace Thetis
 			if (m_disconnected) return;
 			lock (m_objVFODataLock)
 			{
-				//limitList();
+				limitList();
 				m_vfoDataList.AddLast(vfod);
 			}
 		}
@@ -597,7 +619,7 @@ namespace Thetis
             if (m_disconnected) return;
             lock (m_objVFODataLock)
             {
-                //limitList();
+                limitList();
                 m_vfoDataList.AddLast(vfod);
             }
         }
@@ -663,6 +685,11 @@ namespace Thetis
 		{
 			if (m_client != null)
 			{
+                m_sendThread = new Thread(new ThreadStart(SendThreadProc));
+                m_sendThread.Name = "TCI client sender Thread";
+                m_sendThread.Priority = ThreadPriority.AboveNormal;
+                m_sendThread.Start();
+
 				m_VFODataThread = new Thread(new ThreadStart(VFOdata));
 				m_VFODataThread.Priority = ThreadPriority.Normal;
 				m_VFODataThread.Start();
@@ -783,6 +810,190 @@ namespace Thetis
 			if (length > 0) Buffer.BlockCopy(payload, 0, response, (int)indexStartRawData, (int)length);
 			return response;
 		}
+
+        private static string getCoalescedTextFrameKey(string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return null;
+
+            string trimmed = message.Trim();
+            int colonIndex = trimmed.IndexOf(':');
+            if (colonIndex <= 0)
+                return null;
+
+            string command = trimmed.Substring(0, colonIndex).ToLowerInvariant();
+            string[] args = trimmed.Substring(colonIndex + 1).TrimEnd(';').Split(',');
+
+            switch (command)
+            {
+                case "vfo":
+                case "if":
+                    if (args.Length >= 2)
+                        return command + ":" + args[0] + "," + args[1];
+                    break;
+                case "dds":
+                case "rx_filter_band":
+                case "modulation":
+                case "drive":
+                case "tune_drive":
+                case "tune":
+                case "rx_enable":
+                case "tx_enable":
+                    if (args.Length >= 1)
+                        return command + ":" + args[0];
+                    break;
+                case "tx_frequency":
+                case "tx_frequency_thetis":
+                    return command;
+            }
+
+            return null;
+        }
+
+        private bool hasPendingOutboundFramesLocked()
+        {
+            return m_outboundUrgentFrames.Count > 0 ||
+                   m_outboundBinaryFrames.Count > 0 ||
+                   m_outboundControlFrames.Count > 0 ||
+                   m_outboundCoalescedOrder.Count > 0;
+        }
+
+        private bool tryDequeueNextOutboundFrameLocked(out TCIOutboundFrame frame)
+        {
+            frame = null;
+
+            if (m_outboundUrgentFrames.Count > 0)
+            {
+                frame = m_outboundUrgentFrames.Dequeue();
+                return true;
+            }
+
+            if (m_outboundBinaryFrames.Count > 0)
+            {
+                frame = m_outboundBinaryFrames.Dequeue();
+                return true;
+            }
+
+            if (m_outboundControlFrames.Count > 0)
+            {
+                frame = m_outboundControlFrames.Dequeue();
+                return true;
+            }
+
+            while (m_outboundCoalescedOrder.Count > 0)
+            {
+                string key = m_outboundCoalescedOrder.Dequeue();
+                m_outboundCoalescedKeys.Remove(key);
+                if (m_outboundCoalescedFrames.TryGetValue(key, out frame))
+                {
+                    m_outboundCoalescedFrames.Remove(key);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void clearOutboundFrames()
+        {
+            lock (m_objOutboundLock)
+            {
+                m_outboundUrgentFrames.Clear();
+                m_outboundBinaryFrames.Clear();
+                m_outboundControlFrames.Clear();
+                m_outboundCoalescedOrder.Clear();
+                m_outboundCoalescedKeys.Clear();
+                m_outboundCoalescedFrames.Clear();
+            }
+        }
+
+        private void flushOutboundFrames(int timeoutMs)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            while (sw.ElapsedMilliseconds < timeoutMs)
+            {
+                lock (m_objOutboundLock)
+                {
+                    if (!hasPendingOutboundFramesLocked())
+                        return;
+                }
+
+                Thread.Sleep(5);
+            }
+        }
+
+        private void enqueueOutboundFrame(byte[] frameBytes, string logText, TCIOutboundPriority priority, string coalescedKey = null)
+        {
+            if (frameBytes == null || frameBytes.Length == 0)
+                return;
+
+            lock (m_objOutboundLock)
+            {
+                TCIOutboundFrame frame = new TCIOutboundFrame()
+                {
+                    Frame = frameBytes,
+                    LogText = logText
+                };
+
+                if (!string.IsNullOrEmpty(coalescedKey) && priority == TCIOutboundPriority.Control)
+                {
+                    m_outboundCoalescedFrames[coalescedKey] = frame;
+                    if (m_outboundCoalescedKeys.Add(coalescedKey))
+                        m_outboundCoalescedOrder.Enqueue(coalescedKey);
+                }
+                else
+                {
+                    switch (priority)
+                    {
+                        case TCIOutboundPriority.Urgent:
+                            m_outboundUrgentFrames.Enqueue(frame);
+                            break;
+                        case TCIOutboundPriority.Binary:
+                            m_outboundBinaryFrames.Enqueue(frame);
+                            break;
+                        default:
+                            m_outboundControlFrames.Enqueue(frame);
+                            break;
+                    }
+                }
+            }
+
+            m_outboundFrameEvent.Set();
+        }
+
+        private void SendThreadProc()
+        {
+            while (!m_stopClient)
+            {
+                TCIOutboundFrame outboundFrame = null;
+
+                lock (m_objOutboundLock)
+                {
+                    tryDequeueNextOutboundFrameLocked(out outboundFrame);
+                }
+
+                if (outboundFrame == null)
+                {
+                    m_outboundFrameEvent.WaitOne(20);
+                    continue;
+                }
+
+                try
+                {
+                    if (m_bWebSocket && m_client != null && m_stream != null && m_client.Connected)
+                    {
+                        m_stream.Write(outboundFrame.Frame, 0, outboundFrame.Frame.Length);
+                        if (!string.IsNullOrEmpty(outboundFrame.LogText) && m_server != null && m_server.LogForm != null)
+                            m_server.LogForm.Log(false, outboundFrame.LogText);
+                    }
+                }
+                catch
+                {
+                    Debug.Print("problem writing queued frame");
+                    m_stopClient = true;
+                }
+            }
+        }
 
 		private bool upgradeToWebSocket(string msg)
         {
@@ -1285,12 +1496,11 @@ namespace Thetis
 		{
 			try
 			{
-				if (m_bWebSocket && m_client != null && m_stream != null)
+				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
 				{
 					if (m_client.Connected)
 					{
-						byte[] frame = GetFrameFromString(sMsg, EOpcodeType.Ping);
-						m_stream.Write(frame, 0, frame.Length);						
+                        enqueueOutboundFrame(GetFrameFromString(sMsg, EOpcodeType.Ping), null, TCIOutboundPriority.Urgent);
 					}
 				}
 			}
@@ -1304,12 +1514,11 @@ namespace Thetis
 		{
 			try
 			{
-				if (m_bWebSocket && m_client != null && m_stream != null)
+				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
 				{
 					if (m_client.Connected)
 					{
-						byte[] frame = GetFrameFromString(sMsg, EOpcodeType.Pong);
-						m_stream.Write(frame, 0, frame.Length);
+                        enqueueOutboundFrame(GetFrameFromString(sMsg, EOpcodeType.Pong), null, TCIOutboundPriority.Urgent);
 					}
 				}
 			}
@@ -1323,13 +1532,15 @@ namespace Thetis
 		{
 			try
 			{
-				if (m_bWebSocket && m_client != null && m_stream != null)
+				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
 				{
 					if (m_client.Connected)
 					{
-						byte[] frame = GetFrameFromString(sMsg, EOpcodeType.Text);
-						m_stream.Write(frame, 0, frame.Length);
-						if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(false, sMsg);
+                        enqueueOutboundFrame(
+                            GetFrameFromString(sMsg, EOpcodeType.Text),
+                            sMsg,
+                            TCIOutboundPriority.Control,
+                            getCoalescedTextFrameKey(sMsg));
 					}
 				}
 			}
@@ -1343,12 +1554,11 @@ namespace Thetis
 		{
 			try
 			{
-				if (m_bWebSocket && m_client != null && m_stream != null)
+				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
 				{
 					if (m_client.Connected)
 					{
-						byte[] frame = GetFrameFromBytes(payload, EOpcodeType.Binary);
-						m_stream.Write(frame, 0, frame.Length);
+                        enqueueOutboundFrame(GetFrameFromBytes(payload, EOpcodeType.Binary), null, TCIOutboundPriority.Binary);
 					}
 				}
 			}
@@ -1363,12 +1573,11 @@ namespace Thetis
 		{
 			try
 			{
-				if (m_bWebSocket && m_client != null && m_stream != null)
+				if (!m_stopClient && m_bWebSocket && m_client != null && m_stream != null)
 				{
 					if (m_client.Connected)
 					{
-						byte[] frame = GetFrameFromString("", EOpcodeType.ClosedConnection);
-						m_stream.Write(frame, 0, frame.Length);
+                        enqueueOutboundFrame(GetFrameFromString("", EOpcodeType.ClosedConnection), null, TCIOutboundPriority.Urgent);
 					}
 				}
 			}
@@ -1408,12 +1617,26 @@ namespace Thetis
 					
 					sendCloseFrame();
 
+                    flushOutboundFrames(100);
+
 					m_stream.Close();
 					m_stream = null;
 				}
 
 				m_stopClient = true;
+                m_outboundFrameEvent.Set();
 				m_client.Close();
+
+                if (m_sendThread != null)
+                {
+                    m_sendThread.Join(100);
+
+                    if (m_sendThread.IsAlive)
+                    {
+                        m_sendThread.Abort();
+                    }
+                    m_sendThread = null;
+                }
 
 				if (m_VFODataThread != null)
 				{
@@ -1442,6 +1665,7 @@ namespace Thetis
 
 				m_server = null;
 				m_client = null;
+                clearOutboundFrames();
 				m_markedForDeletion = true;
 			}
 		}
