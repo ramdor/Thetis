@@ -426,7 +426,10 @@ namespace Thetis
             {
                 vfob_tx = value;
             }
-
+            get
+            {
+                return vfob_tx;
+            }
         }
 
         private static bool antivox_source_VAC = false;

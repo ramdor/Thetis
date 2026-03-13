@@ -376,7 +376,17 @@ void xcmaster (int stream)
 
 	case 1:  // standard transmitter
 		tx = txid (stream);
-		asioIN(pcm->in[stream]);
+		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// from tci tx audio
+		{
+			if (pcm->InboundTCITxAudio)
+				(*pcm->InboundTCITxAudio)(pcm->xcm_insize[stream], pcm->in[stream]);
+			else
+				memset (pcm->in[stream], 0, pcm->xcm_insize[stream] * sizeof (complex));
+		}
+		else
+		{
+			asioIN(pcm->in[stream]);
+		}
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
@@ -409,6 +419,31 @@ void SendpOutboundTx(void (*Outbound)(int id, int nsamples, double* buff))
 {
 	pcm->OutboundTx = Outbound;
 	SetILVOutputPointer(0, pcm->OutboundTx);
+}
+
+PORT
+void SendpOutboundTCIIQ (void (*Outbound)(int id, int nsamples, double* buff))
+{
+	pcm->OutboundTCIIQ = Outbound;
+}
+
+
+PORT
+void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff))
+{
+	pcm->InboundTCITxAudio = Inbound;
+}
+
+PORT
+void SetTCIRun (int active)
+{
+	_InterlockedExchange (&pcm->tci_run, active);
+}
+
+PORT
+void SetTXTCIAudio (int txid, int active)
+{
+	_InterlockedExchange (&pcm->xmtr[txid].use_tci_audio, active);
 }
 
 PORT

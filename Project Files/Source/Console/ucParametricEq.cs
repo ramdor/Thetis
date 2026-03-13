@@ -319,6 +319,7 @@ namespace Thetis
 
         private bool _show_readout;
         private bool _show_dot_readings;
+        private bool _show_dot_readings_as_comp;
 
         private int _global_handle_x_offset;
         private int _global_handle_size;
@@ -395,6 +396,7 @@ namespace Thetis
 
             _show_readout = true;
             _show_dot_readings = false;
+            _show_dot_readings_as_comp = false;
 
             _global_handle_x_offset = 6;
             _global_handle_size = 10;
@@ -759,6 +761,21 @@ namespace Thetis
         }
 
         [Category("EQ")]
+        [DefaultValue(false)]
+        public bool ShowDotReadingsAsComp
+        {
+            get { return _show_dot_readings_as_comp; }
+            set
+            {
+                bool v = value;
+                if (v == _show_dot_readings_as_comp) return;
+
+                _show_dot_readings_as_comp = v;
+                Invalidate();
+            }
+        }
+
+        [Category("EQ")]
         public double MinPointSpacingHz
         {
             get { return _min_point_spacing_hz; }
@@ -1087,12 +1104,12 @@ namespace Thetis
             Invalidate();
         }
 
-        public void GetDefaults(out double[] F, out double[] G, out double[] Q, out double global_preamp_db, out double min_hz, out double max_hz, out bool parametric_eq, out int band_count, int default_band_count = 10)
+        public void GetDefaults(out double[] F, out double[] G, out double[] Q, out double global_preamp_db, out double min_hz, out double max_hz, out bool parametric_eq, out int band_count, int default_band_count = 10, double default_min_hz = 0.0, double default_max_hz = 4000.0)
         {
             band_count = default_band_count;
             global_preamp_db = 0.0;
-            min_hz = 0.0;
-            max_hz = 4000.0;
+            min_hz = default_min_hz;
+            max_hz = default_max_hz;
             parametric_eq = true;
 
             int count = band_count;
@@ -2408,7 +2425,7 @@ namespace Thetis
 
         private void drawDotReading(Graphics g, Rectangle plot, EqPoint p, float dot_x, float dot_y, float dot_radius)
         {
-            string text = "F " + formatDotReadingHz(p.FrequencyHz) + "   G " + formatDotReadingDb(p.GainDb);
+            string text = "F " + formatDotReadingHz(p.FrequencyHz) + "   " + (_show_dot_readings_as_comp ? "C" : "G") + " " + formatDotReadingDb(p.GainDb);
             if (_parametric_eq) text += "   Q " + p.Q.ToString("0.00");
 
             Size text_size = TextRenderer.MeasureText(text, Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);

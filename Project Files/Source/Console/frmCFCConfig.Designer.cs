@@ -183,6 +183,7 @@
             this.ucCFC_comp.ShowAxisScales = true;
             this.ucCFC_comp.ShowBandShading = true;
             this.ucCFC_comp.ShowDotReadings = true;
+            this.ucCFC_comp.ShowDotReadingsAsComp = true;
             this.ucCFC_comp.ShowReadout = false;
             this.ucCFC_comp.Size = new System.Drawing.Size(509, 320);
             this.ucCFC_comp.TabIndex = 201;

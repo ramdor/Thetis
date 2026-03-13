@@ -86,6 +86,21 @@ namespace Thetis
             Common.RestoreForm(this, "CFCConfig", false);
             Common.ForceFormOnScreen(this);
 
+            ucCFC_comp.GetDefaults(out double[] f, out double[] g, out double[] q, out double pa, out double minHz, out double maxHz, out _, out _, 10);
+
+            ucCFC_comp.SetPointsData(f, g, q);
+            ucCFC_comp.FrequencyMinHz = minHz;
+            ucCFC_comp.FrequencyMaxHz = maxHz;
+            ucCFC_comp.GlobalGainDb = pa;
+
+            ucCFC_eq.SetPointsData(f, g, q);
+            ucCFC_eq.FrequencyMinHz = minHz;
+            ucCFC_eq.FrequencyMaxHz = maxHz;
+            ucCFC_eq.GlobalGainDb = pa;
+
+            udCFC_low.Value = (decimal)minHz;
+            udCFC_high.Value = (decimal)maxHz;
+
             updateSelected(null);
             setTimer();
         }
