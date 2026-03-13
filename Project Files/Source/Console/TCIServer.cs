@@ -1073,9 +1073,10 @@ namespace Thetis
             sendMode(0);
 			sendMode(1);
 
-			//TODO sendFilterBand(0)
+            sendFilterBand(0, console.ThreadSafeTCIAccessor.RX1FilterLow, console.ThreadSafeTCIAccessor.RX1FilterHigh);
+            sendFilterBand(1, console.ThreadSafeTCIAccessor.RX2FilterLow, console.ThreadSafeTCIAccessor.RX2FilterHigh);
 
-			sendRXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
+            sendRXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
 			sendRXEnable(1, bRX2Enabled && !console.ThreadSafeTCIAccessor.MOX);
 
 			//lock
@@ -2085,7 +2086,7 @@ namespace Thetis
             {
                 bool bOK = int.TryParse(args[0], out int vac_number);
 
-                if (bOK && !console.IsSetupFormNull)
+                if (bOK && !console.ThreadSafeTCIAccessor.IsSetupFormNull)
                 {
                     lineOutEnable(vac_number, true);
                 }
@@ -2098,7 +2099,7 @@ namespace Thetis
             {
                 bool bOK = int.TryParse(args[0], out int vac_number);
 
-                if (bOK && !console.IsSetupFormNull)
+                if (bOK && !console.ThreadSafeTCIAccessor.IsSetupFormNull)
                 {
                     lineOutEnable(vac_number, false);
                 }
@@ -2452,7 +2453,54 @@ namespace Thetis
             }
 		}
 
-		private void handleRXEnable(string[] args)
+        private void handleRxFilterBand(string[] args)
+        {
+            if (m_server == null) return;
+
+			int rx = 0;
+			int low = 0;
+			int high = 0;
+
+			if (args.Length == 1)
+			{
+				//read
+				bool bOK = int.TryParse(args[0], out rx);
+
+                switch (rx)
+                {
+                    case 0:
+						low = console.ThreadSafeTCIAccessor.RX1FilterLow;
+						high = console.ThreadSafeTCIAccessor.RX1FilterHigh;
+                        break;
+                    case 1:
+						low = console.ThreadSafeTCIAccessor.RX2FilterLow;
+						high = console.ThreadSafeTCIAccessor.RX2FilterHigh;
+                        break;
+                }
+
+                sendFilterBand(rx, low, high);
+			}
+            else if (args.Length == 3)
+            {
+                //set
+                bool bOK = int.TryParse(args[0], out rx);
+                if (bOK) bOK = int.TryParse(args[1], out low);
+                if (bOK) bOK = int.TryParse(args[2], out high);
+				if (bOK)
+				{
+					switch (rx)
+					{
+						case 0:
+                            console.ThreadSafeTCIAccessor.UpdateRX1Filters(low, high);
+                            break;
+						case 1:
+                            console.ThreadSafeTCIAccessor.UpdateRX2Filters(low, high);
+                            break;
+					}
+				}
+            }
+        }
+        private void handleRXEnable(string[] args)
         {
 			int rx = 0;
 			bool enable = false;
@@ -2592,6 +2640,9 @@ namespace Thetis
 						break;
 					case "spot_simulate_click": // bespoke command to Thetis
 						handleSpotSimulateClick(args);
+						break;
+					case "rx_filter_band":
+						handleRxFilterBand(args);
 						break;
                 }
             }
