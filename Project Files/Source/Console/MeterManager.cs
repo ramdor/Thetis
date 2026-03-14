@@ -8378,7 +8378,7 @@ namespace Thetis
             public override bool Puresignal { get => base.Puresignal; set => updateOn(OtherButtonId.PS_A, value); }
             public override bool QuickPlay { get => base.QuickPlay; set => updateOn(OtherButtonId.PLAY, value); }
             public override bool QuickRecord { get => base.QuickRecord; set => updateOn(OtherButtonId.REC, value); }
-            public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
+            //public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
             public override bool ANF { get => base.ANF; set => updateOn(OtherButtonId.ANF, value); }
             public override bool SNB { get => base.SNB; set => updateOn(OtherButtonId.SNB, value); }
             public override bool TNFActive { get => base.TNFActive; set => updateOn(OtherButtonId.MNF, value); }

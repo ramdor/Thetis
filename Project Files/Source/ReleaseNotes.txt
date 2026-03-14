@@ -7,14 +7,14 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.13 - Development Change Log
-- [add] audio stream over TCI added
-- [add] IQ stream over TCI added
+- [add] audio stream over TCI support added
+- [add] IQ stream over TCI support added
 - [add] new radio discovery and networking system/config added to setup. The old method has been removed. Your old radio IP settings will be lost if you have those set. Please see this video [TODO]
 - [add] Network Settings documentation pdf added for the change network settings. Can be found in shortcuts, or via the About box manual links
 - [add] entirely new recording/playback system added. New tab in Setup->Audio->Recording. New container gadget item, voice record/play, and cat support. ZZJS (stop record/play), ZZJR (record to slot N) ZZJR005; , ZZJP (playback slot N)  ZZJP005;
 - [add] new 5/10/18 band Parametric EQ ui for TX and RX eq, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
 - [add] new 5/10/18 band EQ Parametric EQ ui for CFC, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
-- [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required.
+- [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required
 - [add] now possible to select channel (both, left, right) for cmasio mic input
 - [add] debug/test option to ignore ATT offset in displays and signal meters. Thetis identifies as an Icom !
 - [add] bandwidth debug/test option to visualise the data in/out of Thetis
@@ -36,6 +36,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] auto rx step attenuation will only happen when there has been at least 400ms of adc overload and it moves from a yellow to red warning
 - [change] removed -SWL[n] tag support from TCI spot mode field, added support to JSON tagged data
 - [change] DB merge code changed such that it attempts to pull all state settings from the source database into the new database if possible
+- [change] wave form removed from other buttons, replaced with amp view
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots
 - [fix] diversity form now fades in along side console window at start up
@@ -43,6 +44,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] 6m button on G2 panel not selecting 6m. Previously would select 60m, now selects 6m as it should
 - [fix] issues handling the highprio network packet (1025) meant that ADC overloads could be missed. This is now resolved
 - [fix] fixed issues with 40/30 and 12/10 bfp ranges in setup causing crashes
+- [fix] fixed issue where some modes had spaces in the TCI modulation outbound message
+- [fix] TCI server can now handle concatenated TCI commands
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
