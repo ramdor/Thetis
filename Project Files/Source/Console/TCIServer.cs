@@ -1276,7 +1276,7 @@ namespace Thetis
 
         private void SendThreadProc()
         {
-            while (!m_stopClient)
+            while (true)
             {
                 TCIOutboundFrame outboundFrame = null;
 
@@ -1287,6 +1287,15 @@ namespace Thetis
 
                 if (outboundFrame == null)
                 {
+                    if (m_stopClient)
+                    {
+                        lock (m_objOutboundLock)
+                        {
+                            if (!hasPendingOutboundFramesLocked())
+                                break;
+                        }
+                    }
+
                     m_outboundFrameEvent.WaitOne(20);
                     continue;
                 }
