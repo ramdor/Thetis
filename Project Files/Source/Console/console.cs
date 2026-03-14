@@ -2441,10 +2441,15 @@ namespace Thetis
                 bool bOK = IPAddress.TryParse(m_sTCIAddress, out IPAddress address);
                 if (bOK)
                 {
-                    if (m_tcpTCIServer != null) m_tcpTCIServer.StopServer();
+                    if (m_tcpTCIServer != null)
+                    {
+                        m_tcpTCIServer.StopServer();
+                        cmaster.TCIServer = null;
+                    }
 
                     Debug.Print("Starting TCI on " + m_sTCIAddress + ":" + m_nTCIPort.ToString());
                     m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort);
+                    cmaster.TCIServer = m_tcpTCIServer;
 
                     addTCIDelegates();
 
@@ -2466,6 +2471,7 @@ namespace Thetis
                 {
                     m_tcpTCIServer.CloseLog();
                     m_tcpTCIServer.StopServer();
+                    cmaster.TCIServer = null;
                     removeTCIDelegates();
                 }
             }
@@ -27908,7 +27914,9 @@ namespace Thetis
             {
                 shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
                 m_tcpTCIServer.StopServer();
+                cmaster.TCIServer = null;
                 removeTCIDelegates();
+                m_tcpTCIServer = null;
             }
             if (m_tcpCATServer != null)
             {

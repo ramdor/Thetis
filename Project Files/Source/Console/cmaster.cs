@@ -474,8 +474,6 @@ namespace Thetis
         private const int TCI_MAX_POOLED_BLOCKS = 64;
         private const int TCI_MAX_POOLED_BUFFERS_PER_SIZE = 32;
         private static volatile bool m_runTCIStreamThreads = false;
-
-        private static Console _console = null;
         #endregion
 
         #region logic calls
@@ -1112,18 +1110,6 @@ namespace Thetis
         #endregion
 
         #region callbacks
-        private static Console console
-        {
-            get
-            {
-                if (_console == null)
-                {
-                    _console = Audio.console;
-                }
-                return _console;
-            }
-        }
-
         unsafe public static void SendCallbacks()
         {
             SendCBPushVox(0, PushVoxDel);
@@ -1145,6 +1131,27 @@ namespace Thetis
         unsafe private static TCIStreamSamples TCIRxIQOutDel = OnTCIRxIQOutSamples;
         unsafe private static TCIStreamSamples TCIRxAudioOutDel = OnTCIRxAudioOutSamples;
         unsafe private static TCITxInput TCITxAudioInDel = OnTCITxAudioInSamples;
+
+        private static TCPIPtciServer _tciServer = null;
+        private static readonly object _tciServer_lock = new object();
+        public static TCPIPtciServer TCIServer
+        {
+            get
+            {
+                lock (_tciServer_lock)
+                {
+                    return _tciServer;
+                }
+            }
+            set
+            {
+                lock (_tciServer_lock)
+                {
+                    _tciServer = value;
+                }
+            }
+        }
+
         private static void EnsureTCIStreamThreads()
         {
             m_runTCIStreamThreads = true;
@@ -1174,9 +1181,8 @@ namespace Thetis
             {
                 try
                 {
-                    TCPIPtciServer server = console != null ? console.TCIServer : null;
-                    if (server != null)
-                        ServiceTCIRxStreams(server);
+                    if (TCIServer != null)
+                        ServiceTCIRxStreams();
                 }
                 catch { }
 
@@ -1184,13 +1190,17 @@ namespace Thetis
             }
         }
 
-        private static void ServiceTCIRxStreams(TCPIPtciServer server)
+        private static void ServiceTCIRxStreams()
         {
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null)
+                return;
+
             while (tryDequeueTCIIQ(out TCIIQBlock iqBlock))
             {
                 try
                 {
-                    server.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
+                    tciServer.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
                 }
                 finally
                 {
@@ -1202,7 +1212,7 @@ namespace Thetis
             {
                 try
                 {
-                    server.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
+                    tciServer.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
                 }
                 finally
                 {
@@ -1217,8 +1227,7 @@ namespace Thetis
             {
                 try
                 {
-                    TCPIPtciServer server = console != null ? console.TCIServer : null;
-                    ServiceTCITxProtocol(console, server);
+                    ServiceTCITxProtocol();
                 }
                 catch { }
 
@@ -1226,9 +1235,10 @@ namespace Thetis
             }
         }
 
-        private static void ServiceTCITxProtocol(Console console, TCPIPtciServer server)
+        private static void ServiceTCITxProtocol()
         {
-            if (console == null || server == null || !server.UsesActiveTCITxAudio() || !Audio.MOX)
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null || !tciServer.UsesActiveTCITxAudio() || !Audio.MOX)
             {
                 resetTCITxState();
                 return;
@@ -1257,7 +1267,7 @@ namespace Thetis
                 m_tciTxInputRate = targetRate;
             }
 
-            if (!server.TryGetTxAudioRequestSettings(out int requestRate, out int requestSamples, out int bufferingMs))
+            if (!tciServer.TryGetTxAudioRequestSettings(out int requestRate, out int requestSamples, out int bufferingMs))
             {
                 resetTCITxState();
                 return;
@@ -1267,7 +1277,7 @@ namespace Thetis
             if (requestSamples <= 0) requestSamples = 480;
             if (bufferingMs < 50) bufferingMs = 50;
 
-            while (server.TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio))
+            while (tciServer.TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio))
             {
                 lock (m_objTCITxStateLock)
                 {
@@ -1278,7 +1288,7 @@ namespace Thetis
                 if (queuedAudio == null || queuedAudio.Receiver != receiver)
                     continue;
 
-                queueTCITxAudio(queuedAudio, targetRate, server.TXStereoInputMode);
+                queueTCITxAudio(queuedAudio, targetRate, tciServer.TXStereoInputMode);
             }
 
             int txBlock = GetBuffSize(targetRate);
@@ -1325,7 +1335,7 @@ namespace Thetis
                 if (!canRequest)
                     break;
 
-                server.SendTxChrono(receiver);
+                tciServer.SendTxChrono(receiver);
                 requestsNeeded--;
             }
         }
@@ -1684,12 +1694,12 @@ namespace Thetis
 
         private static unsafe void OnTCIRxIQOutSamples(int id, int nsamples, double* data)
         {
-            TCPIPtciServer server = console != null ? console.TCIServer : null;
-            if (server == null || data == null || nsamples <= 0) return;
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null || data == null || nsamples <= 0) return;
 
             int inputRate = GetInputRate(0, id);
             int outputRate = inputRate > TCI_MAX_IQ_STREAM_RATE ? TCI_MAX_IQ_STREAM_RATE : inputRate;
-            bool iqSwap = server.IQSwap;
+            bool iqSwap = tciServer.IQSwap;
             float[] iq = rentTCIFloatBuffer(nsamples * 2);
             for (int i = 0; i < nsamples; i++)
             {
@@ -1722,8 +1732,7 @@ namespace Thetis
 
         private static unsafe void OnTCIRxAudioOutSamples(int id, int nsamples, double* data)
         {
-            TCPIPtciServer server = console != null ? console.TCIServer : null;
-            if (server == null || data == null || nsamples <= 0) return;
+            if (TCIServer == null || data == null || nsamples <= 0) return;
 
             float[] left = rentTCIFloatBuffer(nsamples);
             float[] right = rentTCIFloatBuffer(nsamples);
@@ -2303,9 +2312,3 @@ namespace Thetis
 #endregion
 
 }
-
-
-
-
-
-

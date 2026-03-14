@@ -532,6 +532,8 @@ namespace Thetis
         private readonly object m_objOutboundLock = new object();
         private readonly object m_objTxQueueLock = new object();
         private readonly object m_objRxAudioLock = new object();
+        private const int MAX_TX_AUDIO_QUEUE_BLOCKS = 64;
+        private const int MAX_TX_AUDIO_QUEUE_COMPLEX_SAMPLES = 96000;
         private readonly AutoResetEvent m_outboundFrameEvent = new AutoResetEvent(false);
         private readonly HashSet<int> m_iqStreamEnabled = new HashSet<int>();
         private readonly HashSet<int> m_audioStreamEnabled = new HashSet<int>();
@@ -554,6 +556,8 @@ namespace Thetis
         private int m_txStreamAudioBufferingMs = 50;
         private bool m_txUsesTCIAudio = false;
         private bool m_tciPttActive = false;
+        private int m_txQueuedComplexSamples = 0;
+        private bool m_seenModernTxAudioNegotiation = false;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
 		{
 			_console = c;
@@ -700,10 +704,11 @@ namespace Thetis
             }
         }
 
-        private unsafe int resampleRxAudioSamples(int receiver, int inputRate, int targetRate, float[] left, float[] right, int samples, out float[] leftOut, out float[] rightOut)
+        private unsafe int resampleRxAudioSamples(int receiver, int inputRate, int targetRate, float[] left, float[] right, int samples, out float[] leftOut, out float[] rightOut, out bool resampled)
         {
             leftOut = left;
             rightOut = right ?? left;
+            resampled = false;
 
             if (left == null || samples <= 0)
                 return 0;
@@ -785,6 +790,7 @@ namespace Thetis
 
             leftOut = leftOutput;
             rightOut = rightOutput;
+            resampled = true;
             return outputSamples;
         }
 
@@ -1753,8 +1759,6 @@ namespace Thetis
 
 										// move rest of bytes if any to the buffer
 										_m_buffer.Clear();
-                                        //for (int i = nStart; i < nRead; i++)
-										//	_m_buffer.Add(bytes[i]);
                                         _m_buffer.AddRange(bytes.Skip(nStart).Take(nRead - nStart));
                                         nRead = 0; // so that we dont re-add these below
 
@@ -1771,8 +1775,6 @@ namespace Thetis
 							if (m_bWebSocket)
 							{
                                 // add new bytes to buffer
-                                //for (int i = 0; i < nRead; i++)
-                                //    _m_buffer.Add(bytes[i]);
                                 _m_buffer.AddRange(bytes.Take(nRead));
 
                                 byte[] bytesAsArray = _m_buffer.ToArray();
@@ -2803,7 +2805,6 @@ namespace Thetis
                 sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
             }
         }
-
         private void handleSpotSimulateClick(string[] args)
         {
 			if (m_server == null) return;
@@ -3366,161 +3367,6 @@ namespace Thetis
             }
         }
 
-
-        //private void parseTextFrame(string msg)
-        //      {
-        //	//Debug.Print("TCI Msg : " + msg);
-
-        //	if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, msg);
-
-        //	if (msg.EndsWith(";")) msg = msg.Substring(0, msg.Length - 1).Trim();
-
-        //	string[] parts = msg.Split(':');
-
-        //	bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
-
-        //          if (parts.Length == 2 || json_spot)
-        //          {
-        //		string cmd = parts[0].ToLower().Trim();
-        //		string[] args = parts[1].Split(',');
-
-        //		switch (cmd)
-        //              {
-        //			case "modulation":
-        //				handleModulationMessage(args);
-        //				break;
-        //			case "vfo":
-        //				handleVFOMessage(args);
-        //				break;
-        //			case "trx":
-        //				handleTrxMessage(args);
-        //				break;
-        //			case "split_enable":
-        //				handleSplitEnableMessage(args);
-        //				break;
-        //			case "tune":
-        //				handleTune(args);
-        //				break;
-        //			case "rx_enable":
-        //				handleRXEnable(args);
-        //				break;
-        //			case "dds":
-        //				handleDDS(args);
-        //				break;
-        //			case "iq_samplerate":
-        //				handleIQSampleRate(args);
-        //				break;
-        //			case "audio_samplerate":
-        //				handleAudioSampleRate(args);
-        //				break;
-        //			case "iq_start":
-        //				handleIQStart(args, true);
-        //				break;
-        //			case "iq_stop":
-        //				handleIQStart(args, false);
-        //				break;
-        //			case "audio_start":
-        //				handleAudioStart(args, true);
-        //				break;
-        //			case "audio_stop":
-        //				handleAudioStart(args, false);
-        //				break;
-        //			case "audio_stream_sample_type":
-        //				handleAudioStreamSampleType(args);
-        //				break;
-        //			case "audio_stream_channels":
-        //				handleAudioStreamChannels(args);
-        //				break;
-        //			case "audio_stream_samples":
-        //				handleAudioStreamSamples(args);
-        //				break;
-        //			case "tx_stream_audio_buffering":
-        //				handleTxStreamAudioBuffering(args);
-        //				break;
-        //			case "if":
-        //				handleIF(args);
-        //				break;
-        //			case "spot":
-        //				handleSpot(args, json_spot, msg);
-        //				break;
-        //			case "spot_delete":
-        //				handleDeleteSpot(args);
-        //				break;
-        //			case "drive":
-        //				handleDrive(args);
-        //				break;
-        //			case "tune_drive":
-        //				handleTuneDrive(args);
-        //				break;
-        //			case "mute":
-        //                      handleMute(args);
-        //				break;
-        //                  case "rx_mute":
-        //                      handleMuteRX(args);
-        //				break;
-        //			case "mon_volume":
-        //				handleMONVolume(args);
-        //				break;
-        //			case "mon_enable":
-        //                      handleMONEnable(args);
-        //                      break;
-        //                  case "line_out_start":
-        //                      handleLineOutStart(args);
-        //                      break;
-        //                  case "line_out_stop":
-        //                      handleLineOutStop(args);
-        //				break;
-        //			case "spot_simulate_click": // bespoke command to Thetis
-        //				handleSpotSimulateClick(args);
-        //				break;
-        //			case "rx_filter_band":
-        //				handleRxFilterBand(args);
-        //				break;
-        //			case "rx_channel_enable":
-        //				handleRxChannelEnable(args);
-        //				break;
-        //              }
-        //          }
-        //	else if (parts.Length == 1)
-        //          {
-        //		string cmd = parts[0].ToLower().Trim();
-        //		// just command
-        //		switch (cmd)
-        //              {
-        //			case "start":
-        //				handleStart();
-        //				break;
-        //			case "stop":
-        //				handleStop();
-        //				break;
-        //			case "set_in_focus":
-        //				handleSetInFocus();
-        //				break;
-        //                  case "mute":
-        //                      handleMute(null, false);
-        //                      break;
-        //                  case "mon_enable":
-        //                      handleMONEnable(null, false);
-        //                      break;
-        //                  case "mon_volume":
-        //                      handleMONVolume(null, false);
-        //                      break;
-        //                  case "iq_samplerate":
-        //                      sendIQSampleRate(getPublishedIQSampleRate());
-        //                      break;
-        //                  case "audio_samplerate":
-        //                      sendAudioSampleRate(m_audioSampleRate);
-        //                      break;
-        //                  case "tx_stream_audio_buffering":
-        //                      sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
-        //                      break;
-        //			case "spot_clear":
-        //				handleSpotClear();
-        //				break;
-        //              }
-        //          }
-        //}
-
         private static int getDefaultAudioStreamSamples(int sampleRate)
         {
             switch (sampleRate)
@@ -3780,7 +3626,8 @@ namespace Thetis
             {
                 if (sampleRate != targetSampleRate)
                 {
-                    samples = resampleRxAudioSamples(receiver, sampleRate, targetSampleRate, left, right, samples, out left, out right);
+                    samples = resampleRxAudioSamples(receiver, sampleRate, targetSampleRate, left, right, samples, out left, out right, out bool resampled);
+                    if (resampled)
                     sampleRate = targetSampleRate;
                     if (samples <= 0)
                         return;
@@ -3840,15 +3687,17 @@ namespace Thetis
             int samples;
             int channels;
             TCISampleType sampleType;
+            bool useModernLengthSemantics;
             lock (m_objStreamLock)
             {
                 sampleRate = m_audioSampleRate;
                 samples = m_audioStreamSamples;
                 channels = m_audioStreamChannels;
                 sampleType = m_audioSampleType;
+                useModernLengthSemantics = m_seenModernTxAudioNegotiation;
             }
 
-			int requestLength = samples;// samples * Math.Max(1, channels);
+			int requestLength = useModernLengthSemantics ? samples * Math.Max(1, channels) : samples;
             sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, requestLength, TCIStreamType.TX_CHRONO, channels, Array.Empty<byte>()));
         }
 
@@ -3877,8 +3726,6 @@ namespace Thetis
                 return m_tciPttActive;
             }
         }
-
-
         internal void SyncTciPttToMox(bool expectedMox)
         {
             bool releaseOwner = false;
@@ -3902,9 +3749,9 @@ namespace Thetis
             lock (m_objTxQueueLock)
             {
                 m_txAudioQueue.Clear();
+                m_txQueuedComplexSamples = 0;
             }
         }
-
         internal bool TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio)
         {
             lock (m_objTxQueueLock)
@@ -3912,6 +3759,8 @@ namespace Thetis
                 if (m_txAudioQueue.Count > 0)
                 {
                     queuedAudio = m_txAudioQueue.Dequeue();
+                    if (queuedAudio != null)
+                        m_txQueuedComplexSamples = Math.Max(0, m_txQueuedComplexSamples - Math.Max(0, queuedAudio.ComplexSamples));
                     return true;
                 }
             }
@@ -3919,7 +3768,6 @@ namespace Thetis
             queuedAudio = null;
             return false;
         }
-
         private void handleBinaryFrame(byte[] payload)
         {
             if (payload == null || payload.Length < 64)
@@ -3976,12 +3824,22 @@ namespace Thetis
                 return;
 
             float[] decoded = decodeSamples(payload, dataOffset, decodedValueCount, sampleType);
-
-            //for (int i = 0; i < decoded.Length; i++)
-            //{
-            //    if (float.IsNaN(decoded[i]) || float.IsInfinity(decoded[i]))
-            //        decoded[i] = 0.0f;
-            //}
+            for (int i = 0; i < decoded.Length; i++)
+            {
+                float sample = decoded[i];
+                if (float.IsNaN(sample) || float.IsInfinity(sample))
+                {
+                    decoded[i] = 0.0f;
+                }
+                else if (sample > 4.0f)
+                {
+                    decoded[i] = 4.0f;
+                }
+                else if (sample < -4.0f)
+                {
+                    decoded[i] = -4.0f;
+                }
+            }
 
             int complexSamples = channels <= 1 ? decoded.Length : decoded.Length / channels;
 
@@ -3997,7 +3855,19 @@ namespace Thetis
 
             lock (m_objTxQueueLock)
             {
+                while (m_txAudioQueue.Count >= MAX_TX_AUDIO_QUEUE_BLOCKS ||
+                       (m_txQueuedComplexSamples + queuedAudio.ComplexSamples) > MAX_TX_AUDIO_QUEUE_COMPLEX_SAMPLES)
+                {
+                    if (m_txAudioQueue.Count == 0)
+                        break;
+
+                    TCIQueuedTxAudio droppedAudio = m_txAudioQueue.Dequeue();
+                    if (droppedAudio != null)
+                        m_txQueuedComplexSamples = Math.Max(0, m_txQueuedComplexSamples - Math.Max(0, droppedAudio.ComplexSamples));
+                }
+
                 m_txAudioQueue.Enqueue(queuedAudio);
+                m_txQueuedComplexSamples += Math.Max(0, queuedAudio.ComplexSamples);
             }
         }
 
@@ -4006,7 +3876,7 @@ namespace Thetis
             if (args.Length != 1) return;
             if (int.TryParse(args[0], out int sampleRate))
             {
-				//just echo out that we have changed to keep client happy
+				//just echo out that we have changed to keep client happy, we dont change Thetis H/W sample rate for now
 				//
                 //if (sampleRate == 48000 || sampleRate == 96000 || sampleRate == 192000 || sampleRate == 384000)
                 //{
@@ -4207,6 +4077,8 @@ namespace Thetis
         private void handleAudioStreamSampleType(string[] args)
         {
             if (args.Length != 1) return;
+            lock (m_objStreamLock)
+            {
             switch (args[0].Trim().ToLower())
             {
                 case "int16":
@@ -4223,16 +4095,24 @@ namespace Thetis
                     m_audioSampleType = TCISampleType.FLOAT32;
                     break;
             }
+
+                m_seenModernTxAudioNegotiation = true;
+            }
             sendAudioStreamSampleType(m_audioSampleType);
         }
 
         private void handleAudioStreamChannels(string[] args)
         {
             if (args.Length != 1) return;
+            lock (m_objStreamLock)
+            {
             if (int.TryParse(args[0], out int channels))
             {
                 if (channels == 1 || channels == 2)
                     m_audioStreamChannels = channels;
+            }
+
+                m_seenModernTxAudioNegotiation = true;
             }
             sendAudioStreamChannels(m_audioStreamChannels);
         }
@@ -4249,6 +4129,7 @@ namespace Thetis
                     {
                     m_audioStreamSamples = samples;
                         m_audioStreamSamplesExplicitlySet = true;
+                        m_seenModernTxAudioNegotiation = true;
                         audioStreamSamples = m_audioStreamSamples;
                     }
                 }
@@ -4273,10 +4154,15 @@ namespace Thetis
         private void handleTxStreamAudioBuffering(string[] args)
         {
             if (args.Length != 1) return;
+            lock (m_objStreamLock)
+            {
             if (int.TryParse(args[0], out int buffering))
             {
                 if (buffering >= 50 && buffering <= 500)
                     m_txStreamAudioBufferingMs = buffering;
+                }
+
+                m_seenModernTxAudioNegotiation = true;
             }
             sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
         }
@@ -4632,25 +4518,6 @@ namespace Thetis
 			}
 		}
 
-		//public void SendToClients(string sMsg)
-		//{
-		//	if (m_server == null) return;
-
-		//	try
-		//	{
-		//		lock (m_objLocker)
-		//		{
-		//			foreach (TCPIPtciSocketListener tsl in m_socketListenersList)
-		//			{
-		//				tsl.SendClientData(sMsg);
-		//			}
-		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
-		//	}
-		//}
-
 		private string m_sLastError = "";
 		public string LastError
         {
@@ -4767,7 +4634,6 @@ namespace Thetis
 				m_socketListenersList = null;
 			}
 		}
-
 		private void ServerThreadStart()
 		{
 			//Socket clientSocket = null;
@@ -4822,7 +4688,6 @@ namespace Thetis
 				}
 			}
 		}
-
 		private void PurgingThreadStart()
 		{
 			while (!m_stopPurging)
@@ -4858,7 +4723,6 @@ namespace Thetis
 				m_bSleepingInPurge = false;
 			}
 		}
-
 		private void ClientConnectedHandler()
 		{
             RefreshStreamRunState();
@@ -4875,7 +4739,6 @@ namespace Thetis
 
 			ClientErrorHandlers?.Invoke(se);
 		}
-
 		public void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
 		{
             bool bVFOaUseRX2;
@@ -5279,7 +5142,7 @@ namespace Thetis
             }
         }
 
-        private TCPIPtciSocketListener GetActiveTxAudioListenerLocked()
+        private TCPIPtciSocketListener GetActiveTxAudioListener()
         {
             if (m_server == null || m_socketListenersList == null)
             {
@@ -5297,7 +5160,7 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
-                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 if (activeListener != null && !activeListener.UsesActiveTCITxAudio())
                 {
                     m_activeTxAudioListener = null;
@@ -5323,28 +5186,11 @@ namespace Thetis
             }
         }
 
-        internal bool UsesTCITxAudio()
-        {
-            lock (m_objLocker)
-            {
-                if (m_server == null || m_socketListenersList == null) return false;
-
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-                {
-                    if (socketListener != null && socketListener.UsesTCITxAudio())
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-
         internal bool UsesActiveTCITxAudio()
         {
             lock (m_objLocker)
             {
-                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 return activeListener != null && activeListener.UsesActiveTCITxAudio();
             }
         }
@@ -5356,7 +5202,7 @@ namespace Thetis
 
             lock (m_objLocker)
             {
-                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 if (activeListener == null)
                     return false;
 
@@ -5373,7 +5219,7 @@ namespace Thetis
         {           
             lock (m_objLocker)
             {
-                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 if (activeListener == null) return;
 
                 activeListener.SendTxChrono(receiver);
@@ -5384,33 +5230,13 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
-                TCPIPtciSocketListener activeListener = GetActiveTxAudioListenerLocked();
+                TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 if (activeListener != null && activeListener.TryDequeueTxAudio(out queuedAudio))
                         return true;
             }
 
             queuedAudio = null;
             return false;
-        }
-
-        public async Task ConnectToServer(string serverAddress, int port, int timeoutMilliseconds)
-        {
-            using (TcpClient client = new TcpClient())
-            {
-                Task connectTask = client.ConnectAsync(serverAddress, port);
-                Task timeoutTask = Task.Delay(timeoutMilliseconds);
-
-                Task completedTask = await Task.WhenAny(connectTask, timeoutTask);
-
-                if (completedTask == connectTask)
-                {
-                    client.Close();
-                }
-                else
-                {
-                    //throw new TimeoutException("Connection timed out.");
-                }
-            }
         }
     }
 }
