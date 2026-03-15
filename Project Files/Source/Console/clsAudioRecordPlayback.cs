@@ -181,6 +181,8 @@ namespace Thetis
         private string _active_record_mp3_filename;
         private RecordingDetails _active_record_details;
         private int _active_record_sample_rate;
+        private bool _active_record_failed;
+        private string _active_record_failure_message;
 
         private string _active_play_id;
         private string _active_play_filename;
@@ -196,6 +198,8 @@ namespace Thetis
         public event Action<bool, string, string> RecordingChanged;
         public event Action<bool, string, string, bool> PlayingChanged;
         public event Action<string, RecordingJsonModel> RecordingJsonWritten;
+        public event Action<string, string, string> RecordError;
+        public event Action<string, string, string> PlaybackError;
 
         private bool _is_wdsp_playing;
 
@@ -624,9 +628,9 @@ namespace Thetis
             }
         }
 
-        public bool OkToRecord(string filepath)
+        public bool OkToRecord(string filepath, bool allowUnknown = true)
         {
-            bool ok = Common.TryGetDriveTotalAndFreeBytes(_audio_folder, out ulong totalBytes, out ulong freeBytes);
+            bool ok = Common.TryGetDriveTotalAndFreeBytes(filepath, out ulong totalBytes, out ulong freeBytes);
             if (ok && totalBytes > 0UL)
             {
                 ulong perc_free = (freeBytes * 100UL) / totalBytes;
@@ -635,7 +639,7 @@ namespace Thetis
                 return perc_free >= (ulong)_free_space_perc;
             }
 
-            return true; // if free space cannot be determined, allow recording
+            return allowUnknown;
         }
         private void startRecordSpaceTimer()
         {
@@ -671,7 +675,7 @@ namespace Thetis
                 if (!isRec) return;
                 if (string.IsNullOrWhiteSpace(path)) return;
 
-                if (!OkToRecord(path))
+                if (!OkToRecord(path, false))
                 {
                     StopRecord(out string _);
                 }
@@ -1148,6 +1152,7 @@ namespace Thetis
         public string RecordToFileFromWDSP(string record_id, string full_path, int wfw_id, out string error, bool remove_if_file_exists = false, RecordingDetails details = null, bool ignore_temp_changes = false)
         {
             error = null;
+            string full_target = null;
 
             lock (_sync)
             {
@@ -1172,7 +1177,7 @@ namespace Thetis
                 try
                 {
                     string filename;
-                    string full_target = resolveRecordPath(record_id, full_path, "wdsp", out filename, out error);
+                    full_target = resolveRecordPath(record_id, full_path, "wdsp", out filename, out error);
                     if (full_target == null) return null;
 
                     if (remove_if_file_exists && File.Exists(full_target))
@@ -1180,7 +1185,7 @@ namespace Thetis
                         try { File.Delete(full_target); } catch { }
                     }
 
-                    if (!OkToRecord(full_target))
+                    if (!OkToRecord(full_target, true))
                     {
                         error = "Not enough free space to start recording.";
                         return null;
@@ -1286,6 +1291,7 @@ namespace Thetis
                 catch (Exception ex)
                 {
                     error = ex.Message;
+                    raiseRecordError(record_id, full_target, error);
                     try { Audio.WaveRecord = false; } catch { }
 
                     try
@@ -1326,6 +1332,7 @@ namespace Thetis
         public string RecordToFileFromPCAudio(string record_id, string full_path, int pcAudioDeviceInputId, out string error, bool remove_if_file_exists = false, RecordingDetails details = null)
         {
             error = null;
+            string full_target = null;
 
             lock (_sync)
             {
@@ -1344,7 +1351,7 @@ namespace Thetis
                 try
                 {
                     string filename;
-                    string full_target = resolveRecordPath(record_id, full_path, "pc", out filename, out error);
+                    full_target = resolveRecordPath(record_id, full_path, "pc", out filename, out error);
                     if (full_target == null) return null;
 
                     if (remove_if_file_exists && File.Exists(full_target))
@@ -1352,7 +1359,7 @@ namespace Thetis
                         try { File.Delete(full_target); } catch { }
                     }
 
-                    if (!OkToRecord(full_target))
+                    if (!OkToRecord(full_target, true))
                     {
                         error = "Not enough free space to start recording.";
                         return null;
@@ -1474,6 +1481,7 @@ namespace Thetis
                 catch (Exception ex)
                 {
                     error = ex.Message;
+                    raiseRecordError(record_id, full_target, error);
 
                     try { cleanupPcRecording(); } catch { }
 
@@ -1570,10 +1578,14 @@ namespace Thetis
         {
             error = null;
             stopRecordSpaceTimer();
+            string recordId = null;
+            string filename = null;
 
             lock (_sync)
             {
                 if (!_is_recording) return true;
+                recordId = _active_record_id;
+                filename = _active_record_filename;
 
                 try
                 {
@@ -1612,6 +1624,10 @@ namespace Thetis
             }
 
             storeRestoreSettings(false, false);
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                raiseRecordError(recordId, filename, error);
+            }
             return error == null;
         }
         private void applyPcInputSourceStereoRemap(byte[] buffer, int bytesRecorded)
@@ -1707,6 +1723,7 @@ namespace Thetis
             bool ret = false;
             bool restore = false;
             error = null;
+            string fullPath = null;
 
             lock (_sync)
             {
@@ -1724,7 +1741,7 @@ namespace Thetis
 
                 try
                 {
-                    string fullPath = resolvePlayPath(full_path, out error);
+                    fullPath = resolvePlayPath(full_path, out error);
                     if (fullPath == null) return false;
 
                     if (!File.Exists(fullPath))
@@ -1741,6 +1758,7 @@ namespace Thetis
                     catch (Exception ex)
                     {
                         error = ex.Message;
+                        raisePlaybackError(play_id, fullPath, error);
                         return false;
                     }
 
@@ -1800,6 +1818,7 @@ namespace Thetis
                 catch (Exception ex)
                 {
                     error = ex.Message;
+                    raisePlaybackError(play_id, fullPath, error);
                     try
                     {
                         _console.SetWavePlayback(wfw_id, false);
@@ -1828,6 +1847,7 @@ namespace Thetis
         {
             bool ret = false;
             error = null;
+            string fullPath = null;
 
             lock (_sync)
             {
@@ -1839,7 +1859,7 @@ namespace Thetis
 
                 try
                 {
-                    string fullPath = resolvePlayPath(full_path, out error);
+                    fullPath = resolvePlayPath(full_path, out error);
                     if (fullPath == null) return false;
 
                     if (!File.Exists(fullPath))
@@ -1906,6 +1926,7 @@ namespace Thetis
                 catch (Exception ex)
                 {
                     error = ex.Message;
+                    raisePlaybackError(play_id, fullPath, error);
                     try { cleanupPcPlayback(); } catch { }
                     setPlayingState(false);
                 }
@@ -1915,8 +1936,34 @@ namespace Thetis
 
         private void pcWaveOut_PlaybackStopped(object sender, StoppedEventArgs e)
         {
+            string playId;
+            string filename;
+
+            lock (_sync)
+            {
+                playId = _active_play_id;
+                filename = _active_play_filename;
+            }
+
             string error;
             StopPlayback(out error);
+
+            string failure = null;
+            if (e != null && e.Exception != null)
+            {
+                failure = getMediaFailureMessage(e.Exception);
+            }
+
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                if (string.IsNullOrWhiteSpace(failure)) failure = error;
+                else if (failure.IndexOf(error, StringComparison.Ordinal) < 0) failure += Environment.NewLine + error;
+            }
+
+            if (!string.IsNullOrWhiteSpace(failure))
+            {
+                raisePlaybackError(playId, filename, failure);
+            }
         }
 
         private void cleanupPcPlayback()
@@ -1990,10 +2037,14 @@ namespace Thetis
         {
             error = null;
             bool wdsp = false;
+            string playId = null;
+            string filename = null;
 
             lock (_sync)
             {
                 if (!_is_playing) return true;
+                playId = _active_play_id;
+                filename = _active_play_filename;
                 try
                 {
                     if (_active_playback_wfw_id >= 0)
@@ -2023,15 +2074,118 @@ namespace Thetis
 
             if (wdsp) storeRestoreSettings(false, true);
             setPlayingState(false);
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                raisePlaybackError(playId, filename, error);
+            }
             return error == null;
+        }
+
+        private static string getMediaFailureMessage(Exception ex)
+        {
+            if (ex == null) return null;
+
+            string msg = ex.Message;
+            if (string.IsNullOrWhiteSpace(msg)) msg = ex.GetType().Name;
+            return msg;
+        }
+
+        private void markActiveRecordFailureLocked(Exception ex)
+        {
+            _active_record_failed = true;
+
+            string msg = getMediaFailureMessage(ex);
+            if (string.IsNullOrWhiteSpace(msg)) return;
+
+            if (string.IsNullOrWhiteSpace(_active_record_failure_message))
+            {
+                _active_record_failure_message = msg;
+                return;
+            }
+
+            if (_active_record_failure_message.IndexOf(msg, StringComparison.Ordinal) < 0)
+            {
+                _active_record_failure_message += Environment.NewLine + msg;
+            }
+        }
+
+        private void stopFaultedPcRecording(Exception ex)
+        {
+            IWaveIn waveIn = null;
+            string wav = null;
+            string json = null;
+            string mp3 = null;
+            RecordingDetails details = null;
+            string unique_id = null;
+            string failure = null;
+            bool completeNow = false;
+
+            lock (_sync)
+            {
+                if (!_is_recording) return;
+
+                if (ex != null) markActiveRecordFailureLocked(ex);
+                if (!_active_record_failed) return;
+
+                waveIn = _pc_wave_in;
+                if (waveIn == null)
+                {
+                    wav = _active_record_filename;
+                    json = _active_record_json_filename;
+                    mp3 = _active_record_mp3_filename;
+                    details = _active_record_details;
+                    unique_id = _active_record_id;
+                    failure = _active_record_failure_message;
+
+                    cleanupPcRecording();
+                    completeNow = true;
+                }
+            }
+
+            if (waveIn != null)
+            {
+                try
+                {
+                    waveIn.StopRecording();
+                    return;
+                }
+                catch (Exception stopEx)
+                {
+                    lock (_sync)
+                    {
+                        if (!_is_recording) return;
+
+                        markActiveRecordFailureLocked(stopEx);
+
+                        wav = _active_record_filename;
+                        json = _active_record_json_filename;
+                        mp3 = _active_record_mp3_filename;
+                        details = _active_record_details;
+                        unique_id = _active_record_id;
+                        failure = _active_record_failure_message;
+
+                        cleanupPcRecording();
+                        completeNow = true;
+                    }
+                }
+            }
+
+            if (completeNow)
+            {
+                recordCompleted(unique_id, wav, json, mp3, details, false, failure);
+            }
         }
 
         private void onPcDataAvailable(object sender, WaveInEventArgs e)
         {
+            Exception writeError = null;
+
             lock (_sync)
             {
-                if (_pc_wave_writer == null) return;
+                if (_pc_wave_writer == null || _active_record_failed) return;
 
+                try
+                {
                 float gain = _pc_input_gain;
                 if (gain <= 0.0f)
                 {
@@ -2173,6 +2327,17 @@ namespace Thetis
                 _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
                 _pc_wave_writer.Flush();
             }
+                catch (Exception ex)
+                {
+                    markActiveRecordFailureLocked(ex);
+                    writeError = ex;
+                }
+            }
+
+            if (writeError != null)
+            {
+                stopFaultedPcRecording(writeError);
+            }
         }
 
         private void onPcRecordingStopped(object sender, StoppedEventArgs e)
@@ -2182,19 +2347,28 @@ namespace Thetis
             string mp3;
             RecordingDetails details;
             string unique_id;
+            bool success;
+            string failure;
 
             lock (_sync)
             {
+                if (e != null && e.Exception != null)
+                {
+                    markActiveRecordFailureLocked(e.Exception);
+                }
+
                 wav = _active_record_filename;
                 json = _active_record_json_filename;
                 mp3 = _active_record_mp3_filename;
                 details = _active_record_details;
                 unique_id = _active_record_id;
+                success = !_active_record_failed;
+                failure = _active_record_failure_message;
 
                 cleanupPcRecording();
             }
 
-            recordCompleted(unique_id, wav, json, mp3, details);
+            recordCompleted(unique_id, wav, json, mp3, details, success, failure);
         }
 
         private void cleanupPcRecording()
@@ -2214,19 +2388,47 @@ namespace Thetis
             }
         }
 
-        private void onWdspPlaybackFinished()
+        private void onWdspPlaybackFinished(Exception ex)
         {
+            string playId;
+            string filename;
+
+            lock (_sync)
+            {
+                playId = _active_play_id;
+                filename = _active_play_filename;
+            }
+
             string error;
             StopPlayback(out error);
+
+            string failure = getMediaFailureMessage(ex);
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                if (string.IsNullOrWhiteSpace(failure)) failure = error;
+                else if (failure.IndexOf(error, StringComparison.Ordinal) < 0) failure += Environment.NewLine + error;
+            }
+
+            if (!string.IsNullOrWhiteSpace(failure))
+            {
+                raisePlaybackError(playId, filename, failure);
+            }
         }
 
-        private void onWdspRecordFinished(string wavPath)
+        private void onWdspRecordFinished(string wavPath, Exception ex)
         {
             string wav;
             string json;
             string mp3;
             RecordingDetails details;
             string unique_id;
+            bool success;
+            string failure;
+
+            if (ex != null)
+            {
+                try { Audio.WaveRecord = false; } catch { }
+            }
 
             lock (_sync)
             {
@@ -2245,23 +2447,31 @@ namespace Thetis
                     WaveThing.wave_file_writer[_active_record_wfw_id] = null;
                 }
 
+                if (ex != null)
+                {
+                    markActiveRecordFailureLocked(ex);
+                }
+
                 wav = _active_record_filename;
                 json = _active_record_json_filename;
                 mp3 = _active_record_mp3_filename;
                 details = _active_record_details;
                 unique_id = _active_record_id;
+                success = !_active_record_failed;
+                failure = _active_record_failure_message;
             }
 
-            recordCompleted(unique_id, wav, json, mp3, details);
+            recordCompleted(unique_id, wav, json, mp3, details, success, failure);
         }
 
-        private void recordCompleted(string unique_id, string wav, string json, string mp3, RecordingDetails details)
+        private void recordCompleted(string unique_id, string wav, string json, string mp3, RecordingDetails details, bool recordSucceeded, string failureMessage)
         {
             Action a = delegate
             {
                 stopRecordSpaceTimer();
+                storeRestoreSettings(false, false);
 
-                if (details != null)
+                if (recordSucceeded && details != null)
                 {
                     details.UtcTime = ensureUtc(details.UtcTime);
 
@@ -2292,7 +2502,7 @@ namespace Thetis
 
                 string mp3Path = null;
 
-                if (GenerateMP3File && details != null && !string.IsNullOrWhiteSpace(wav) && File.Exists(wav))
+                if (recordSucceeded && GenerateMP3File && details != null && !string.IsNullOrWhiteSpace(wav) && File.Exists(wav))
                 {
                     mp3Path = Path.ChangeExtension(wav, ".mp3");
                     try { if (File.Exists(mp3Path)) File.Delete(mp3Path); } catch { }
@@ -2325,7 +2535,7 @@ namespace Thetis
                     }
                 }
 
-                if (GenerateJSON && details != null && !string.IsNullOrWhiteSpace(json))
+                if (recordSucceeded && GenerateJSON && details != null && !string.IsNullOrWhiteSpace(json))
                 {
                     try { if (File.Exists(json)) File.Delete(json); } catch { }
                     bool ok = writeRecordingJson(unique_id, json, details);
@@ -2333,6 +2543,10 @@ namespace Thetis
                     {
                         try { if (File.Exists(json)) File.Delete(json); } catch { }
                     }
+                }
+                else if (!recordSucceeded && !string.IsNullOrWhiteSpace(failureMessage))
+                {
+                    raiseRecordError(unique_id, wav, failureMessage);
                 }
 
                 setRecordingState(false);
@@ -2447,6 +2661,48 @@ namespace Thetis
                 catch { }
             }
         }
+
+        private void raiseMediaError(Action<string, string, string> handler, string unique_id, string filename, string errorMessage)
+        {
+            if (handler == null) return;
+            if (string.IsNullOrWhiteSpace(errorMessage)) return;
+
+            string uid = unique_id ?? string.Empty;
+            string file = filename ?? string.Empty;
+            string msg = errorMessage.Trim();
+
+            Action a = delegate
+            {
+                Delegate[] list = handler.GetInvocationList();
+                for (int i = 0; i < list.Length; i++)
+                {
+                    try
+                    {
+                        ((Action<string, string, string>)list[i])(uid, file, msg);
+                    }
+                    catch { }
+                }
+            };
+
+            if (_sync_context != null)
+            {
+                _sync_context.Post(delegate { a(); }, null);
+            }
+            else
+            {
+                ThreadPool.QueueUserWorkItem(delegate { a(); });
+            }
+        }
+
+        private void raiseRecordError(string unique_id, string filename, string errorMessage)
+        {
+            raiseMediaError(RecordError, unique_id, filename, errorMessage);
+        }
+
+        private void raisePlaybackError(string unique_id, string filename, string errorMessage)
+        {
+            raiseMediaError(PlaybackError, unique_id, filename, errorMessage);
+        }
         private static void ensureMediaFoundation()
         {
             lock (_mf_sync)
@@ -2492,6 +2748,8 @@ namespace Thetis
             _active_record_details = null;
             _active_record_wfw_id = -1;
             _active_record_sample_rate = 0;
+            _active_record_failed = false;
+            _active_record_failure_message = null;
         }
 
         private void setRecordingState(bool recording)
@@ -2589,7 +2847,11 @@ namespace Thetis
         private static void ensureFolderExists(string folder)
         {
             if (string.IsNullOrWhiteSpace(folder)) return;
-            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            try
+            {
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            }
+            catch { }
         }
 
         private static bool tryParseWaveHeader(BinaryReader reader, out int formatTag, out int sampleRate, out int channels, out int bitsPerSample, out long dataStart, out long dataLengthBytes, out string error)
@@ -2878,9 +3140,10 @@ namespace Thetis
         private volatile float _fInverseGain = 1f;
 
         private readonly string _file;
-        private readonly Action<string> _finished;
+        private readonly Action<string, Exception> _finished;
+        private Exception _failure;
 
-        public WaveFileWriter(int wfw_id, short chan, int samp_rate, string file, bool recordRxPreProcessed, bool recordTxPreProcessed, short formatTag, short bitDepth, Action<string> finished)
+        public WaveFileWriter(int wfw_id, short chan, int samp_rate, string file, bool recordRxPreProcessed, bool recordTxPreProcessed, short formatTag, short bitDepth, Action<string, Exception> finished)
         {
             _id = wfw_id;
             _file = file;
@@ -2989,39 +3252,56 @@ namespace Thetis
 
         private void ProcessRecordBuffers()
         {
+            try
+            {
             WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, 0);
 
-            while (_record == true || _rb_l.ReadSpace() > 0)
+                while ((_record == true || _rb_l.ReadSpace() > 0) && _failure == null)
             {
-                while (_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0))
+                    while ((_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0)) && _failure == null)
                 {
                     WriteBuffer(ref _writer, ref _length_counter);
                 }
-                Thread.Sleep(3);
+                    if (_failure == null) Thread.Sleep(3);
+                }
+            }
+            catch (Exception ex)
+            {
+                _failure = ex;
+                _record = false;
             }
 
             try
             {
+                if (_writer != null)
+                {
+                    if (_failure == null)
+                    {
                 _writer.Seek(0, SeekOrigin.Begin);
                 WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
                 _writer.Flush();
+                    }
+
                 _writer.Close();
             }
-            catch
+            }
+            catch (Exception ex)
             {
+                if (_failure == null) _failure = ex;
                 try { _writer.Close(); } catch { }
             }
 
             try
             {
-                Action<string> f = _finished;
-                if (f != null) f(_file);
+                Action<string, Exception> f = _finished;
+                if (f != null) f(_file, _failure);
             }
             catch { }
         }
 
         unsafe public void AddWriteBuffer(float* left, float* right, int nsamps)
         {
+            if (!_record || _failure != null) return;
             _rb_l.WritePtr(left, nsamps);
             _rb_r.WritePtr(right, nsamps);
         }
@@ -3261,7 +3541,9 @@ namespace Thetis
         unsafe private void* xmtr_resamp_l;
         unsafe private void* xmtr_resamp_r;
 
-        private readonly Action _finished;
+        private readonly Action<Exception> _finished;
+        private Exception _failure;
+        private int _finish_started;
 
         private bool _fade_enabled;
         private int _fade_ms;
@@ -3271,7 +3553,7 @@ namespace Thetis
         private long _frames_read;
         private int _bytes_per_frame;
 
-        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, BinaryReader binread, Action finished)
+        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, BinaryReader binread, Action<Exception> finished)
         {
             id = wfr_id;
             format = fmt;
@@ -3420,6 +3702,8 @@ namespace Thetis
 
         private void ProcessBuffers()
         {
+            try
+            {
             while (playback)
             {
                 while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
@@ -3432,8 +3716,19 @@ namespace Thetis
 
                 Thread.Sleep(10);
             }
+            }
+            catch (Exception ex)
+            {
+                _failure = ex;
+                playback = false;
+            }
 
             try { reader.Close(); } catch { }
+
+            if (_failure != null)
+            {
+                queueFinish(_failure);
+            }
         }
 
         private void ReadBuffer(ref BinaryReader r)
@@ -3624,19 +3919,27 @@ namespace Thetis
 
             if (total_samps_read >= total_samps_written)
             {
+                queueFinish(null);
+            }
+        }
+
+        private void queueFinish(Exception ex)
+        {
+            if (ex != null && _failure == null) _failure = ex;
+            if (Interlocked.Exchange(ref _finish_started, 1) != 0) return;
+
                 Thread t = new Thread(new ThreadStart(finishPlayback));
                 t.Name = "Wave File Finish Playback";
                 t.IsBackground = true;
                 t.Priority = ThreadPriority.Normal;
                 t.Start();
             }
-        }
 
         private void finishPlayback()
         {
             Thread.Sleep(50);
-            Action a = _finished;
-            if (a != null) a();
+            Action<Exception> a = _finished;
+            if (a != null) a(_failure);
         }
     }
 }

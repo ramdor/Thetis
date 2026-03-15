@@ -831,14 +831,14 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX1; }
             set
-            {
-                SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
+            {                
                 if (value != m_dCentreFreqRX1)
                 {
+                    SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
                     _rx1_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx1Waterfall = true;
-                }
-                m_dCentreFreqRX1 = value;
+                    m_dCentreFreqRX1 = value;
+                }                
             }
         }
 
@@ -847,14 +847,14 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX2; }
             set
-            {
-                SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
+            {                
                 if (value != m_dCentreFreqRX2)
                 {
+                    SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
                     _rx2_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx2Waterfall = true;
-                }
-                m_dCentreFreqRX2 = value;
+                    m_dCentreFreqRX2 = value;
+                }                
             }
         }
 
@@ -6225,9 +6225,10 @@ namespace Thetis
             {
                 DateTime stopTime = rx == 1 ? _rx1_centrefreq_change_time : _rx2_centrefreq_change_time;
                 float filltime = rx == 1 ? _fft_fill_timeRX1 : _fft_fill_timeRX2;
-                filltime *= 2;
-                filltime += ((m_nFps / 1000f) * 2);
-                addRow = (DateTime.UtcNow - stopTime).TotalMilliseconds > (filltime * 1.2);
+                filltime += ((m_nFps / 1000f) * 2); // two extra frames
+                filltime *= 1.05f; // 5% extra time;
+                if (filltime < 100.0f) filltime = 200.0f;
+                addRow = (DateTime.UtcNow - stopTime).TotalMilliseconds > filltime;
                 if (addRow)
                 {
                     if (rx == 1) _stopRx1Waterfall = false;

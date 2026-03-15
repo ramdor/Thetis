@@ -15312,14 +15312,17 @@ namespace Thetis
             if (_mox)
                 setAlex1HPF(_rx1_dds_freq);
 
-            if(RX2Enabled && VFOBTX) //[2.10.3.13]MW0LGE
+            if (MOX)//[2.10.3.13]MW0LGE
             {
-                // rx2
-                Display.CentreFreqRX2 = tx_dds_freq_mhz;
-            }
-            else
-            {
-                Display.CentreFreqRX1 = tx_dds_freq_mhz;
+                if (RX2Enabled && VFOBTX) 
+                {
+                    // rx2
+                    Display.CentreFreqRX2 = tx_dds_freq_mhz;
+                }
+                else
+                {
+                    Display.CentreFreqRX1 = tx_dds_freq_mhz;
+                }
             }
 
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
@@ -24023,7 +24026,9 @@ namespace Thetis
                             "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString() + Environment.NewLine +
                             "RX1MeterCalOffset : " + _rx1_meter_cal_offset.ToString() + Environment.NewLine +
                             "RX2MeterCalOffset : " + _rx2_meter_cal_offset.ToString() + Environment.NewLine +
-                            "mon_recall : " + mon_recall.ToString();
+                            "mon_recall : " + mon_recall.ToString() + Environment.NewLine +
+                            "_fft_fill_timeRX1 : " + _fft_fill_timeRX1.ToString() + Environment.NewLine +
+                            "_fft_fill_timeRX2 : " + _fft_fill_timeRX2.ToString();
                     }
                     #endregion
 
