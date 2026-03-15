@@ -7498,6 +7498,7 @@ namespace Thetis
                             clearWaterfallBitmapRegion(waterfallBitmap, 0, 1, W, (int)topPixels.Size.Height);
                         }
 
+                        if (addRow)
                         recordWaterfallAdvance(rx, H - 20);
                     }
 
@@ -7564,7 +7565,7 @@ namespace Thetis
             //if (grid_control_major)  //[2.10.3.9]MW0LGE
             drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, true);            
 
-            if (console.PowerOn && addRow)
+            if (console.PowerOn)
                 drawWaterfallTimeOverlay(nVerticalShift, W, H, rx);
 
             //DebugText = $"previous low : {_RX1waterfallPreviousMinValue.ToString("F2")}\nlow : {low_threshold.ToString("F2")}\nhigh : {high_threshold.ToString("F2")}";
