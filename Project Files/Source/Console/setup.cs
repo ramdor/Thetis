@@ -37136,6 +37136,34 @@ namespace Thetis
                 console.TCIServer.TXStereoInputMode = TCITxStereoInputMode.Both;
             }
         }
+
+        private void radWaterfall_timelab_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radWaterfall_timelab_none.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.NONE;
+            }
+            else if (radWaterfall_timelab_left.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.LEFT;
+            }
+            else if (radWaterfall_timelab_right.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.RIGHT;
+            }
+        }
+
+        private void radWaterfall_timelab_time_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radWaterfall_timelab_utc.Checked)
+            {
+                Display.WaterfallTime = WaterfallTimeMode.UTC;
+            }
+            else if (radWaterfall_timelab_local.Checked)
+            {
+                Display.WaterfallTime = WaterfallTimeMode.LOCAL;
+            }
+        }
         // END CFC para
     }
 
