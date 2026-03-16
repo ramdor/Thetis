@@ -32225,11 +32225,13 @@ namespace Thetis
                 ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
             }
 
+            #if !DEBUG
             if (portaudio_issue || (!cmasio_config_flag && !ignore))
             {
                 tcAudio.TabPages.Remove(tpCMAsio);
                 return;
             }
+            #endif
 
             _ignore_cmasio_settings_change = true; // prevent any changes here from writing to registry
 

@@ -111,10 +111,10 @@ namespace Thetis
         public static extern int GetCMAstate();
 
         // tci
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIIQ", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIRxIQ", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpOutboundTCIRxIQ(TCIStreamSamples del);
 
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIAudio", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIRxAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpOutboundTCIRxAudio(TCIStreamSamples del);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpInboundTCITxAudio", CallingConvention = CallingConvention.Cdecl)]
