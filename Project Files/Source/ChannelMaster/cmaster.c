@@ -376,16 +376,13 @@ void xcmaster (int stream)
 
 	case 1:  // standard transmitter
 		tx = txid (stream);
-		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// from tci tx audio
+		asioIN(pcm->in[stream]);
+		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// from tci tx audio, service asio above so we still get other rx output, but override with tci if needed
 		{
 			if (pcm->InboundTCITxAudio)
 				(*pcm->InboundTCITxAudio)(pcm->xcm_insize[stream], pcm->in[stream]);
 			else
 				memset (pcm->in[stream], 0, pcm->xcm_insize[stream] * sizeof (complex));
-		}
-		else
-		{
-			asioIN(pcm->in[stream]);
 		}
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
@@ -422,9 +419,9 @@ void SendpOutboundTx(void (*Outbound)(int id, int nsamples, double* buff))
 }
 
 PORT
-void SendpOutboundTCIIQ (void (*Outbound)(int id, int nsamples, double* buff))
+void SendpOutboundTCIRxIQ (void (*Outbound)(int id, int nsamples, double* buff))
 {
-	pcm->OutboundTCIIQ = Outbound;
+	pcm->OutboundTCIRxIQ = Outbound;
 }
 
 

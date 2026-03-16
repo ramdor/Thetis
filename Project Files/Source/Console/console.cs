@@ -1109,7 +1109,20 @@ namespace Thetis
 
             LogTool.Completed("THET");
             LogTool.Finish();
+
+
+            //_spectrumProcessor = new clsSpectrumProcessor(this);
+            //_spectrumProcessor.AddReceiver(0, 1024, 15, 8192);
+            //_spectrumProcessor.AddReceiver(1, 128, 15, 8192);
+            ////_spectrumProcessor.SetReceiverFrameRate(0, 60);
+            ////_spectrumProcessor.SetReceiverFrameRate(1, 60);
+            //_rx1SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(0, -130, -40);
+            //_rx2SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(1, -130, -40);
         }
+        private clsSpectrumProcessor _spectrumProcessor;
+        private Form _rx1SpectrumTestForm;
+        private Form _rx2SpectrumTestForm;
+
         private void initialisePortAudio()
         {
             System.Int32 result = PA19.PA_Initialize();
@@ -2468,10 +2481,15 @@ namespace Thetis
                 bool bOK = IPAddress.TryParse(m_sTCIAddress, out IPAddress address);
                 if (bOK)
                 {
-                    if (m_tcpTCIServer != null) m_tcpTCIServer.StopServer();
+                    if (m_tcpTCIServer != null)
+                    {
+                        m_tcpTCIServer.StopServer();
+                        cmaster.TCIServer = null;
+                    }
 
                     Debug.Print("Starting TCI on " + m_sTCIAddress + ":" + m_nTCIPort.ToString());
                     m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort);
+                    cmaster.TCIServer = m_tcpTCIServer;
 
                     addTCIDelegates();
 
@@ -2493,6 +2511,7 @@ namespace Thetis
                 {
                     m_tcpTCIServer.CloseLog();
                     m_tcpTCIServer.StopServer();
+                    cmaster.TCIServer = null;
                     removeTCIDelegates();
                 }
             }
@@ -15311,6 +15330,8 @@ namespace Thetis
             setAlex1HPF(_rx1_dds_freq);
             UpdateAlexTXFilter();
             UpdateAlexRXFilter();
+            
+            Display.CentreFreqRX1 = rx1_dds_freq_mhz;            
 
             switch (HardwareSpecific.Model)
             {
@@ -15337,6 +15358,8 @@ namespace Thetis
             if (initializing) return;
             UpdateAlexTXFilter();
             UpdateAlexRXFilter();
+            
+            Display.CentreFreqRX2 = rx2_dds_freq_mhz;            
 
             if (HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
                 HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
@@ -15373,6 +15396,20 @@ namespace Thetis
             setAlexLPF(tx_dds_freq_mhz, true);
             if (_mox)
                 setAlex1HPF(_rx1_dds_freq);
+
+            if (MOX)//[2.10.3.13]MW0LGE
+            {
+                if (RX2Enabled && VFOBTX) 
+                {
+                    // rx2
+                    Display.CentreFreqRX2 = tx_dds_freq_mhz;
+                }
+                else
+                {
+                    Display.CentreFreqRX1 = tx_dds_freq_mhz;
+                }
+            }
+
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
         }
 
@@ -24088,6 +24125,8 @@ namespace Thetis
                 double fThreadSleepOverRun = 0;
                 bool bOldLocalMox = Display.MOX;
 
+                double pixel_ref = 0.0;
+
                 while (m_bDisplayLoopRunning)
                 {
                     #region debug_text
@@ -24144,7 +24183,9 @@ namespace Thetis
                             "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString() + Environment.NewLine +
                             "RX1MeterCalOffset : " + _rx1_meter_cal_offset.ToString() + Environment.NewLine +
                             "RX2MeterCalOffset : " + _rx2_meter_cal_offset.ToString() + Environment.NewLine +
-                            "mon_recall : " + mon_recall.ToString();
+                            "mon_recall : " + mon_recall.ToString() + Environment.NewLine +
+                            "_fft_fill_timeRX1 : " + _fft_fill_timeRX1.ToString() + Environment.NewLine +
+                            "_fft_fill_timeRX2 : " + _fft_fill_timeRX2.ToString();
                     }
                     #endregion
 
@@ -24221,7 +24262,7 @@ namespace Thetis
                                                     SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
                                                 bDataReady = (flag == 1);
                                                 fixed (float* ptr = &Display.new_waterfall_data[0])
-                                                    SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag);
+                                                    SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag, out pixel_ref);
                                                 bWaterfallDataReady = (flag == 1);
                                             }
                                             else
@@ -24230,7 +24271,7 @@ namespace Thetis
                                                     SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
                                                 bDataReady = (flag == 1);
                                                 fixed (float* ptr = &Display.new_waterfall_data[0])
-                                                    SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
+                                                    SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag, out pixel_ref);
                                                 bWaterfallDataReady = (flag == 1);
                                             }
                                         }
@@ -24241,7 +24282,7 @@ namespace Thetis
                                             bDataReady = (flag == 1);
                                             bN1mm = true;
                                             fixed (float* ptr = &Display.new_waterfall_data[0])
-                                                SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
+                                                SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag, out pixel_ref);
                                             bWaterfallDataReady = (flag == 1);
                                         }
                                         break;
@@ -24300,6 +24341,9 @@ namespace Thetis
                                         break;
                                 }
 
+                                if (bWaterfallDataReady)
+                                    Display.SetPendingWaterfallPixelRef(1, pixel_ref);
+
                                 Display.DataReady = bDataReady;
                                 Display.WaterfallDataReady = bWaterfallDataReady;
                                 if (bN1mm && N1MM.IsStarted)
@@ -24331,13 +24375,13 @@ namespace Thetis
                                         if (bLocalMox && VFOBTX)
                                         {
                                             fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2, out pixel_ref);
                                             bWaterfallDataReady = (flag2 == 1);
                                         }
                                         else
                                         {
                                             fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
+                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2, out pixel_ref);
                                             bWaterfallDataReady = (flag2 == 1);
                                             bN1mm = true;
                                         }
@@ -24364,7 +24408,7 @@ namespace Thetis
                                                 SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
                                             bDataReady = (flag2 == 1);
                                             fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2, out pixel_ref);
                                             bWaterfallDataReady = (flag2 == 1);
                                         }
                                         else
@@ -24374,7 +24418,7 @@ namespace Thetis
                                             bDataReady = (flag2 == 1);
                                             bN1mm = true;
                                             fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
+                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2, out pixel_ref);
                                             bWaterfallDataReady = (flag2 == 1);
                                         }
                                         break;
@@ -24404,6 +24448,9 @@ namespace Thetis
                                         }
                                         break;
                                 }
+
+                                if (bWaterfallDataReady)
+                                    Display.SetPendingWaterfallPixelRef(2, pixel_ref);
 
                                 Display.DataReadyBottom = bDataReady;
                                 Display.WaterfallDataReadyBottom = bWaterfallDataReady;
@@ -28537,7 +28584,9 @@ namespace Thetis
             {
                 shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
                 m_tcpTCIServer.StopServer();
+                cmaster.TCIServer = null;
                 removeTCIDelegates();
+                m_tcpTCIServer = null;
             }
             if (m_tcpCATServer != null)
             {
@@ -32376,6 +32425,8 @@ namespace Thetis
 
             WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 0), (RX1DDSFreq + f_LO) * 1.0e6);
             WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 1), (RX1DDSFreq + f_LO) * 1.0e6);
+            
+            Display.CentreFreqRX1 = rx1_dds_freq_mhz;
 
             UpdatePreamps();
 
@@ -33371,6 +33422,9 @@ namespace Thetis
             set_rx2_freq = false;
 
             WDSP.RXANBPSetTuneFrequency(WDSP.id(2, 0), (RX2DDSFreq + f_LO) * 1.0e6);
+            
+            Display.CentreFreqRX2 = rx2_dds_freq_mhz;
+
             goto end;
 
         end:
@@ -51297,7 +51351,10 @@ namespace Thetis
                         }
 
                         if (bShowDBM) y = PixelToRx2Db(e.Y);
-                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 2);
+                        else if (bShowWaterfallSeconds)
+                        {
+                            y = WaterfallPixelToTime(e.Y, 2);
+                        }
                     }
                     else
                     {
@@ -51334,7 +51391,10 @@ namespace Thetis
                         }
 
                         if (bShowDBM) y = PixelToDb(e.Y);
-                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 1);
+                        else if (bShowWaterfallSeconds)
+                        {
+                            y = WaterfallPixelToTime(e.Y, 1);
+                        }
                     }
 
                     DisplayCursorX = e.X; // update display cursor position (crosshairs)
@@ -51377,22 +51437,33 @@ namespace Thetis
 
                     Display.MHzCursorDisplay = sTmp;
 
+                    string cursorOtherDataText;
                     if (bShowDBM)
+                    {
                         sTmp = y.ToString("f1") + "dBm";
+                        cursorOtherDataText = sTmp;
+                    }
                     else if (bShowWaterfallSeconds)
+                    {
                         sTmp = (y / 1000.0f).ToString("f1") + "sec";
+                        cursorOtherDataText = sTmp;
+                    }
                     else
+                    {
                         sTmp = "";
+                        cursorOtherDataText = "";
+                    }
 
                     infoBar.Left2(0, sTmp);
 
-                    Display.OtherData1CursorDisplay = sTmp;
+                    Display.OtherData1CursorDisplay = cursorOtherDataText;
                 }
                 else
                 {
                     infoBar.Left1(0, "");
                     infoBar.Left2(0, "");
                     infoBar.Left3(0, "");
+                    Display.OtherData1CursorDisplay = "";
                 }
                 #endregion
 

@@ -70,6 +70,12 @@ typedef struct _dp
 	double *window;											// pointer to buffer to hold window coefficients	
 	double *result[dMAX_STITCH];							// pointers to buffer to hold elimination results for each sub-span
 	dOUTREAL *pixels[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];		// pointers pixel output buffers
+
+															   // [2.10.3.13]MW0LGE
+	double pixel_ref;										   // A reference value as a double for newly generated pixel buffers, which can be used to index the results of GetPixels back to this value
+															   // Could be used to track a centre frequency that the GetPixels relate to for example
+	double pixel_refs[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];		   // storage for the referencing used by get pixels
+
 	double *t_pixels[dMAX_PIXOUTS];							// pointer to temporary pixel buffer									//pointer to temporary pixel buffer for non-averaged data
 	int w_pix_buff[dMAX_PIXOUTS];							// number of pixel buffer owned by writing process
 	int r_pix_buff[dMAX_PIXOUTS];							// number of pixel buffer owned by reading process
@@ -122,6 +128,7 @@ typedef struct _dp
 	double *snap_buff[dMAX_STITCH][dMAX_NUM_FFT];			// pointers to buffers for the snap
 
 	CRITICAL_SECTION PB_ControlsSection[dMAX_PIXOUTS];
+	CRITICAL_SECTION PixelRefSection;
 	CRITICAL_SECTION SetAnalyzerSection;
 	CRITICAL_SECTION BufferControlSection[dMAX_STITCH][dMAX_NUM_FFT];
 	CRITICAL_SECTION StitchSection;
@@ -211,5 +218,15 @@ void SnapSpectrumTimeout(int disp,
 	double* snap_buff,
 	DWORD timeout,
 	int* flag);
+
+extern __declspec(dllexport)
+void SetPixelRef(int disp, double pixel_ref);
+
+extern __declspec(dllexport)
+void GetPixels(int disp,
+	int pixout,
+	dOUTREAL* pix,
+	int* flag,
+	double* pixel_ref);
 
 #endif

@@ -33220,11 +33220,13 @@ namespace Thetis
                 ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
             }
 
+            #if !DEBUG
             if (portaudio_issue || (!cmasio_config_flag && !ignore))
             {
                 tcAudio.TabPages.Remove(tpCMAsio);
                 return;
             }
+            #endif
 
             _ignore_cmasio_settings_change = true; // prevent any changes here from writing to registry
 
@@ -38135,6 +38137,34 @@ namespace Thetis
             else
             {
                 console.TCIServer.TXStereoInputMode = TCITxStereoInputMode.Both;
+            }
+        }
+
+        private void radWaterfall_timelab_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radWaterfall_timelab_none.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.NONE;
+            }
+            else if (radWaterfall_timelab_left.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.LEFT;
+            }
+            else if (radWaterfall_timelab_right.Checked)
+            {
+                Display.ShowWaterfallTime = WaterfallTimePosition.RIGHT;
+            }
+        }
+
+        private void radWaterfall_timelab_time_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radWaterfall_timelab_utc.Checked)
+            {
+                Display.WaterfallTime = WaterfallTimeMode.UTC;
+            }
+            else if (radWaterfall_timelab_local.Checked)
+            {
+                Display.WaterfallTime = WaterfallTimeMode.LOCAL;
             }
         }
         // END CFC para

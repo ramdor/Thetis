@@ -3156,6 +3156,13 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.groupBoxTS70 = new System.Windows.Forms.GroupBoxTS();
+            this.panelTS16 = new System.Windows.Forms.PanelTS();
+            this.radWaterfall_timelab_local = new System.Windows.Forms.RadioButtonTS();
+            this.radWaterfall_timelab_utc = new System.Windows.Forms.RadioButtonTS();
+            this.radWaterfall_timelab_right = new System.Windows.Forms.RadioButtonTS();
+            this.radWaterfall_timelab_left = new System.Windows.Forms.RadioButtonTS();
+            this.radWaterfall_timelab_none = new System.Windows.Forms.RadioButtonTS();
             this.groupBoxTS38 = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnTXAttenuationBackground = new Thetis.ColorButton();
             this.labelTS195 = new System.Windows.Forms.LabelTS();
@@ -3652,6 +3659,77 @@
             this.comboCATparity = new System.Windows.Forms.ComboBoxTS();
             this.comboCATdatabits = new System.Windows.Forms.ComboBoxTS();
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
+            this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
+            this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.panelTS15 = new System.Windows.Forms.PanelTS();
+            this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
+            this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
+            this.btnShowLog = new System.Windows.Forms.ButtonTS();
+            this.panelTS13 = new System.Windows.Forms.PanelTS();
+            this.radTCI_spot_force_default = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS644 = new System.Windows.Forms.LabelTS();
+            this.radTCI_spot_force_cwl = new System.Windows.Forms.RadioButtonTS();
+            this.radTCI_spot_force_cwu = new System.Windows.Forms.RadioButtonTS();
+            this.chkOverrideSpotFlashColour = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnSpotFlashColour = new Thetis.ColorButton();
+            this.chkFlashNewTCISpots = new System.Windows.Forms.CheckBoxTS();
+            this.btnClearTCISpotsSWL = new System.Windows.Forms.ButtonTS();
+            this.chkForgetRX2VfoBVFOinfo = new System.Windows.Forms.CheckBoxTS();
+            this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
+            this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
+            this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
+            this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
+            this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
+            this.chkCWLUbecomesCW = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnOwnCallApearance = new Thetis.ColorButton();
+            this.txtOwnCallsign = new System.Windows.Forms.TextBoxTS();
+            this.chkSpotOwnCallAppearance = new System.Windows.Forms.CheckBoxTS();
+            this.chkShowTCISpots = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS615 = new System.Windows.Forms.LabelTS();
+            this.udTCISpotLifetime = new System.Windows.Forms.NumericUpDownTS();
+            this.udMaxTCISpots = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS614 = new System.Windows.Forms.LabelTS();
+            this.labelTS613 = new System.Windows.Forms.LabelTS();
+            this.chkTCIsendInitialStateOnConnect = new System.Windows.Forms.CheckBoxTS();
+            this.chkUseRX1vfoaForRX2vfoa = new System.Windows.Forms.CheckBoxTS();
+            this.chkCopyRX2VFObToVFOa = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS611 = new System.Windows.Forms.LabelTS();
+            this.udTCIRateLimit = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS612 = new System.Windows.Forms.LabelTS();
+            this.btnDefaultBindPortForTCI = new System.Windows.Forms.ButtonTS();
+            this.txtTCIServerBindIPPort = new System.Windows.Forms.TextBoxTS();
+            this.grpTCPIPcatServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
+            this.btnShowTCPIPCatLog = new System.Windows.Forms.ButtonTS();
+            this.chkWelcomeMessageTCPIPCat = new System.Windows.Forms.CheckBoxTS();
+            this.lblToggleToUse = new System.Windows.Forms.LabelTS();
+            this.labelTS609 = new System.Windows.Forms.LabelTS();
+            this.chkTCPIPCatServerListening = new System.Windows.Forms.CheckBoxTS();
+            this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
+            this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
+            this.groupBoxTS16 = new System.Windows.Forms.GroupBoxTS();
+            this.lblN1MM_ids_warning = new System.Windows.Forms.LabelTS();
+            this.labelTS643 = new System.Windows.Forms.LabelTS();
+            this.txtN1MM_ID_RX_2 = new System.Windows.Forms.TextBoxTS();
+            this.txtN1MM_ID_RX_1 = new System.Windows.Forms.TextBoxTS();
+            this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
+            this.btnN1MMDefault = new System.Windows.Forms.ButtonTS();
+            this.labelTS90 = new System.Windows.Forms.LabelTS();
+            this.udN1MMSendRate = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS89 = new System.Windows.Forms.LabelTS();
+            this.udN1MMRX2Scaling = new System.Windows.Forms.NumericUpDownTS();
+            this.udN1MMRX1Scaling = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS19 = new System.Windows.Forms.LabelTS();
+            this.txtN1MMSendTo = new System.Windows.Forms.TextBoxTS();
+            this.chkN1MMEnableRX2 = new System.Windows.Forms.CheckBoxTS();
+            this.chkN1MMEnableRX1 = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxTS69 = new System.Windows.Forms.GroupBoxTS();
+            this.radTCITXchannel_both = new System.Windows.Forms.RadioButtonTS();
+            this.radTCITXchannel_R = new System.Windows.Forms.RadioButtonTS();
+            this.radTCITXchannel_L = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS661 = new System.Windows.Forms.LabelTS();
+            this.chkTCISwapIQ = new System.Windows.Forms.CheckBoxTS();
+            this.chkTCIAlwaysStreamIQ = new System.Windows.Forms.CheckBoxTS();
             this.tbMIDIcat = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkMidiControlIDincludesStatus = new System.Windows.Forms.CheckBoxTS();
@@ -3790,77 +3868,6 @@
             this.labelTS288 = new System.Windows.Forms.LabelTS();
             this.txtDiscordCallsign = new System.Windows.Forms.TextBoxTS();
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
-            this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
-            this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
-            this.panelTS15 = new System.Windows.Forms.PanelTS();
-            this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
-            this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
-            this.btnShowLog = new System.Windows.Forms.ButtonTS();
-            this.panelTS13 = new System.Windows.Forms.PanelTS();
-            this.radTCI_spot_force_default = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS644 = new System.Windows.Forms.LabelTS();
-            this.radTCI_spot_force_cwl = new System.Windows.Forms.RadioButtonTS();
-            this.radTCI_spot_force_cwu = new System.Windows.Forms.RadioButtonTS();
-            this.chkOverrideSpotFlashColour = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnSpotFlashColour = new Thetis.ColorButton();
-            this.chkFlashNewTCISpots = new System.Windows.Forms.CheckBoxTS();
-            this.btnClearTCISpotsSWL = new System.Windows.Forms.ButtonTS();
-            this.chkForgetRX2VfoBVFOinfo = new System.Windows.Forms.CheckBoxTS();
-            this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
-            this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
-            this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
-            this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
-            this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
-            this.chkCWLUbecomesCW = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnOwnCallApearance = new Thetis.ColorButton();
-            this.txtOwnCallsign = new System.Windows.Forms.TextBoxTS();
-            this.chkSpotOwnCallAppearance = new System.Windows.Forms.CheckBoxTS();
-            this.chkShowTCISpots = new System.Windows.Forms.CheckBoxTS();
-            this.labelTS615 = new System.Windows.Forms.LabelTS();
-            this.udTCISpotLifetime = new System.Windows.Forms.NumericUpDownTS();
-            this.udMaxTCISpots = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS614 = new System.Windows.Forms.LabelTS();
-            this.labelTS613 = new System.Windows.Forms.LabelTS();
-            this.chkTCIsendInitialStateOnConnect = new System.Windows.Forms.CheckBoxTS();
-            this.chkUseRX1vfoaForRX2vfoa = new System.Windows.Forms.CheckBoxTS();
-            this.chkCopyRX2VFObToVFOa = new System.Windows.Forms.CheckBoxTS();
-            this.labelTS611 = new System.Windows.Forms.LabelTS();
-            this.udTCIRateLimit = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS612 = new System.Windows.Forms.LabelTS();
-            this.btnDefaultBindPortForTCI = new System.Windows.Forms.ButtonTS();
-            this.txtTCIServerBindIPPort = new System.Windows.Forms.TextBoxTS();
-            this.grpTCPIPcatServer = new System.Windows.Forms.GroupBoxTS();
-            this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
-            this.btnShowTCPIPCatLog = new System.Windows.Forms.ButtonTS();
-            this.chkWelcomeMessageTCPIPCat = new System.Windows.Forms.CheckBoxTS();
-            this.lblToggleToUse = new System.Windows.Forms.LabelTS();
-            this.labelTS609 = new System.Windows.Forms.LabelTS();
-            this.chkTCPIPCatServerListening = new System.Windows.Forms.CheckBoxTS();
-            this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
-            this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
-            this.groupBoxTS16 = new System.Windows.Forms.GroupBoxTS();
-            this.lblN1MM_ids_warning = new System.Windows.Forms.LabelTS();
-            this.labelTS643 = new System.Windows.Forms.LabelTS();
-            this.txtN1MM_ID_RX_2 = new System.Windows.Forms.TextBoxTS();
-            this.txtN1MM_ID_RX_1 = new System.Windows.Forms.TextBoxTS();
-            this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
-            this.btnN1MMDefault = new System.Windows.Forms.ButtonTS();
-            this.labelTS90 = new System.Windows.Forms.LabelTS();
-            this.udN1MMSendRate = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS89 = new System.Windows.Forms.LabelTS();
-            this.udN1MMRX2Scaling = new System.Windows.Forms.NumericUpDownTS();
-            this.udN1MMRX1Scaling = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS19 = new System.Windows.Forms.LabelTS();
-            this.txtN1MMSendTo = new System.Windows.Forms.TextBoxTS();
-            this.chkN1MMEnableRX2 = new System.Windows.Forms.CheckBoxTS();
-            this.chkN1MMEnableRX1 = new System.Windows.Forms.CheckBoxTS();
-            this.groupBoxTS69 = new System.Windows.Forms.GroupBoxTS();
-            this.radTCITXchannel_both = new System.Windows.Forms.RadioButtonTS();
-            this.radTCITXchannel_R = new System.Windows.Forms.RadioButtonTS();
-            this.radTCITXchannel_L = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS661 = new System.Windows.Forms.LabelTS();
-            this.chkTCISwapIQ = new System.Windows.Forms.CheckBoxTS();
-            this.chkTCIAlwaysStreamIQ = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
             this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
@@ -5304,6 +5311,8 @@
             this.tpAppearance.SuspendLayout();
             this.tcAppearance.SuspendLayout();
             this.tpAppearanceGeneral.SuspendLayout();
+            this.groupBoxTS70.SuspendLayout();
+            this.panelTS16.SuspendLayout();
             this.groupBoxTS38.SuspendLayout();
             this.groupBoxTS31.SuspendLayout();
             this.groupBoxTS12.SuspendLayout();
@@ -5399,6 +5408,18 @@
             this.grpCat3ControlBox.SuspendLayout();
             this.grpCat2ControlBox.SuspendLayout();
             this.grpCatControlBox.SuspendLayout();
+            this.tpTCITCPIPN1MM.SuspendLayout();
+            this.grpTCIServer.SuspendLayout();
+            this.panelTS13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).BeginInit();
+            this.grpTCPIPcatServer.SuspendLayout();
+            this.groupBoxTS16.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).BeginInit();
+            this.groupBoxTS69.SuspendLayout();
             this.tbMIDIcat.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMin)).BeginInit();
@@ -5425,18 +5446,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_filter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_ignore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_tag)).BeginInit();
-            this.tpTCITCPIPN1MM.SuspendLayout();
-            this.grpTCIServer.SuspendLayout();
-            this.panelTS13.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).BeginInit();
-            this.grpTCPIPcatServer.SuspendLayout();
-            this.groupBoxTS16.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).BeginInit();
-            this.groupBoxTS69.SuspendLayout();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -52189,6 +52198,7 @@
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS70);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS38);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS31);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
@@ -52202,6 +52212,93 @@
             this.tpAppearanceGeneral.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
+            // 
+            // groupBoxTS70
+            // 
+            this.groupBoxTS70.Controls.Add(this.panelTS16);
+            this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_right);
+            this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_left);
+            this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_none);
+            this.groupBoxTS70.Location = new System.Drawing.Point(8, 269);
+            this.groupBoxTS70.Name = "groupBoxTS70";
+            this.groupBoxTS70.Size = new System.Drawing.Size(167, 72);
+            this.groupBoxTS70.TabIndex = 94;
+            this.groupBoxTS70.TabStop = false;
+            this.groupBoxTS70.Text = "Waterfall Time Labels";
+            // 
+            // panelTS16
+            // 
+            this.panelTS16.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS16.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS16.Controls.Add(this.radWaterfall_timelab_local);
+            this.panelTS16.Controls.Add(this.radWaterfall_timelab_utc);
+            this.panelTS16.Location = new System.Drawing.Point(3, 42);
+            this.panelTS16.Name = "panelTS16";
+            this.panelTS16.Size = new System.Drawing.Size(121, 25);
+            this.panelTS16.TabIndex = 3;
+            // 
+            // radWaterfall_timelab_local
+            // 
+            this.radWaterfall_timelab_local.AutoSize = true;
+            this.radWaterfall_timelab_local.Image = null;
+            this.radWaterfall_timelab_local.Location = new System.Drawing.Point(56, 3);
+            this.radWaterfall_timelab_local.Name = "radWaterfall_timelab_local";
+            this.radWaterfall_timelab_local.Size = new System.Drawing.Size(51, 17);
+            this.radWaterfall_timelab_local.TabIndex = 2;
+            this.radWaterfall_timelab_local.Text = "Local";
+            this.radWaterfall_timelab_local.UseVisualStyleBackColor = true;
+            // 
+            // radWaterfall_timelab_utc
+            // 
+            this.radWaterfall_timelab_utc.AutoSize = true;
+            this.radWaterfall_timelab_utc.Checked = true;
+            this.radWaterfall_timelab_utc.Image = null;
+            this.radWaterfall_timelab_utc.Location = new System.Drawing.Point(3, 3);
+            this.radWaterfall_timelab_utc.Name = "radWaterfall_timelab_utc";
+            this.radWaterfall_timelab_utc.Size = new System.Drawing.Size(47, 17);
+            this.radWaterfall_timelab_utc.TabIndex = 1;
+            this.radWaterfall_timelab_utc.TabStop = true;
+            this.radWaterfall_timelab_utc.Text = "UTC";
+            this.radWaterfall_timelab_utc.UseVisualStyleBackColor = true;
+            this.radWaterfall_timelab_utc.CheckedChanged += new System.EventHandler(this.radWaterfall_timelab_time_CheckedChanged);
+            // 
+            // radWaterfall_timelab_right
+            // 
+            this.radWaterfall_timelab_right.AutoSize = true;
+            this.radWaterfall_timelab_right.Image = null;
+            this.radWaterfall_timelab_right.Location = new System.Drawing.Point(112, 19);
+            this.radWaterfall_timelab_right.Name = "radWaterfall_timelab_right";
+            this.radWaterfall_timelab_right.Size = new System.Drawing.Size(50, 17);
+            this.radWaterfall_timelab_right.TabIndex = 2;
+            this.radWaterfall_timelab_right.Text = "Right";
+            this.radWaterfall_timelab_right.UseVisualStyleBackColor = true;
+            this.radWaterfall_timelab_right.CheckedChanged += new System.EventHandler(this.radWaterfall_timelab_CheckedChanged);
+            // 
+            // radWaterfall_timelab_left
+            // 
+            this.radWaterfall_timelab_left.AutoSize = true;
+            this.radWaterfall_timelab_left.Checked = true;
+            this.radWaterfall_timelab_left.Image = null;
+            this.radWaterfall_timelab_left.Location = new System.Drawing.Point(63, 19);
+            this.radWaterfall_timelab_left.Name = "radWaterfall_timelab_left";
+            this.radWaterfall_timelab_left.Size = new System.Drawing.Size(43, 17);
+            this.radWaterfall_timelab_left.TabIndex = 1;
+            this.radWaterfall_timelab_left.TabStop = true;
+            this.radWaterfall_timelab_left.Text = "Left";
+            this.radWaterfall_timelab_left.UseVisualStyleBackColor = true;
+            this.radWaterfall_timelab_left.CheckedChanged += new System.EventHandler(this.radWaterfall_timelab_CheckedChanged);
+            // 
+            // radWaterfall_timelab_none
+            // 
+            this.radWaterfall_timelab_none.AutoSize = true;
+            this.radWaterfall_timelab_none.Image = null;
+            this.radWaterfall_timelab_none.Location = new System.Drawing.Point(6, 19);
+            this.radWaterfall_timelab_none.Name = "radWaterfall_timelab_none";
+            this.radWaterfall_timelab_none.Size = new System.Drawing.Size(51, 17);
+            this.radWaterfall_timelab_none.TabIndex = 0;
+            this.radWaterfall_timelab_none.Text = "None";
+            this.radWaterfall_timelab_none.UseVisualStyleBackColor = true;
+            this.radWaterfall_timelab_none.CheckedChanged += new System.EventHandler(this.radWaterfall_timelab_CheckedChanged);
             // 
             // groupBoxTS38
             // 
@@ -58579,6 +58676,1023 @@
             this.comboCATstopbits.TabIndex = 94;
             this.comboCATstopbits.SelectedIndexChanged += new System.EventHandler(this.comboCATstopbits_SelectedIndexChanged);
             // 
+            // tpTCITCPIPN1MM
+            // 
+            this.tpTCITCPIPN1MM.BackColor = System.Drawing.SystemColors.Control;
+            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCIServer);
+            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCPIPcatServer);
+            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS16);
+            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS69);
+            this.tpTCITCPIPN1MM.Location = new System.Drawing.Point(4, 22);
+            this.tpTCITCPIPN1MM.Name = "tpTCITCPIPN1MM";
+            this.tpTCITCPIPN1MM.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTCITCPIPN1MM.Size = new System.Drawing.Size(724, 407);
+            this.tpTCITCPIPN1MM.TabIndex = 3;
+            this.tpTCITCPIPN1MM.Text = "Network";
+            // 
+            // grpTCIServer
+            // 
+            this.grpTCIServer.Controls.Add(this.panelTS15);
+            this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
+            this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
+            this.grpTCIServer.Controls.Add(this.btnShowLog);
+            this.grpTCIServer.Controls.Add(this.panelTS13);
+            this.grpTCIServer.Controls.Add(this.chkOverrideSpotFlashColour);
+            this.grpTCIServer.Controls.Add(this.clrbtnSpotFlashColour);
+            this.grpTCIServer.Controls.Add(this.chkFlashNewTCISpots);
+            this.grpTCIServer.Controls.Add(this.btnClearTCISpotsSWL);
+            this.grpTCIServer.Controls.Add(this.chkForgetRX2VfoBVFOinfo);
+            this.grpTCIServer.Controls.Add(this.chkCWbecomesCWUabove10mhz);
+            this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
+            this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
+            this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
+            this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
+            this.grpTCIServer.Controls.Add(this.chkCWLUbecomesCW);
+            this.grpTCIServer.Controls.Add(this.clrbtnOwnCallApearance);
+            this.grpTCIServer.Controls.Add(this.txtOwnCallsign);
+            this.grpTCIServer.Controls.Add(this.chkSpotOwnCallAppearance);
+            this.grpTCIServer.Controls.Add(this.chkShowTCISpots);
+            this.grpTCIServer.Controls.Add(this.labelTS615);
+            this.grpTCIServer.Controls.Add(this.udTCISpotLifetime);
+            this.grpTCIServer.Controls.Add(this.udMaxTCISpots);
+            this.grpTCIServer.Controls.Add(this.labelTS614);
+            this.grpTCIServer.Controls.Add(this.labelTS613);
+            this.grpTCIServer.Controls.Add(this.chkTCIsendInitialStateOnConnect);
+            this.grpTCIServer.Controls.Add(this.chkUseRX1vfoaForRX2vfoa);
+            this.grpTCIServer.Controls.Add(this.chkCopyRX2VFObToVFOa);
+            this.grpTCIServer.Controls.Add(this.labelTS611);
+            this.grpTCIServer.Controls.Add(this.udTCIRateLimit);
+            this.grpTCIServer.Controls.Add(this.labelTS612);
+            this.grpTCIServer.Controls.Add(this.btnDefaultBindPortForTCI);
+            this.grpTCIServer.Controls.Add(this.txtTCIServerBindIPPort);
+            this.grpTCIServer.Location = new System.Drawing.Point(14, 8);
+            this.grpTCIServer.Name = "grpTCIServer";
+            this.grpTCIServer.Size = new System.Drawing.Size(373, 389);
+            this.grpTCIServer.TabIndex = 98;
+            this.grpTCIServer.TabStop = false;
+            this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // panelTS15
+            // 
+            this.panelTS15.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS15.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS15.Location = new System.Drawing.Point(361, 298);
+            this.panelTS15.Name = "panelTS15";
+            this.panelTS15.Size = new System.Drawing.Size(23, 89);
+            this.panelTS15.TabIndex = 115;
+            // 
+            // lblToggleToUseTCI
+            // 
+            this.lblToggleToUseTCI.AutoSize = true;
+            this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
+            this.lblToggleToUseTCI.Image = null;
+            this.lblToggleToUseTCI.Location = new System.Drawing.Point(253, 357);
+            this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
+            this.lblToggleToUseTCI.Size = new System.Drawing.Size(81, 26);
+            this.lblToggleToUseTCI.TabIndex = 15;
+            this.lblToggleToUseTCI.Text = "toggle off/on\r\nto use";
+            this.lblToggleToUseTCI.Visible = false;
+            // 
+            // chkTCIServerListening
+            // 
+            this.chkTCIServerListening.AutoSize = true;
+            this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTCIServerListening.Image = null;
+            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 365);
+            this.chkTCIServerListening.Name = "chkTCIServerListening";
+            this.chkTCIServerListening.Size = new System.Drawing.Size(138, 17);
+            this.chkTCIServerListening.TabIndex = 13;
+            this.chkTCIServerListening.Text = "TCI Server Running";
+            this.toolTip1.SetToolTip(this.chkTCIServerListening, "Checked to listen for client connections");
+            this.chkTCIServerListening.UseVisualStyleBackColor = true;
+            this.chkTCIServerListening.CheckedChanged += new System.EventHandler(this.chkTCIServerListening_CheckedChanged);
+            // 
+            // btnShowLog
+            // 
+            this.btnShowLog.Image = null;
+            this.btnShowLog.Location = new System.Drawing.Point(166, 359);
+            this.btnShowLog.Name = "btnShowLog";
+            this.btnShowLog.Selectable = true;
+            this.btnShowLog.Size = new System.Drawing.Size(82, 26);
+            this.btnShowLog.TabIndex = 69;
+            this.btnShowLog.Text = "Show Log";
+            this.btnShowLog.UseVisualStyleBackColor = true;
+            this.btnShowLog.Click += new System.EventHandler(this.btnShowLog_Click);
+            // 
+            // panelTS13
+            // 
+            this.panelTS13.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS13.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_default);
+            this.panelTS13.Controls.Add(this.labelTS644);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwl);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwu);
+            this.panelTS13.Location = new System.Drawing.Point(22, 312);
+            this.panelTS13.Name = "panelTS13";
+            this.panelTS13.Size = new System.Drawing.Size(271, 43);
+            this.panelTS13.TabIndex = 112;
+            // 
+            // radTCI_spot_force_default
+            // 
+            this.radTCI_spot_force_default.AutoSize = true;
+            this.radTCI_spot_force_default.Checked = true;
+            this.radTCI_spot_force_default.Image = null;
+            this.radTCI_spot_force_default.Location = new System.Drawing.Point(208, 19);
+            this.radTCI_spot_force_default.Name = "radTCI_spot_force_default";
+            this.radTCI_spot_force_default.Size = new System.Drawing.Size(59, 17);
+            this.radTCI_spot_force_default.TabIndex = 2;
+            this.radTCI_spot_force_default.TabStop = true;
+            this.radTCI_spot_force_default.Text = "Default";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_default, "Default behaviour which is CWU for frequencies >= 10MHz or if within the 60M band" +
+        ".\r\nThis may be changed if the TCI client provides CWL or CWU instead of CW as th" +
+        "e spot mode.\r\n");
+            this.radTCI_spot_force_default.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_default.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
+            // 
+            // labelTS644
+            // 
+            this.labelTS644.AutoSize = true;
+            this.labelTS644.Image = null;
+            this.labelTS644.Location = new System.Drawing.Point(2, 3);
+            this.labelTS644.Name = "labelTS644";
+            this.labelTS644.Size = new System.Drawing.Size(96, 13);
+            this.labelTS644.TabIndex = 0;
+            this.labelTS644.Text = "CW Spot sideband";
+            // 
+            // radTCI_spot_force_cwl
+            // 
+            this.radTCI_spot_force_cwl.AutoSize = true;
+            this.radTCI_spot_force_cwl.Image = null;
+            this.radTCI_spot_force_cwl.Location = new System.Drawing.Point(116, 19);
+            this.radTCI_spot_force_cwl.Name = "radTCI_spot_force_cwl";
+            this.radTCI_spot_force_cwl.Size = new System.Drawing.Size(91, 17);
+            this.radTCI_spot_force_cwl.TabIndex = 1;
+            this.radTCI_spot_force_cwl.TabStop = true;
+            this.radTCI_spot_force_cwl.Text = "Force to CWL";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwl, "Any TCI CW spot arriving will be forced to CWL");
+            this.radTCI_spot_force_cwl.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_cwl.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
+            // 
+            // radTCI_spot_force_cwu
+            // 
+            this.radTCI_spot_force_cwu.AutoSize = true;
+            this.radTCI_spot_force_cwu.Image = null;
+            this.radTCI_spot_force_cwu.Location = new System.Drawing.Point(17, 19);
+            this.radTCI_spot_force_cwu.Name = "radTCI_spot_force_cwu";
+            this.radTCI_spot_force_cwu.Size = new System.Drawing.Size(93, 17);
+            this.radTCI_spot_force_cwu.TabIndex = 0;
+            this.radTCI_spot_force_cwu.TabStop = true;
+            this.radTCI_spot_force_cwu.Text = "Force to CWU";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwu, "Any TCI CW spot arriving will be forced to CWU");
+            this.radTCI_spot_force_cwu.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_cwu.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
+            // 
+            // chkOverrideSpotFlashColour
+            // 
+            this.chkOverrideSpotFlashColour.AutoSize = true;
+            this.chkOverrideSpotFlashColour.Image = null;
+            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(308, 267);
+            this.chkOverrideSpotFlashColour.Name = "chkOverrideSpotFlashColour";
+            this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(15, 14);
+            this.chkOverrideSpotFlashColour.TabIndex = 112;
+            this.toolTip1.SetToolTip(this.chkOverrideSpotFlashColour, "Override the flash colour");
+            this.chkOverrideSpotFlashColour.UseVisualStyleBackColor = true;
+            this.chkOverrideSpotFlashColour.CheckedChanged += new System.EventHandler(this.chkOverrideSpotFlashColour_CheckedChanged);
+            // 
+            // clrbtnSpotFlashColour
+            // 
+            this.clrbtnSpotFlashColour.Automatic = "Automatic";
+            this.clrbtnSpotFlashColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnSpotFlashColour.Image = null;
+            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(329, 262);
+            this.clrbtnSpotFlashColour.MoreColors = "More Colors...";
+            this.clrbtnSpotFlashColour.Name = "clrbtnSpotFlashColour";
+            this.clrbtnSpotFlashColour.Selectable = true;
+            this.clrbtnSpotFlashColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnSpotFlashColour.TabIndex = 104;
+            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "Colour of the flash");
+            this.clrbtnSpotFlashColour.Changed += new System.EventHandler(this.clrbtnSpotFlashColour_Changed);
+            // 
+            // chkFlashNewTCISpots
+            // 
+            this.chkFlashNewTCISpots.AutoSize = true;
+            this.chkFlashNewTCISpots.Image = null;
+            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(221, 266);
+            this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
+            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(74, 17);
+            this.chkFlashNewTCISpots.TabIndex = 103;
+            this.chkFlashNewTCISpots.Text = "Flash new";
+            this.toolTip1.SetToolTip(this.chkFlashNewTCISpots, "New spots will flash (newer than 2 mins)");
+            this.chkFlashNewTCISpots.UseVisualStyleBackColor = true;
+            this.chkFlashNewTCISpots.CheckedChanged += new System.EventHandler(this.chkFlashNewTCISpots_CheckedChanged);
+            // 
+            // btnClearTCISpotsSWL
+            // 
+            this.btnClearTCISpotsSWL.Image = null;
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(267, 222);
+            this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
+            this.btnClearTCISpotsSWL.Selectable = true;
+            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(73, 39);
+            this.btnClearTCISpotsSWL.TabIndex = 102;
+            this.btnClearTCISpotsSWL.Text = "Clear SWL";
+            this.btnClearTCISpotsSWL.UseVisualStyleBackColor = true;
+            this.btnClearTCISpotsSWL.Click += new System.EventHandler(this.btnClearTCISpotsSWL_Click);
+            // 
+            // chkForgetRX2VfoBVFOinfo
+            // 
+            this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
+            this.chkForgetRX2VfoBVFOinfo.Enabled = false;
+            this.chkForgetRX2VfoBVFOinfo.Image = null;
+            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 131);
+            this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";
+            this.chkForgetRX2VfoBVFOinfo.Size = new System.Drawing.Size(110, 17);
+            this.chkForgetRX2VfoBVFOinfo.TabIndex = 101;
+            this.chkForgetRX2VfoBVFOinfo.Text = "Forget RX2 VFOb";
+            this.toolTip1.SetToolTip(this.chkForgetRX2VfoBVFOinfo, "RX2 VFOb messages will not be sent (out)");
+            this.chkForgetRX2VfoBVFOinfo.UseVisualStyleBackColor = true;
+            this.chkForgetRX2VfoBVFOinfo.CheckedChanged += new System.EventHandler(this.chkForgetRX2VfoBVFOinfo_CheckedChanged);
+            // 
+            // chkCWbecomesCWUabove10mhz
+            // 
+            this.chkCWbecomesCWUabove10mhz.AutoSize = true;
+            this.chkCWbecomesCWUabove10mhz.Image = null;
+            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
+            this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
+            this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
+            this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
+            this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
+            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "A CW mode message will be considered CWU if related VFO is at or above 10MHz");
+            this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
+            this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
+            // 
+            // btnClearTCISpots
+            // 
+            this.btnClearTCISpots.Image = null;
+            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 222);
+            this.btnClearTCISpots.Name = "btnClearTCISpots";
+            this.btnClearTCISpots.Selectable = true;
+            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 39);
+            this.btnClearTCISpots.TabIndex = 99;
+            this.btnClearTCISpots.Text = "Clear Non SWL";
+            this.btnClearTCISpots.UseVisualStyleBackColor = true;
+            this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
+            // 
+            // chkEmulateExpertSDR3Protocol
+            // 
+            this.chkEmulateExpertSDR3Protocol.AutoSize = true;
+            this.chkEmulateExpertSDR3Protocol.Image = null;
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 199);
+            this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
+            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
+            this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
+            this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
+            this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
+            this.chkEmulateExpertSDR3Protocol.UseVisualStyleBackColor = true;
+            this.chkEmulateExpertSDR3Protocol.CheckedChanged += new System.EventHandler(this.chkEmulateExpertSDR3Protocol_CheckedChanged);
+            // 
+            // chkEmulateSunSDR2Pro
+            // 
+            this.chkEmulateSunSDR2Pro.AutoSize = true;
+            this.chkEmulateSunSDR2Pro.Image = null;
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(199, 199);
+            this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
+            this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
+            this.chkEmulateSunSDR2Pro.TabIndex = 71;
+            this.chkEmulateSunSDR2Pro.Text = "Emulate SunSDR2Pro device";
+            this.toolTip1.SetToolTip(this.chkEmulateSunSDR2Pro, "Causes the TCI device message to send \'SunSDR2PRO\' instead of Anan model");
+            this.chkEmulateSunSDR2Pro.UseVisualStyleBackColor = true;
+            this.chkEmulateSunSDR2Pro.CheckedChanged += new System.EventHandler(this.chkEmulateSunSDR2Pro_CheckedChanged);
+            // 
+            // btnIPv4TCI
+            // 
+            this.btnIPv4TCI.Image = null;
+            this.btnIPv4TCI.Location = new System.Drawing.Point(262, 26);
+            this.btnIPv4TCI.Name = "btnIPv4TCI";
+            this.btnIPv4TCI.Selectable = true;
+            this.btnIPv4TCI.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4TCI.TabIndex = 70;
+            this.btnIPv4TCI.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4TCI, "Show list if IPv4 addresses.");
+            this.btnIPv4TCI.UseVisualStyleBackColor = true;
+            this.btnIPv4TCI.Click += new System.EventHandler(this.btnIPv4TCI_Click);
+            // 
+            // chkCWLUbecomesCW
+            // 
+            this.chkCWLUbecomesCW.AutoSize = true;
+            this.chkCWLUbecomesCW.Image = null;
+            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 154);
+            this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
+            this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
+            this.chkCWLUbecomesCW.TabIndex = 68;
+            this.chkCWLUbecomesCW.Text = "CWL/CWU becomes CW (out)";
+            this.toolTip1.SetToolTip(this.chkCWLUbecomesCW, "CWL or CWU converts into CW in the outbound mode message");
+            this.chkCWLUbecomesCW.UseVisualStyleBackColor = true;
+            this.chkCWLUbecomesCW.CheckedChanged += new System.EventHandler(this.chkCWLUbecomesCW_CheckedChanged);
+            // 
+            // clrbtnOwnCallApearance
+            // 
+            this.clrbtnOwnCallApearance.Automatic = "Automatic";
+            this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
+            this.clrbtnOwnCallApearance.Image = null;
+            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 286);
+            this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
+            this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
+            this.clrbtnOwnCallApearance.Selectable = true;
+            this.clrbtnOwnCallApearance.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnOwnCallApearance.TabIndex = 67;
+            this.toolTip1.SetToolTip(this.clrbtnOwnCallApearance, "The colour of your callsign if it appears as a spot");
+            this.clrbtnOwnCallApearance.Changed += new System.EventHandler(this.clrbtnOwnCallApearance_Changed);
+            // 
+            // txtOwnCallsign
+            // 
+            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 287);
+            this.txtOwnCallsign.Name = "txtOwnCallsign";
+            this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
+            this.txtOwnCallsign.TabIndex = 28;
+            this.toolTip1.SetToolTip(this.txtOwnCallsign, "Your callsign");
+            this.txtOwnCallsign.TextChanged += new System.EventHandler(this.txtOwnCallsign_TextChanged);
+            // 
+            // chkSpotOwnCallAppearance
+            // 
+            this.chkSpotOwnCallAppearance.AutoSize = true;
+            this.chkSpotOwnCallAppearance.Image = null;
+            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 289);
+            this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
+            this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
+            this.chkSpotOwnCallAppearance.TabIndex = 27;
+            this.chkSpotOwnCallAppearance.Text = "Own Call Appearance";
+            this.toolTip1.SetToolTip(this.chkSpotOwnCallAppearance, "Change the colour of your callsign if it appears as a spot");
+            this.chkSpotOwnCallAppearance.UseVisualStyleBackColor = true;
+            this.chkSpotOwnCallAppearance.CheckedChanged += new System.EventHandler(this.chkSpotOwnCallAppearance_CheckedChanged);
+            // 
+            // chkShowTCISpots
+            // 
+            this.chkShowTCISpots.AutoSize = true;
+            this.chkShowTCISpots.Image = null;
+            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 222);
+            this.chkShowTCISpots.Name = "chkShowTCISpots";
+            this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
+            this.chkShowTCISpots.TabIndex = 26;
+            this.chkShowTCISpots.Text = "Show TCI Spots";
+            this.toolTip1.SetToolTip(this.chkShowTCISpots, "Show spots that are sent via TCI");
+            this.chkShowTCISpots.UseVisualStyleBackColor = true;
+            this.chkShowTCISpots.CheckedChanged += new System.EventHandler(this.chkShowTCISpots_CheckedChanged);
+            // 
+            // labelTS615
+            // 
+            this.labelTS615.AutoSize = true;
+            this.labelTS615.Image = null;
+            this.labelTS615.Location = new System.Drawing.Point(183, 266);
+            this.labelTS615.Name = "labelTS615";
+            this.labelTS615.Size = new System.Drawing.Size(28, 13);
+            this.labelTS615.TabIndex = 25;
+            this.labelTS615.Text = "mins";
+            // 
+            // udTCISpotLifetime
+            // 
+            this.udTCISpotLifetime.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 264);
+            this.udTCISpotLifetime.Maximum = new decimal(new int[] {
+            1440,
+            0,
+            0,
+            0});
+            this.udTCISpotLifetime.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTCISpotLifetime.Name = "udTCISpotLifetime";
+            this.udTCISpotLifetime.Size = new System.Drawing.Size(58, 20);
+            this.udTCISpotLifetime.TabIndex = 24;
+            this.udTCISpotLifetime.TinyStep = false;
+            this.udTCISpotLifetime.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTCISpotLifetime.ValueChanged += new System.EventHandler(this.udTCISpotLifetime_ValueChanged);
+            // 
+            // udMaxTCISpots
+            // 
+            this.udMaxTCISpots.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 241);
+            this.udMaxTCISpots.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udMaxTCISpots.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udMaxTCISpots.Name = "udMaxTCISpots";
+            this.udMaxTCISpots.Size = new System.Drawing.Size(58, 20);
+            this.udMaxTCISpots.TabIndex = 23;
+            this.udMaxTCISpots.TinyStep = false;
+            this.udMaxTCISpots.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udMaxTCISpots.ValueChanged += new System.EventHandler(this.udMaxTCISpots_ValueChanged);
+            // 
+            // labelTS614
+            // 
+            this.labelTS614.AutoSize = true;
+            this.labelTS614.Image = null;
+            this.labelTS614.Location = new System.Drawing.Point(37, 266);
+            this.labelTS614.Name = "labelTS614";
+            this.labelTS614.Size = new System.Drawing.Size(74, 13);
+            this.labelTS614.TabIndex = 22;
+            this.labelTS614.Text = "Spot Lifetime :";
+            // 
+            // labelTS613
+            // 
+            this.labelTS613.AutoSize = true;
+            this.labelTS613.Image = null;
+            this.labelTS613.Location = new System.Drawing.Point(37, 243);
+            this.labelTS613.Name = "labelTS613";
+            this.labelTS613.Size = new System.Drawing.Size(63, 13);
+            this.labelTS613.TabIndex = 21;
+            this.labelTS613.Text = "Max Spots :";
+            // 
+            // chkTCIsendInitialStateOnConnect
+            // 
+            this.chkTCIsendInitialStateOnConnect.AutoSize = true;
+            this.chkTCIsendInitialStateOnConnect.Image = null;
+            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 85);
+            this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
+            this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
+            this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
+            this.chkTCIsendInitialStateOnConnect.Text = "Send initial VFO state on connect (out)";
+            this.toolTip1.SetToolTip(this.chkTCIsendInitialStateOnConnect, "Send initial VFO state on connect");
+            this.chkTCIsendInitialStateOnConnect.UseVisualStyleBackColor = true;
+            this.chkTCIsendInitialStateOnConnect.CheckedChanged += new System.EventHandler(this.chkTCIsendInitialStateOnConnect_CheckedChanged);
+            // 
+            // chkUseRX1vfoaForRX2vfoa
+            // 
+            this.chkUseRX1vfoaForRX2vfoa.AutoSize = true;
+            this.chkUseRX1vfoaForRX2vfoa.Image = null;
+            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 108);
+            this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
+            this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
+            this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
+            this.chkUseRX1vfoaForRX2vfoa.Text = "Use RX1 VFOa for RX2 VFOa (in+out)";
+            this.toolTip1.SetToolTip(this.chkUseRX1vfoaForRX2vfoa, "Thetis does not have VFOa for RX2. Use RX1 VFOa for RX2 VFOa");
+            this.chkUseRX1vfoaForRX2vfoa.UseVisualStyleBackColor = true;
+            this.chkUseRX1vfoaForRX2vfoa.CheckedChanged += new System.EventHandler(this.chkUseRX1vfoaForRX2vfoa_CheckedChanged);
+            // 
+            // chkCopyRX2VFObToVFOa
+            // 
+            this.chkCopyRX2VFObToVFOa.AutoSize = true;
+            this.chkCopyRX2VFObToVFOa.Image = null;
+            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 131);
+            this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
+            this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
+            this.chkCopyRX2VFObToVFOa.TabIndex = 18;
+            this.chkCopyRX2VFObToVFOa.Text = "Duplicate RX2 VFOb to RX2 VFOa (out)";
+            this.toolTip1.SetToolTip(this.chkCopyRX2VFObToVFOa, "Thetis does not have VFOa for RX2. This option will duplicate vfob to vfoa");
+            this.chkCopyRX2VFObToVFOa.UseVisualStyleBackColor = true;
+            this.chkCopyRX2VFObToVFOa.CheckedChanged += new System.EventHandler(this.chkCopyRX2VFObToVFOa_CheckedChanged);
+            // 
+            // labelTS611
+            // 
+            this.labelTS611.AutoSize = true;
+            this.labelTS611.Image = null;
+            this.labelTS611.Location = new System.Drawing.Point(9, 57);
+            this.labelTS611.Name = "labelTS611";
+            this.labelTS611.Size = new System.Drawing.Size(76, 13);
+            this.labelTS611.TabIndex = 17;
+            this.labelTS611.Text = "Rate Limit (ms)";
+            // 
+            // udTCIRateLimit
+            // 
+            this.udTCIRateLimit.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTCIRateLimit.Location = new System.Drawing.Point(91, 55);
+            this.udTCIRateLimit.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udTCIRateLimit.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTCIRateLimit.Name = "udTCIRateLimit";
+            this.udTCIRateLimit.Size = new System.Drawing.Size(62, 20);
+            this.udTCIRateLimit.TabIndex = 16;
+            this.udTCIRateLimit.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udTCIRateLimit, "The maximum rate VFO/IF/DDS messages can be sent to clients");
+            this.udTCIRateLimit.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udTCIRateLimit.ValueChanged += new System.EventHandler(this.udTCIRateLimit_ValueChanged);
+            // 
+            // labelTS612
+            // 
+            this.labelTS612.AutoSize = true;
+            this.labelTS612.Image = null;
+            this.labelTS612.Location = new System.Drawing.Point(9, 32);
+            this.labelTS612.Name = "labelTS612";
+            this.labelTS612.Size = new System.Drawing.Size(63, 13);
+            this.labelTS612.TabIndex = 14;
+            this.labelTS612.Text = "Bind IP:Port";
+            // 
+            // btnDefaultBindPortForTCI
+            // 
+            this.btnDefaultBindPortForTCI.Image = null;
+            this.btnDefaultBindPortForTCI.Location = new System.Drawing.Point(219, 26);
+            this.btnDefaultBindPortForTCI.Name = "btnDefaultBindPortForTCI";
+            this.btnDefaultBindPortForTCI.Selectable = true;
+            this.btnDefaultBindPortForTCI.Size = new System.Drawing.Size(37, 26);
+            this.btnDefaultBindPortForTCI.TabIndex = 12;
+            this.btnDefaultBindPortForTCI.Text = "Def";
+            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCI, "Default value");
+            this.btnDefaultBindPortForTCI.UseVisualStyleBackColor = true;
+            this.btnDefaultBindPortForTCI.Click += new System.EventHandler(this.btnDefaultBindPortForTCI_Click);
+            // 
+            // txtTCIServerBindIPPort
+            // 
+            this.txtTCIServerBindIPPort.Location = new System.Drawing.Point(91, 29);
+            this.txtTCIServerBindIPPort.Name = "txtTCIServerBindIPPort";
+            this.txtTCIServerBindIPPort.Size = new System.Drawing.Size(122, 20);
+            this.txtTCIServerBindIPPort.TabIndex = 11;
+            this.txtTCIServerBindIPPort.Text = "127.0.0.1:50001";
+            this.toolTip1.SetToolTip(this.txtTCIServerBindIPPort, "The bind IP and the port that the server uses to listen on");
+            this.txtTCIServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCIServerBindIPPort_TextChanged);
+            // 
+            // grpTCPIPcatServer
+            // 
+            this.grpTCPIPcatServer.Controls.Add(this.btnIPv4TCPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.btnShowTCPIPCatLog);
+            this.grpTCPIPcatServer.Controls.Add(this.chkWelcomeMessageTCPIPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.lblToggleToUse);
+            this.grpTCPIPcatServer.Controls.Add(this.labelTS609);
+            this.grpTCPIPcatServer.Controls.Add(this.chkTCPIPCatServerListening);
+            this.grpTCPIPcatServer.Controls.Add(this.btnDefaultBindPortForTCPIPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
+            this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 8);
+            this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
+            this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 139);
+            this.grpTCPIPcatServer.TabIndex = 97;
+            this.grpTCPIPcatServer.TabStop = false;
+            this.grpTCPIPcatServer.Text = "TCP/IP CAT Server (0 clients)";
+            // 
+            // btnIPv4TCPCat
+            // 
+            this.btnIPv4TCPCat.Image = null;
+            this.btnIPv4TCPCat.Location = new System.Drawing.Point(262, 26);
+            this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
+            this.btnIPv4TCPCat.Selectable = true;
+            this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4TCPCat.TabIndex = 99;
+            this.btnIPv4TCPCat.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4TCPCat, "Show list if IPv4 addresses.");
+            this.btnIPv4TCPCat.UseVisualStyleBackColor = true;
+            this.btnIPv4TCPCat.Click += new System.EventHandler(this.btnIPv4TCPCat_Click);
+            // 
+            // btnShowTCPIPCatLog
+            // 
+            this.btnShowTCPIPCatLog.Image = null;
+            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(21, 104);
+            this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
+            this.btnShowTCPIPCatLog.Selectable = true;
+            this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
+            this.btnShowTCPIPCatLog.TabIndex = 98;
+            this.btnShowTCPIPCatLog.Text = "Show Log";
+            this.btnShowTCPIPCatLog.UseVisualStyleBackColor = true;
+            this.btnShowTCPIPCatLog.Click += new System.EventHandler(this.btnShowTCPIPCatLog_Click);
+            // 
+            // chkWelcomeMessageTCPIPCat
+            // 
+            this.chkWelcomeMessageTCPIPCat.AutoSize = true;
+            this.chkWelcomeMessageTCPIPCat.Image = null;
+            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(22, 58);
+            this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
+            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
+            this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
+            this.chkWelcomeMessageTCPIPCat.Text = "Send version on client connect";
+            this.toolTip1.SetToolTip(this.chkWelcomeMessageTCPIPCat, "Instantly send a version message to the client on connect (semi colon terminated)" +
+        "");
+            this.chkWelcomeMessageTCPIPCat.UseVisualStyleBackColor = true;
+            this.chkWelcomeMessageTCPIPCat.CheckedChanged += new System.EventHandler(this.chkWelcomeMessageTCPIPCat_CheckedChanged);
+            // 
+            // lblToggleToUse
+            // 
+            this.lblToggleToUse.AutoSize = true;
+            this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
+            this.lblToggleToUse.Image = null;
+            this.lblToggleToUse.Location = new System.Drawing.Point(216, 76);
+            this.lblToggleToUse.Name = "lblToggleToUse";
+            this.lblToggleToUse.Size = new System.Drawing.Size(81, 26);
+            this.lblToggleToUse.TabIndex = 15;
+            this.lblToggleToUse.Text = "toggle off/on\r\nto use";
+            this.lblToggleToUse.Visible = false;
+            // 
+            // labelTS609
+            // 
+            this.labelTS609.AutoSize = true;
+            this.labelTS609.Image = null;
+            this.labelTS609.Location = new System.Drawing.Point(9, 32);
+            this.labelTS609.Name = "labelTS609";
+            this.labelTS609.Size = new System.Drawing.Size(63, 13);
+            this.labelTS609.TabIndex = 14;
+            this.labelTS609.Text = "Bind IP:Port";
+            // 
+            // chkTCPIPCatServerListening
+            // 
+            this.chkTCPIPCatServerListening.AutoSize = true;
+            this.chkTCPIPCatServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTCPIPCatServerListening.Image = null;
+            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(22, 81);
+            this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
+            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(188, 17);
+            this.chkTCPIPCatServerListening.TabIndex = 13;
+            this.chkTCPIPCatServerListening.Text = "TCP/IP CAT Server Running";
+            this.toolTip1.SetToolTip(this.chkTCPIPCatServerListening, "Checked to listen for client connections");
+            this.chkTCPIPCatServerListening.UseVisualStyleBackColor = true;
+            this.chkTCPIPCatServerListening.CheckedChanged += new System.EventHandler(this.chkTCPIPCatServerListening_CheckedChanged);
+            // 
+            // btnDefaultBindPortForTCPIPCat
+            // 
+            this.btnDefaultBindPortForTCPIPCat.Image = null;
+            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(219, 26);
+            this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
+            this.btnDefaultBindPortForTCPIPCat.Selectable = true;
+            this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
+            this.btnDefaultBindPortForTCPIPCat.TabIndex = 12;
+            this.btnDefaultBindPortForTCPIPCat.Text = "Def";
+            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCPIPCat, "Default value");
+            this.btnDefaultBindPortForTCPIPCat.UseVisualStyleBackColor = true;
+            this.btnDefaultBindPortForTCPIPCat.Click += new System.EventHandler(this.btnDefaultBindPortForTCPIPCat_Click);
+            // 
+            // txtTCPIPCATServerBindIPPort
+            // 
+            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 29);
+            this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
+            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
+            this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
+            this.txtTCPIPCATServerBindIPPort.Text = "127.0.0.1:13013";
+            this.toolTip1.SetToolTip(this.txtTCPIPCATServerBindIPPort, "The bind IP and the port that the server uses to listen on");
+            this.txtTCPIPCATServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCPIPCATServerBindIPPort_TextChanged);
+            // 
+            // groupBoxTS16
+            // 
+            this.groupBoxTS16.Controls.Add(this.lblN1MM_ids_warning);
+            this.groupBoxTS16.Controls.Add(this.labelTS643);
+            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_2);
+            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_1);
+            this.groupBoxTS16.Controls.Add(this.btnIPv4N1MM);
+            this.groupBoxTS16.Controls.Add(this.btnN1MMDefault);
+            this.groupBoxTS16.Controls.Add(this.labelTS90);
+            this.groupBoxTS16.Controls.Add(this.udN1MMSendRate);
+            this.groupBoxTS16.Controls.Add(this.labelTS89);
+            this.groupBoxTS16.Controls.Add(this.udN1MMRX2Scaling);
+            this.groupBoxTS16.Controls.Add(this.udN1MMRX1Scaling);
+            this.groupBoxTS16.Controls.Add(this.labelTS19);
+            this.groupBoxTS16.Controls.Add(this.txtN1MMSendTo);
+            this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX2);
+            this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX1);
+            this.groupBoxTS16.Location = new System.Drawing.Point(393, 153);
+            this.groupBoxTS16.Name = "groupBoxTS16";
+            this.groupBoxTS16.Size = new System.Drawing.Size(323, 139);
+            this.groupBoxTS16.TabIndex = 57;
+            this.groupBoxTS16.TabStop = false;
+            this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
+            // 
+            // lblN1MM_ids_warning
+            // 
+            this.lblN1MM_ids_warning.AutoSize = true;
+            this.lblN1MM_ids_warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblN1MM_ids_warning.ForeColor = System.Drawing.Color.Red;
+            this.lblN1MM_ids_warning.Image = null;
+            this.lblN1MM_ids_warning.Location = new System.Drawing.Point(166, 119);
+            this.lblN1MM_ids_warning.Name = "lblN1MM_ids_warning";
+            this.lblN1MM_ids_warning.Size = new System.Drawing.Size(149, 13);
+            this.lblN1MM_ids_warning.TabIndex = 75;
+            this.lblN1MM_ids_warning.Text = "ID\'s can not be the same";
+            this.lblN1MM_ids_warning.Visible = false;
+            // 
+            // labelTS643
+            // 
+            this.labelTS643.AutoSize = true;
+            this.labelTS643.Image = null;
+            this.labelTS643.Location = new System.Drawing.Point(157, 13);
+            this.labelTS643.Name = "labelTS643";
+            this.labelTS643.Size = new System.Drawing.Size(18, 13);
+            this.labelTS643.TabIndex = 74;
+            this.labelTS643.Text = "ID";
+            // 
+            // txtN1MM_ID_RX_2
+            // 
+            this.txtN1MM_ID_RX_2.Location = new System.Drawing.Point(111, 51);
+            this.txtN1MM_ID_RX_2.MaxLength = 32;
+            this.txtN1MM_ID_RX_2.Name = "txtN1MM_ID_RX_2";
+            this.txtN1MM_ID_RX_2.Size = new System.Drawing.Size(110, 20);
+            this.txtN1MM_ID_RX_2.TabIndex = 73;
+            this.txtN1MM_ID_RX_2.Text = "Thetis_2";
+            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_2, "The unique ID for RX2 data");
+            this.txtN1MM_ID_RX_2.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
+            // 
+            // txtN1MM_ID_RX_1
+            // 
+            this.txtN1MM_ID_RX_1.Location = new System.Drawing.Point(111, 28);
+            this.txtN1MM_ID_RX_1.MaxLength = 32;
+            this.txtN1MM_ID_RX_1.Name = "txtN1MM_ID_RX_1";
+            this.txtN1MM_ID_RX_1.Size = new System.Drawing.Size(110, 20);
+            this.txtN1MM_ID_RX_1.TabIndex = 72;
+            this.txtN1MM_ID_RX_1.Text = "Thetis_1";
+            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_1, "The unique ID for RX1 data");
+            this.txtN1MM_ID_RX_1.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
+            // 
+            // btnIPv4N1MM
+            // 
+            this.btnIPv4N1MM.Image = null;
+            this.btnIPv4N1MM.Location = new System.Drawing.Point(262, 80);
+            this.btnIPv4N1MM.Name = "btnIPv4N1MM";
+            this.btnIPv4N1MM.Selectable = true;
+            this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4N1MM.TabIndex = 71;
+            this.btnIPv4N1MM.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4N1MM, "Show list if IPv4 addresses.");
+            this.btnIPv4N1MM.UseVisualStyleBackColor = true;
+            this.btnIPv4N1MM.Click += new System.EventHandler(this.btnIPv4N1MM_Click);
+            // 
+            // btnN1MMDefault
+            // 
+            this.btnN1MMDefault.Image = null;
+            this.btnN1MMDefault.Location = new System.Drawing.Point(219, 80);
+            this.btnN1MMDefault.Name = "btnN1MMDefault";
+            this.btnN1MMDefault.Selectable = true;
+            this.btnN1MMDefault.Size = new System.Drawing.Size(37, 26);
+            this.btnN1MMDefault.TabIndex = 10;
+            this.btnN1MMDefault.Text = "Def";
+            this.btnN1MMDefault.UseVisualStyleBackColor = true;
+            this.btnN1MMDefault.Click += new System.EventHandler(this.btnN1MMDefault_Click);
+            // 
+            // labelTS90
+            // 
+            this.labelTS90.AutoSize = true;
+            this.labelTS90.Image = null;
+            this.labelTS90.Location = new System.Drawing.Point(9, 110);
+            this.labelTS90.Name = "labelTS90";
+            this.labelTS90.Size = new System.Drawing.Size(61, 13);
+            this.labelTS90.TabIndex = 9;
+            this.labelTS90.Text = "Send Rate:";
+            // 
+            // udN1MMSendRate
+            // 
+            this.udN1MMSendRate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udN1MMSendRate.Location = new System.Drawing.Point(91, 108);
+            this.udN1MMSendRate.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udN1MMSendRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udN1MMSendRate.Name = "udN1MMSendRate";
+            this.udN1MMSendRate.Size = new System.Drawing.Size(49, 20);
+            this.udN1MMSendRate.TabIndex = 7;
+            this.udN1MMSendRate.TinyStep = false;
+            this.udN1MMSendRate.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udN1MMSendRate.ValueChanged += new System.EventHandler(this.udN1MMSendRate_ValueChanged);
+            // 
+            // labelTS89
+            // 
+            this.labelTS89.AutoSize = true;
+            this.labelTS89.Image = null;
+            this.labelTS89.Location = new System.Drawing.Point(228, 12);
+            this.labelTS89.Name = "labelTS89";
+            this.labelTS89.Size = new System.Drawing.Size(56, 13);
+            this.labelTS89.TabIndex = 6;
+            this.labelTS89.Text = "dB scaling";
+            // 
+            // udN1MMRX2Scaling
+            // 
+            this.udN1MMRX2Scaling.DecimalPlaces = 2;
+            this.udN1MMRX2Scaling.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMRX2Scaling.Location = new System.Drawing.Point(227, 51);
+            this.udN1MMRX2Scaling.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udN1MMRX2Scaling.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMRX2Scaling.Name = "udN1MMRX2Scaling";
+            this.udN1MMRX2Scaling.Size = new System.Drawing.Size(58, 20);
+            this.udN1MMRX2Scaling.TabIndex = 5;
+            this.udN1MMRX2Scaling.TinyStep = false;
+            this.udN1MMRX2Scaling.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            this.udN1MMRX2Scaling.ValueChanged += new System.EventHandler(this.udN1MMRX2Scaling_ValueChanged);
+            // 
+            // udN1MMRX1Scaling
+            // 
+            this.udN1MMRX1Scaling.DecimalPlaces = 2;
+            this.udN1MMRX1Scaling.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMRX1Scaling.Location = new System.Drawing.Point(227, 28);
+            this.udN1MMRX1Scaling.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udN1MMRX1Scaling.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMRX1Scaling.Name = "udN1MMRX1Scaling";
+            this.udN1MMRX1Scaling.Size = new System.Drawing.Size(58, 20);
+            this.udN1MMRX1Scaling.TabIndex = 4;
+            this.udN1MMRX1Scaling.TinyStep = false;
+            this.udN1MMRX1Scaling.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            this.udN1MMRX1Scaling.ValueChanged += new System.EventHandler(this.udN1MMRX1Scaling_ValueChanged);
+            // 
+            // labelTS19
+            // 
+            this.labelTS19.AutoSize = true;
+            this.labelTS19.Image = null;
+            this.labelTS19.Location = new System.Drawing.Point(9, 86);
+            this.labelTS19.Name = "labelTS19";
+            this.labelTS19.Size = new System.Drawing.Size(73, 13);
+            this.labelTS19.TabIndex = 3;
+            this.labelTS19.Text = "Send UDP to:";
+            // 
+            // txtN1MMSendTo
+            // 
+            this.txtN1MMSendTo.Location = new System.Drawing.Point(91, 83);
+            this.txtN1MMSendTo.Name = "txtN1MMSendTo";
+            this.txtN1MMSendTo.Size = new System.Drawing.Size(122, 20);
+            this.txtN1MMSendTo.TabIndex = 2;
+            this.txtN1MMSendTo.Text = "127.0.0.1:13064";
+            this.txtN1MMSendTo.TextChanged += new System.EventHandler(this.txtN1MMSendTo_TextChanged);
+            // 
+            // chkN1MMEnableRX2
+            // 
+            this.chkN1MMEnableRX2.AutoSize = true;
+            this.chkN1MMEnableRX2.Image = null;
+            this.chkN1MMEnableRX2.Location = new System.Drawing.Point(22, 54);
+            this.chkN1MMEnableRX2.Name = "chkN1MMEnableRX2";
+            this.chkN1MMEnableRX2.Size = new System.Drawing.Size(83, 17);
+            this.chkN1MMEnableRX2.TabIndex = 1;
+            this.chkN1MMEnableRX2.Text = "Enable RX2";
+            this.chkN1MMEnableRX2.UseVisualStyleBackColor = true;
+            this.chkN1MMEnableRX2.CheckedChanged += new System.EventHandler(this.chkN1MMEnableRX2_CheckedChanged);
+            // 
+            // chkN1MMEnableRX1
+            // 
+            this.chkN1MMEnableRX1.AutoSize = true;
+            this.chkN1MMEnableRX1.Image = null;
+            this.chkN1MMEnableRX1.Location = new System.Drawing.Point(22, 31);
+            this.chkN1MMEnableRX1.Name = "chkN1MMEnableRX1";
+            this.chkN1MMEnableRX1.Size = new System.Drawing.Size(83, 17);
+            this.chkN1MMEnableRX1.TabIndex = 0;
+            this.chkN1MMEnableRX1.Text = "Enable RX1";
+            this.chkN1MMEnableRX1.UseVisualStyleBackColor = true;
+            this.chkN1MMEnableRX1.CheckedChanged += new System.EventHandler(this.chkN1MMEnableRX1_CheckedChanged);
+            // 
+            // groupBoxTS69
+            // 
+            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_both);
+            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_R);
+            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_L);
+            this.groupBoxTS69.Controls.Add(this.labelTS661);
+            this.groupBoxTS69.Controls.Add(this.chkTCISwapIQ);
+            this.groupBoxTS69.Controls.Add(this.chkTCIAlwaysStreamIQ);
+            this.groupBoxTS69.Location = new System.Drawing.Point(386, 298);
+            this.groupBoxTS69.Name = "groupBoxTS69";
+            this.groupBoxTS69.Size = new System.Drawing.Size(330, 99);
+            this.groupBoxTS69.TabIndex = 99;
+            this.groupBoxTS69.TabStop = false;
+            // 
+            // radTCITXchannel_both
+            // 
+            this.radTCITXchannel_both.AutoSize = true;
+            this.radTCITXchannel_both.Checked = true;
+            this.radTCITXchannel_both.Image = null;
+            this.radTCITXchannel_both.Location = new System.Drawing.Point(194, 56);
+            this.radTCITXchannel_both.Name = "radTCITXchannel_both";
+            this.radTCITXchannel_both.Size = new System.Drawing.Size(47, 17);
+            this.radTCITXchannel_both.TabIndex = 118;
+            this.radTCITXchannel_both.TabStop = true;
+            this.radTCITXchannel_both.Text = "Both";
+            this.toolTip1.SetToolTip(this.radTCITXchannel_both, "Use both channels of the inbound TCI audio stream (default)");
+            this.radTCITXchannel_both.UseVisualStyleBackColor = true;
+            // 
+            // radTCITXchannel_R
+            // 
+            this.radTCITXchannel_R.AutoSize = true;
+            this.radTCITXchannel_R.Image = null;
+            this.radTCITXchannel_R.Location = new System.Drawing.Point(155, 56);
+            this.radTCITXchannel_R.Name = "radTCITXchannel_R";
+            this.radTCITXchannel_R.Size = new System.Drawing.Size(33, 17);
+            this.radTCITXchannel_R.TabIndex = 117;
+            this.radTCITXchannel_R.Text = "R";
+            this.toolTip1.SetToolTip(this.radTCITXchannel_R, "Use the right channel of the inbound TCI audio stream");
+            this.radTCITXchannel_R.UseVisualStyleBackColor = true;
+            // 
+            // radTCITXchannel_L
+            // 
+            this.radTCITXchannel_L.AutoSize = true;
+            this.radTCITXchannel_L.Image = null;
+            this.radTCITXchannel_L.Location = new System.Drawing.Point(118, 56);
+            this.radTCITXchannel_L.Name = "radTCITXchannel_L";
+            this.radTCITXchannel_L.Size = new System.Drawing.Size(31, 17);
+            this.radTCITXchannel_L.TabIndex = 116;
+            this.radTCITXchannel_L.Text = "L";
+            this.toolTip1.SetToolTip(this.radTCITXchannel_L, "Use the left channel of the inbound TCI audio stream");
+            this.radTCITXchannel_L.UseVisualStyleBackColor = true;
+            this.radTCITXchannel_L.CheckedChanged += new System.EventHandler(this.radTCITXchannel_CheckedChanged);
+            // 
+            // labelTS661
+            // 
+            this.labelTS661.AutoSize = true;
+            this.labelTS661.Image = null;
+            this.labelTS661.Location = new System.Drawing.Point(7, 58);
+            this.labelTS661.Name = "labelTS661";
+            this.labelTS661.Size = new System.Drawing.Size(97, 13);
+            this.labelTS661.TabIndex = 115;
+            this.labelTS661.Text = "TX source channel";
+            // 
+            // chkTCISwapIQ
+            // 
+            this.chkTCISwapIQ.AutoSize = true;
+            this.chkTCISwapIQ.Checked = true;
+            this.chkTCISwapIQ.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTCISwapIQ.Image = null;
+            this.chkTCISwapIQ.Location = new System.Drawing.Point(6, 19);
+            this.chkTCISwapIQ.Name = "chkTCISwapIQ";
+            this.chkTCISwapIQ.Size = new System.Drawing.Size(67, 17);
+            this.chkTCISwapIQ.TabIndex = 113;
+            this.chkTCISwapIQ.Text = "Swap IQ";
+            this.toolTip1.SetToolTip(this.chkTCISwapIQ, "Swap IQ. This should normally be on.");
+            this.chkTCISwapIQ.UseVisualStyleBackColor = true;
+            this.chkTCISwapIQ.CheckedChanged += new System.EventHandler(this.chkTCISwapIQ_CheckedChanged);
+            // 
+            // chkTCIAlwaysStreamIQ
+            // 
+            this.chkTCIAlwaysStreamIQ.AutoSize = true;
+            this.chkTCIAlwaysStreamIQ.Image = null;
+            this.chkTCIAlwaysStreamIQ.Location = new System.Drawing.Point(6, 38);
+            this.chkTCIAlwaysStreamIQ.Name = "chkTCIAlwaysStreamIQ";
+            this.chkTCIAlwaysStreamIQ.Size = new System.Drawing.Size(107, 17);
+            this.chkTCIAlwaysStreamIQ.TabIndex = 114;
+            this.chkTCIAlwaysStreamIQ.Text = "Always stream IQ";
+            this.toolTip1.SetToolTip(this.chkTCIAlwaysStreamIQ, "Some older software do ot sent IQ_START so IQ streaming will not start.\r\nUse this" +
+        " option to always stream it.");
+            this.chkTCIAlwaysStreamIQ.UseVisualStyleBackColor = true;
+            this.chkTCIAlwaysStreamIQ.CheckedChanged += new System.EventHandler(this.chkTCIAlwaysStreamIQ_CheckedChanged);
+            // 
             // tbMIDIcat
             // 
             this.tbMIDIcat.BackColor = System.Drawing.SystemColors.Control;
@@ -60336,1023 +61450,6 @@
             this.chkDiscordEnabled.Text = "Enabled";
             this.chkDiscordEnabled.UseVisualStyleBackColor = true;
             this.chkDiscordEnabled.CheckedChanged += new System.EventHandler(this.chkDiscordEnabled_CheckedChanged);
-            // 
-            // tpTCITCPIPN1MM
-            // 
-            this.tpTCITCPIPN1MM.BackColor = System.Drawing.SystemColors.Control;
-            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCIServer);
-            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCPIPcatServer);
-            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS16);
-            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS69);
-            this.tpTCITCPIPN1MM.Location = new System.Drawing.Point(4, 22);
-            this.tpTCITCPIPN1MM.Name = "tpTCITCPIPN1MM";
-            this.tpTCITCPIPN1MM.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTCITCPIPN1MM.Size = new System.Drawing.Size(724, 407);
-            this.tpTCITCPIPN1MM.TabIndex = 3;
-            this.tpTCITCPIPN1MM.Text = "Network";
-            // 
-            // grpTCIServer
-            // 
-            this.grpTCIServer.Controls.Add(this.panelTS15);
-            this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
-            this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
-            this.grpTCIServer.Controls.Add(this.btnShowLog);
-            this.grpTCIServer.Controls.Add(this.panelTS13);
-            this.grpTCIServer.Controls.Add(this.chkOverrideSpotFlashColour);
-            this.grpTCIServer.Controls.Add(this.clrbtnSpotFlashColour);
-            this.grpTCIServer.Controls.Add(this.chkFlashNewTCISpots);
-            this.grpTCIServer.Controls.Add(this.btnClearTCISpotsSWL);
-            this.grpTCIServer.Controls.Add(this.chkForgetRX2VfoBVFOinfo);
-            this.grpTCIServer.Controls.Add(this.chkCWbecomesCWUabove10mhz);
-            this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
-            this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
-            this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
-            this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
-            this.grpTCIServer.Controls.Add(this.chkCWLUbecomesCW);
-            this.grpTCIServer.Controls.Add(this.clrbtnOwnCallApearance);
-            this.grpTCIServer.Controls.Add(this.txtOwnCallsign);
-            this.grpTCIServer.Controls.Add(this.chkSpotOwnCallAppearance);
-            this.grpTCIServer.Controls.Add(this.chkShowTCISpots);
-            this.grpTCIServer.Controls.Add(this.labelTS615);
-            this.grpTCIServer.Controls.Add(this.udTCISpotLifetime);
-            this.grpTCIServer.Controls.Add(this.udMaxTCISpots);
-            this.grpTCIServer.Controls.Add(this.labelTS614);
-            this.grpTCIServer.Controls.Add(this.labelTS613);
-            this.grpTCIServer.Controls.Add(this.chkTCIsendInitialStateOnConnect);
-            this.grpTCIServer.Controls.Add(this.chkUseRX1vfoaForRX2vfoa);
-            this.grpTCIServer.Controls.Add(this.chkCopyRX2VFObToVFOa);
-            this.grpTCIServer.Controls.Add(this.labelTS611);
-            this.grpTCIServer.Controls.Add(this.udTCIRateLimit);
-            this.grpTCIServer.Controls.Add(this.labelTS612);
-            this.grpTCIServer.Controls.Add(this.btnDefaultBindPortForTCI);
-            this.grpTCIServer.Controls.Add(this.txtTCIServerBindIPPort);
-            this.grpTCIServer.Location = new System.Drawing.Point(14, 8);
-            this.grpTCIServer.Name = "grpTCIServer";
-            this.grpTCIServer.Size = new System.Drawing.Size(373, 389);
-            this.grpTCIServer.TabIndex = 98;
-            this.grpTCIServer.TabStop = false;
-            this.grpTCIServer.Text = "TCI Server (0 clients)";
-            // 
-            // panelTS15
-            // 
-            this.panelTS15.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelTS15.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelTS15.Location = new System.Drawing.Point(361, 298);
-            this.panelTS15.Name = "panelTS15";
-            this.panelTS15.Size = new System.Drawing.Size(23, 89);
-            this.panelTS15.TabIndex = 115;
-            // 
-            // lblToggleToUseTCI
-            // 
-            this.lblToggleToUseTCI.AutoSize = true;
-            this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
-            this.lblToggleToUseTCI.Image = null;
-            this.lblToggleToUseTCI.Location = new System.Drawing.Point(253, 357);
-            this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
-            this.lblToggleToUseTCI.Size = new System.Drawing.Size(81, 26);
-            this.lblToggleToUseTCI.TabIndex = 15;
-            this.lblToggleToUseTCI.Text = "toggle off/on\r\nto use";
-            this.lblToggleToUseTCI.Visible = false;
-            // 
-            // chkTCIServerListening
-            // 
-            this.chkTCIServerListening.AutoSize = true;
-            this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkTCIServerListening.Image = null;
-            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 365);
-            this.chkTCIServerListening.Name = "chkTCIServerListening";
-            this.chkTCIServerListening.Size = new System.Drawing.Size(138, 17);
-            this.chkTCIServerListening.TabIndex = 13;
-            this.chkTCIServerListening.Text = "TCI Server Running";
-            this.toolTip1.SetToolTip(this.chkTCIServerListening, "Checked to listen for client connections");
-            this.chkTCIServerListening.UseVisualStyleBackColor = true;
-            this.chkTCIServerListening.CheckedChanged += new System.EventHandler(this.chkTCIServerListening_CheckedChanged);
-            // 
-            // btnShowLog
-            // 
-            this.btnShowLog.Image = null;
-            this.btnShowLog.Location = new System.Drawing.Point(166, 359);
-            this.btnShowLog.Name = "btnShowLog";
-            this.btnShowLog.Selectable = true;
-            this.btnShowLog.Size = new System.Drawing.Size(82, 26);
-            this.btnShowLog.TabIndex = 69;
-            this.btnShowLog.Text = "Show Log";
-            this.btnShowLog.UseVisualStyleBackColor = true;
-            this.btnShowLog.Click += new System.EventHandler(this.btnShowLog_Click);
-            // 
-            // panelTS13
-            // 
-            this.panelTS13.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelTS13.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelTS13.Controls.Add(this.radTCI_spot_force_default);
-            this.panelTS13.Controls.Add(this.labelTS644);
-            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwl);
-            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwu);
-            this.panelTS13.Location = new System.Drawing.Point(22, 312);
-            this.panelTS13.Name = "panelTS13";
-            this.panelTS13.Size = new System.Drawing.Size(271, 43);
-            this.panelTS13.TabIndex = 112;
-            // 
-            // radTCI_spot_force_default
-            // 
-            this.radTCI_spot_force_default.AutoSize = true;
-            this.radTCI_spot_force_default.Checked = true;
-            this.radTCI_spot_force_default.Image = null;
-            this.radTCI_spot_force_default.Location = new System.Drawing.Point(208, 19);
-            this.radTCI_spot_force_default.Name = "radTCI_spot_force_default";
-            this.radTCI_spot_force_default.Size = new System.Drawing.Size(59, 17);
-            this.radTCI_spot_force_default.TabIndex = 2;
-            this.radTCI_spot_force_default.TabStop = true;
-            this.radTCI_spot_force_default.Text = "Default";
-            this.toolTip1.SetToolTip(this.radTCI_spot_force_default, "Default behaviour which is CWU for frequencies >= 10MHz or if within the 60M band" +
-        ".\r\nThis may be changed if the TCI client provides CWL or CWU instead of CW as th" +
-        "e spot mode.\r\n");
-            this.radTCI_spot_force_default.UseVisualStyleBackColor = true;
-            this.radTCI_spot_force_default.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
-            // 
-            // labelTS644
-            // 
-            this.labelTS644.AutoSize = true;
-            this.labelTS644.Image = null;
-            this.labelTS644.Location = new System.Drawing.Point(2, 3);
-            this.labelTS644.Name = "labelTS644";
-            this.labelTS644.Size = new System.Drawing.Size(96, 13);
-            this.labelTS644.TabIndex = 0;
-            this.labelTS644.Text = "CW Spot sideband";
-            // 
-            // radTCI_spot_force_cwl
-            // 
-            this.radTCI_spot_force_cwl.AutoSize = true;
-            this.radTCI_spot_force_cwl.Image = null;
-            this.radTCI_spot_force_cwl.Location = new System.Drawing.Point(116, 19);
-            this.radTCI_spot_force_cwl.Name = "radTCI_spot_force_cwl";
-            this.radTCI_spot_force_cwl.Size = new System.Drawing.Size(91, 17);
-            this.radTCI_spot_force_cwl.TabIndex = 1;
-            this.radTCI_spot_force_cwl.TabStop = true;
-            this.radTCI_spot_force_cwl.Text = "Force to CWL";
-            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwl, "Any TCI CW spot arriving will be forced to CWL");
-            this.radTCI_spot_force_cwl.UseVisualStyleBackColor = true;
-            this.radTCI_spot_force_cwl.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
-            // 
-            // radTCI_spot_force_cwu
-            // 
-            this.radTCI_spot_force_cwu.AutoSize = true;
-            this.radTCI_spot_force_cwu.Image = null;
-            this.radTCI_spot_force_cwu.Location = new System.Drawing.Point(17, 19);
-            this.radTCI_spot_force_cwu.Name = "radTCI_spot_force_cwu";
-            this.radTCI_spot_force_cwu.Size = new System.Drawing.Size(93, 17);
-            this.radTCI_spot_force_cwu.TabIndex = 0;
-            this.radTCI_spot_force_cwu.TabStop = true;
-            this.radTCI_spot_force_cwu.Text = "Force to CWU";
-            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwu, "Any TCI CW spot arriving will be forced to CWU");
-            this.radTCI_spot_force_cwu.UseVisualStyleBackColor = true;
-            this.radTCI_spot_force_cwu.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
-            // 
-            // chkOverrideSpotFlashColour
-            // 
-            this.chkOverrideSpotFlashColour.AutoSize = true;
-            this.chkOverrideSpotFlashColour.Image = null;
-            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(308, 267);
-            this.chkOverrideSpotFlashColour.Name = "chkOverrideSpotFlashColour";
-            this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(15, 14);
-            this.chkOverrideSpotFlashColour.TabIndex = 112;
-            this.toolTip1.SetToolTip(this.chkOverrideSpotFlashColour, "Override the flash colour");
-            this.chkOverrideSpotFlashColour.UseVisualStyleBackColor = true;
-            this.chkOverrideSpotFlashColour.CheckedChanged += new System.EventHandler(this.chkOverrideSpotFlashColour_CheckedChanged);
-            // 
-            // clrbtnSpotFlashColour
-            // 
-            this.clrbtnSpotFlashColour.Automatic = "Automatic";
-            this.clrbtnSpotFlashColour.Color = System.Drawing.Color.Yellow;
-            this.clrbtnSpotFlashColour.Image = null;
-            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(329, 262);
-            this.clrbtnSpotFlashColour.MoreColors = "More Colors...";
-            this.clrbtnSpotFlashColour.Name = "clrbtnSpotFlashColour";
-            this.clrbtnSpotFlashColour.Selectable = true;
-            this.clrbtnSpotFlashColour.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnSpotFlashColour.TabIndex = 104;
-            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "Colour of the flash");
-            this.clrbtnSpotFlashColour.Changed += new System.EventHandler(this.clrbtnSpotFlashColour_Changed);
-            // 
-            // chkFlashNewTCISpots
-            // 
-            this.chkFlashNewTCISpots.AutoSize = true;
-            this.chkFlashNewTCISpots.Image = null;
-            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(221, 266);
-            this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
-            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(74, 17);
-            this.chkFlashNewTCISpots.TabIndex = 103;
-            this.chkFlashNewTCISpots.Text = "Flash new";
-            this.toolTip1.SetToolTip(this.chkFlashNewTCISpots, "New spots will flash (newer than 2 mins)");
-            this.chkFlashNewTCISpots.UseVisualStyleBackColor = true;
-            this.chkFlashNewTCISpots.CheckedChanged += new System.EventHandler(this.chkFlashNewTCISpots_CheckedChanged);
-            // 
-            // btnClearTCISpotsSWL
-            // 
-            this.btnClearTCISpotsSWL.Image = null;
-            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(267, 222);
-            this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
-            this.btnClearTCISpotsSWL.Selectable = true;
-            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(73, 39);
-            this.btnClearTCISpotsSWL.TabIndex = 102;
-            this.btnClearTCISpotsSWL.Text = "Clear SWL";
-            this.btnClearTCISpotsSWL.UseVisualStyleBackColor = true;
-            this.btnClearTCISpotsSWL.Click += new System.EventHandler(this.btnClearTCISpotsSWL_Click);
-            // 
-            // chkForgetRX2VfoBVFOinfo
-            // 
-            this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
-            this.chkForgetRX2VfoBVFOinfo.Enabled = false;
-            this.chkForgetRX2VfoBVFOinfo.Image = null;
-            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 131);
-            this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";
-            this.chkForgetRX2VfoBVFOinfo.Size = new System.Drawing.Size(110, 17);
-            this.chkForgetRX2VfoBVFOinfo.TabIndex = 101;
-            this.chkForgetRX2VfoBVFOinfo.Text = "Forget RX2 VFOb";
-            this.toolTip1.SetToolTip(this.chkForgetRX2VfoBVFOinfo, "RX2 VFOb messages will not be sent (out)");
-            this.chkForgetRX2VfoBVFOinfo.UseVisualStyleBackColor = true;
-            this.chkForgetRX2VfoBVFOinfo.CheckedChanged += new System.EventHandler(this.chkForgetRX2VfoBVFOinfo_CheckedChanged);
-            // 
-            // chkCWbecomesCWUabove10mhz
-            // 
-            this.chkCWbecomesCWUabove10mhz.AutoSize = true;
-            this.chkCWbecomesCWUabove10mhz.Image = null;
-            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
-            this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
-            this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
-            this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
-            this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
-            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "A CW mode message will be considered CWU if related VFO is at or above 10MHz");
-            this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
-            this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
-            // 
-            // btnClearTCISpots
-            // 
-            this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 222);
-            this.btnClearTCISpots.Name = "btnClearTCISpots";
-            this.btnClearTCISpots.Selectable = true;
-            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 39);
-            this.btnClearTCISpots.TabIndex = 99;
-            this.btnClearTCISpots.Text = "Clear Non SWL";
-            this.btnClearTCISpots.UseVisualStyleBackColor = true;
-            this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
-            // 
-            // chkEmulateExpertSDR3Protocol
-            // 
-            this.chkEmulateExpertSDR3Protocol.AutoSize = true;
-            this.chkEmulateExpertSDR3Protocol.Image = null;
-            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 199);
-            this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
-            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
-            this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
-            this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
-            this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
-            this.chkEmulateExpertSDR3Protocol.UseVisualStyleBackColor = true;
-            this.chkEmulateExpertSDR3Protocol.CheckedChanged += new System.EventHandler(this.chkEmulateExpertSDR3Protocol_CheckedChanged);
-            // 
-            // chkEmulateSunSDR2Pro
-            // 
-            this.chkEmulateSunSDR2Pro.AutoSize = true;
-            this.chkEmulateSunSDR2Pro.Image = null;
-            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(199, 199);
-            this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
-            this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
-            this.chkEmulateSunSDR2Pro.TabIndex = 71;
-            this.chkEmulateSunSDR2Pro.Text = "Emulate SunSDR2Pro device";
-            this.toolTip1.SetToolTip(this.chkEmulateSunSDR2Pro, "Causes the TCI device message to send \'SunSDR2PRO\' instead of Anan model");
-            this.chkEmulateSunSDR2Pro.UseVisualStyleBackColor = true;
-            this.chkEmulateSunSDR2Pro.CheckedChanged += new System.EventHandler(this.chkEmulateSunSDR2Pro_CheckedChanged);
-            // 
-            // btnIPv4TCI
-            // 
-            this.btnIPv4TCI.Image = null;
-            this.btnIPv4TCI.Location = new System.Drawing.Point(262, 26);
-            this.btnIPv4TCI.Name = "btnIPv4TCI";
-            this.btnIPv4TCI.Selectable = true;
-            this.btnIPv4TCI.Size = new System.Drawing.Size(42, 26);
-            this.btnIPv4TCI.TabIndex = 70;
-            this.btnIPv4TCI.Text = "IPv4";
-            this.toolTip1.SetToolTip(this.btnIPv4TCI, "Show list if IPv4 addresses.");
-            this.btnIPv4TCI.UseVisualStyleBackColor = true;
-            this.btnIPv4TCI.Click += new System.EventHandler(this.btnIPv4TCI_Click);
-            // 
-            // chkCWLUbecomesCW
-            // 
-            this.chkCWLUbecomesCW.AutoSize = true;
-            this.chkCWLUbecomesCW.Image = null;
-            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 154);
-            this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
-            this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
-            this.chkCWLUbecomesCW.TabIndex = 68;
-            this.chkCWLUbecomesCW.Text = "CWL/CWU becomes CW (out)";
-            this.toolTip1.SetToolTip(this.chkCWLUbecomesCW, "CWL or CWU converts into CW in the outbound mode message");
-            this.chkCWLUbecomesCW.UseVisualStyleBackColor = true;
-            this.chkCWLUbecomesCW.CheckedChanged += new System.EventHandler(this.chkCWLUbecomesCW_CheckedChanged);
-            // 
-            // clrbtnOwnCallApearance
-            // 
-            this.clrbtnOwnCallApearance.Automatic = "Automatic";
-            this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
-            this.clrbtnOwnCallApearance.Image = null;
-            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 286);
-            this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
-            this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
-            this.clrbtnOwnCallApearance.Selectable = true;
-            this.clrbtnOwnCallApearance.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnOwnCallApearance.TabIndex = 67;
-            this.toolTip1.SetToolTip(this.clrbtnOwnCallApearance, "The colour of your callsign if it appears as a spot");
-            this.clrbtnOwnCallApearance.Changed += new System.EventHandler(this.clrbtnOwnCallApearance_Changed);
-            // 
-            // txtOwnCallsign
-            // 
-            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 287);
-            this.txtOwnCallsign.Name = "txtOwnCallsign";
-            this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
-            this.txtOwnCallsign.TabIndex = 28;
-            this.toolTip1.SetToolTip(this.txtOwnCallsign, "Your callsign");
-            this.txtOwnCallsign.TextChanged += new System.EventHandler(this.txtOwnCallsign_TextChanged);
-            // 
-            // chkSpotOwnCallAppearance
-            // 
-            this.chkSpotOwnCallAppearance.AutoSize = true;
-            this.chkSpotOwnCallAppearance.Image = null;
-            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 289);
-            this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
-            this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
-            this.chkSpotOwnCallAppearance.TabIndex = 27;
-            this.chkSpotOwnCallAppearance.Text = "Own Call Appearance";
-            this.toolTip1.SetToolTip(this.chkSpotOwnCallAppearance, "Change the colour of your callsign if it appears as a spot");
-            this.chkSpotOwnCallAppearance.UseVisualStyleBackColor = true;
-            this.chkSpotOwnCallAppearance.CheckedChanged += new System.EventHandler(this.chkSpotOwnCallAppearance_CheckedChanged);
-            // 
-            // chkShowTCISpots
-            // 
-            this.chkShowTCISpots.AutoSize = true;
-            this.chkShowTCISpots.Image = null;
-            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 222);
-            this.chkShowTCISpots.Name = "chkShowTCISpots";
-            this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
-            this.chkShowTCISpots.TabIndex = 26;
-            this.chkShowTCISpots.Text = "Show TCI Spots";
-            this.toolTip1.SetToolTip(this.chkShowTCISpots, "Show spots that are sent via TCI");
-            this.chkShowTCISpots.UseVisualStyleBackColor = true;
-            this.chkShowTCISpots.CheckedChanged += new System.EventHandler(this.chkShowTCISpots_CheckedChanged);
-            // 
-            // labelTS615
-            // 
-            this.labelTS615.AutoSize = true;
-            this.labelTS615.Image = null;
-            this.labelTS615.Location = new System.Drawing.Point(183, 266);
-            this.labelTS615.Name = "labelTS615";
-            this.labelTS615.Size = new System.Drawing.Size(28, 13);
-            this.labelTS615.TabIndex = 25;
-            this.labelTS615.Text = "mins";
-            // 
-            // udTCISpotLifetime
-            // 
-            this.udTCISpotLifetime.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 264);
-            this.udTCISpotLifetime.Maximum = new decimal(new int[] {
-            1440,
-            0,
-            0,
-            0});
-            this.udTCISpotLifetime.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udTCISpotLifetime.Name = "udTCISpotLifetime";
-            this.udTCISpotLifetime.Size = new System.Drawing.Size(58, 20);
-            this.udTCISpotLifetime.TabIndex = 24;
-            this.udTCISpotLifetime.TinyStep = false;
-            this.udTCISpotLifetime.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udTCISpotLifetime.ValueChanged += new System.EventHandler(this.udTCISpotLifetime_ValueChanged);
-            // 
-            // udMaxTCISpots
-            // 
-            this.udMaxTCISpots.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 241);
-            this.udMaxTCISpots.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.udMaxTCISpots.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udMaxTCISpots.Name = "udMaxTCISpots";
-            this.udMaxTCISpots.Size = new System.Drawing.Size(58, 20);
-            this.udMaxTCISpots.TabIndex = 23;
-            this.udMaxTCISpots.TinyStep = false;
-            this.udMaxTCISpots.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.udMaxTCISpots.ValueChanged += new System.EventHandler(this.udMaxTCISpots_ValueChanged);
-            // 
-            // labelTS614
-            // 
-            this.labelTS614.AutoSize = true;
-            this.labelTS614.Image = null;
-            this.labelTS614.Location = new System.Drawing.Point(37, 266);
-            this.labelTS614.Name = "labelTS614";
-            this.labelTS614.Size = new System.Drawing.Size(74, 13);
-            this.labelTS614.TabIndex = 22;
-            this.labelTS614.Text = "Spot Lifetime :";
-            // 
-            // labelTS613
-            // 
-            this.labelTS613.AutoSize = true;
-            this.labelTS613.Image = null;
-            this.labelTS613.Location = new System.Drawing.Point(37, 243);
-            this.labelTS613.Name = "labelTS613";
-            this.labelTS613.Size = new System.Drawing.Size(63, 13);
-            this.labelTS613.TabIndex = 21;
-            this.labelTS613.Text = "Max Spots :";
-            // 
-            // chkTCIsendInitialStateOnConnect
-            // 
-            this.chkTCIsendInitialStateOnConnect.AutoSize = true;
-            this.chkTCIsendInitialStateOnConnect.Image = null;
-            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 85);
-            this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
-            this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
-            this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
-            this.chkTCIsendInitialStateOnConnect.Text = "Send initial VFO state on connect (out)";
-            this.toolTip1.SetToolTip(this.chkTCIsendInitialStateOnConnect, "Send initial VFO state on connect");
-            this.chkTCIsendInitialStateOnConnect.UseVisualStyleBackColor = true;
-            this.chkTCIsendInitialStateOnConnect.CheckedChanged += new System.EventHandler(this.chkTCIsendInitialStateOnConnect_CheckedChanged);
-            // 
-            // chkUseRX1vfoaForRX2vfoa
-            // 
-            this.chkUseRX1vfoaForRX2vfoa.AutoSize = true;
-            this.chkUseRX1vfoaForRX2vfoa.Image = null;
-            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 108);
-            this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
-            this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
-            this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
-            this.chkUseRX1vfoaForRX2vfoa.Text = "Use RX1 VFOa for RX2 VFOa (in+out)";
-            this.toolTip1.SetToolTip(this.chkUseRX1vfoaForRX2vfoa, "Thetis does not have VFOa for RX2. Use RX1 VFOa for RX2 VFOa");
-            this.chkUseRX1vfoaForRX2vfoa.UseVisualStyleBackColor = true;
-            this.chkUseRX1vfoaForRX2vfoa.CheckedChanged += new System.EventHandler(this.chkUseRX1vfoaForRX2vfoa_CheckedChanged);
-            // 
-            // chkCopyRX2VFObToVFOa
-            // 
-            this.chkCopyRX2VFObToVFOa.AutoSize = true;
-            this.chkCopyRX2VFObToVFOa.Image = null;
-            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 131);
-            this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
-            this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
-            this.chkCopyRX2VFObToVFOa.TabIndex = 18;
-            this.chkCopyRX2VFObToVFOa.Text = "Duplicate RX2 VFOb to RX2 VFOa (out)";
-            this.toolTip1.SetToolTip(this.chkCopyRX2VFObToVFOa, "Thetis does not have VFOa for RX2. This option will duplicate vfob to vfoa");
-            this.chkCopyRX2VFObToVFOa.UseVisualStyleBackColor = true;
-            this.chkCopyRX2VFObToVFOa.CheckedChanged += new System.EventHandler(this.chkCopyRX2VFObToVFOa_CheckedChanged);
-            // 
-            // labelTS611
-            // 
-            this.labelTS611.AutoSize = true;
-            this.labelTS611.Image = null;
-            this.labelTS611.Location = new System.Drawing.Point(9, 57);
-            this.labelTS611.Name = "labelTS611";
-            this.labelTS611.Size = new System.Drawing.Size(76, 13);
-            this.labelTS611.TabIndex = 17;
-            this.labelTS611.Text = "Rate Limit (ms)";
-            // 
-            // udTCIRateLimit
-            // 
-            this.udTCIRateLimit.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udTCIRateLimit.Location = new System.Drawing.Point(91, 55);
-            this.udTCIRateLimit.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.udTCIRateLimit.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udTCIRateLimit.Name = "udTCIRateLimit";
-            this.udTCIRateLimit.Size = new System.Drawing.Size(62, 20);
-            this.udTCIRateLimit.TabIndex = 16;
-            this.udTCIRateLimit.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udTCIRateLimit, "The maximum rate VFO/IF/DDS messages can be sent to clients");
-            this.udTCIRateLimit.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.udTCIRateLimit.ValueChanged += new System.EventHandler(this.udTCIRateLimit_ValueChanged);
-            // 
-            // labelTS612
-            // 
-            this.labelTS612.AutoSize = true;
-            this.labelTS612.Image = null;
-            this.labelTS612.Location = new System.Drawing.Point(9, 32);
-            this.labelTS612.Name = "labelTS612";
-            this.labelTS612.Size = new System.Drawing.Size(63, 13);
-            this.labelTS612.TabIndex = 14;
-            this.labelTS612.Text = "Bind IP:Port";
-            // 
-            // btnDefaultBindPortForTCI
-            // 
-            this.btnDefaultBindPortForTCI.Image = null;
-            this.btnDefaultBindPortForTCI.Location = new System.Drawing.Point(219, 26);
-            this.btnDefaultBindPortForTCI.Name = "btnDefaultBindPortForTCI";
-            this.btnDefaultBindPortForTCI.Selectable = true;
-            this.btnDefaultBindPortForTCI.Size = new System.Drawing.Size(37, 26);
-            this.btnDefaultBindPortForTCI.TabIndex = 12;
-            this.btnDefaultBindPortForTCI.Text = "Def";
-            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCI, "Default value");
-            this.btnDefaultBindPortForTCI.UseVisualStyleBackColor = true;
-            this.btnDefaultBindPortForTCI.Click += new System.EventHandler(this.btnDefaultBindPortForTCI_Click);
-            // 
-            // txtTCIServerBindIPPort
-            // 
-            this.txtTCIServerBindIPPort.Location = new System.Drawing.Point(91, 29);
-            this.txtTCIServerBindIPPort.Name = "txtTCIServerBindIPPort";
-            this.txtTCIServerBindIPPort.Size = new System.Drawing.Size(122, 20);
-            this.txtTCIServerBindIPPort.TabIndex = 11;
-            this.txtTCIServerBindIPPort.Text = "127.0.0.1:50001";
-            this.toolTip1.SetToolTip(this.txtTCIServerBindIPPort, "The bind IP and the port that the server uses to listen on");
-            this.txtTCIServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCIServerBindIPPort_TextChanged);
-            // 
-            // grpTCPIPcatServer
-            // 
-            this.grpTCPIPcatServer.Controls.Add(this.btnIPv4TCPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.btnShowTCPIPCatLog);
-            this.grpTCPIPcatServer.Controls.Add(this.chkWelcomeMessageTCPIPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.lblToggleToUse);
-            this.grpTCPIPcatServer.Controls.Add(this.labelTS609);
-            this.grpTCPIPcatServer.Controls.Add(this.chkTCPIPCatServerListening);
-            this.grpTCPIPcatServer.Controls.Add(this.btnDefaultBindPortForTCPIPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
-            this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 8);
-            this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
-            this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 139);
-            this.grpTCPIPcatServer.TabIndex = 97;
-            this.grpTCPIPcatServer.TabStop = false;
-            this.grpTCPIPcatServer.Text = "TCP/IP CAT Server (0 clients)";
-            // 
-            // btnIPv4TCPCat
-            // 
-            this.btnIPv4TCPCat.Image = null;
-            this.btnIPv4TCPCat.Location = new System.Drawing.Point(262, 26);
-            this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
-            this.btnIPv4TCPCat.Selectable = true;
-            this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
-            this.btnIPv4TCPCat.TabIndex = 99;
-            this.btnIPv4TCPCat.Text = "IPv4";
-            this.toolTip1.SetToolTip(this.btnIPv4TCPCat, "Show list if IPv4 addresses.");
-            this.btnIPv4TCPCat.UseVisualStyleBackColor = true;
-            this.btnIPv4TCPCat.Click += new System.EventHandler(this.btnIPv4TCPCat_Click);
-            // 
-            // btnShowTCPIPCatLog
-            // 
-            this.btnShowTCPIPCatLog.Image = null;
-            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(21, 104);
-            this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
-            this.btnShowTCPIPCatLog.Selectable = true;
-            this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
-            this.btnShowTCPIPCatLog.TabIndex = 98;
-            this.btnShowTCPIPCatLog.Text = "Show Log";
-            this.btnShowTCPIPCatLog.UseVisualStyleBackColor = true;
-            this.btnShowTCPIPCatLog.Click += new System.EventHandler(this.btnShowTCPIPCatLog_Click);
-            // 
-            // chkWelcomeMessageTCPIPCat
-            // 
-            this.chkWelcomeMessageTCPIPCat.AutoSize = true;
-            this.chkWelcomeMessageTCPIPCat.Image = null;
-            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(22, 58);
-            this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
-            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
-            this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
-            this.chkWelcomeMessageTCPIPCat.Text = "Send version on client connect";
-            this.toolTip1.SetToolTip(this.chkWelcomeMessageTCPIPCat, "Instantly send a version message to the client on connect (semi colon terminated)" +
-        "");
-            this.chkWelcomeMessageTCPIPCat.UseVisualStyleBackColor = true;
-            this.chkWelcomeMessageTCPIPCat.CheckedChanged += new System.EventHandler(this.chkWelcomeMessageTCPIPCat_CheckedChanged);
-            // 
-            // lblToggleToUse
-            // 
-            this.lblToggleToUse.AutoSize = true;
-            this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
-            this.lblToggleToUse.Image = null;
-            this.lblToggleToUse.Location = new System.Drawing.Point(216, 76);
-            this.lblToggleToUse.Name = "lblToggleToUse";
-            this.lblToggleToUse.Size = new System.Drawing.Size(81, 26);
-            this.lblToggleToUse.TabIndex = 15;
-            this.lblToggleToUse.Text = "toggle off/on\r\nto use";
-            this.lblToggleToUse.Visible = false;
-            // 
-            // labelTS609
-            // 
-            this.labelTS609.AutoSize = true;
-            this.labelTS609.Image = null;
-            this.labelTS609.Location = new System.Drawing.Point(9, 32);
-            this.labelTS609.Name = "labelTS609";
-            this.labelTS609.Size = new System.Drawing.Size(63, 13);
-            this.labelTS609.TabIndex = 14;
-            this.labelTS609.Text = "Bind IP:Port";
-            // 
-            // chkTCPIPCatServerListening
-            // 
-            this.chkTCPIPCatServerListening.AutoSize = true;
-            this.chkTCPIPCatServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkTCPIPCatServerListening.Image = null;
-            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(22, 81);
-            this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
-            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(188, 17);
-            this.chkTCPIPCatServerListening.TabIndex = 13;
-            this.chkTCPIPCatServerListening.Text = "TCP/IP CAT Server Running";
-            this.toolTip1.SetToolTip(this.chkTCPIPCatServerListening, "Checked to listen for client connections");
-            this.chkTCPIPCatServerListening.UseVisualStyleBackColor = true;
-            this.chkTCPIPCatServerListening.CheckedChanged += new System.EventHandler(this.chkTCPIPCatServerListening_CheckedChanged);
-            // 
-            // btnDefaultBindPortForTCPIPCat
-            // 
-            this.btnDefaultBindPortForTCPIPCat.Image = null;
-            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(219, 26);
-            this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
-            this.btnDefaultBindPortForTCPIPCat.Selectable = true;
-            this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
-            this.btnDefaultBindPortForTCPIPCat.TabIndex = 12;
-            this.btnDefaultBindPortForTCPIPCat.Text = "Def";
-            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCPIPCat, "Default value");
-            this.btnDefaultBindPortForTCPIPCat.UseVisualStyleBackColor = true;
-            this.btnDefaultBindPortForTCPIPCat.Click += new System.EventHandler(this.btnDefaultBindPortForTCPIPCat_Click);
-            // 
-            // txtTCPIPCATServerBindIPPort
-            // 
-            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 29);
-            this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
-            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
-            this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
-            this.txtTCPIPCATServerBindIPPort.Text = "127.0.0.1:13013";
-            this.toolTip1.SetToolTip(this.txtTCPIPCATServerBindIPPort, "The bind IP and the port that the server uses to listen on");
-            this.txtTCPIPCATServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCPIPCATServerBindIPPort_TextChanged);
-            // 
-            // groupBoxTS16
-            // 
-            this.groupBoxTS16.Controls.Add(this.lblN1MM_ids_warning);
-            this.groupBoxTS16.Controls.Add(this.labelTS643);
-            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_2);
-            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_1);
-            this.groupBoxTS16.Controls.Add(this.btnIPv4N1MM);
-            this.groupBoxTS16.Controls.Add(this.btnN1MMDefault);
-            this.groupBoxTS16.Controls.Add(this.labelTS90);
-            this.groupBoxTS16.Controls.Add(this.udN1MMSendRate);
-            this.groupBoxTS16.Controls.Add(this.labelTS89);
-            this.groupBoxTS16.Controls.Add(this.udN1MMRX2Scaling);
-            this.groupBoxTS16.Controls.Add(this.udN1MMRX1Scaling);
-            this.groupBoxTS16.Controls.Add(this.labelTS19);
-            this.groupBoxTS16.Controls.Add(this.txtN1MMSendTo);
-            this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX2);
-            this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX1);
-            this.groupBoxTS16.Location = new System.Drawing.Point(393, 153);
-            this.groupBoxTS16.Name = "groupBoxTS16";
-            this.groupBoxTS16.Size = new System.Drawing.Size(323, 139);
-            this.groupBoxTS16.TabIndex = 57;
-            this.groupBoxTS16.TabStop = false;
-            this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
-            // 
-            // lblN1MM_ids_warning
-            // 
-            this.lblN1MM_ids_warning.AutoSize = true;
-            this.lblN1MM_ids_warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblN1MM_ids_warning.ForeColor = System.Drawing.Color.Red;
-            this.lblN1MM_ids_warning.Image = null;
-            this.lblN1MM_ids_warning.Location = new System.Drawing.Point(166, 119);
-            this.lblN1MM_ids_warning.Name = "lblN1MM_ids_warning";
-            this.lblN1MM_ids_warning.Size = new System.Drawing.Size(149, 13);
-            this.lblN1MM_ids_warning.TabIndex = 75;
-            this.lblN1MM_ids_warning.Text = "ID\'s can not be the same";
-            this.lblN1MM_ids_warning.Visible = false;
-            // 
-            // labelTS643
-            // 
-            this.labelTS643.AutoSize = true;
-            this.labelTS643.Image = null;
-            this.labelTS643.Location = new System.Drawing.Point(157, 13);
-            this.labelTS643.Name = "labelTS643";
-            this.labelTS643.Size = new System.Drawing.Size(18, 13);
-            this.labelTS643.TabIndex = 74;
-            this.labelTS643.Text = "ID";
-            // 
-            // txtN1MM_ID_RX_2
-            // 
-            this.txtN1MM_ID_RX_2.Location = new System.Drawing.Point(111, 51);
-            this.txtN1MM_ID_RX_2.MaxLength = 32;
-            this.txtN1MM_ID_RX_2.Name = "txtN1MM_ID_RX_2";
-            this.txtN1MM_ID_RX_2.Size = new System.Drawing.Size(110, 20);
-            this.txtN1MM_ID_RX_2.TabIndex = 73;
-            this.txtN1MM_ID_RX_2.Text = "Thetis_2";
-            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_2, "The unique ID for RX2 data");
-            this.txtN1MM_ID_RX_2.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
-            // 
-            // txtN1MM_ID_RX_1
-            // 
-            this.txtN1MM_ID_RX_1.Location = new System.Drawing.Point(111, 28);
-            this.txtN1MM_ID_RX_1.MaxLength = 32;
-            this.txtN1MM_ID_RX_1.Name = "txtN1MM_ID_RX_1";
-            this.txtN1MM_ID_RX_1.Size = new System.Drawing.Size(110, 20);
-            this.txtN1MM_ID_RX_1.TabIndex = 72;
-            this.txtN1MM_ID_RX_1.Text = "Thetis_1";
-            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_1, "The unique ID for RX1 data");
-            this.txtN1MM_ID_RX_1.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
-            // 
-            // btnIPv4N1MM
-            // 
-            this.btnIPv4N1MM.Image = null;
-            this.btnIPv4N1MM.Location = new System.Drawing.Point(262, 80);
-            this.btnIPv4N1MM.Name = "btnIPv4N1MM";
-            this.btnIPv4N1MM.Selectable = true;
-            this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
-            this.btnIPv4N1MM.TabIndex = 71;
-            this.btnIPv4N1MM.Text = "IPv4";
-            this.toolTip1.SetToolTip(this.btnIPv4N1MM, "Show list if IPv4 addresses.");
-            this.btnIPv4N1MM.UseVisualStyleBackColor = true;
-            this.btnIPv4N1MM.Click += new System.EventHandler(this.btnIPv4N1MM_Click);
-            // 
-            // btnN1MMDefault
-            // 
-            this.btnN1MMDefault.Image = null;
-            this.btnN1MMDefault.Location = new System.Drawing.Point(219, 80);
-            this.btnN1MMDefault.Name = "btnN1MMDefault";
-            this.btnN1MMDefault.Selectable = true;
-            this.btnN1MMDefault.Size = new System.Drawing.Size(37, 26);
-            this.btnN1MMDefault.TabIndex = 10;
-            this.btnN1MMDefault.Text = "Def";
-            this.btnN1MMDefault.UseVisualStyleBackColor = true;
-            this.btnN1MMDefault.Click += new System.EventHandler(this.btnN1MMDefault_Click);
-            // 
-            // labelTS90
-            // 
-            this.labelTS90.AutoSize = true;
-            this.labelTS90.Image = null;
-            this.labelTS90.Location = new System.Drawing.Point(9, 110);
-            this.labelTS90.Name = "labelTS90";
-            this.labelTS90.Size = new System.Drawing.Size(61, 13);
-            this.labelTS90.TabIndex = 9;
-            this.labelTS90.Text = "Send Rate:";
-            // 
-            // udN1MMSendRate
-            // 
-            this.udN1MMSendRate.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udN1MMSendRate.Location = new System.Drawing.Point(91, 108);
-            this.udN1MMSendRate.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.udN1MMSendRate.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udN1MMSendRate.Name = "udN1MMSendRate";
-            this.udN1MMSendRate.Size = new System.Drawing.Size(49, 20);
-            this.udN1MMSendRate.TabIndex = 7;
-            this.udN1MMSendRate.TinyStep = false;
-            this.udN1MMSendRate.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udN1MMSendRate.ValueChanged += new System.EventHandler(this.udN1MMSendRate_ValueChanged);
-            // 
-            // labelTS89
-            // 
-            this.labelTS89.AutoSize = true;
-            this.labelTS89.Image = null;
-            this.labelTS89.Location = new System.Drawing.Point(228, 12);
-            this.labelTS89.Name = "labelTS89";
-            this.labelTS89.Size = new System.Drawing.Size(56, 13);
-            this.labelTS89.TabIndex = 6;
-            this.labelTS89.Text = "dB scaling";
-            // 
-            // udN1MMRX2Scaling
-            // 
-            this.udN1MMRX2Scaling.DecimalPlaces = 2;
-            this.udN1MMRX2Scaling.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udN1MMRX2Scaling.Location = new System.Drawing.Point(227, 51);
-            this.udN1MMRX2Scaling.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udN1MMRX2Scaling.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udN1MMRX2Scaling.Name = "udN1MMRX2Scaling";
-            this.udN1MMRX2Scaling.Size = new System.Drawing.Size(58, 20);
-            this.udN1MMRX2Scaling.TabIndex = 5;
-            this.udN1MMRX2Scaling.TinyStep = false;
-            this.udN1MMRX2Scaling.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            65536});
-            this.udN1MMRX2Scaling.ValueChanged += new System.EventHandler(this.udN1MMRX2Scaling_ValueChanged);
-            // 
-            // udN1MMRX1Scaling
-            // 
-            this.udN1MMRX1Scaling.DecimalPlaces = 2;
-            this.udN1MMRX1Scaling.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udN1MMRX1Scaling.Location = new System.Drawing.Point(227, 28);
-            this.udN1MMRX1Scaling.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udN1MMRX1Scaling.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udN1MMRX1Scaling.Name = "udN1MMRX1Scaling";
-            this.udN1MMRX1Scaling.Size = new System.Drawing.Size(58, 20);
-            this.udN1MMRX1Scaling.TabIndex = 4;
-            this.udN1MMRX1Scaling.TinyStep = false;
-            this.udN1MMRX1Scaling.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            65536});
-            this.udN1MMRX1Scaling.ValueChanged += new System.EventHandler(this.udN1MMRX1Scaling_ValueChanged);
-            // 
-            // labelTS19
-            // 
-            this.labelTS19.AutoSize = true;
-            this.labelTS19.Image = null;
-            this.labelTS19.Location = new System.Drawing.Point(9, 86);
-            this.labelTS19.Name = "labelTS19";
-            this.labelTS19.Size = new System.Drawing.Size(73, 13);
-            this.labelTS19.TabIndex = 3;
-            this.labelTS19.Text = "Send UDP to:";
-            // 
-            // txtN1MMSendTo
-            // 
-            this.txtN1MMSendTo.Location = new System.Drawing.Point(91, 83);
-            this.txtN1MMSendTo.Name = "txtN1MMSendTo";
-            this.txtN1MMSendTo.Size = new System.Drawing.Size(122, 20);
-            this.txtN1MMSendTo.TabIndex = 2;
-            this.txtN1MMSendTo.Text = "127.0.0.1:13064";
-            this.txtN1MMSendTo.TextChanged += new System.EventHandler(this.txtN1MMSendTo_TextChanged);
-            // 
-            // chkN1MMEnableRX2
-            // 
-            this.chkN1MMEnableRX2.AutoSize = true;
-            this.chkN1MMEnableRX2.Image = null;
-            this.chkN1MMEnableRX2.Location = new System.Drawing.Point(22, 54);
-            this.chkN1MMEnableRX2.Name = "chkN1MMEnableRX2";
-            this.chkN1MMEnableRX2.Size = new System.Drawing.Size(83, 17);
-            this.chkN1MMEnableRX2.TabIndex = 1;
-            this.chkN1MMEnableRX2.Text = "Enable RX2";
-            this.chkN1MMEnableRX2.UseVisualStyleBackColor = true;
-            this.chkN1MMEnableRX2.CheckedChanged += new System.EventHandler(this.chkN1MMEnableRX2_CheckedChanged);
-            // 
-            // chkN1MMEnableRX1
-            // 
-            this.chkN1MMEnableRX1.AutoSize = true;
-            this.chkN1MMEnableRX1.Image = null;
-            this.chkN1MMEnableRX1.Location = new System.Drawing.Point(22, 31);
-            this.chkN1MMEnableRX1.Name = "chkN1MMEnableRX1";
-            this.chkN1MMEnableRX1.Size = new System.Drawing.Size(83, 17);
-            this.chkN1MMEnableRX1.TabIndex = 0;
-            this.chkN1MMEnableRX1.Text = "Enable RX1";
-            this.chkN1MMEnableRX1.UseVisualStyleBackColor = true;
-            this.chkN1MMEnableRX1.CheckedChanged += new System.EventHandler(this.chkN1MMEnableRX1_CheckedChanged);
-            // 
-            // groupBoxTS69
-            // 
-            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_both);
-            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_R);
-            this.groupBoxTS69.Controls.Add(this.radTCITXchannel_L);
-            this.groupBoxTS69.Controls.Add(this.labelTS661);
-            this.groupBoxTS69.Controls.Add(this.chkTCISwapIQ);
-            this.groupBoxTS69.Controls.Add(this.chkTCIAlwaysStreamIQ);
-            this.groupBoxTS69.Location = new System.Drawing.Point(386, 298);
-            this.groupBoxTS69.Name = "groupBoxTS69";
-            this.groupBoxTS69.Size = new System.Drawing.Size(330, 99);
-            this.groupBoxTS69.TabIndex = 99;
-            this.groupBoxTS69.TabStop = false;
-            // 
-            // radTCITXchannel_both
-            // 
-            this.radTCITXchannel_both.AutoSize = true;
-            this.radTCITXchannel_both.Checked = true;
-            this.radTCITXchannel_both.Image = null;
-            this.radTCITXchannel_both.Location = new System.Drawing.Point(194, 56);
-            this.radTCITXchannel_both.Name = "radTCITXchannel_both";
-            this.radTCITXchannel_both.Size = new System.Drawing.Size(47, 17);
-            this.radTCITXchannel_both.TabIndex = 118;
-            this.radTCITXchannel_both.TabStop = true;
-            this.radTCITXchannel_both.Text = "Both";
-            this.toolTip1.SetToolTip(this.radTCITXchannel_both, "Use both channels of the inbound TCI audio stream (default)");
-            this.radTCITXchannel_both.UseVisualStyleBackColor = true;
-            // 
-            // radTCITXchannel_R
-            // 
-            this.radTCITXchannel_R.AutoSize = true;
-            this.radTCITXchannel_R.Image = null;
-            this.radTCITXchannel_R.Location = new System.Drawing.Point(155, 56);
-            this.radTCITXchannel_R.Name = "radTCITXchannel_R";
-            this.radTCITXchannel_R.Size = new System.Drawing.Size(33, 17);
-            this.radTCITXchannel_R.TabIndex = 117;
-            this.radTCITXchannel_R.Text = "R";
-            this.toolTip1.SetToolTip(this.radTCITXchannel_R, "Use the right channel of the inbound TCI audio stream");
-            this.radTCITXchannel_R.UseVisualStyleBackColor = true;
-            // 
-            // radTCITXchannel_L
-            // 
-            this.radTCITXchannel_L.AutoSize = true;
-            this.radTCITXchannel_L.Image = null;
-            this.radTCITXchannel_L.Location = new System.Drawing.Point(118, 56);
-            this.radTCITXchannel_L.Name = "radTCITXchannel_L";
-            this.radTCITXchannel_L.Size = new System.Drawing.Size(31, 17);
-            this.radTCITXchannel_L.TabIndex = 116;
-            this.radTCITXchannel_L.Text = "L";
-            this.toolTip1.SetToolTip(this.radTCITXchannel_L, "Use the left channel of the inbound TCI audio stream");
-            this.radTCITXchannel_L.UseVisualStyleBackColor = true;
-            this.radTCITXchannel_L.CheckedChanged += new System.EventHandler(this.radTCITXchannel_CheckedChanged);
-            // 
-            // labelTS661
-            // 
-            this.labelTS661.AutoSize = true;
-            this.labelTS661.Image = null;
-            this.labelTS661.Location = new System.Drawing.Point(7, 58);
-            this.labelTS661.Name = "labelTS661";
-            this.labelTS661.Size = new System.Drawing.Size(97, 13);
-            this.labelTS661.TabIndex = 115;
-            this.labelTS661.Text = "TX source channel";
-            // 
-            // chkTCISwapIQ
-            // 
-            this.chkTCISwapIQ.AutoSize = true;
-            this.chkTCISwapIQ.Checked = true;
-            this.chkTCISwapIQ.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTCISwapIQ.Image = null;
-            this.chkTCISwapIQ.Location = new System.Drawing.Point(6, 19);
-            this.chkTCISwapIQ.Name = "chkTCISwapIQ";
-            this.chkTCISwapIQ.Size = new System.Drawing.Size(67, 17);
-            this.chkTCISwapIQ.TabIndex = 113;
-            this.chkTCISwapIQ.Text = "Swap IQ";
-            this.toolTip1.SetToolTip(this.chkTCISwapIQ, "Swap IQ. This should normally be on.");
-            this.chkTCISwapIQ.UseVisualStyleBackColor = true;
-            this.chkTCISwapIQ.CheckedChanged += new System.EventHandler(this.chkTCISwapIQ_CheckedChanged);
-            // 
-            // chkTCIAlwaysStreamIQ
-            // 
-            this.chkTCIAlwaysStreamIQ.AutoSize = true;
-            this.chkTCIAlwaysStreamIQ.Image = null;
-            this.chkTCIAlwaysStreamIQ.Location = new System.Drawing.Point(6, 38);
-            this.chkTCIAlwaysStreamIQ.Name = "chkTCIAlwaysStreamIQ";
-            this.chkTCIAlwaysStreamIQ.Size = new System.Drawing.Size(107, 17);
-            this.chkTCIAlwaysStreamIQ.TabIndex = 114;
-            this.chkTCIAlwaysStreamIQ.Text = "Always stream IQ";
-            this.toolTip1.SetToolTip(this.chkTCIAlwaysStreamIQ, "Some older software do ot sent IQ_START so IQ streaming will not start.\r\nUse this" +
-        " option to always stream it.");
-            this.chkTCIAlwaysStreamIQ.UseVisualStyleBackColor = true;
-            this.chkTCIAlwaysStreamIQ.CheckedChanged += new System.EventHandler(this.chkTCIAlwaysStreamIQ_CheckedChanged);
             // 
             // tpTests
             // 
@@ -72178,6 +72275,10 @@
             this.tpAppearance.ResumeLayout(false);
             this.tcAppearance.ResumeLayout(false);
             this.tpAppearanceGeneral.ResumeLayout(false);
+            this.groupBoxTS70.ResumeLayout(false);
+            this.groupBoxTS70.PerformLayout();
+            this.panelTS16.ResumeLayout(false);
+            this.panelTS16.PerformLayout();
             this.groupBoxTS38.ResumeLayout(false);
             this.groupBoxTS31.ResumeLayout(false);
             this.groupBoxTS31.PerformLayout();
@@ -72304,6 +72405,23 @@
             this.grpCat2ControlBox.PerformLayout();
             this.grpCatControlBox.ResumeLayout(false);
             this.grpCatControlBox.PerformLayout();
+            this.tpTCITCPIPN1MM.ResumeLayout(false);
+            this.grpTCIServer.ResumeLayout(false);
+            this.grpTCIServer.PerformLayout();
+            this.panelTS13.ResumeLayout(false);
+            this.panelTS13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).EndInit();
+            this.grpTCPIPcatServer.ResumeLayout(false);
+            this.grpTCPIPcatServer.PerformLayout();
+            this.groupBoxTS16.ResumeLayout(false);
+            this.groupBoxTS16.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).EndInit();
+            this.groupBoxTS69.ResumeLayout(false);
+            this.groupBoxTS69.PerformLayout();
             this.tbMIDIcat.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -72340,23 +72458,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_filter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_ignore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_tag)).EndInit();
-            this.tpTCITCPIPN1MM.ResumeLayout(false);
-            this.grpTCIServer.ResumeLayout(false);
-            this.grpTCIServer.PerformLayout();
-            this.panelTS13.ResumeLayout(false);
-            this.panelTS13.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).EndInit();
-            this.grpTCPIPcatServer.ResumeLayout(false);
-            this.grpTCPIPcatServer.PerformLayout();
-            this.groupBoxTS16.ResumeLayout(false);
-            this.groupBoxTS16.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).EndInit();
-            this.groupBoxTS69.ResumeLayout(false);
-            this.groupBoxTS69.PerformLayout();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -77045,5 +77146,12 @@
         private RadioButtonTS radTCITXchannel_R;
         private RadioButtonTS radTCITXchannel_L;
         private LabelTS labelTS661;
+        private GroupBoxTS groupBoxTS70;
+        private PanelTS panelTS16;
+        private RadioButtonTS radWaterfall_timelab_local;
+        private RadioButtonTS radWaterfall_timelab_utc;
+        private RadioButtonTS radWaterfall_timelab_right;
+        private RadioButtonTS radWaterfall_timelab_left;
+        private RadioButtonTS radWaterfall_timelab_none;
     }
 }

@@ -9,11 +9,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.13 - Development Change Log
 - [add] audio stream over TCI support added
 - [add] IQ stream over TCI support added
-- [add] new radio discovery and networking system/config added to setup. The old method has been removed. Your old radio IP settings will be lost if you have those set. Please see this video [TODO]
+- [add] new radio discovery and networking system/config added to setup. The old method has been removed. Your old radio IP settings will be lost if you have those set
 - [add] Network Settings documentation pdf added for the change network settings. Can be found in shortcuts, or via the About box manual links
+- [add] dragging the spectrum to cause DDC centre frequency changes will attempt to realign the waterfall data to limit waterfall smearing. The waterfall is put to sleep which fft bins are emptying or refilling. The sleep time varies depending on hardware sample rate and fft size. There may be up to a 4 pixel alignment error, this is unavoidable do to the nature of power spread into fft bins and the subsequent pixel columns
 - [add] entirely new recording/playback system added. New tab in Setup->Audio->Recording. New container gadget item, voice record/play, and cat support. ZZJS (stop record/play), ZZJR (record to slot N) ZZJR005; , ZZJP (playback slot N)  ZZJP005;
 - [add] new 5/10/18 band Parametric EQ ui for TX and RX eq, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
 - [add] new 5/10/18 band EQ Parametric EQ ui for CFC, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
+- [add] timing labels on the waterfall, options in Setup->Appearance->General
 - [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required
 - [add] now possible to select channel (both, left, right) for cmasio mic input
 - [add] debug/test option to ignore ATT offset in displays and signal meters. Thetis identifies as an Icom !

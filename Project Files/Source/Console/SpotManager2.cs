@@ -54,8 +54,11 @@ namespace Thetis
     {
         const int MAX_RX = 2;
 
-        private static List<smSpot> _spots = new List<smSpot>();
-        private static Object _objLock = new Object();
+        private static readonly List<smSpot> _spots = new List<smSpot>();
+        private static readonly Object _objLock = new Object();
+        private static smSpot[] _sortedSpotsCache = Array.Empty<smSpot>();
+        private static bool _sortedSpotsDirty = true;
+        private static readonly smSpot[] _highlightedSpots = new smSpot[MAX_RX];
         private static int _lifeTime = 60;
         private static int _maxNumber = 100;
         private static Timer _tickTimer;
@@ -101,6 +104,8 @@ namespace Thetis
 
             public Color text_colour;
             public bool use_text_colour;
+            public string cached_display_text;
+            public int colour_luminance;
 
             public smSpot()
             {
@@ -123,6 +128,8 @@ namespace Thetis
                 flash_start_time = now;
                 text_colour = Color.Empty;
                 use_text_colour = false;
+                cached_display_text = null;
+                colour_luminance = Common.GetLuminance(colour);
             }
             public void BrowseQRZ()
             {
@@ -142,6 +149,58 @@ namespace Thetis
             _tickTimer.Enabled = true;
         }
 
+        private static int CompareByFrequency(smSpot left, smSpot right)
+        {
+            return left.frequencyHZ.CompareTo(right.frequencyHZ);
+        }
+
+        private static void MarkSortedSpotsDirty()
+        {
+            _sortedSpotsDirty = true;
+        }
+
+        private static void RebuildSortedSpotsCache()
+        {
+            if (!_sortedSpotsDirty) return;
+
+            if (_spots.Count == 0)
+            {
+                _sortedSpotsCache = Array.Empty<smSpot>();
+                _sortedSpotsDirty = false;
+                return;
+            }
+
+            smSpot[] snapshot = _spots.ToArray();
+            Array.Sort(snapshot, CompareByFrequency);
+            _sortedSpotsCache = snapshot;
+            _sortedSpotsDirty = false;
+        }
+
+        private static void ClearHighlightedReference(smSpot spot)
+        {
+            if (spot == null) return;
+
+            for (int rx = 0; rx < MAX_RX; rx++)
+            {
+                if (!ReferenceEquals(_highlightedSpots[rx], spot)) continue;
+
+                spot.Highlight[rx] = false;
+                _highlightedSpots[rx] = null;
+            }
+        }
+
+        private static void PruneHighlightedReferences()
+        {
+            for (int rx = 0; rx < MAX_RX; rx++)
+            {
+                smSpot highlightedSpot = _highlightedSpots[rx];
+                if (highlightedSpot == null || _spots.Contains(highlightedSpot)) continue;
+
+                highlightedSpot.Highlight[rx] = false;
+                _highlightedSpots[rx] = null;
+            }
+        }
+
         public static int LifeTime
         {
             get { return _lifeTime; }
@@ -156,17 +215,16 @@ namespace Thetis
         {
             lock (_objLock)
             {
-                //List<smSpot> oldSpots = _spots.Where(o => (DateTime.Now - o.timeAdded).TotalMinutes > _lifeTime && !o.IsSWL).ToList();
-                //foreach(smSpot spot in oldSpots)
-                //{
-                //    _spots.Remove(spot);
-                //}
+                DateTime utcNow = DateTime.UtcNow;
 
-                //remove any old spots, that are not swl
-                _spots.RemoveAll(o => !o.IsSWL && (DateTime.UtcNow - o.timeAdded).TotalMinutes > _lifeTime);
+                int removed = _spots.RemoveAll(o => !o.IsSWL && (utcNow - o.timeAdded).TotalMinutes > _lifeTime);
+                removed += _spots.RemoveAll(o => o.IsSWL && o.SWLSecondsToLive != 0 && utcNow > (o.timeAdded + TimeSpan.FromSeconds(o.SWLSecondsToLive)));
 
-                //remove timeout swl, leave ones with 0
-                _spots.RemoveAll(o => o.IsSWL && o.SWLSecondsToLive != 0 && DateTime.UtcNow > (o.timeAdded + TimeSpan.FromSeconds(o.SWLSecondsToLive)));
+                if (removed > 0)
+                {
+                    MarkSortedSpotsDirty();
+                    PruneHighlightedReferences();
+                }
             }
         }
 
@@ -174,29 +232,40 @@ namespace Thetis
         {
             lock (_objLock)
             {
-                // clear all highlighted
-                for (int rx = 0; rx < 2; rx++)
-                {
-                    List<smSpot> highlightedSpots = _spots.Where(o => o.Highlight[rx] == true).ToList();
+                smSpot hitSpot = null;
+                int hitRx = -1;
 
-                    foreach (smSpot higlighSpot in highlightedSpots)
-                    {
-                        higlighSpot.Highlight[rx] = false;
+                for (int rx = 0; rx < MAX_RX && hitSpot == null; rx++)
+                {
+                    for (int i = 0; i < _spots.Count; i++)
+                {
+                        smSpot spot = _spots[i];
+                        if (!spot.Visible[rx] || !spot.BoundingBoxInPixels[rx].Contains(x, y)) continue;
+
+                        hitSpot = spot;
+                        hitRx = rx;
+                        break;
                     }
                 }
 
-                // highlight the one we want
-                for (int rx = 0; rx < 2; rx++)
+                for (int rx = 0; rx < MAX_RX; rx++)
                 {
-                    smSpot spot = _spots.Find(o => o.Visible[rx] && o.BoundingBoxInPixels[rx].Contains(x, y));
-                    if (spot != null)
-                    {
-                        spot.Highlight[rx] = true;
-                        return spot;
-                    }
+                    smSpot highlightedSpot = _highlightedSpots[rx];
+                    if (highlightedSpot == null) continue;
+                    if (ReferenceEquals(highlightedSpot, hitSpot) && rx == hitRx) continue;
+
+                    highlightedSpot.Highlight[rx] = false;
+                    _highlightedSpots[rx] = null;
                 }
+
+                if (hitSpot != null)
+                    {
+                    hitSpot.Highlight[hitRx] = true;
+                    _highlightedSpots[hitRx] = hitSpot;
+                }
+
+                return hitSpot;
             }
-            return null;
         }
 
         public static DSPMode SpotModeNumberToDSPMode(int number, double freq = -1)
@@ -390,6 +459,7 @@ namespace Thetis
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)
                 spot.colour = _replaceBackgroundColour;
+            spot.colour_luminance = Common.GetLuminance(spot.colour);
 
             if (spot.callsign.Length > 20)
                 spot.callsign = spot.callsign.Substring(0, 20);
@@ -416,7 +486,17 @@ namespace Thetis
 
             lock (_objLock)
             {
-                smSpot exists = _spots.Find(o => string.Equals(o.callsign?.Trim(), spot.callsign?.Trim(), StringComparison.OrdinalIgnoreCase) && Math.Abs(o.frequencyHZ - frequencyHz) <= 5000);
+                smSpot exists = null;
+                for (int i = 0; i < _spots.Count; i++)
+                {
+                    smSpot candidate = _spots[i];
+                    if (!string.Equals(candidate.callsign?.Trim(), spot.callsign?.Trim(), StringComparison.OrdinalIgnoreCase)) continue;
+                    if (Math.Abs(candidate.frequencyHZ - frequencyHz) > 5000) continue;
+
+                    exists = candidate;
+                    break;
+                }
+
                 if (exists != null)
                 {
                     spot.flash_start_time = exists.flash_start_time;
@@ -435,32 +515,45 @@ namespace Thetis
                         spot.utc_spot_time = exists.utc_spot_time;
                     }
 
+                    ClearHighlightedReference(exists);
                     _spots.Remove(exists);
                 }
 
-                // Limit to max
-                int count_swl = _spots.Count(o => o.IsSWL);
-                int count_non_swl = _spots.Count(o => !o.IsSWL);
-
-                if (count_non_swl >= _maxNumber)
+                int count_non_swl = 0;
+                for (int i = 0; i < _spots.Count; i++)
                 {
-                    // Order only the non-IsSWL spots by age
-                    List<smSpot> ageOrderedNonSWLSpots = _spots
-                        .Where(o => !o.IsSWL)
-                        .OrderBy(o => o.timeAdded)
-                        .ToList();
+                    if (!_spots[i].IsSWL) count_non_swl++;
+                }
 
-                    // Determine how many spots need to be removed
-                    int spotsToRemove = count_non_swl - _maxNumber;
+                if (!spot.IsSWL && count_non_swl >= _maxNumber)
+                {
+                    int spotsToRemove = count_non_swl - _maxNumber + 1;
 
-                    for (int i = 0; i < spotsToRemove; i++)
+                    while (spotsToRemove > 0)
                     {
-                        smSpot removeSpot = ageOrderedNonSWLSpots[i];
-                        _spots.Remove(removeSpot); // Remove from the original _spots list
+                        int oldestIndex = -1;
+                        DateTime oldestTime = DateTime.MaxValue;
+
+                        for (int i = 0; i < _spots.Count; i++)
+                    {
+                            smSpot candidate = _spots[i];
+                            if (candidate.IsSWL || candidate.timeAdded >= oldestTime) continue;
+
+                            oldestTime = candidate.timeAdded;
+                            oldestIndex = i;
+                        }
+
+                        if (oldestIndex < 0) break;
+
+                        smSpot removeSpot = _spots[oldestIndex];
+                        ClearHighlightedReference(removeSpot);
+                        _spots.RemoveAt(oldestIndex);
+                        spotsToRemove--;
                     }
                 }
 
                 _spots.Add(spot);
+                MarkSortedSpotsDirty();
             }
         }
 
@@ -475,22 +568,33 @@ namespace Thetis
             }
         }
 
-        public static List<smSpot> GetFrequencySortedSpots()
+        public static smSpot[] GetFrequencySortedSpots()
         {
-            List<smSpot> lst;
             lock (_objLock)
             {
-                lst = _spots.OrderBy(o => o.frequencyHZ).ToList();
+                RebuildSortedSpotsCache();
+                return _sortedSpotsCache;
             }
-            return lst;
         }
 
         public static void ClearAllSpots(bool non_swl, bool swl)
         {
             lock (_objLock)
             {
-                if (non_swl) _spots.RemoveAll(o => !o.IsSWL);
-                if (swl) _spots.RemoveAll(o => o.IsSWL);
+                bool removed = false;
+
+                for (int i = _spots.Count - 1; i >= 0; i--)
+                {
+                    smSpot spot = _spots[i];
+                    bool removeSpot = (non_swl && !spot.IsSWL) || (swl && spot.IsSWL);
+                    if (!removeSpot) continue;
+
+                    ClearHighlightedReference(spot);
+                    _spots.RemoveAt(i);
+                    removed = true;
+                }
+
+                if (removed) MarkSortedSpotsDirty();
             }
         }
 
@@ -499,10 +603,19 @@ namespace Thetis
             lock (_objLock)
             {
                 string call = callsign.ToUpper().Trim();
+                bool removed = false;
 
-                List<smSpot> spots = _spots.Where(o => o.callsign == call).ToList();
-                foreach(smSpot spot in spots)
-                    _spots.Remove(spot);
+                for (int i = _spots.Count - 1; i >= 0; i--)
+                {
+                    smSpot spot = _spots[i];
+                    if (spot.callsign != call) continue;
+
+                    ClearHighlightedReference(spot);
+                    _spots.RemoveAt(i);
+                    removed = true;
+                }
+
+                if (removed) MarkSortedSpotsDirty();
             }
         }
 
