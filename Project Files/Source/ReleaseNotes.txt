@@ -15,7 +15,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] entirely new recording/playback system added. New tab in Setup->Audio->Recording. New container gadget item, voice record/play, and cat support. ZZJS (stop record/play), ZZJR (record to slot N) ZZJR005; , ZZJP (playback slot N)  ZZJP005;
 - [add] new 5/10/18 band Parametric EQ ui for TX and RX eq, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
 - [add] new 5/10/18 band EQ Parametric EQ ui for CFC, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
-- [add] flags can be shown on the TCI spots if information is provided in the JSON payload. Contact me for info about this, email on QRZ. v3.0.3 Cluster TCI Bridge from OE3IDE will support this
+- [add] flags can be shown on the TCI spots if information is provided in the JSON payload. Contact me for info about this, email on QRZ. v3.0.4 Cluster TCI Bridge from OE3IDE will support this
 - [add] timing labels on the waterfall, options in Setup->Appearance->General
 - [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required
 - [add] now possible to select channel (both, left, right) for cmasio mic input
