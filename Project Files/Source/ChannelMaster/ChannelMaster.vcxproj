@@ -231,6 +231,7 @@
     <ClInclude Include="router.h" />
     <ClInclude Include="sidetone.h" />
     <ClInclude Include="sync.h" />
+    <ClInclude Include="tci.h" />
     <ClInclude Include="cmUtilities.h" />
     <ClInclude Include="txgain.h" />
     <ClInclude Include="version.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="router.c" />
     <ClCompile Include="sidetone.c" />
     <ClCompile Include="sync.c" />
+    <ClCompile Include="tci.c" />
     <ClCompile Include="cmUtilities.c" />
     <ClCompile Include="txgain.c" />
     <ClCompile Include="version.c" />

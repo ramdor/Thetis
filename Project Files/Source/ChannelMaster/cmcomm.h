@@ -42,6 +42,7 @@ warren@pratt.one
 #include "ilv.h"
 #include "ivac.h"
 #include "pipe.h"
+#include "tci.h"
 #include "ring.h"
 #include "router.h"
 #include "sidetone.h"

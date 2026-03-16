@@ -112,6 +112,7 @@ void create_pipe()
 		ppip->rcvr[i].playwave_run = 0;			// playwave run
 		ppip->rcvr[i].recordwave_run = 0;		// recordwave run
 	}
+	create_tci();
 	create_spc0();
 }
 
@@ -119,6 +120,7 @@ void destroy_pipe()
 {
 	int i;
 	destroy_spc0();
+	destroy_tci();
 	for (i = 0; i < pcm->cmRCVR; i++)
 	{
 		_aligned_free (ppip->rbuff[i]);
@@ -185,9 +187,8 @@ void xpipe (int stream, int pos, double** buffs)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xscope(rx, 0, ppip->rbuff[rx]);														// scope
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xtciOUT(rx, 1, ppip->rbuff[rx]);													// data to TCI rx audio
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
-			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIRxAudio)
-				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);		// to TCI
 			break;
 		}
 	}
@@ -208,9 +209,8 @@ void xpipe (int stream, int pos, double** buffs)
 				for (j = 0; j < 2 * pcm->rcvr[rx].ch_outsize; j++)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xtciOUT(rx, 1, ppip->rbuff[rx]);													// data to TCI rx audio
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
-			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIRxAudio)
-				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);		// to TCI
 			break;
 		}
 	}
@@ -233,6 +233,8 @@ void xpipe (int stream, int pos, double** buffs)
 			xscope(0, 1, buffs[2]);																// scope
 			xvacOUT(0, 2, buffs[2]);															// data to VAC 0
 			xvacOUT(1, 2, buffs[2]);															// data to VAC 1
+			for (i = 0; i < pcm->cmRCVR; i++)
+				xtciOUT(i, 2, buffs[2]);														// tx monitor into each TCI rx audio stream
 			xrecordwave(0, 1, 1, buffs[2]);														// wav recorder 0
 			xrecordwave(1, 1, 1, buffs[2]);														// wav recorder 1
 			break;
@@ -310,12 +312,6 @@ PORT
 void SetTopPan3Run (int run)
 {
 	_InterlockedExchange (&pip.rcvr[0].top_pan3_run, run);
-}
-
-PORT
-void SendpOutboundTCIRxAudio(void (*Outbound)(int id, int nsamples, double* buff))
-{
-	pip.OutboundTCIRxAudio = Outbound;
 }
 
 PORT

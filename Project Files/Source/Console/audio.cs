@@ -253,6 +253,8 @@ namespace Thetis
                 monitor_volume = value;
                 cmaster.CMSetAudioVolume(value);
                 ivac.SetIVACmonVol(0, monitor_volume);
+                cmaster.SetTCIRxAudioMonVol(0, monitor_volume);
+                cmaster.SetTCIRxAudioMonVol(1, monitor_volume);
             }
         }
 
@@ -358,17 +360,23 @@ namespace Thetis
                     {
                         ivac.SetIVACmox(0, 0);
                         ivac.SetIVACmox(1, 1);
+                        cmaster.SetTCIRxAudioMox(0, 0);
+                        cmaster.SetTCIRxAudioMox(1, 1);
                     }
                     else
                     {
                         ivac.SetIVACmox(0, 1);
                         ivac.SetIVACmox(1, 0);
+                        cmaster.SetTCIRxAudioMox(0, 1);
+                        cmaster.SetTCIRxAudioMox(1, 0);
                     }
                 }
                 else
                 {
                     ivac.SetIVACmox(0, 0);
                     ivac.SetIVACmox(1, 0);
+                    cmaster.SetTCIRxAudioMox(0, 0);
+                    cmaster.SetTCIRxAudioMox(1, 0);
                 }
 
                 WaveThing.UpdateMox();
@@ -382,11 +390,17 @@ namespace Thetis
                 ivac.SetIVACmon(0, 1);
                 ivac.SetIVACmon(1, 0);
                 ivac.SetIVACmonVol(0, monitor_volume);
+                cmaster.SetTCIRxAudioMon(0, 1);
+                cmaster.SetTCIRxAudioMon(1, 1);
+                cmaster.SetTCIRxAudioMonVol(0, monitor_volume);
+                cmaster.SetTCIRxAudioMonVol(1, monitor_volume);
             }
             else
             {
                 ivac.SetIVACmon(0, 0);
                 ivac.SetIVACmon(1, 0);
+                cmaster.SetTCIRxAudioMon(0, 0);
+                cmaster.SetTCIRxAudioMon(1, 0);
             }
         }
         private static bool mon;
