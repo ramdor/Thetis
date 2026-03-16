@@ -187,7 +187,7 @@ void xpipe (int stream, int pos, double** buffs)
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIRxAudio)
-				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);			// to TCI
+				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);		// to TCI
 			break;
 		}
 	}
@@ -210,7 +210,7 @@ void xpipe (int stream, int pos, double** buffs)
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			if (_InterlockedAnd (&pcm->tci_run, 1) && pip.OutboundTCIRxAudio)
-				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);			// to TCI
+				(*pip.OutboundTCIRxAudio)(rx, pcm->rcvr[rx].ch_outsize, ppip->rbuff[rx]);		// to TCI
 			break;
 		}
 	}
