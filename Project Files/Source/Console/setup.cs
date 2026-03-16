@@ -37166,6 +37166,11 @@ namespace Thetis
                 Display.WaterfallTime = WaterfallTimeMode.LOCAL;
             }
         }
+
+        private void chkTCI_spot_flags_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowSpotFlags = chkTCI_spot_flags.Checked;
+        }
         // END CFC para
     }
 

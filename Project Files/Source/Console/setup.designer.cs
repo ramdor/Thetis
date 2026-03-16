@@ -3619,6 +3619,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkTCI_spot_flags = new System.Windows.Forms.CheckBoxTS();
             this.panelTS15 = new System.Windows.Forms.PanelTS();
             this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
             this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
@@ -57960,6 +57961,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkTCI_spot_flags);
             this.grpTCIServer.Controls.Add(this.panelTS15);
             this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
             this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
@@ -57999,6 +58001,22 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // chkTCI_spot_flags
+            // 
+            this.chkTCI_spot_flags.AutoSize = true;
+            this.chkTCI_spot_flags.Checked = true;
+            this.chkTCI_spot_flags.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTCI_spot_flags.Image = null;
+            this.chkTCI_spot_flags.Location = new System.Drawing.Point(316, 222);
+            this.chkTCI_spot_flags.Name = "chkTCI_spot_flags";
+            this.chkTCI_spot_flags.Size = new System.Drawing.Size(51, 17);
+            this.chkTCI_spot_flags.TabIndex = 116;
+            this.chkTCI_spot_flags.Text = "Flags";
+            this.toolTip1.SetToolTip(this.chkTCI_spot_flags, "Show TCI spot flags if the flag or flagspotter info has been provided in the json" +
+        " payload");
+            this.chkTCI_spot_flags.UseVisualStyleBackColor = true;
+            this.chkTCI_spot_flags.CheckedChanged += new System.EventHandler(this.chkTCI_spot_flags_CheckedChanged);
             // 
             // panelTS15
             // 
@@ -58158,10 +58176,10 @@
             // btnClearTCISpotsSWL
             // 
             this.btnClearTCISpotsSWL.Image = null;
-            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(267, 222);
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(254, 222);
             this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
             this.btnClearTCISpotsSWL.Selectable = true;
-            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(73, 39);
+            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(56, 39);
             this.btnClearTCISpotsSWL.TabIndex = 102;
             this.btnClearTCISpotsSWL.Text = "Clear SWL";
             this.btnClearTCISpotsSWL.UseVisualStyleBackColor = true;
@@ -58200,9 +58218,9 @@
             this.btnClearTCISpots.Location = new System.Drawing.Point(184, 222);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
-            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 39);
+            this.btnClearTCISpots.Size = new System.Drawing.Size(68, 39);
             this.btnClearTCISpots.TabIndex = 99;
-            this.btnClearTCISpots.Text = "Clear Non SWL";
+            this.btnClearTCISpots.Text = "Clear non SWL";
             this.btnClearTCISpots.UseVisualStyleBackColor = true;
             this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
             // 
@@ -76367,5 +76385,6 @@
         private RadioButtonTS radWaterfall_timelab_right;
         private RadioButtonTS radWaterfall_timelab_left;
         private RadioButtonTS radWaterfall_timelab_none;
+        private CheckBoxTS chkTCI_spot_flags;
     }
 }

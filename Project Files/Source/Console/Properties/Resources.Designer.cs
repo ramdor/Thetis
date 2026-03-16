@@ -542,6 +542,53 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap flagatlas_image {
+            get {
+                object obj = ResourceManager.GetObject("flagatlas_image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;image&quot;: &quot;atlas.png&quot;,
+        ///  &quot;width&quot;: 308,
+        ///  &quot;height&quot;: 320,
+        ///  &quot;tile_width&quot;: 22,
+        ///  &quot;tile_height&quot;: 16,
+        ///  &quot;cell_width&quot;: 22,
+        ///  &quot;cell_height&quot;: 16,
+        ///  &quot;pad&quot;: 0,
+        ///  &quot;columns&quot;: 14,
+        ///  &quot;rows&quot;: 20,
+        ///  &quot;sprites&quot;: {
+        ///    &quot;ad.png&quot;: {
+        ///      &quot;x&quot;: 0,
+        ///      &quot;y&quot;: 0,
+        ///      &quot;width&quot;: 22,
+        ///      &quot;height&quot;: 16,
+        ///      &quot;cell_x&quot;: 0,
+        ///      &quot;cell_y&quot;: 0,
+        ///      &quot;cell_width&quot;: 22,
+        ///      &quot;cell_height&quot;: 16
+        ///    },
+        ///    &quot;ae.png&quot;: {
+        ///      &quot;x&quot;: 22,
+        ///      &quot;y&quot;: 0,
+        ///      &quot;width&quot;: 22,
+        ///      &quot;height&quot;: 16,
+        ///      &quot;cell_x&quot;: 22,
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string flagatlas_json {
+            get {
+                return ResourceManager.GetString("flagatlas_json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Folder_Open_32 {
             get {
                 object obj = ResourceManager.GetObject("Folder-Open-32", resourceCulture);

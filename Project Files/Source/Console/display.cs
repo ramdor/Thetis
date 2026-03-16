@@ -7971,6 +7971,7 @@ namespace Thetis
         private static void releaseDX2Resources()
         {
             clearAllDynamicBrushes();
+            clearSpotFlagBitmapCache();
 
             if (m_brushLGDataFillRX1 != null) Utilities.Dispose(ref m_brushLGDataFillRX1);
             if (m_brushLGDataFillRX2 != null) Utilities.Dispose(ref m_brushLGDataFillRX2);
@@ -11078,6 +11079,7 @@ namespace Thetis
         private static List<int> _spotLayerRightRX1 = new List<int>();
         private static List<int> _spotLayerRightRX2 = new List<int>();
         private static readonly Dictionary<int, SharpDX.Direct2D1.Brush> _DX2Brushes = new Dictionary<int, SharpDX.Direct2D1.Brush>(256);
+        private static readonly Dictionary<System.Drawing.Image, SharpDX.Direct2D1.Bitmap> _spotFlagBitmapCache = new Dictionary<System.Drawing.Image, SharpDX.Direct2D1.Bitmap>(ReferenceEqualityComparer<System.Drawing.Image>.Instance);
 
         private static int getSpotLayer(int rx, int leftX)
         {
@@ -11241,15 +11243,31 @@ namespace Thetis
                     continue;
                 }
 
+                if (_spot_cache_dirty || ( (spot.spot_flag_in_use && spot.flag == null) || (spot.spotter_flag_in_use && spot.flag_spotter == null) ))
+                {
+                    spot.cached_display_text = "";
+                    spot.Size.Width = 0;
+                    spot.Size.Height = 0;
+                    spot.spot_flag_in_use = false;
+                    spot.spotter_flag_in_use = false;
+                }
+
+                spot.spot_flag_in_use = spot.flag != null;
+                spot.spotter_flag_in_use = spot.flag_spotter != null;
+
                 sDisplayString = getCallsignString(spot);
                 if (!string.Equals(spot.cached_display_text, sDisplayString, StringComparison.Ordinal))
                 {
                     spot.cached_display_text = sDisplayString;
-                spot.Size = measureStringDX2D(sDisplayString, fontDX2d_font9);
+                    spot.Size = getSpotTagSize(sDisplayString, spot.flag);
+                }
+                else if (spot.Size.Width <= 0 || spot.Size.Height <= 0)
+                {
+                    spot.Size = getSpotTagSize(sDisplayString, spot.flag);
                 }
 
                 int width = (int)spot.Size.Width;
-                int height = (int)spot.Size.Height + 2;
+                int height = (int)spot.Size.Height;
 
                 int halfWidth = width / 2;
                 float x = (spot.frequencyHZ - vfoLow - cwShift - local_rit) * HzToPixel;
@@ -11313,7 +11331,7 @@ namespace Thetis
                     spot.Visible[rxIndex] = false;
                 }
             }
-
+            _spot_cache_dirty = false;
 
             // now plot all the tags over the lines if the spot is visible
             SharpDX.Direct2D1.Brush textBrush;
@@ -11349,7 +11367,7 @@ namespace Thetis
                 else
                 {
                     drawFillRectangleDX2D(spotColour, spot.BoundingBoxInPixels[rxIndex]);
-                    drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, spot.BoundingBoxInPixels[rxIndex].X + 1, spot.BoundingBoxInPixels[rxIndex].Y + 1);
+                    drawSpotTagContent(spot, sDisplayString, textBrush, spot.BoundingBoxInPixels[rxIndex]);
 
                     if (!_flashNewTCISpots) continue;
 
@@ -11382,7 +11400,7 @@ namespace Thetis
 
                 drawFillRectangleDX2D(spotColour, r);
                 drawRectangleDX2D(brightBorder, r, 2);
-                drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, highLightedSpot.BoundingBoxInPixels[rxIndex].X + 1, highLightedSpot.BoundingBoxInPixels[rxIndex].Y + 1);
+                drawSpotTagContent(highLightedSpot, sDisplayString, textBrush, highLightedSpot.BoundingBoxInPixels[rxIndex]);
 
                 // show additional text in bubble below, and concat parts if available
                 string bubble_text = highLightedSpot.additionalText;
@@ -11853,6 +11871,144 @@ namespace Thetis
                 return (int)devMode.dmDisplayFrequency;
             }
             return 60;
+        }
+
+        private static SizeF getSpotTagSize(string displayText, System.Drawing.Image flagImage)
+        {
+            SizeF textSize = measureStringDX2D(displayText, fontDX2d_font9);
+            int flagWidth;
+            int flagHeight;
+            getSpotFlagRenderSize(flagImage, (int)textSize.Height, out flagWidth, out flagHeight);
+
+            int width = (int)textSize.Width + 4;
+            if (flagWidth > 0)
+                width += flagWidth + 3;
+
+            int height = Math.Max((int)textSize.Height, flagHeight) + 2;
+            return new SizeF(width, height);
+        }
+
+        private static void drawSpotTagContent(SpotManager2.smSpot spot, string displayText, SharpDX.Direct2D1.Brush textBrush, Rectangle bounds)
+        {
+            int textX = bounds.X + 1;
+
+            if (_spot_flags)
+            {
+                int flagWidth;
+                int flagHeight;
+
+                System.Drawing.Image flagImage = _bShiftKeyDown ? spot.flag_spotter : spot.flag;
+                getSpotFlagRenderSize(flagImage, bounds.Height - 2, out flagWidth, out flagHeight);
+
+                if (flagWidth > 0)
+                {
+                    SharpDX.Direct2D1.Bitmap flagBitmap = getSpotFlagBitmap(flagImage);
+                    if (flagBitmap != null)
+                    {
+                        RectangleF destRect = new RectangleF(
+                            bounds.X + 1,
+                            bounds.Y + ((bounds.Height - flagHeight) / 2f),
+                            flagWidth,
+                            flagHeight);
+
+                        _d2dRenderTarget.DrawBitmap(flagBitmap, destRect, 1f, BitmapInterpolationMode.Linear);
+                    }
+
+                    textX += flagWidth + 3;
+                }
+            }
+
+            drawStringDX2D(displayText, fontDX2d_font9, textBrush, textX, bounds.Y + 1);
+        }
+
+        private static SharpDX.Direct2D1.Bitmap getSpotFlagBitmap(System.Drawing.Image flagImage)
+        {
+            if (flagImage == null || !_bDX2Setup || _d2dRenderTarget == null)
+                return null;
+
+            lock (_spotFlagBitmapCache)
+            {
+                SharpDX.Direct2D1.Bitmap cachedBitmap;
+                if (_spotFlagBitmapCache.TryGetValue(flagImage, out cachedBitmap))
+                    return cachedBitmap;
+            }
+
+            try
+            {
+                using (Bitmap graphicsImage = new Bitmap(flagImage))
+                {
+                    SharpDX.Direct2D1.Bitmap dxBitmap = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                    if (dxBitmap == null) return null;
+
+                    lock (_spotFlagBitmapCache)
+                    {
+                        SharpDX.Direct2D1.Bitmap cachedBitmap;
+                        if (_spotFlagBitmapCache.TryGetValue(flagImage, out cachedBitmap))
+                        {
+                            Utilities.Dispose(ref dxBitmap);
+                            return cachedBitmap;
+                        }
+
+                        _spotFlagBitmapCache[flagImage] = dxBitmap;
+                        return dxBitmap;
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static void getSpotFlagRenderSize(System.Drawing.Image flagImage, int targetHeight, out int width, out int height)
+        {
+            width = 0;
+            height = 0;
+
+            if (!_spot_flags || flagImage == null || flagImage.Width <= 0 || flagImage.Height <= 0 || targetHeight <= 0)
+                return;
+
+            height = Math.Max(1, targetHeight);
+            width = Math.Max(1, (int)Math.Round(flagImage.Width * (height / (double)flagImage.Height)));
+        }
+
+        private static void clearSpotFlagBitmapCache()
+        {
+            lock (_spotFlagBitmapCache)
+            {
+                foreach (SharpDX.Direct2D1.Bitmap bitmap in _spotFlagBitmapCache.Values)
+                {
+                    SharpDX.Direct2D1.Bitmap tempBitmap = bitmap;
+                    Utilities.Dispose(ref tempBitmap);
+                }
+
+                _spotFlagBitmapCache.Clear();
+            }
+        }
+        private static bool _spot_flags = true;
+        private static bool _spot_cache_dirty = true;
+        public static bool ShowSpotFlags
+        {
+            get { return _spot_flags; }
+            set 
+            { 
+                _spot_flags = value;
+                _spot_cache_dirty = true;
+            }
+        }
+        private sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
+        {
+            internal static readonly ReferenceEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();
+
+            public bool Equals(T x, T y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            public int GetHashCode(T obj)
+            {
+                return RuntimeHelpers.GetHashCode(obj);
+            }
         }
     }
 }

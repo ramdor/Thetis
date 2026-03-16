@@ -47,6 +47,7 @@ using System.Drawing;
 using System.Timers;
 using System.Globalization;
 using System.Web.UI;
+using System.Collections.Concurrent;
 
 namespace Thetis
 {
@@ -63,6 +64,8 @@ namespace Thetis
         private static int _maxNumber = 100;
         private static Timer _tickTimer;
 
+        private static ConcurrentDictionary<string, Image> _flag_images;
+
         public class JsonSpotData
         {
             public string Spotter { get; set; } = "";
@@ -72,6 +75,8 @@ namespace Thetis
             public string Country { get; set; } = "";
             public string UtcTime { get; set; } = "";
             public string TextColor { get; set; } = ""; // text colour A92GE
+            public string Flag { get; set; } = "";
+            public string FlagSpotter { get; set; } = "";
 
             public bool IsSWL { get; set; } = false;
             public long SWLSecondsToLive { get; set; } = 0; // 0 = no expiry
@@ -107,6 +112,12 @@ namespace Thetis
             public string cached_display_text;
             public int colour_luminance;
 
+            public bool spot_flag_in_use;
+            public bool spotter_flag_in_use;
+
+            public Image flag;
+            public Image flag_spotter;
+
             public smSpot()
             {
                 DateTime now = DateTime.UtcNow;
@@ -120,6 +131,8 @@ namespace Thetis
                 heading = -1;
                 continent = "";
                 country = "";
+                flag = null;
+                flag_spotter = null;
                 utc_spot_time = now;
                 IsSWL = false;
                 SWLSecondsToLive = 0;
@@ -143,10 +156,26 @@ namespace Thetis
 
         static SpotManager2()
         {
+            // init flags
+            _flag_images = new ConcurrentDictionary<string, Image>();
+            FlagAtlas.Init(Properties.Resources.flagatlas_image, Properties.Resources.flagatlas_json);
+
             _tickTimer = new Timer(1000);
             _tickTimer.Elapsed += OnTick;
             _tickTimer.AutoReset = true;
             _tickTimer.Enabled = true;
+        }
+
+        public static void FreeUpFlags()
+        {
+            if (_flag_images != null)
+            {
+                while (_flag_images.Count > 0)
+                {
+                    _flag_images.TryRemove(_flag_images.First().Key, out Image i);
+                    if (i != null) i.Dispose();
+                }
+            }
         }
 
         private static int CompareByFrequency(smSpot left, smSpot right)
@@ -409,6 +438,8 @@ namespace Thetis
             bool use_text_colour = false;
             bool is_swl = false;
             long swl_seconds_to_live = 0;
+            Image flag_image = null;
+            Image flag_spotter_image = null;
 
             if (jsonSpotData != null)
             {
@@ -419,6 +450,53 @@ namespace Thetis
                 text_colour = getSpotTextColour(jsonSpotData.TextColor);
                 use_text_colour = text_colour != Color.Empty;
                 additionalText = jsonSpotData.Comment.Trim();
+
+                string flag = jsonSpotData.Flag.Trim();
+                if (!string.IsNullOrEmpty(flag))
+                {
+                    bool found = _flag_images.TryGetValue(flag, out flag_image);
+                    if (!found)
+                    {
+                        // add it
+                        try
+                        {
+                            flag_image = FlagAtlas.GetFlag(flag);
+                            _flag_images[flag] = flag_image;
+                        }
+                        catch
+                        {
+                            flag_image = null;
+                        }
+                    }
+                    else
+                    {
+                        flag_image = _flag_images[flag];
+                    }
+                }
+
+                //spotter flag
+                flag = jsonSpotData.FlagSpotter.Trim();
+                if (!string.IsNullOrEmpty(flag))
+                {
+                    bool found = _flag_images.TryGetValue(flag, out flag_spotter_image);
+                    if (!found)
+                    {
+                        // add it
+                        try
+                        {
+                            flag_spotter_image = FlagAtlas.GetFlag(flag);
+                            _flag_images[flag] = flag_spotter_image;
+                        }
+                        catch
+                        {
+                            flag_spotter_image = null;
+                        }
+                    }
+                    else
+                    {
+                        flag_spotter_image = _flag_images[flag];
+                    }
+                }
                 is_swl = jsonSpotData.IsSWL;
                 swl_seconds_to_live = jsonSpotData.SWLSecondsToLive;               
                 if(swl_seconds_to_live < 0)  swl_seconds_to_live = 0;
@@ -446,6 +524,9 @@ namespace Thetis
                 country = spot_country,
                 timeAdded = DateTime.UtcNow,
                 utc_spot_time = spotted_time,
+
+                flag = flag_image,
+                flag_spotter = flag_spotter_image,
 
                 IsSWL = is_swl,
                 SWLSecondsToLive = swl_seconds_to_live,
