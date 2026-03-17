@@ -249,6 +249,12 @@ namespace Thetis
         public static extern int getAndResetADC_Overload();
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern ushort getADCmaxMagnitude(int adc);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern ushort getAndResetADCmaxMagnitudeAtOverload(int adc);        
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int getHaveSync();
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]

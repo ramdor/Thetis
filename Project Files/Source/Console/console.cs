@@ -21206,6 +21206,8 @@ namespace Thetis
             }
             if (!_check_for_bad_adc) return;
 
+            //Debug.Print(NetworkIO.getADCmaxMagnitude(0).ToString());
+
             /*
                     overload adc_oload_num
             | adc[0] | adc[1] | adc[2] |          |
@@ -21295,6 +21297,8 @@ namespace Thetis
         }
         private void handleOverload()
         {
+            //Debug.Print($"ADC OVERLOAD ({i}) : " + NetworkIO.getAndResetADCmaxMagnitudeAtOverload(i).ToString());
+
             // adjust the step shift
             for (int i = 0; i < 3; i++)
             {
@@ -23958,7 +23962,7 @@ namespace Thetis
             }
         }
         unsafe private void RunDisplay()
-        {
+        {            
             m_bDisplayLoopRunning = true;
 
             try
@@ -46610,6 +46614,14 @@ namespace Thetis
                     updateTX = true;
                 }
 
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+                if (MeterManager.RequiresUpdate(1, Reading.ADC_MAX_MAG)) 
+                {                 
+                    _RX1MeterValues[Reading.ADC_MAX_MAG] = (float)NetworkIO.getADCmaxMagnitude(GetADCInUse(nRX1DDCinUse));
+                    updateRX = true;
+                }
+
                 bool bNeedVolts = MeterManager.RequiresUpdate(1, Reading.VOLTS);
                 bool bNeedAmps = MeterManager.RequiresUpdate(1, Reading.AMPS);
                 if (bNeedVolts || bNeedAmps) 
@@ -46758,6 +46770,14 @@ namespace Thetis
                     ////
 
                     updateTX = true;
+                }
+
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+                if (MeterManager.RequiresUpdate(2, Reading.ADC_MAX_MAG))
+                {
+                    _RX2MeterValues[Reading.ADC_MAX_MAG] = (float)NetworkIO.getADCmaxMagnitude(GetADCInUse(nRX2DDCinUse));
+                    updateRX = true;
                 }
 
                 bool bNeedVolts = MeterManager.RequiresUpdate(1, Reading.VOLTS);

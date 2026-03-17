@@ -106,6 +106,11 @@ namespace Thetis
             if (string.IsNullOrWhiteSpace(flag_name))
                 throw new ArgumentException("Flag name is null or empty.", "flag_name");
 
+            flag_name = flag_name.Trim();
+
+            if (!flag_name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase))
+                flag_name += ".png";
+
             lock (_sync)
             {
                 ensureInitialised();

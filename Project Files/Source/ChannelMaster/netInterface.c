@@ -130,11 +130,32 @@ int getAndResetADC_Overload()
 	int n = prn->adc[0].adc_overload | (prn->adc[1].adc_overload << 1) | (prn->adc[2].adc_overload << 2);
 
 	//reset
-	prn->adc[0].adc_overload = 0;
-	prn->adc[1].adc_overload = 0;
-	prn->adc[2].adc_overload = 0;
+	for (int i = 0; i < MAX_ADC; i++)
+	{
+		prn->adc[i].adc_overload = 0;
+	}
 
 	return n;
+}
+
+PORT
+uint16_t getAndResetADCmaxMagnitudeAtOverload(int adc)
+{
+	if (adc < 0 || adc >= MAX_ADC) return 0;
+
+	short mag = prn->adc[adc].max_magnitude_at_overload;
+
+	prn->adc[adc].max_magnitude_at_overload = 0;
+
+	return mag;
+}
+
+PORT
+uint16_t getADCmaxMagnitude(int adc)
+{
+	if (adc < 0 || adc >= MAX_ADC) return 0;
+
+	return prn->adc[adc].max_magnitude;
 }
 
 PORT

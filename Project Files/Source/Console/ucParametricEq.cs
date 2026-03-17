@@ -1847,6 +1847,8 @@ namespace Thetis
         {
             base.OnMouseWheel(e);
 
+            bool dragging = isDraggingNow();
+
             Rectangle plot = getPlotRect();
 
             double steps = (double)e.Delta / 120.0;
@@ -1937,7 +1939,7 @@ namespace Thetis
                     raisePointsChanged(false);
                     if (Math.Abs(p.FrequencyHz - old_f) > 0.000001 || Math.Abs(p.GainDb - old_g) > 0.000001 || Math.Abs(p.Q - old_q) > 0.000001)
                     {
-                        raisePointDataChangedForPoint(p, false);
+                        raisePointDataChangedForPoint(p, dragging);
                     }
                     Invalidate();
                 }
@@ -1954,7 +1956,7 @@ namespace Thetis
                     raisePointsChanged(false);
                     if (Math.Abs(p.FrequencyHz - old_f) > 0.000001 || Math.Abs(p.GainDb - old_g) > 0.000001 || Math.Abs(p.Q - old_q) > 0.000001)
                     {
-                        raisePointDataChangedForPoint(p, false);
+                        raisePointDataChangedForPoint(p, dragging);
                     }
                     Invalidate();
                 }
@@ -1970,7 +1972,7 @@ namespace Thetis
                     raisePointsChanged(false);
                     if (Math.Abs(p.FrequencyHz - old_f) > 0.000001 || Math.Abs(p.GainDb - old_g) > 0.000001 || Math.Abs(p.Q - old_q) > 0.000001)
                     {
-                        raisePointDataChangedForPoint(p, false);
+                        raisePointDataChangedForPoint(p, dragging);
                     }
                     Invalidate();
                 }
@@ -1983,10 +1985,10 @@ namespace Thetis
             if (Math.Abs(qv - p.Q) > 0.000001)
             {
                 p.Q = qv;
-                raisePointsChanged(false);
+                raisePointsChanged(dragging);
                 if (Math.Abs(p.FrequencyHz - old_f) > 0.000001 || Math.Abs(p.GainDb - old_g) > 0.000001 || Math.Abs(p.Q - old_q) > 0.000001)
                 {
-                    raisePointDataChangedForPoint(p, false);
+                    raisePointDataChangedForPoint(p, dragging);
                 }
                 Invalidate();
             }

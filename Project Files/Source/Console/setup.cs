@@ -24510,15 +24510,15 @@ namespace Thetis
 
             MeterType t = mtci.MeterType;
             int block = -1;
-            if (((int)t > (int)MeterType.NONE) && ((int)t <= (int)MeterType.ESTIMATED_PBSNR))
+            if ( ((int)t > (int)MeterType.NONE) && ((int)t <= (int)MeterType.ESTIMATED_PBSNR) || (int)t == (int)MeterType.ACG_MAX_MAG)
             {
                 block = 0;
             }
-            else if (((int)t >= (int)MeterType.MIC) && ((int)t <= (int)MeterType.SWR))
+            else if ( ((int)t >= (int)MeterType.MIC) && ((int)t <= (int)MeterType.SWR) )
             {
                 block = 1;
             }
-            else if (((int)t >= (int)MeterType.MAGIC_EYE) && ((int)t < (int)MeterType.LAST))
+            else if ( ((int)t >= (int)MeterType.MAGIC_EYE) && ((int)t < (int)MeterType.LAST) )
             {
                 block = 2;
             }
@@ -25556,13 +25556,13 @@ namespace Thetis
                 }
 
                 chkHistory_auto_0_scale.Checked = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true);
-                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -10000f, 10000f, -150f);
-                nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
+                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -40000f, 40000f, -150f);
+                nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -40000f, 40000f, 0f);
 
                 chkHistory_1_show_axis.Checked = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
                 chkHistory_auto_1_scale.Checked = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true);
-                nudHistory_axis1_min.Value = (decimal)igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
-                nudHistory_axis1_max.Value = (decimal)igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);
+                nudHistory_axis1_min.Value = (decimal)igs.GetSetting<float>("history_min_1", true, -40000f, 40000f, -150f);
+                nudHistory_axis1_max.Value = (decimal)igs.GetSetting<float>("history_max_1", true, -40000f, 40000f, 0f);
 
                 clrbtnHistory_colour_0.Color = igs.GetSetting<System.Drawing.Color>("history_colour_0", false, Color.Empty, Color.Empty, System.Drawing.Color.Red);
                 clrbtnHistory_colour_1.Color = igs.GetSetting<System.Drawing.Color>("history_colour_1", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
@@ -32057,7 +32057,7 @@ namespace Thetis
             List<clsComboHistoryItem> items = new List<clsComboHistoryItem>();
             comboHistory_reading_0.Items.Clear();
             comboHistory_reading_1.Items.Clear();
-            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SIGNAL_MAX_BIN; i++)
+            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.ADC_MAX_MAG; i++)
             {
                 if (i == 22 || i == 23) continue; // skip these as not used
                 if (i >= 29 && i <= 71) continue; // skip

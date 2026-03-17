@@ -703,7 +703,10 @@ ReadThreadMainLoop() {
 					//for (i = 0; i < MAX_ADC; i++)
 					//	prn->adc[i].adc_overload = ((prn->ReadBufp[1] >> i) & 0x1) != 0;
 					for (i = 0; i < MAX_ADC; i++)
+					{		
+						prn->adc[i].previous_adc_overload = prn->adc[i].adc_overload;
 						prn->adc[i].adc_overload = prn->adc[i].adc_overload || (((prn->ReadBufp[1] >> i) & 0x1) != 0); // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
+					}
 
 					//Bytes 2,3      Exciter Power [15:0]     * 12 bits sign extended to 16
 					//Bytes 10,11    FWD Power [15:0]           ditto
@@ -713,6 +716,24 @@ ReadThreadMainLoop() {
 					prn->tx[0].rev_power = prn->ReadBufp[18] << 8 | prn->ReadBufp[19];
 					PeakFwdPower((float)(prn->tx[0].fwd_power));
 					PeakRevPower((float)(prn->tx[0].rev_power));
+
+					//16 bit magnitude from adc's, G2 v27 f/w at the moment
+					prn->adc[0].max_magnitude = (prn->ReadBufp[35] << 8) | prn->ReadBufp[36];
+					prn->adc[1].max_magnitude = (prn->ReadBufp[37] << 8) | prn->ReadBufp[38];
+					for (i = 2; i < MAX_ADC; i++)
+						prn->adc[i].max_magnitude = 0; // other adcs not supported
+
+					for (i = 0; i < 2; i++) 
+					{
+						if (!prn->adc[i].previous_adc_overload && prn->adc[i].adc_overload)
+						{
+							// not overloaded, now is, record the mags
+							prn->adc[i].max_magnitude_at_overload = prn->adc[i].max_magnitude;
+						}
+					}
+					for (i = 2; i < MAX_ADC; i++)
+						prn->adc[i].max_magnitude_at_overload = 0; // other adcs not supported
+
 					//Bytes 45,46  Supply Volts [15:0]          
 					prn->supply_volts = prn->ReadBufp[45] << 8 | prn->ReadBufp[46];
 
