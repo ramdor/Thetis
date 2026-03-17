@@ -5207,8 +5207,8 @@ namespace Thetis
                     return false;
 
                 return activeListener.TryGetTxAudioRequestSettings(out sampleRate, out samples, out bufferingMs);
-                }
             }
+        }
 
         internal void RefreshTxAudioSourceState()
         {
@@ -5232,7 +5232,7 @@ namespace Thetis
             {
                 TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
                 if (activeListener != null && activeListener.TryDequeueTxAudio(out queuedAudio))
-                        return true;
+                    return true;
             }
 
             queuedAudio = null;

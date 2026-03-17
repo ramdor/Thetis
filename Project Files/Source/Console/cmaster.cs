@@ -255,6 +255,15 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXTCIAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXTCIAudio(int txid, int active);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMox", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMox(int id, int mox);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMon", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMon(int id, int mon);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMonVol", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMonVol(int id, double vol);
+
         // Penelope output level
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXFixedGainRun", CallingConvention = CallingConvention.Cdecl)]

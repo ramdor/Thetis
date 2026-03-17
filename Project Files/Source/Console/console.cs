@@ -28720,6 +28720,9 @@ namespace Thetis
 
             cmaster.Closewb(0);
 
+            shutdownLogStringToPath("Before SpotManager2.FreeUpFlags()");
+            SpotManager2.FreeUpFlags();
+
             shutdownLogStringToPath("Before DumpCap.StopDumpcap()");
             DumpCap.StopDumpcap();
 
