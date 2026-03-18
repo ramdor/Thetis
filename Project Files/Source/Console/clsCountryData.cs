@@ -55,6 +55,7 @@ namespace Thetis
         private static List<PrefixData> _prefixDataList;
         private static readonly Dictionary<string, string> _countryCodeAliasMap = createCountryCodeAliasMap();
         private static readonly Dictionary<string, string> _regionCountryCodeMap = createRegionCountryCodeMap();
+        private static readonly Dictionary<int, string> _adifCountryCodeMap = createAdifCountryCodeMap();
 
         [Serializable]
         public class PrefixData
@@ -260,47 +261,118 @@ namespace Thetis
             if (_countryCodeAliasMap.TryGetValue(normalized, out code)) return code;
             if (_regionCountryCodeMap.TryGetValue(normalized, out code)) return code;
 
-            switch (adif)
+            if (_adifCountryCodeMap.TryGetValue(adif, out code)) return code;
+
+            return string.Empty;
+        }
+
+        private static Dictionary<int, string> createAdifCountryCodeMap()
             {
-                case 6: return "US";
-                case 15: return "RU";
-                case 21: return "ES";
-                case 37: return "GR";
-                case 46: return "MY";
-                case 47: return "CL";
-                case 54: return "RU";
-                case 67: return "US";
-                case 110: return "UN";
-                case 117: return "UN";
-                case 123: return "JP";
-                case 126: return "RU";
-                case 142: return "IN";
-                case 149: return "PT";
-                case 165: return "MU";
-                case 191: return "CK";
-                case 195: return "GQ";
-                case 207: return "MU";
-                case 215: return "CY";
-                case 230: return "DE";
-                case 234: return "CK";
-                case 256: return "PT";
-                case 272: return "PT";
-                case 299: return "MY";
-                case 318: return "CN";
-                case 339: return "JP";
-                case 386: return "TW";
-                case 489: return "FJ";
-                default: return string.Empty;
-            }
+            Dictionary<int, string> map = new Dictionary<int, string>();
+
+            addCountryCode(map, 6, "US");
+            addCountryCode(map, 10, "TF");
+            addCountryCode(map, 13, "AQ");
+            addCountryCode(map, 15, "RU");
+            addCountryCode(map, 16, "NZ");
+            addCountryCode(map, 17, "VE");
+            addCountryCode(map, 20, "UM");
+            addCountryCode(map, 21, "ES");
+            addCountryCode(map, 24, "BV");
+            addCountryCode(map, 31, "KI");
+            addCountryCode(map, 33, "IO");
+            addCountryCode(map, 34, "NZ");
+            addCountryCode(map, 36, "FR");
+            addCountryCode(map, 37, "CR");
+            addCountryCode(map, 41, "TF");
+            addCountryCode(map, 46, "MY");
+            addCountryCode(map, 47, "CL");
+            addCountryCode(map, 48, "KI");
+            addCountryCode(map, 54, "RU");
+            addCountryCode(map, 67, "US"); //legacy coverage
+            addCountryCode(map, 71, "EC");
+            addCountryCode(map, 98, "VC");
+            addCountryCode(map, 99, "TF");
+            addCountryCode(map, 110, "US");
+            addCountryCode(map, 111, "HM");
+            addCountryCode(map, 117, "UN");
+            addCountryCode(map, 123, "UM");
+            addCountryCode(map, 124, "TF");
+            addCountryCode(map, 126, "RU");
+            addCountryCode(map, 131, "TF");
+            addCountryCode(map, 133, "NZ");
+            addCountryCode(map, 137, "KR");
+            addCountryCode(map, 142, "IN");
+            addCountryCode(map, 149, "PT");
+            addCountryCode(map, 152, "MO");
+            addCountryCode(map, 153, "AU");
+            addCountryCode(map, 161, "CO");
+            addCountryCode(map, 165, "MU");
+            addCountryCode(map, 166, "MP");
+            addCountryCode(map, 172, "PN");
+            addCountryCode(map, 174, "UM");
+            addCountryCode(map, 191, "CK");
+            addCountryCode(map, 195, "GQ");
+            addCountryCode(map, 199, "BV");
+            addCountryCode(map, 201, "ZA");
+            addCountryCode(map, 204, "MX");
+            addCountryCode(map, 205, "SH");
+            addCountryCode(map, 206, "UN");
+            addCountryCode(map, 207, "MU");
+            addCountryCode(map, 215, "CY");
+            addCountryCode(map, 217, "CL");
+            addCountryCode(map, 230, "DE");
+            addCountryCode(map, 234, "CK");
+            addCountryCode(map, 235, "GS");
+            addCountryCode(map, 238, "AQ");
+            addCountryCode(map, 240, "GS");
+            addCountryCode(map, 241, "AQ");
+            addCountryCode(map, 246, "MT");
+            addCountryCode(map, 247, string.Empty); //disputed, leave blank
+            addCountryCode(map, 248, "IT");
+            addCountryCode(map, 250, "SH");
+            addCountryCode(map, 253, "BR");
+            addCountryCode(map, 256, "PT");
+            addCountryCode(map, 270, "TK");
+            addCountryCode(map, 272, "PT");
+            addCountryCode(map, 273, "BR");
+            addCountryCode(map, 274, "SH");
+            addCountryCode(map, 276, "TF");
+            addCountryCode(map, 283, "GB");
+            addCountryCode(map, 285, "VI");
+            addCountryCode(map, 289, "UN");
+            addCountryCode(map, 299, "MY");
+            addCountryCode(map, 301, "KI");
+            addCountryCode(map, 302, "EH");
+            addCountryCode(map, 318, "CN");
+            addCountryCode(map, 321, "HK");
+            addCountryCode(map, 339, "JP");
+            addCountryCode(map, 344, "KP");
+            addCountryCode(map, 345, "BN");
+            addCountryCode(map, 386, "TW");
+            addCountryCode(map, 414, "CD");
+            addCountryCode(map, 453, "RE");
+            addCountryCode(map, 468, "SZ");
+            addCountryCode(map, 489, "FJ");
+            addCountryCode(map, 490, "KI");
+            addCountryCode(map, 504, "SK");
+            addCountryCode(map, 507, "SB");
+            addCountryCode(map, 508, "PF");
+            addCountryCode(map, 509, "PF");
+            addCountryCode(map, 512, "NC");
+            addCountryCode(map, 513, "PN");
+            addCountryCode(map, 515, "AS");
+            addCountryCode(map, 519, "BQ");
+            addCountryCode(map, 520, "BQ");
+            addCountryCode(map, 521, "SS");
+            addCountryCode(map, 522, "XK");
+
+            return map;
         }
 
         private static Dictionary<string, string> createCountryCodeAliasMap()
         {
             Dictionary<string, string> map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            //specials not listed, but are in the CTY-3612 file
-            addAlias(map, "Asiatic Turkey", "TR");
-            //
 
             addAlias(map, "Aland Islands", "AX");
             addAlias(map, "Agalega and Saint Brandon", "MU");
@@ -311,9 +383,12 @@ namespace Thetis
             addAlias(map, "Annobon Island", "GQ");
             addAlias(map, "Annobón", "GQ");
             addAlias(map, "Asiatic Russia", "RU");
+            addAlias(map, "Asiatic Turkey", "TR");
+            addAlias(map, "Aves Island", "VE");
             addAlias(map, "Azores", "PT");
             addAlias(map, "Balearic Islands", "ES");
             addAlias(map, "Bear Island", "SJ");
+            addAlias(map, "Bouvet", "BV");
             addAlias(map, "Bouvet Island", "BV");
             addAlias(map, "Canary Islands", "ES");
             addAlias(map, "Ceuta and Melilla", "ES");
@@ -363,6 +438,7 @@ namespace Thetis
             addAlias(map, "Peter I Island", "BV");
             addAlias(map, "Pratas Island", "TW");
             addAlias(map, "Rodrigues Island", "MU");
+            addAlias(map, "Rodriguez Island", "MU");
             addAlias(map, "Rotuma Island", "FJ");
             addAlias(map, "Sable Island", "CA");
             addAlias(map, "San Andres and Providencia", "CO");
@@ -432,8 +508,33 @@ namespace Thetis
             addAlias(map, "Tanzania", "TZ");
             addAlias(map, "United States", "US");
             addAlias(map, "Venezuela", "VE");
+            addAlias(map, "Antarctica", "AQ");
+            addAlias(map, "Bonaire", "BQ");
+            addAlias(map, "Brunei Darussalam", "BN");
+            addAlias(map, "Hong Kong", "HK");
+            addAlias(map, "Macao", "MO");
+            addAlias(map, "Republic of Kosovo", "XK");
+            addAlias(map, "Republic of Korea", "KR");
+            addAlias(map, "Republic of South Sudan", "SS");
+            addAlias(map, "Reunion Island", "RE");
+            addAlias(map, "Slovak Republic", "SK");
+            addAlias(map, "Vienna Intl Ctr", "UN");
+            addAlias(map, "Wallis & Futuna Islands", "WF");
+            addAlias(map, "Western Sahara", "EH");
 
             return map;
+        }
+
+        private static void addCountryCode(Dictionary<int, string> map, int adif, string code)
+        {
+            if (!map.ContainsKey(adif))
+            {
+                map.Add(adif, code);
+            }
+            else
+            {
+                map[adif] = code;
+            }
         }
 
         private static void addAlias(Dictionary<string, string> map, string name, string code)
@@ -456,7 +557,7 @@ namespace Thetis
             if (string.IsNullOrWhiteSpace(value)) return string.Empty;
 
             string formD = value.Trim().Normalize(NormalizationForm.FormD);
-            StringBuilder sb = new StringBuilder(formD.Length);
+            StringBuilder sb = new StringBuilder(formD.Length + 8);
 
             for (int i = 0; i < formD.Length; i++)
             {
@@ -464,6 +565,12 @@ namespace Thetis
                 UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(c);
 
                 if (category == UnicodeCategory.NonSpacingMark) continue;
+
+                if (c == '&')
+                {
+                    sb.Append(" AND ");
+                    continue;
+                }
 
                 if (char.IsLetterOrDigit(c))
                 {
@@ -476,6 +583,18 @@ namespace Thetis
             }
 
             string normalized = sb.ToString();
+
+            while (normalized.Contains("  "))
+            {
+                normalized = normalized.Replace("  ", " ");
+            }
+
+            normalized = " " + normalized.Trim() + " ";
+            normalized = normalized.Replace(" N Z ", " NEW ZEALAND ");
+            normalized = normalized.Replace(" ST ", " SAINT ");
+            normalized = normalized.Replace(" IS ", " ISLANDS ");
+            normalized = normalized.Replace(" INTL ", " INTERNATIONAL ");
+            normalized = normalized.Replace(" CTR ", " CENTRE ");
 
             while (normalized.Contains("  "))
             {

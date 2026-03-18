@@ -1136,7 +1136,6 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.chkTestAtt = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
@@ -7579,18 +7578,11 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
-            // chkTestAtt
-            // 
-            resources.ApplyResources(this.chkTestAtt, "chkTestAtt");
-            this.chkTestAtt.Name = "chkTestAtt";
-            this.chkTestAtt.UseVisualStyleBackColor = true;
-            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.chkTestAtt);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.panelDisplay);
@@ -7933,6 +7925,5 @@
         private ToolStripStatusLabel toolStripStatus_PAspacer;
         private ToolStripStatusLabel toolStripStatusLabel_play_record;
         private ToolStripStatusLabel toolStripStatus_RecordPlay_spacer;
-        private CheckBoxTS chkTestAtt;
     }
 }
