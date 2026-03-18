@@ -1123,22 +1123,26 @@ namespace Thetis
             //_rx1SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(0, -130, -40);
             //_rx2SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(1, -130, -40);
 
-            ////test full auto
-            ////x = maximum ADC magnitude seen during the last 200ms period, from 0 to 32768
-            ////U = upper threshold where protective action begins, 25000(configurable)
-            ////L = lower threshold where it is safe to start reducing attenuation again, say 15000(configurable)
-            ////- if overload or x > U then apply +3dB attenuation
-            ////-f_old = (0.9 * f_old) + (0.1 * x)
-            ////- if f_old < L then remove 1dB attenuation
-            ////-otherwise hold current attenuation
+            //test full auto
+            //x = maximum ADC magnitude seen during the last 200ms period, from 0 to 32768
+            //U = upper threshold where protective action begins, 25000(configurable)
+            //L = lower threshold where it is safe to start reducing attenuation again, say 15000(configurable)
+            //- if overload or x > U then apply +3dB attenuation
+            //-f_old = (0.9 * f_old) + (0.1 * x)
+            //- if f_old < L then remove 1dB attenuation
+            //-otherwise hold current attenuation
 
             //void timerTick_RX1_FullAutoAtt(object state)
-            //{
+            //{       
+            //    if(this.IsDisposed || this.Disposing || !this.IsHandleCreated) return;
+
             //    if (this.InvokeRequired)
             //    {
             //        this.Invoke((Action)(() => timerTick_RX1_FullAutoAtt(state)));
             //        return;
             //    }
+
+            //    if (!chkTestAtt.Checked) return;
 
             //    int adc_oload_num = 0;
             //    bool got_oload_info;
@@ -1154,7 +1158,7 @@ namespace Thetis
 
             //    bool overloaded = false;
             //    if (got_oload_info)
-            //    { 
+            //    {
             //        for (int i = 0; i < 1; i++)
             //        {
             //            overloaded |= ((adc_oload_num >> i) & 1) != 0;
@@ -1165,7 +1169,7 @@ namespace Thetis
 
             //    bool atted = false;
             //    int satt = RX1AttenuatorData;
-            //    int tmpatt = satt;                
+            //    int tmpatt = satt;
 
             //    if (adcMag > 25000 || overloaded)
             //    {
@@ -1173,14 +1177,14 @@ namespace Thetis
             //        atted = true;
             //    }
 
-            //    _full_auto_att_running_mag = ((1.0f - _full_auto_att_alpha) * _full_auto_att_running_mag) + (_full_auto_att_alpha * adcMag);              
+            //    _full_auto_att_running_mag = ((1.0f - _full_auto_att_alpha) * _full_auto_att_running_mag) + (_full_auto_att_alpha * adcMag);
 
             //    if (!atted && _full_auto_att_running_mag < 15000) tmpatt--;
 
             //    if (tmpatt < 0) tmpatt = 0;
             //    if (tmpatt > 31) tmpatt = 31;
 
-            //    if(tmpatt != satt) RX1AttenuatorData = tmpatt;
+            //    if (tmpatt != satt) RX1AttenuatorData = tmpatt;
             //}
 
             //_full_auto_att_timer = new System.Threading.Timer(timerTick_RX1_FullAutoAtt, null, 0, 200);
@@ -49854,7 +49858,7 @@ namespace Thetis
 
                     //BAND STACK OVERLAY
                     //only do this if not doing something else
-                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit ||
+                    if (e.Y >= 15 && m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit ||
                         gridminmaxadjust || agc_knee_drag || agc_hang_drag || rx1_spectrum_tune_drag || rx1_click_tune_drag || rx2_spectrum_tune_drag || rx2_click_tune_drag ||
                         tx_high_filter_drag || tx_low_filter_drag || rx1_low_filter_drag || rx1_high_filter_drag || rx2_low_filter_drag || rx1_high_filter_drag))
                     {
@@ -50693,7 +50697,7 @@ namespace Thetis
                     #region BandStackHighlight
                     //BandstackOverlay highlight MW0LGE_21h
                     //only do this if not doing something else
-                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || bHighlightNumberScaleRX1 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
+                    if (e.Y >= 15 && m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || bHighlightNumberScaleRX1 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
                     {
                         if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
                         {
@@ -51187,6 +51191,9 @@ namespace Thetis
                                     if ((_click_tune_rx2_display || Common.ShiftKeyDown) && _highlightedSpot == null)
                                         next_cursor = Cursors.NoMoveHoriz;
                                 }
+
+                                if (e.Y < 15) highlightRX1 = 0; // ignore it if we up top
+                                if (e.Y < ((pnlDisplay.Height / 2) + 15)) highlightRX2 = 0;
 
                                 //MW0LGE_21k9 added the filter info onto the cursor info, also done below on the filter drags
                                 if (highlightRX1 == -1)

@@ -161,7 +161,7 @@ namespace Thetis
             FlagAtlas.Init(Properties.Resources.flagatlas_image, Properties.Resources.flagatlas_json);
 
             _tickTimer = new Timer(1000);
-            _tickTimer.Elapsed += OnTick;
+            _tickTimer.Elapsed += onTick;
             _tickTimer.AutoReset = true;
             _tickTimer.Enabled = true;
         }
@@ -178,12 +178,12 @@ namespace Thetis
             }
         }
 
-        private static int CompareByFrequency(smSpot left, smSpot right)
+        private static int compareByFrequency(smSpot left, smSpot right)
         {
             return left.frequencyHZ.CompareTo(right.frequencyHZ);
         }
 
-        private static void MarkSortedSpotsDirty()
+        private static void markSortedSpotsDirty()
         {
             _sortedSpotsDirty = true;
         }
@@ -200,12 +200,12 @@ namespace Thetis
             }
 
             smSpot[] snapshot = _spots.ToArray();
-            Array.Sort(snapshot, CompareByFrequency);
+            Array.Sort(snapshot, compareByFrequency);
             _sortedSpotsCache = snapshot;
             _sortedSpotsDirty = false;
         }
 
-        private static void ClearHighlightedReference(smSpot spot)
+        private static void clearHighlightedReference(smSpot spot)
         {
             if (spot == null) return;
 
@@ -218,7 +218,7 @@ namespace Thetis
             }
         }
 
-        private static void PruneHighlightedReferences()
+        private static void pruneHighlightedReferences()
         {
             for (int rx = 0; rx < MAX_RX; rx++)
             {
@@ -240,7 +240,7 @@ namespace Thetis
             get { return _maxNumber; }
             set { _maxNumber = value; }
         }
-        private static void OnTick(Object source, ElapsedEventArgs e)
+        private static void onTick(Object source, ElapsedEventArgs e)
         {
             lock (_objLock)
             {
@@ -251,8 +251,8 @@ namespace Thetis
 
                 if (removed > 0)
                 {
-                    MarkSortedSpotsDirty();
-                    PruneHighlightedReferences();
+                    markSortedSpotsDirty();
+                    pruneHighlightedReferences();
                 }
             }
         }
@@ -424,8 +424,53 @@ namespace Thetis
             }
             return spotTextColour;
         }
+        private static Image getFlagImage(string flag)
+        {
+            if (string.IsNullOrWhiteSpace(flag)) return null;
+
+            flag = flag.Trim();
+
+            if (flag.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                flag = flag.Substring(0, flag.Length - 4);
+
+            if (string.IsNullOrWhiteSpace(flag)) return null;
+
+            flag = flag.ToLowerInvariant();
+
+            Image image;
+            if (_flag_images.TryGetValue(flag, out image))
+                return image;
+
+            try
+            {
+                image = FlagAtlas.GetFlag(flag);
+                _flag_images[flag] = image;
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static Image getFlagImageFromCallsign(string callsign, out string country)
+        {
+            country = null;
+            if (string.IsNullOrWhiteSpace(callsign)) return null;
+
+            CountryData.PrefixData pd = CountryData.GetCallsignData(callsign);
+            if (pd == null) return null;
+
+            country = pd.Country;
+
+            string country_ansi = pd.Ansi2CharCountryCode;
+            if (string.IsNullOrWhiteSpace(country_ansi)) return null;
+
+            return getFlagImage(country_ansi);
+        }
+
         public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, JsonSpotData jsonSpotData = null)
-        {            
+        {
             callsign = callsign.ToUpper().Trim();
             additionalText = additionalText.Trim();
 
@@ -451,56 +496,25 @@ namespace Thetis
                 use_text_colour = text_colour != Color.Empty;
                 additionalText = jsonSpotData.Comment.Trim();
 
-                string flag = jsonSpotData.Flag.Trim();
-                if (!string.IsNullOrEmpty(flag))
-                {
-                    bool found = _flag_images.TryGetValue(flag, out flag_image);
-                    if (!found)
-                    {
-                        // add it
-                        try
-                        {
-                            flag_image = FlagAtlas.GetFlag(flag);
-                            _flag_images[flag] = flag_image;
-                        }
-                        catch
-                        {
-                            flag_image = null;
-                        }
-                    }
-                    else
-                    {
-                        flag_image = _flag_images[flag];
-                    }
-                }
+                flag_image = getFlagImage(jsonSpotData.Flag);
+                flag_spotter_image = getFlagImage(jsonSpotData.FlagSpotter);
 
-                //spotter flag
-                flag = jsonSpotData.FlagSpotter.Trim();
-                if (!string.IsNullOrEmpty(flag))
-                {
-                    bool found = _flag_images.TryGetValue(flag, out flag_spotter_image);
-                    if (!found)
-                    {
-                        // add it
-                        try
-                        {
-                            flag_spotter_image = FlagAtlas.GetFlag(flag);
-                            _flag_images[flag] = flag_spotter_image;
-                        }
-                        catch
-                        {
-                            flag_spotter_image = null;
-                        }
-                    }
-                    else
-                    {
-                        flag_spotter_image = _flag_images[flag];
-                    }
-                }
                 is_swl = jsonSpotData.IsSWL;
-                swl_seconds_to_live = jsonSpotData.SWLSecondsToLive;               
-                if(swl_seconds_to_live < 0)  swl_seconds_to_live = 0;
+                swl_seconds_to_live = jsonSpotData.SWLSecondsToLive;
+                if (swl_seconds_to_live < 0) swl_seconds_to_live = 0;
             }
+
+            string temp_country = null;
+            if (!string.IsNullOrEmpty(callsign) && flag_image == null)
+            {
+                flag_image = getFlagImageFromCallsign(callsign, out temp_country);
+            }
+            if (string.IsNullOrEmpty(spot_country) && !string.IsNullOrEmpty(temp_country)) spot_country = temp_country;
+
+            string spotter_tmp = string.IsNullOrEmpty(spotter) ? callsign : spotter;
+
+            if (!string.IsNullOrEmpty(spotter_tmp) && flag_spotter_image == null)
+                flag_spotter_image = getFlagImageFromCallsign(spotter_tmp, out _);
 
             DateTime spotted_time = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(date_time))
@@ -552,7 +566,7 @@ namespace Thetis
                 spot.continent = spot.continent.Substring(0, 30);
             if (spot.country.Length > 30)
                 spot.country = spot.country.Substring(0, 30);
-            if (spot.heading < 0 || spot.heading > 360) spot.heading = -1; //should idealy be 359, but we will accept 360 as the same as 0
+            if (spot.heading < 0 || spot.heading > 360) spot.heading = -1;
 
             spot.Highlight = new bool[MAX_RX];
             spot.BoundingBoxInPixels = new Rectangle[MAX_RX];
@@ -583,7 +597,6 @@ namespace Thetis
                     spot.flash_start_time = exists.flash_start_time;
                     spot.flashing = exists.flashing;
 
-                    //if the data is the same, use the original spot time
                     if (spot.mode == exists.mode &&
                         Math.Abs(spot.frequencyHZ - exists.frequencyHZ) <= 5000 &&
                         spot.colour == exists.colour &&
@@ -596,7 +609,7 @@ namespace Thetis
                         spot.utc_spot_time = exists.utc_spot_time;
                     }
 
-                    ClearHighlightedReference(exists);
+                    clearHighlightedReference(exists);
                     _spots.Remove(exists);
                 }
 
@@ -616,7 +629,7 @@ namespace Thetis
                         DateTime oldestTime = DateTime.MaxValue;
 
                         for (int i = 0; i < _spots.Count; i++)
-                    {
+                        {
                             smSpot candidate = _spots[i];
                             if (candidate.IsSWL || candidate.timeAdded >= oldestTime) continue;
 
@@ -627,16 +640,17 @@ namespace Thetis
                         if (oldestIndex < 0) break;
 
                         smSpot removeSpot = _spots[oldestIndex];
-                        ClearHighlightedReference(removeSpot);
+                        clearHighlightedReference(removeSpot);
                         _spots.RemoveAt(oldestIndex);
                         spotsToRemove--;
                     }
                 }
 
                 _spots.Add(spot);
-                MarkSortedSpotsDirty();
+                markSortedSpotsDirty();
             }
         }
+        
 
         public static bool HasSpots
         {
@@ -670,12 +684,12 @@ namespace Thetis
                     bool removeSpot = (non_swl && !spot.IsSWL) || (swl && spot.IsSWL);
                     if (!removeSpot) continue;
 
-                    ClearHighlightedReference(spot);
+                    clearHighlightedReference(spot);
                     _spots.RemoveAt(i);
                     removed = true;
                 }
 
-                if (removed) MarkSortedSpotsDirty();
+                if (removed) markSortedSpotsDirty();
             }
         }
 
@@ -691,12 +705,12 @@ namespace Thetis
                     smSpot spot = _spots[i];
                     if (spot.callsign != call) continue;
 
-                    ClearHighlightedReference(spot);
+                    clearHighlightedReference(spot);
                     _spots.RemoveAt(i);
                     removed = true;
                 }
 
-                if (removed) MarkSortedSpotsDirty();
+                if (removed) markSortedSpotsDirty();
             }
         }
 
