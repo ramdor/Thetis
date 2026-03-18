@@ -62928,7 +62928,7 @@
             65536});
             this.nudHistory_axis1_max.Location = new System.Drawing.Point(187, 73);
             this.nudHistory_axis1_max.Maximum = new decimal(new int[] {
-            10000,
+            40000,
             0,
             0,
             0});
@@ -62964,7 +62964,7 @@
             0,
             0});
             this.nudHistory_axis1_min.Minimum = new decimal(new int[] {
-            10000,
+            40000,
             0,
             0,
             -2147483648});
@@ -63005,7 +63005,7 @@
             65536});
             this.nudHistory_axis0_max.Location = new System.Drawing.Point(187, 73);
             this.nudHistory_axis0_max.Maximum = new decimal(new int[] {
-            10000,
+            40000,
             0,
             0,
             0});
@@ -63041,7 +63041,7 @@
             0,
             0});
             this.nudHistory_axis0_min.Minimum = new decimal(new int[] {
-            10000,
+            40000,
             0,
             0,
             -2147483648});

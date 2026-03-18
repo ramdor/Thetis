@@ -170,6 +170,7 @@ typedef struct CACHE_ALIGN _radionet
 		int id;
 		int rx_step_attn;
 		int tx_step_attn;
+		int previous_adc_overload;
 		int adc_overload;
 		int dither;
 		int random;
@@ -177,6 +178,8 @@ typedef struct CACHE_ALIGN _radionet
 		int wb_seqnum;
 		int wb_state;
 		double* wb_buff;
+		uint16_t max_magnitude;
+		uint16_t max_magnitude_at_overload;
 	} adc[MAX_ADC];
 
 	struct _cw

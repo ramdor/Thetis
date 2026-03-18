@@ -612,26 +612,31 @@ namespace Thetis
 			sendRXEnable(1, enabled);
 			sendTXEnable(1, enabled && !console.ThreadSafeTCIAccessor.MOX);
 		}
-		public void HWSampleRateChange(int rx, int oldSampleRate, int newSampleRate)
+        public void HWSampleRateChange(int rx, int oldSampleRate, int newSampleRate)
         {
-			if (m_disconnected) return;
+            if (m_disconnected) return;
 
             int publishedRate;
-			lock (m_objStreamLock)
-			{
+            int halfSample;
+            lock (m_objStreamLock)
+            {
                 int index = rx - 1;
                 if (index >= 0 && index < m_hwSampleRate.Length)
                     m_hwSampleRate[index] = newSampleRate;
 
                 publishedRate = getPublishedIQSampleRateLocked();
-			}
-			
+
+                int rx1SampleRate = 48000;
+                if (m_hwSampleRate != null && m_hwSampleRate.Length > 0 && m_hwSampleRate[0] > 0)
+                    rx1SampleRate = m_hwSampleRate[0];
+
+                halfSample = rx1SampleRate / 2;
+            }
+
             sendIQSampleRate(publishedRate);
 
-            //int halfSample = publishedRate / 2;
             //sendIFLimits(-halfSample, halfSample);
-            int halfSample = console.ThreadSafeTCIAccessor.SampleRateRX1 / 2;
-            sendIFLimits(-halfSample, halfSample); // only VFOA/rx1
+            sendIFLimits(-halfSample, halfSample); // sadly this is global in tci, so use rx1
         }
 
         private int getPublishedIQSampleRate()
@@ -1315,7 +1320,7 @@ namespace Thetis
                             m_server.LogForm.Log(false, outboundFrame.LogText);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     Debug.Print("problem writing queued frame");
                     m_stopClient = true;
@@ -4276,8 +4281,8 @@ namespace Thetis
 		private Thread m_purgingThread = null;
 		private List<TCPIPtciSocketListener> m_socketListenersList = null;
         private TCPIPtciSocketListener m_activeTxAudioListener = null;
-		private Object m_objLocker = new Object();
-		private bool m_bSleepingInPurge = false;
+		private object m_objLocker = new object();
+        private bool m_bSleepingInPurge = false;
 		private bool m_bDelegatesAdded = false;
 		private int m_nRateLimit = 0;
 		private bool m_bEmulateSunSDR2Pro = false;
@@ -4588,11 +4593,12 @@ namespace Thetis
 					m_purgingThread = null;
 				}
 
-				m_server = null;
 
 				// Stop All clients.
 				StopAllSocketListers();
                 cmaster.SetTCIRun(0);
+
+				m_server = null;
 			}
 		}
 
@@ -4618,20 +4624,23 @@ namespace Thetis
         }
 		private void StopAllSocketListers()
 		{
+            List<TCPIPtciSocketListener> stopList;
+
 			lock (m_objLocker)
 			{
-				foreach (TCPIPtciSocketListener socketListener
-							 in m_socketListenersList)
-				{
-					socketListener.StopSocketListener();
+                if (m_socketListenersList == null) return;
 
+                stopList = new List<TCPIPtciSocketListener>(m_socketListenersList);
+				m_socketListenersList.Clear();
+				m_socketListenersList = null;
+			}
+
+            foreach (TCPIPtciSocketListener socketListener in stopList)
+				{
 					socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
 					socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
 					socketListener.ClientErrorHandlers -= ClientErrorHandler;
-				}
-
-				m_socketListenersList.Clear();
-				m_socketListenersList = null;
+                socketListener.StopSocketListener();
 			}
 		}
 		private void ServerThreadStart()
@@ -4696,17 +4705,13 @@ namespace Thetis
 
 				lock (m_objLocker)
 				{
-					foreach (TCPIPtciSocketListener socketListener
-								 in m_socketListenersList)
+                    if (m_server == null || m_socketListenersList == null) return;
+
+                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 					{
 						if (socketListener.IsMarkedForDeletion())
 						{
 							deleteList.Add(socketListener);
-							socketListener.StopSocketListener();
-
-							socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-							socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-							socketListener.ClientErrorHandlers -= ClientErrorHandler;
 						}
 					}
 
@@ -4715,6 +4720,14 @@ namespace Thetis
 						m_socketListenersList.Remove(deleteList[i]);
 					}
 				}
+
+                foreach (TCPIPtciSocketListener socketListener in deleteList)
+                {
+                    socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
+                    socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
+                    socketListener.ClientErrorHandlers -= ClientErrorHandler;
+                    socketListener.StopSocketListener();
+                }
 
 				deleteList = null;
 
@@ -4762,6 +4775,8 @@ namespace Thetis
 
             lock (m_objLocker)
             {
+                if (m_server == null || m_socketListenersList == null) return;
+
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
 					socketListener.VFOChange(vfod);
@@ -5090,27 +5105,26 @@ namespace Thetis
 
             lock (m_objLocker)
             {
-                if (m_server != null && m_socketListenersList != null)
+                if (m_server == null || m_socketListenersList == null) return;
+
+                bool hasReadyClient = false;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    bool hasReadyClient = false;
+                    if (socketListener == null || !socketListener.IsReadyForStreaming())
+                        continue;
 
-                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                    hasReadyClient = true;
+
+                    if (socketListener.WantsAnyRxStream())
                     {
-                        if (socketListener == null || !socketListener.IsReadyForStreaming())
-                            continue;
-
-                        hasReadyClient = true;
-
-                        if (socketListener.WantsAnyRxStream())
-                        {
-                            run = true;
-                            break;
-                        }
-                    }
-
-                    if (!run && hasReadyClient && m_bAlwaysStreamIQ)
                         run = true;
+                        break;
+                    }
                 }
+
+                if (!run && hasReadyClient && m_bAlwaysStreamIQ)
+                    run = true;
             }
 
             cmaster.SetTCIRun(run ? 1 : 0);

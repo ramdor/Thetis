@@ -170,6 +170,8 @@ namespace Thetis
 
         SIGNAL_MAX_BIN = 72,
 
+        ADC_MAX_MAG = 73,
+
         LAST
     }
 
@@ -225,6 +227,7 @@ namespace Thetis
         CUSTOM_METER_BAR,
         OTHER_BUTTONS,
         VOICE_RECORD_PLAY_BUTTONS,
+        ACG_MAX_MAG,
         LAST
     }
     public enum BandGroups
@@ -749,6 +752,7 @@ namespace Thetis
                 _all_readings.Add(Reading.SWR);
                 _all_readings.Add(Reading.SIGNAL_STRENGTH);
                 _all_readings.Add(Reading.AVG_SIGNAL_STRENGTH);
+                _all_readings.Add(Reading.ADC_MAX_MAG);
                 ////sub rx
                 //_all_readings.Add(Reading.SUB_SIGNAL_STRENGTH);
                 //_all_readings.Add(Reading.SUB_AVG_SIGNAL_STRENGTH);
@@ -2126,6 +2130,11 @@ namespace Thetis
                         value = 0f;
                     }
                     break;
+                case Reading.ADC_MAX_MAG:
+                    {
+                        value = 0f;
+                    }
+                    break;
             }
             setReadingForced(rx, reading, value);
         }
@@ -2185,6 +2194,8 @@ namespace Thetis
                 case MeterType.OTHER_BUTTONS: return 2;
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS: return 2;
 
+                case MeterType.ACG_MAX_MAG: return 0;
+
                 case MeterType.SIGNAL_MAX_BIN: return 0;
             }
 
@@ -2239,6 +2250,7 @@ namespace Thetis
                 case MeterType.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
                 case MeterType.OTHER_BUTTONS: return "Other Buttons";
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS: return "Voice Record/Play";
+                case MeterType.ACG_MAX_MAG: return "Max ADC Magnitude";
             }
 
             return meter.ToString();
@@ -2295,6 +2307,8 @@ namespace Thetis
 
                 case Reading.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
 
+                case Reading.ADC_MAX_MAG: return "ADC Max Magnitude";
+
                 // not used
                 case (Reading)(int)22: return "";
                 case (Reading)(int)23: return "";
@@ -2350,6 +2364,7 @@ namespace Thetis
                 case Reading.AZ: return "°";
                 case Reading.ELE: return "°";
                 case Reading.SIGNAL_MAX_BIN: return "dBm";
+                case Reading.ADC_MAX_MAG: return "";
             }
 
             return reading.ToString();
@@ -5497,6 +5512,7 @@ namespace Thetis
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
                 setReading(rx, Reading.AMPS, ref readings);
+                setReading(rx, Reading.ADC_MAX_MAG, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -21322,6 +21338,7 @@ namespace Thetis
                     case MeterType.SIGNAL_MAX_BIN: ret = Reading.SIGNAL_MAX_BIN.ToString(); break;
                     case MeterType.OTHER_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.ACG_MAX_MAG: ret = Reading.ADC_MAX_MAG.ToString(); break;
                 }
                 return ret;
             }
@@ -21375,6 +21392,8 @@ namespace Thetis
                     case MeterType.SIGNAL_MAX_BIN: return 1;
                     case MeterType.OTHER_BUTTONS: return 0;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: return 0;
+
+                    case MeterType.ACG_MAX_MAG: return 1;
                 }
                 return 0;
             }
@@ -21432,6 +21451,7 @@ namespace Thetis
                     case MeterType.SIGNAL_MAX_BIN: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.OTHER_BUTTONS: AddOtherButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: AddVoiceRecordPlay(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ACG_MAX_MAG: AddADCMaxMag(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
                 // update the console data for the meter if we are not recovering
@@ -21575,7 +21595,68 @@ namespace Thetis
                 addMeterItem(ig);
 
                 return cb.ID;
-            }            
+            }
+            public string AddADCMaxMag(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.Primary = true;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ADC_MAX_MAG;
+                cb.MMIOVariableIndex = 0;
+                cb.AttackRatio = 0.2f;
+                cb.DecayRatio = 0.05f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 4000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Orange;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(25000, new PointF(0.8333f, 0));
+                cb.ScaleCalibration.Add(32768, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ACG_MAX_MAG;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
             private string AddSMeterBarText(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -25489,14 +25570,14 @@ namespace Thetis
                                             his.Reading1 = igs.GetSetting<Reading>("history_reading_1", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
 
                                             his.AutoScale0 = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true); // needs to be before the min0 manuals
-                                            his.Min0Manual = igs.GetSetting<float>("history_min_0", true, -10000f, 10000f, -150f);
-                                            his.Max0Manual = igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
+                                            his.Min0Manual = igs.GetSetting<float>("history_min_0", true, -40000f, 40000f, -150f);
+                                            his.Max0Manual = igs.GetSetting<float>("history_max_0", true, -40000f, 40000f, 0f);
 
                                             his.ShowScale1 = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
 
                                             his.AutoScale1 = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true); // needs to be before the min0 manuals
-                                            his.Min1Manual = igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
-                                            his.Max1Manual = igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);
+                                            his.Min1Manual = igs.GetSetting<float>("history_min_1", true, -40000f, 40000f, -150f);
+                                            his.Max1Manual = igs.GetSetting<float>("history_max_1", true, -40000f, 40000f, 0f);
 
                                             his.Axis0MMIOGuid = igs.GetMMIOGuid(0);
                                             his.Axis0MMIOVariable = igs.GetMMIOVariable(0);
@@ -31793,6 +31874,11 @@ namespace Thetis
 
                     switch (scale.ReadingSource)
                     {
+                        case Reading.ADC_MAX_MAG:
+                            {
+                                generalScale(x, y, w, h, scale, 6, 1, 0, 32768, 5000, 3884, fLineBaseY, fontSizeEmScaled, 255);
+                            }
+                            break;
                         case Reading.AGC_GAIN:
                             {
                                 generalScale(x, y, w, h, scale, 7, 1, -50, 125, 25, 25, fLineBaseY, fontSizeEmScaled, 255);
