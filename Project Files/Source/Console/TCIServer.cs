@@ -2108,10 +2108,10 @@ namespace Thetis
                 Buffer.BlockCopy(bytes, dataIndex, payload, 0, dataLength);
                 handleBinaryFrame(payload);
             }
-			else
-			{
-				Debug.Print("UNNOWN OPCODE " + opcode.ToString());
-			}
+			//else
+			//{
+			//	Debug.Print("UNNOWN OPCODE " + opcode.ToString());
+			//}
 		}
 		private void handleSetInFocus()
         {
