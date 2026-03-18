@@ -127,6 +127,9 @@ int nativeGetDotDashPTT()
 PORT
 int getAndResetADC_Overload() 
 {
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
+
 	int n = prn->adc[0].adc_overload | (prn->adc[1].adc_overload << 1) | (prn->adc[2].adc_overload << 2);
 
 	//reset
@@ -142,6 +145,8 @@ PORT
 uint16_t getAndResetADCmaxMagnitudeAtOverload(int adc)
 {
 	if (adc < 0 || adc >= MAX_ADC) return 0;
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
 
 	short mag = prn->adc[adc].max_magnitude_at_overload;
 
@@ -154,6 +159,8 @@ PORT
 uint16_t getADCmaxMagnitude(int adc)
 {
 	if (adc < 0 || adc >= MAX_ADC) return 0;
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
 
 	return prn->adc[adc].max_magnitude;
 }
