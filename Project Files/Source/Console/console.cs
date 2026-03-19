@@ -11767,27 +11767,27 @@ namespace Thetis
                 float oldData = _rx1_xvtr_gain_offset;
                 _rx1_xvtr_gain_offset = value;
                 UpdateRX1DisplayOffsets();
-                if (_rx1_xvtr_gain_offset != oldData) XvtrGainOffsetChangedHandlers?.Invoke(1, oldData, _rx1_meter_cal_offset);
+                if (_rx1_xvtr_gain_offset != oldData) XvtrGainOffsetChangedHandlers?.Invoke(1, oldData, _rx1_xvtr_gain_offset);
             }
         }
 
-        private float rx2_xvtr_gain_offset;						// gain offset as entered on the xvtr form
+        private float _rx2_xvtr_gain_offset;						// gain offset as entered on the xvtr form
         public float RX2XVTRGainOffset
         {
-            get { return rx2_xvtr_gain_offset; }
+            get { return _rx2_xvtr_gain_offset; }
             set
             {
-                float oldData = rx2_xvtr_gain_offset;
-                rx2_xvtr_gain_offset = value;
+                float oldData = _rx2_xvtr_gain_offset;
+                _rx2_xvtr_gain_offset = value;
                 UpdateRX2DisplayOffsets();
-                if (rx2_xvtr_gain_offset != oldData) XvtrGainOffsetChangedHandlers?.Invoke(2, oldData, rx2_xvtr_gain_offset);
+                if (_rx2_xvtr_gain_offset != oldData) XvtrGainOffsetChangedHandlers?.Invoke(2, oldData, _rx2_xvtr_gain_offset);
             }
         }
 
         private float _rx_6m_gain_offset_rx1 = 13;
         public float RX6mGainOffset_RX1
         {
-            //NOTE: this is the +ve 6m gain value from setup, a -ve version of this is assigned to RX1_6mGainOffset in txtVFOAFreq_LostFocus
+            //NOTE: this is the +ve 6m gain value from setup, a -ve version of this is assigned to RX1_6mGainOffset in txtVFOAFreq_LostFocus, what a complete bodge by someone
             get { return _rx_6m_gain_offset_rx1; }
             set
             {
@@ -11800,7 +11800,7 @@ namespace Thetis
         private float rx_6m_gain_offset_rx2 = 13;
         public float RX6mGainOffset_RX2
         {
-            //NOTE: this is the +ve 6m gain value from setup, a -ve version of this is assigned to RX2_6mGainOffset in txtVFOBFreq_LostFocus
+            //NOTE: this is the +ve 6m gain value from setup, a -ve version of this is assigned to RX2_6mGainOffset in txtVFOBFreq_LostFocus, what a complete bodge by someone
             get { return rx_6m_gain_offset_rx2; }
             set
             {
@@ -21008,7 +21008,7 @@ namespace Thetis
             }
             else //rx2
             {
-                fOffset = _rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+                fOffset = _rx2_meter_cal_offset + _rx2_xvtr_gain_offset;
 
                 if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                     HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
@@ -21020,6 +21020,11 @@ namespace Thetis
         public float RXOffset(int rx)
         {
             return RXPreampOffset(rx) + RXCalibrationOffset(rx);
+        }
+
+        public float TXDisplayCalOffset
+        {
+            get { return Display.TXDisplayCalOffset; }
         }
 
         // Added 6/11/05 BT to support CAT //[2.10.3.11]MW0LGE included setter

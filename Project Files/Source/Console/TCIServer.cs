@@ -1124,6 +1124,24 @@ namespace Thetis
             if (m_disconnected) return;
             sendTXProfiles();
         }
+        public void CalibrationChanged(int rx)
+        {
+            if (m_disconnected) return;
+
+            float meter_offset;
+            float display_offset;
+            float xvtr_gain_offset;
+            float offset_6m;
+            float tx_display_offset;
+
+            meter_offset = rx == 0 ? console.ThreadSafeTCIAccessor.RX1MeterCalOffset : console.ThreadSafeTCIAccessor.RX2MeterCalOffset;
+            display_offset = rx == 0 ? console.ThreadSafeTCIAccessor.RX1DisplayCalOffset : console.ThreadSafeTCIAccessor.RX2DisplayCalOffset;
+            xvtr_gain_offset = rx == 0 ? console.ThreadSafeTCIAccessor.RX1XVTRGainOffset : console.ThreadSafeTCIAccessor.RX2XVTRGainOffset;
+            offset_6m = rx == 0 ? console.ThreadSafeTCIAccessor.RX6mGainOffset_RX1 : console.ThreadSafeTCIAccessor.RX6mGainOffset_RX2;
+            tx_display_offset = console.ThreadSafeTCIAccessor.TXDisplayCalOffset;
+
+            sendCalibration(rx, meter_offset, display_offset, xvtr_gain_offset, offset_6m, tx_display_offset);
+        }
         public void MONChanged(bool newState)
 		{
             if (m_disconnected) return;
@@ -1966,6 +1984,10 @@ namespace Thetis
 
             sendTXProfiles();
             sendTXProfile(console.ThreadSafeTCIAccessor.TXProfile);
+
+            CalibrationChanged(0);
+            CalibrationChanged(1);
+
             //lock
             //TODO rx channel enable
             //rit/xit
@@ -3765,7 +3787,7 @@ namespace Thetis
 
             if (args.Length == 0)
             {
-                //get current tcprofille
+                //get current txprofille
                 string prof = console.ThreadSafeTCIAccessor.TXProfile;
                 sendTXProfile(prof);
             }
@@ -3792,6 +3814,23 @@ namespace Thetis
             {
                 console.ThreadSafeTCIAccessor.Close();
             }
+        }
+        private void sendCalibration(int rx, float meter, float display, float xvtr, float six_meter, float tx_display_offset)
+        {
+            if (rx < 0 || rx > 1) return;
+
+            string s = $"calibration_ex:{rx},{meter.ToString("F6", CultureInfo.InvariantCulture)}," +
+                $"{display.ToString("F6", CultureInfo.InvariantCulture)},{xvtr.ToString("F6", CultureInfo.InvariantCulture)}," +
+                $"{six_meter.ToString("F6", CultureInfo.InvariantCulture)},{tx_display_offset.ToString("F6", CultureInfo.InvariantCulture)};";
+
+            sendTextFrame(s);
+        }
+        private void handleCalibration(string[] args)
+        {
+            if (args.Length != 1) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            CalibrationChanged(rx);
         }
         //
 
@@ -4053,6 +4092,10 @@ namespace Thetis
                     case "tx_profile_ex":
                         handleTXProfile(args); // bespoke thetis cmd to select tx profile
                         break;
+                    case "calibration_ex":
+                        handleCalibration(args); // bespoke thetis cmd to get calibration data
+                        break;
+
                 }
             }
             else if (parts.Length == 1)
@@ -5223,6 +5266,11 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers += OnTXProfileChanged;
                     console.ThreadSafeTCIAccessor.TXProfilesChangedHandlers += OnTXProfilesChanged;
 
+                    console.ThreadSafeTCIAccessor.MeterCalOffsetChangedHandlers += OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.DisplayOffsetChangedHandlers += OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.XvtrGainOffsetChangedHandlers += OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.Rx6mOffsetChangedHandlers += OnCalibrationChanged;
+
                     m_bDelegatesAdded = true;
 				}
 
@@ -5299,6 +5347,11 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers -= OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers -= OnTXProfileChanged;
                     console.ThreadSafeTCIAccessor.TXProfilesChangedHandlers -= OnTXProfilesChanged;
+
+                    console.ThreadSafeTCIAccessor.MeterCalOffsetChangedHandlers -= OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.DisplayOffsetChangedHandlers -= OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.XvtrGainOffsetChangedHandlers -= OnCalibrationChanged;
+                    console.ThreadSafeTCIAccessor.Rx6mOffsetChangedHandlers -= OnCalibrationChanged;
 
                     m_bDelegatesAdded = false;
 				}
@@ -5832,6 +5885,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.TXProfilesChanged();
+                }
+            }
+        }
+        private void OnCalibrationChanged(int rx, float oldcal, float newcal)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.CalibrationChanged(rx);
                 }
             }
         }
