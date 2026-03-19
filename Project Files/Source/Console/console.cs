@@ -37416,7 +37416,8 @@ namespace Thetis
             //{
             //    WaveForm.QuickPlay = false;
             //    ckQuickPlay.BackColor = SystemColors.Control;
-            //}            
+            //}
+            
             if (!ckQuickPlay.Enabled) return; // leave if this function called direct
             if (ckQuickPlay.Checked)
             {
@@ -37461,6 +37462,7 @@ namespace Thetis
             //    if (!_updated_from_wave_form) WaveForm.QuickRec = false;
             //    ckQuickRec.BackColor = SystemColors.Control;
             //}
+
             if (!ckQuickRec.Enabled) return; // leave if this function called direct
             if (ckQuickRec.Checked)
             {
@@ -47566,13 +47568,14 @@ namespace Thetis
 
                 bool updateRX = false;
                 bool updateTX = false;
+                int TCIsensorInterval = int.MaxValue;
 
                 if (!_mox || (_mox && RX2Enabled && VFOBTX))
                 {
                     float offset = RXOffset(1);
 
                     // get all readings
-                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.SIGNAL_STRENGTH))) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     bool bNeedAvg = true;
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH))
                     {
@@ -47633,6 +47636,8 @@ namespace Thetis
                     }
 
                     updateRX = true;
+
+                    if (TCIServer != null) TCIsensorInterval = TCIServer.MinimumRequiredRxSensorInterval();
                 }
                 else if (_mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
                 {
@@ -47716,6 +47721,8 @@ namespace Thetis
                     ////
 
                     updateTX = true;
+
+                    if (TCIServer != null) TCIsensorInterval = TCIServer.MinimumRequiredTxSensorInterval();
                 }
 
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
@@ -47750,6 +47757,7 @@ namespace Thetis
 
                 // get quickest updating meter from MeterManager
                 int delayMS = MeterManager.QuickestUpdateInterval(1, _mox) - (int)meterDelay.DurationMsec;
+                delayMS = Math.Min(delayMS, TCIsensorInterval);
                 if (delayMS < 1) delayMS = 1;
                 await Task.Delay(delayMS);
             }
@@ -47764,13 +47772,14 @@ namespace Thetis
 
                 bool updateRX = false;
                 bool updateTX = false;
+                int TCIsensorInterval = int.MaxValue;
 
                 if (!_mox || (_mox && RX2Enabled && VFOATX))
                 {
                     float offset = RXOffset(2);
 
                     // get all readings
-                    if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.SIGNAL_STRENGTH))) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     bool bNeedAvg = true;
                     if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH))
                     {
@@ -47804,6 +47813,8 @@ namespace Thetis
                     }
 
                     updateRX = true;
+
+                    if (TCIServer != null) TCIsensorInterval = TCIServer.MinimumRequiredRxSensorInterval();
                 }
                 else if(_mox && RX2Enabled && VFOBTX)
                 {
@@ -47874,6 +47885,8 @@ namespace Thetis
                     ////
 
                     updateTX = true;
+
+                    if (TCIServer != null) TCIsensorInterval = TCIServer.MinimumRequiredTxSensorInterval();
                 }
 
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
@@ -47908,14 +47921,15 @@ namespace Thetis
 
                 // get quickest RX updating meter from MeterManager
                 int delayMS = MeterManager.QuickestUpdateInterval(2, false) - (int)meterDelay.DurationMsec;
+                delayMS = Math.Min(delayMS, TCIsensorInterval);
                 if (delayMS < 1) delayMS = 1;
                 await Task.Delay(delayMS);
             }
         }
         private void updateMetersReading(Reading reading, float value, int rx)
         {
-            if ((rx == 0 || rx == 1) && MeterManager.RequiresUpdate(1, reading)) _RX1MeterValues[reading] = value;
-            if ((rx == 0 || rx == 2) && MeterManager.RequiresUpdate(2, reading)) _RX2MeterValues[reading] = value;
+            if ((rx == 0 || rx == 1) && (MeterManager.RequiresUpdate(1, reading) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.MIC)))) _RX1MeterValues[reading] = value;
+            if ((rx == 0 || rx == 2) && (MeterManager.RequiresUpdate(2, reading) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.MIC)))) _RX2MeterValues[reading] = value;
         }
         private void picMultiMeterDigital_Click(object sender, EventArgs e)
         {
@@ -52009,8 +52023,28 @@ namespace Thetis
                 case OtherButtonId.TWOTON: TwoTone = !TwoTone; break;
                 case OtherButtonId.DUP: chkRX2SR.Checked = !chkRX2SR.Checked; break;
                 case OtherButtonId.PS_A: PSA = !PSA; break;
-                case OtherButtonId.REC: QuickRec = !QuickRec; break;
-                case OtherButtonId.PLAY: QuickPlay = !QuickPlay; break;
+                case OtherButtonId.REC:
+                    {
+                        if (ckQuickRec.Enabled) // button is disabled if play active
+                        {
+                            ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
+                            QuickRec = !QuickRec;
+                            ckQuickRec.CheckedChanged += ckQuickRec_CheckedChanged;
+                            ckQuickRec_CheckedChanged(this, EventArgs.Empty);
+                        }
+                    }
+                    break;
+                case OtherButtonId.PLAY:
+                    {
+                        if (ckQuickPlay.Enabled) // button is disabled if record active
+                        {
+                            ckQuickPlay.CheckedChanged -= ckQuickPlay_CheckedChanged;
+                            QuickPlay = !QuickPlay;
+                            ckQuickPlay.CheckedChanged += ckQuickPlay_CheckedChanged;
+                            ckQuickPlay_CheckedChanged(this, EventArgs.Empty);
+                        }
+                    }
+                    break;
                 //case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
                 case OtherButtonId.NR: incrementNR(rx); break;
                 case OtherButtonId.ANF: SetANF(rx, !GetANF(rx)); break;
@@ -54298,6 +54332,8 @@ namespace Thetis
 
                     if (ckQuickPlay.Checked) ckQuickPlay.Checked = false;
                 }
+
+                QuickPlayChangedHandlers?.Invoke(1, !playing, playing);
             }
             else
             {
@@ -54333,6 +54369,8 @@ namespace Thetis
 
                     if (ckQuickRec.Checked) ckQuickRec.Checked = false;
                 }
+
+                QuickRecordChangedHandlers?.Invoke(1, !recording, recording);
             }
             else
             {
