@@ -4596,11 +4596,6 @@ namespace Thetis
             TCPIPtciSocketListener.VFOData vfod = (TCPIPtciSocketListener.VFOData)o;
             centreFrequencyChange(vfod);
         }
-        private void TXFrequencycallback(Object o)
-        {
-            TCPIPtciSocketListener.VFOData vfod = (TCPIPtciSocketListener.VFOData)o;
-            TXFrequencyChange(vfod);
-        }
         public void VFOChange(VFOData vfod)
         {
             if (m_tmVFOtimer != null)
@@ -5462,23 +5457,24 @@ namespace Thetis
         }
 		private void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
 		{
-			TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
-			{
-				cen = false,
-				centreMHz = -1,
-				rx = -1,
-				freqMHz = new_frequency,
-				offsetHz = -1,
-				chan = -1,
-				duplicate_tochan = -1,
-				replace_if_duplicated = false,
-				sendIF = false,
+            TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
+            {
+                cen = false,
+                centreMHz = -1,
+                //rx = -1,
+                rx = rx2_enabled && tx_vfob ? 1 : 0,
+                freqMHz = new_frequency,
+                offsetHz = -1,
+                chan = -1,
+                duplicate_tochan = -1,
+                replace_if_duplicated = false,
+                sendIF = false,
 
-				SendTXInfo = true,
-				TXfreqBand = new_band,
+                SendTXInfo = true,
+                TXfreqBand = new_band,
                 RX2EnabledForTX = rx2_enabled,
-				TXVFOB = tx_vfob
-			};
+                TXVFOB = tx_vfob
+            };
 
             lock (m_objLocker)
             {

@@ -53273,6 +53273,8 @@ namespace Thetis
 
                     if (ckQuickPlay.Checked) ckQuickPlay.Checked = false;
                 }
+
+                QuickPlayChangedHandlers?.Invoke(1, !playing, playing);
             }
             else
             {
@@ -53308,6 +53310,8 @@ namespace Thetis
 
                     if (ckQuickRec.Checked) ckQuickRec.Checked = false;
                 }
+
+                QuickRecordChangedHandlers?.Invoke(1, !recording, recording);
             }
             else
             {
