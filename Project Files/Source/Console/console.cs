@@ -46620,7 +46620,7 @@ namespace Thetis
                     // get all readings
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.SIGNAL_STRENGTH))) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     bool bNeedAvg = true;
-                    if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH))
+                    if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)))
                     {
                         _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                         bNeedAvg = false;
@@ -46671,7 +46671,7 @@ namespace Thetis
                     //    }
                     //}
 
-                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_MAX_BIN))
+                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_MAX_BIN) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.SIGNAL_MAX_BIN)))
                     {
                         if (!_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(0);
@@ -46824,7 +46824,7 @@ namespace Thetis
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.SIGNAL_STRENGTH))) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     bool bNeedAvg = true;
-                    if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH))
+                    if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)))
                     {
                         _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                         bNeedAvg = false;
@@ -46848,7 +46848,7 @@ namespace Thetis
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
 
-                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_MAX_BIN))
+                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_MAX_BIN) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.SIGNAL_MAX_BIN)))
                     {
                         if (!_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(1);
