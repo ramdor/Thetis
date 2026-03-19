@@ -36571,7 +36571,8 @@ namespace Thetis
             //{
             //    WaveForm.QuickPlay = false;
             //    ckQuickPlay.BackColor = SystemColors.Control;
-            //}            
+            //}
+            
             if (!ckQuickPlay.Enabled) return; // leave if this function called direct
             if (ckQuickPlay.Checked)
             {
@@ -36616,6 +36617,7 @@ namespace Thetis
             //    if (!_updated_from_wave_form) WaveForm.QuickRec = false;
             //    ckQuickRec.BackColor = SystemColors.Control;
             //}
+
             if (!ckQuickRec.Enabled) return; // leave if this function called direct
             if (ckQuickRec.Checked)
             {
@@ -50984,8 +50986,28 @@ namespace Thetis
                 case OtherButtonId.TWOTON: TwoTone = !TwoTone; break;
                 case OtherButtonId.DUP: chkRX2SR.Checked = !chkRX2SR.Checked; break;
                 case OtherButtonId.PS_A: PSA = !PSA; break;
-                case OtherButtonId.REC: QuickRec = !QuickRec; break;
-                case OtherButtonId.PLAY: QuickPlay = !QuickPlay; break;
+                case OtherButtonId.REC:
+                    {
+                        if (ckQuickRec.Enabled) // button is disabled if play active
+                        {
+                            ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
+                            QuickRec = !QuickRec;
+                            ckQuickRec.CheckedChanged += ckQuickRec_CheckedChanged;
+                            ckQuickRec_CheckedChanged(this, EventArgs.Empty);
+                        }
+                    }
+                    break;
+                case OtherButtonId.PLAY:
+                    {
+                        if (ckQuickPlay.Enabled) // button is disabled if record active
+                        {
+                            ckQuickPlay.CheckedChanged -= ckQuickPlay_CheckedChanged;
+                            QuickPlay = !QuickPlay;
+                            ckQuickPlay.CheckedChanged += ckQuickPlay_CheckedChanged;
+                            ckQuickPlay_CheckedChanged(this, EventArgs.Empty);
+                        }
+                    }
+                    break;
                 //case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
                 case OtherButtonId.NR: incrementNR(rx); break;
                 case OtherButtonId.ANF: SetANF(rx, !GetANF(rx)); break;
