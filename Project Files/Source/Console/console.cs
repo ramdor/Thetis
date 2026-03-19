@@ -37275,6 +37275,9 @@ namespace Thetis
             }
         }
 
+        private int _old_rx1_gain = -1;
+        private int _old_rx1sub_gain = -1;
+        private int _old_rx2_gain = -1;
         private void ptbRX0Gain_Scroll(object sender, System.EventArgs e)
         {
             lblRX1Vol.Text = "Vol";
@@ -37307,6 +37310,13 @@ namespace Thetis
             Midi2Cat.SendUpdateToMidi(CatCmd.VolumeVfoA_inc, pct);
             if (sliderForm != null)
                 sliderForm.RX1Gain = ptbRX0Gain.Value;
+
+            int gain = ptbRX0Gain.Value;
+            if (gain != _old_rx1_gain)
+            {
+                RXGainChangedHandlers?.Invoke(1, false, _old_rx1_gain, gain);
+                _old_rx1_gain = gain;
+            }
         }
 
         private void ptbRX1Gain_Scroll(object sender, System.EventArgs e)
@@ -37331,6 +37341,12 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.SubRXGain = ptbRX1Gain.Value;
 
+            int gain = ptbRX1Gain.Value;
+            if (gain != _old_rx1sub_gain)
+            {
+                RXGainChangedHandlers?.Invoke(1, true, _old_rx1sub_gain, gain);
+                _old_rx1sub_gain = gain;
+            }
         }
 
         #endregion
@@ -39308,6 +39324,14 @@ namespace Thetis
             Midi2Cat.SendUpdateToMidi(CatCmd.VolumeVfoB_inc, pct);
             if (sliderForm != null)
                 sliderForm.RX2Gain = ptbRX2Gain.Value;
+
+            int gain = ptbRX2Gain.Value;
+            if (gain != _old_rx2_gain)
+            {
+                RXGainChangedHandlers?.Invoke(2, false, _old_rx2_gain, gain);
+                RXGainChangedHandlers?.Invoke(2, true , _old_rx2_gain, gain); // no sub rx on 2, send anyway
+                _old_rx2_gain = gain;
+            }
         }
 
         private void chkRX2Mute_CheckedChanged(object sender, System.EventArgs e)
@@ -44014,7 +44038,11 @@ namespace Thetis
             cat_rx2_nr_status = 0;
             cat_rx2_nr2_status = 0;
 
-            switch (_nr_selected[rx - 1])
+            int nr = _nr_selected[rx - 1];
+            if (nr < 0) nr = 0;
+            if (nr > 4) nr = 4;
+
+            switch (nr)
             {
                 case 0: // all off
                     rad.RXANR4Run = 0;
@@ -45685,6 +45713,7 @@ namespace Thetis
         public delegate void CWXShown(bool shown);
         public delegate void GlobalKeyPress(Keys keycode);
         public delegate void DarkModeChanged(bool dark_mode);
+        public delegate void RXGainChanged(int rx, bool is_subrx, int old_gain, int new_gain);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -45826,6 +45855,8 @@ namespace Thetis
         public GlobalKeyPress GlobalKeyPressDownHandlers;
 
         public DarkModeChanged DarkModeChangedHandlers;
+
+        public RXGainChanged RXGainChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
