@@ -2928,8 +2928,9 @@ namespace Thetis
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (!comboTXProfileName.Items.Contains(dr["Name"]))
-                        comboTXProfileName.Items.Add(dr["Name"]);
+                    string profile_name = (string)dr["Name"];
+                    if (!comboTXProfileName.Items.Contains(profile_name))
+                        comboTXProfileName.Items.Add(profile_name);
                 }
             }
         }
@@ -9254,7 +9255,7 @@ namespace Thetis
             // NOTE: make sure you update checkTXProfileChanged2, if anything is added/removed
             //
 
-            DataRow[] rows = getDataRowsForTXProfile(sProfileName);// DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = getDataRowsForTXProfile(sProfileName);// DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''            
 
             if (rows.Length != 1)
             {
@@ -9546,6 +9547,10 @@ namespace Thetis
             string name = InputBox.Show("Save Profile", "Please enter a profile name:",
                 _current_profile);
 
+            // no more , in profile names, because it will make the tci tx profile messages look like they have multiple parts
+            // existing ones will cause issues no doubt, but just not worth the effort to reparse the database
+            name = name.Replace(",", "_");
+
             if (string.IsNullOrEmpty(name))
             {
                 MessageBox.Show("TX Profile Save cancelled",
@@ -9596,6 +9601,10 @@ namespace Thetis
             {
                 DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
+
+                // tell delgates that we changed the tx profile list
+                console.TXProfilesChangedHandlers?.Invoke();
+
                 comboTXProfileName.Text = name;
             }
 
@@ -9632,6 +9641,10 @@ namespace Thetis
 
             int index = comboTXProfileName.SelectedIndex;
             comboTXProfileName.Items.Remove(comboTXProfileName.Text);
+
+            // tell delgates that we changed the tx profile list
+            console.TXProfilesChangedHandlers?.Invoke();
+
             if (comboTXProfileName.Items.Count > 0)
             {
                 if (index > comboTXProfileName.Items.Count - 1)
@@ -12383,6 +12396,10 @@ namespace Thetis
             {
                 DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
+
+                // tell delgates that we changed the tx profile list
+                console.TXProfilesChangedHandlers?.Invoke();
+
                 comboTXProfileName.Text = name;
             }
 
