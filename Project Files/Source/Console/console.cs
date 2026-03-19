@@ -12433,6 +12433,44 @@ namespace Thetis
                 }
             }
         }
+        public void SafeTXProfileSet(string profile)
+        {
+            ComboBox combo = null;
+
+            switch (_rx1_dsp_mode)
+            {
+                case DSPMode.DIGL:
+                case DSPMode.DIGU:
+                    combo = comboDigTXProfile;
+                    break;
+
+                case DSPMode.FM:
+                    combo = comboFMTXProfile;
+                    break;
+
+                case DSPMode.AM:
+                case DSPMode.SAM:
+                    combo = comboAMTXProfile;
+                    break;
+
+                default:
+                    combo = comboTXProfile;
+                    break;
+            }
+
+            if (combo == null || string.IsNullOrEmpty(profile))
+                return;
+
+            for (int i = 0; i < combo.Items.Count; i++)
+            {
+                object item = combo.Items[i];
+                if (item != null && string.Equals(item.ToString(), profile, StringComparison.Ordinal))
+                {
+                    TXProfile = profile;
+                    return;
+                }
+            }
+        }
 
         private string vac_sample_rate = "48000";
         public string VACSampleRate
@@ -45660,6 +45698,7 @@ namespace Thetis
         public delegate void TXFiltersChanged(int low, int high);
         public delegate void PAProfileChanged(string old_profile_name, string new_profile_name);
         public delegate void TXProfileChanged(string old_name, string new_name);
+        public delegate void TXProfilesChanged();
 
         public delegate void RXSpecGridMinMaxChanged(int rx, int min, int max);
         public delegate void TXSpecGridMinMaxChanged(int min, int max);
@@ -45800,6 +45839,7 @@ namespace Thetis
         public TXFiltersChanged TXFiltersChangedHandlers;
 
         public TXProfileChanged TXProfileChangedHandlers;
+        public TXProfilesChanged TXProfilesChangedHandlers;
 
         public RXSpecGridMinMaxChanged RXSpecGridMinMaxChangedHandlers;
         public TXSpecGridMinMaxChanged TXSpecGridMinMaxChangedHandlers;

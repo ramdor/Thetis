@@ -1109,6 +1109,21 @@ namespace Thetis
             double db = audioGainToDb(gain / 100f);
             sendRxVolume(rx - 1, chan, db);
         }
+        public void CTUNChanged(int rx, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendCTUN(rx - 1, enabled);
+        }
+        public void TXProfileChanged(string profile)
+        {
+            if (m_disconnected) return;
+            sendTXProfile(profile);
+        }
+        public void TXProfilesChanged()
+        {
+            if (m_disconnected) return;
+            sendTXProfiles();
+        }
         public void MONChanged(bool newState)
 		{
             if (m_disconnected) return;
@@ -1945,6 +1960,12 @@ namespace Thetis
             sendRxVolume(0, 1, rx1Subvol);
             sendRxVolume(1, 0, rx2vol);
             sendRxVolume(1, 1, rx2vol);
+
+            sendCTUN(0, console.ThreadSafeTCIAccessor.GetCTUN(1));
+            sendCTUN(1, console.ThreadSafeTCIAccessor.GetCTUN(2));
+
+            sendTXProfiles();
+            sendTXProfile(console.ThreadSafeTCIAccessor.TXProfile);
             //lock
             //TODO rx channel enable
             //rit/xit
@@ -3484,8 +3505,9 @@ namespace Thetis
 			bool enable = false;
 
 			bool bOK = int.TryParse(args[0], out rx);
+            if (rx < 0 || rx > 1) return;
 
-			if (args.Length == 2)
+            if (args.Length == 2)
 			{				
 				if (bOK)
 					bOK = bool.TryParse(args[1], out enable);
@@ -3556,6 +3578,7 @@ namespace Thetis
         {
             if (args == null || args.Length < 1 || is_extended && args.Length < 3) return;
             if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
 
             int nr = 1;
             bool enable = false;
@@ -3588,6 +3611,7 @@ namespace Thetis
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
             if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
 
             bool enable = false;
             if (args.Length == 1)
@@ -3635,7 +3659,9 @@ namespace Thetis
         {
             if (args == null || args.Length < 2 || args.Length > 3) return;
             if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
             if (!int.TryParse(args[1], out int chan)) return;
+            if (chan < 0 || chan > 1) return;
 
             int vol = 0;
 
@@ -3689,6 +3715,82 @@ namespace Thetis
                         console.ThreadSafeTCIAccessor.RX2Gain = (int)ag;
                         break;
                 }
+            }
+        }
+        private void sendCTUN(int rx, bool enabled)
+        {
+            string s = "rx_ctun_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+
+            sendTextFrame(s);
+        }
+        private void handleCTUN(string[] args)
+        {
+            if(args== null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            bool enable = false;
+            if(args.Length == 1)
+            {
+                //get
+                enable = console.ThreadSafeTCIAccessor.GetCTUN(rx + 1);
+                sendCTUN(rx, enable);
+            }
+            else
+            {
+                //set
+                if (!bool.TryParse(args[1], out enable)) return;
+                console.ThreadSafeTCIAccessor.SetCTUN(rx + 1, enable);
+            }
+        }
+        private void sendTXProfile(string prof)
+        {
+            string s = "tx_profile_ex:" + prof + ";";
+
+            sendTextFrame(s);
+        }
+        private void sendTXProfiles()
+        {
+            // each profile surrounded with {} and , separated
+            if (console == null || console.IsSetupFormNull) return;
+
+            string[] profiles = console.ThreadSafeTCIAccessor.SetupForm.GetTXProfileStrings();
+            string formatted_profiles = string.Join(",", profiles);
+            string s = "tx_profiles_ex:" + formatted_profiles + ";";
+
+            sendTextFrame(s);
+        }
+        private void handleTXProfile(string[] args)
+        {
+            if (args == null || args.Length > 1) return;
+
+            if (args.Length == 0)
+            {
+                //get current tcprofille
+                string prof = console.ThreadSafeTCIAccessor.TXProfile;
+                sendTXProfile(prof);
+            }
+            else
+            {
+                //set
+                console.ThreadSafeTCIAccessor.SafeTXProfileSet(args[1]);
+            }
+        }
+        private void handleTXProfiles()
+        {
+            sendTXProfiles();
+        }
+        private void handleShutdown()
+        {
+            if (console.ThreadSafeTCIAccessor.InvokeRequired)
+            {
+                console.ThreadSafeTCIAccessor.BeginInvoke(new MethodInvoker(() =>
+                {
+                    console.ThreadSafeTCIAccessor.Close();
+                }));
+            }
+            else
+            {
+                console.ThreadSafeTCIAccessor.Close();
             }
         }
         //
@@ -3945,6 +4047,12 @@ namespace Thetis
                     case "rx_volume":
                         handleRxVolume(args);
                         break;
+                    case "rx_ctun_ex":
+                        handleCTUN(args); // bespoke thetis cmd for ctun
+                        break;
+                    case "tx_profile_ex":
+                        handleTXProfile(args); // bespoke thetis cmd to select tx profile
+                        break;
                 }
             }
             else if (parts.Length == 1)
@@ -3982,6 +4090,12 @@ namespace Thetis
                         break;
                     case "spot_clear":
                         handleSpotClear();
+                        break;
+                    case "tx_profiles_ex":
+                        handleTXProfiles(); // bespoke thetis cmd to send out tx profiles list
+                        break;
+                    case "shutdown_ex":
+                        handleShutdown(); // bespoke thetis cmd  to do a full shutdown
                         break;
                 }
             }
@@ -5105,6 +5219,9 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.NRChangedHandlers += OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers += OnAnfChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers += OnRxAfGainChanged;
+                    console.ThreadSafeTCIAccessor.CTUNChangedHandlers += OnCTUNChanged;
+                    console.ThreadSafeTCIAccessor.TXProfileChangedHandlers += OnTXProfileChanged;
+                    console.ThreadSafeTCIAccessor.TXProfilesChangedHandlers += OnTXProfilesChanged;
 
                     m_bDelegatesAdded = true;
 				}
@@ -5179,6 +5296,9 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.NRChangedHandlers -= OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers -= OnAnfChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers -= OnRxAfGainChanged;
+                    console.ThreadSafeTCIAccessor.CTUNChangedHandlers -= OnCTUNChanged;
+                    console.ThreadSafeTCIAccessor.TXProfileChangedHandlers -= OnTXProfileChanged;
+                    console.ThreadSafeTCIAccessor.TXProfilesChangedHandlers -= OnTXProfilesChanged;
 
                     m_bDelegatesAdded = false;
 				}
@@ -5676,6 +5796,42 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.RxAfGainChanged(rx, is_subrx, new_gain);
+                }
+            }
+        }
+        private void OnCTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.CTUNChanged(rx, newCTUN);
+                }
+            }
+        }
+        private void OnTXProfileChanged(string old_name, string new_name)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.TXProfileChanged(new_name);
+                }
+            }
+        }
+        private void OnTXProfilesChanged()
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.TXProfilesChanged();
                 }
             }
         }
