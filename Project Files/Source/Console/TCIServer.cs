@@ -321,6 +321,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace Thetis
 {
@@ -1101,6 +1102,13 @@ namespace Thetis
             if (m_disconnected) return;
             sendAnfEnable(rx - 1, newState);
         }
+        public void RxAfGainChanged(int rx, bool is_subrx, int gain)
+        {
+            if (m_disconnected) return;
+            int chan = is_subrx ? 1 : 0;
+            double db = audioGainToDb(gain / 100f);
+            sendRxVolume(rx - 1, chan, db);
+        }
         public void MONChanged(bool newState)
 		{
             if (m_disconnected) return;
@@ -1769,7 +1777,7 @@ namespace Thetis
 		{
             if (volume < -60f || volume > 0f) return;
 
-            string s = "mon_volume:" + volume.ToString("F1").ToLower() + ";";
+            string s = "mon_volume:" + volume.ToString("F1", CultureInfo.InvariantCulture).ToLower() + ";";
             sendTextFrame(s);
         }
 		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
@@ -1842,11 +1850,11 @@ namespace Thetis
 		}
 		private void sendRxSensors(int rx, double levelDbm)
 		{
-			sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1") + ";");
+			sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
 		}
 		private void sendRxChannelSensors(int rx, int channel, double levelDbm)
 		{
-			sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1") + ";");
+			sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
 		}
 		private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
 		{
@@ -1929,6 +1937,14 @@ namespace Thetis
             sendAnfEnable(0, console.ThreadSafeTCIAccessor.GetANF(1));
             sendAnfEnable(1, console.ThreadSafeTCIAccessor.GetANF(2));
 
+            double rx1vol = audioGainToDb(console.ThreadSafeTCIAccessor.RX0Gain / 100f);
+            double rx1Subvol = audioGainToDb(console.ThreadSafeTCIAccessor.RX1Gain / 100f);
+            double rx2vol = audioGainToDb(console.ThreadSafeTCIAccessor.RX2Gain / 100f);
+
+            sendRxVolume(0, 0, rx1vol);
+            sendRxVolume(0, 1, rx1Subvol);
+            sendRxVolume(1, 0, rx2vol);
+            sendRxVolume(1, 1, rx2vol);
             //lock
             //TODO rx channel enable
             //rit/xit
@@ -3538,34 +3554,142 @@ namespace Thetis
         }
         private void handleNrEnable(string[] args, bool is_extended)
         {
-            int nr = 1;
-
-            if (args == null || !((!is_extended && args.Length == 2) || (is_extended && args.Length == 3))) return;
+            if (args == null || args.Length < 1 || is_extended && args.Length < 3) return;
             if (!int.TryParse(args[0], out int rx)) return;
-            if (!bool.TryParse(args[1], out bool enable)) return;
-            if (is_extended && !int.TryParse(args[2], out nr)) return;
-            if (nr < 1 || nr > 4) return;
 
-            if (enable)
-            {                
-                console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, is_extended ? nr : 1);
+            int nr = 1;
+            bool enable = false;
+            if (args.Length == 1)
+            {
+                //get
+                nr = console.ThreadSafeTCIAccessor.GetSelectedNR(rx + 1);
+                enable = nr > 0;
+                sendNrEnable(rx, enable, false, nr);
+                sendNrEnable(rx, enable, true, nr);
             }
             else
             {
-                console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, 0);
-            }
+                //set
+                if (!bool.TryParse(args[1], out enable)) return;
+                if (is_extended && !int.TryParse(args[2], out nr)) return;
+                if (nr < 1 || nr > 4) return;
 
-            sendNrEnable(rx, enable, is_extended, nr);
+                if (enable)
+                {
+                    console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, is_extended ? nr : 1);
+                }
+                else
+                {
+                    console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, 0);
+                }                
+            }
         }
         private void handleAnfEnable(string[] args)
         {
-            if (args == null || args.Length != 2) return;
+            if (args == null || args.Length < 1 || args.Length > 2) return;
             if (!int.TryParse(args[0], out int rx)) return;
-            if (!bool.TryParse(args[1], out bool enable)) return;
 
-            console.ThreadSafeTCIAccessor.SetANF(rx + 1, enable);
+            bool enable = false;
+            if (args.Length == 1)
+            {
+                // get
+                enable = console.ThreadSafeTCIAccessor.GetANF(rx + 1);
+                sendAnfEnable(rx, enable);
+            }
+            else
+            {
+                //set
+                if (!bool.TryParse(args[1], out enable)) return;
 
-            sendAnfEnable(rx, enable);
+                console.ThreadSafeTCIAccessor.SetANF(rx + 1, enable);                
+            }            
+        }
+        private double dbToAudioGain(double db)
+        {
+            if (db <= -60.0)
+                return 0.0;
+
+            if (db >= 0.0)
+                return 1.0;
+
+            return Math.Pow(10.0, db / 20.0);
+        }
+
+        private double audioGainToDb(double gain)
+        {
+            if (gain <= 0.0)
+                return -60.0;
+
+            if (gain >= 1.0)
+                return 0.0;
+
+            return 20.0 * Math.Log10(gain);
+        }
+        private void sendRxVolume(int rx, int chan, double volume)
+        {
+            string s = "rx_volume:" + rx.ToString() + "," + chan.ToString() + "," + volume.ToString("F2", CultureInfo.InvariantCulture) + ";";
+
+            sendTextFrame(s);
+        }
+        private void handleRxVolume(string[] args)
+        {
+            if (args == null || args.Length < 2 || args.Length > 3) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (!int.TryParse(args[1], out int chan)) return;
+
+            int vol = 0;
+
+            if (args.Length == 2)
+            {
+                //get
+                switch (rx + 1)
+                {
+                    case 1:
+                        if (chan == 0)
+                        {
+                            vol = console.ThreadSafeTCIAccessor.RX0Gain; // such horrible naming
+                        }
+                        else if (chan == 1)
+                        {
+                            vol = console.ThreadSafeTCIAccessor.RX1Gain;
+                        }
+                        else
+                            return;
+                        break;
+                    case 2:
+                        vol = console.ThreadSafeTCIAccessor.RX2Gain; // no sub
+                        break;
+                }
+                double perc = vol / 100f;
+                double db = audioGainToDb(perc);
+                sendRxVolume(rx, chan, db);
+            }
+            else
+            {
+                //set
+                if (!double.TryParse(args[2], out double db)) return;
+
+                double ag = dbToAudioGain(db) * 100f;              
+
+                switch (rx + 1)
+                {
+                    case 1:
+                        if (chan == 0)
+                        {
+                            console.ThreadSafeTCIAccessor.RX0Gain = (int)ag;
+                        }
+                        else if (chan == 1)
+                        {
+                            console.ThreadSafeTCIAccessor.RX1Gain = (int)ag;
+                        }
+                        else
+                            return;
+                        break;
+                    case 2:
+                        console.ThreadSafeTCIAccessor.RX2Gain = (int)ag;
+                        break;
+                }
+            }
         }
         //
 
@@ -3817,6 +3941,9 @@ namespace Thetis
                         break;
                     case "rx_anf_enable":
                         handleAnfEnable(args);
+                        break;
+                    case "rx_volume":
+                        handleRxVolume(args);
                         break;
                 }
             }
@@ -4977,6 +5104,7 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers += OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers += OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.RXGainChangedHandlers += OnRxAfGainChanged;
 
                     m_bDelegatesAdded = true;
 				}
@@ -5050,6 +5178,7 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers -= OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers -= OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers -= OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.RXGainChangedHandlers -= OnRxAfGainChanged;
 
                     m_bDelegatesAdded = false;
 				}
@@ -5535,6 +5664,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.AnfChanged(rx, new_state);
+                }
+            }
+        }
+        private void OnRxAfGainChanged(int rx, bool is_subrx, int old_gain, int new_gain)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RxAfGainChanged(rx, is_subrx, new_gain);
                 }
             }
         }
