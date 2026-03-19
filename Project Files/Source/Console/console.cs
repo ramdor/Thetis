@@ -43066,7 +43066,11 @@ namespace Thetis
             cat_rx2_nr_status = 0;
             cat_rx2_nr2_status = 0;
 
-            switch (_nr_selected[rx - 1])
+            int nr = _nr_selected[rx - 1];
+            if (nr < 0) nr = 0;
+            if (nr > 4) nr = 4;
+
+            switch (nr)
             {
                 case 0: // all off
                     rad.RXANR4Run = 0;

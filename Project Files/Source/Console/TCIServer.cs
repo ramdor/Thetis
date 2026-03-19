@@ -1089,7 +1089,19 @@ namespace Thetis
 			sendMute(console.ThreadSafeTCIAccessor.MUT || (console.ThreadSafeTCIAccessor.RX2Enabled && console.ThreadSafeTCIAccessor.MUT2));
 			sendMuteRX(rx - 1, newState);
         }
-		public void MONChanged(bool newState)
+        public void NrChanged(int rx, int newNR)
+        {
+            if (m_disconnected) return;
+            bool enabled = newNR > 0;
+            sendNrEnable(rx - 1, enabled, false, newNR);
+            sendNrEnable(rx - 1, enabled, true, newNR);
+        }
+        public void AnfChanged(int rx, bool newState)
+        {
+            if (m_disconnected) return;
+            sendAnfEnable(rx - 1, newState);
+        }
+        public void MONChanged(bool newState)
 		{
             if (m_disconnected) return;
 			sendMONEnable(newState);
@@ -1907,11 +1919,21 @@ namespace Thetis
             sendRXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
 			sendRXEnable(1, bRX2Enabled && !console.ThreadSafeTCIAccessor.MOX);
 
-			//lock
-			//TODO rx channel enable
-			//rit/xit
+            int rx1nr = console.ThreadSafeTCIAccessor.GetSelectedNR(1);
+            int rx2nr = console.ThreadSafeTCIAccessor.GetSelectedNR(2);
+            sendNrEnable(0, rx1nr > 0, false, rx1nr);
+            sendNrEnable(1, rx2nr > 0, false, rx2nr);
+            sendNrEnable(0, rx1nr > 0, true, rx1nr);
+            sendNrEnable(1, rx2nr > 0, true, rx2nr);
 
-			sendSplit(0, console.ThreadSafeTCIAccessor.VFOSplit);
+            sendAnfEnable(0, console.ThreadSafeTCIAccessor.GetANF(1));
+            sendAnfEnable(1, console.ThreadSafeTCIAccessor.GetANF(2));
+
+            //lock
+            //TODO rx channel enable
+            //rit/xit
+
+            sendSplit(0, console.ThreadSafeTCIAccessor.VFOSplit);
 			sendSplit(1, bRX2Enabled && console.ThreadSafeTCIAccessor.VFOSplit);
 
 			sendTXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
@@ -3486,8 +3508,7 @@ namespace Thetis
 
 			setRxSensorsEnabled(enabled, intervalMs, enabled);
 		}
-
-		private void handleTxSensorsEnable(string[] args)
+        private void handleTxSensorsEnable(string[] args)
 		{
 			if (args == null || args.Length < 1 || args.Length > 2) return;
 			if (!bool.TryParse(args[0], out bool enabled)) return;
@@ -3498,6 +3519,55 @@ namespace Thetis
 
 			setTxSensorsEnabled(enabled, intervalMs, enabled);
 		}
+        //
+        private void sendNrEnable(int rx, bool enabled, bool is_extended, int nr)
+        {
+            string s;
+            if(is_extended)
+                s = "rx_nr_enable_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + "," + nr.ToString() + ";";
+            else
+                s = "rx_nr_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+
+            sendTextFrame(s);
+        }
+        private void sendAnfEnable(int rx, bool enabled)
+        {
+            string s = "rx_anf_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+
+            sendTextFrame(s);
+        }
+        private void handleNrEnable(string[] args, bool is_extended)
+        {
+            int nr = 1;
+
+            if (args == null || !((!is_extended && args.Length == 2) || (is_extended && args.Length == 3))) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (!bool.TryParse(args[1], out bool enable)) return;
+            if (is_extended && !int.TryParse(args[2], out nr)) return;
+            if (nr < 1 || nr > 4) return;
+
+            if (enable)
+            {                
+                console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, is_extended ? nr : 1);
+            }
+            else
+            {
+                console.ThreadSafeTCIAccessor.SelectNR(rx + 1, false, 0);
+            }
+
+            sendNrEnable(rx, enable, is_extended, nr);
+        }
+        private void handleAnfEnable(string[] args)
+        {
+            if (args == null || args.Length != 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (!bool.TryParse(args[1], out bool enable)) return;
+
+            console.ThreadSafeTCIAccessor.SetANF(rx + 1, enable);
+
+            sendAnfEnable(rx, enable);
+        }
+        //
 
         private List<string> splitTextCommands(string msg)
         {
@@ -3738,6 +3808,15 @@ namespace Thetis
                         break;
                     case "tx_sensors_enable":
                         handleTxSensorsEnable(args);
+                        break;
+                    case "rx_nr_enable":
+                        handleNrEnable(args, false);
+                        break;
+                    case "rx_nr_enable_ex":
+                        handleNrEnable(args, true);
+                        break;
+                    case "rx_anf_enable":
+                        handleAnfEnable(args);
                         break;
                 }
             }
@@ -4895,7 +4974,9 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.MONChangedHandlers += OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers += OnMONVolumeChanged;
 					console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
-                    console.MeterReadingsChangedHandlers += OnMeterReadingsChangedHandler;
+                    console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
+                    console.ThreadSafeTCIAccessor.NRChangedHandlers += OnNrChanged;
+                    console.ThreadSafeTCIAccessor.ANFChangedHandlers += OnAnfChanged;
 
                     m_bDelegatesAdded = true;
 				}
@@ -4966,7 +5047,9 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MONChangedHandlers -= OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers -= OnMONVolumeChanged;
                     console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
-                    console.MeterReadingsChangedHandlers -= OnMeterReadingsChangedHandler;
+                    console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers -= OnMeterReadingsChanged;
+                    console.ThreadSafeTCIAccessor.NRChangedHandlers -= OnNrChanged;
+                    console.ThreadSafeTCIAccessor.ANFChangedHandlers -= OnAnfChanged;
 
                     m_bDelegatesAdded = false;
 				}
@@ -5431,6 +5514,30 @@ namespace Thetis
                 }
             }
         }
+        private void OnNrChanged(int rx, int old_nr, int new_nr)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.NrChanged(rx, new_nr);
+                }
+            }
+        }
+        private void OnAnfChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.AnfChanged(rx, new_state);
+                }
+            }
+        }
         private void OnMONChanged(bool oldState, bool newState)
         {
             lock (m_objLocker)
@@ -5486,7 +5593,7 @@ namespace Thetis
                 }
             }
         }
-        private void OnMeterReadingsChangedHandler(int rx, bool tx, ref Dictionary<Reading, float> readings)
+        private void OnMeterReadingsChanged(int rx, bool tx, ref Dictionary<Reading, float> readings)
         {
             lock (m_objLocker)
             {
