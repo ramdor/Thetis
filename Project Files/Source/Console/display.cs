@@ -2872,11 +2872,10 @@ namespace Thetis
                         _waterfall_bmp_dx2d = null;
                     }
                     _waterfall_bmp_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
+                    clearWaterfallBitmapRegion(_waterfall_bmp_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                     if (tmp != null)
                     {
-                        clearWaterfallBitmapRegion(_waterfall_bmp_dx2d, 0, 0, displayTargetWidth, H - 20);
-
                         // copy old waterfall into new bitmap
                         _waterfall_bmp_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
                         Utilities.Dispose(ref tmp);
@@ -2928,11 +2927,10 @@ namespace Thetis
                         _waterfall_bmp2_dx2d = null;
                     }
                     _waterfall_bmp2_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
+                    clearWaterfallBitmapRegion(_waterfall_bmp2_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                     if (tmp != null)
                     {
-                        clearWaterfallBitmapRegion(_waterfall_bmp2_dx2d, 0, 0, displayTargetWidth, H - 20);
-
                         // copy old waterfall into new bitmap
                         _waterfall_bmp2_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
                         Utilities.Dispose(ref tmp);
