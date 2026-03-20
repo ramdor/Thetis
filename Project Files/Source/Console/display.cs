@@ -2875,13 +2875,7 @@ namespace Thetis
 
                     if (tmp != null)
                     {
-                        byte[] zeroed = new byte[displayTargetWidth * (H - 20) * 4];
-                        unsafe
-                        {
-                            fixed (void* wptr = &zeroed[0])
-                                Win32.memset(wptr, 0, zeroed.Length);
-                        }
-                        _waterfall_bmp_dx2d.CopyFromMemory(zeroed, 4);
+                        clearWaterfallBitmapRegion(_waterfall_bmp_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                         // copy old waterfall into new bitmap
                         _waterfall_bmp_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
@@ -2937,13 +2931,7 @@ namespace Thetis
 
                     if (tmp != null)
                     {
-                        byte[] zeroed = new byte[displayTargetWidth * (H - 20) * 4];
-                        unsafe
-                        {
-                            fixed (void* wptr = &zeroed[0])
-                                Win32.memset(wptr, 0, zeroed.Length);
-                        }
-                        _waterfall_bmp2_dx2d.CopyFromMemory(zeroed, 4);
+                        clearWaterfallBitmapRegion(_waterfall_bmp2_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                         // copy old waterfall into new bitmap
                         _waterfall_bmp2_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
@@ -6137,6 +6125,8 @@ namespace Thetis
             try
             {
                 Array.Clear(clearBuffer, 0, bytesNeeded);
+                for (int i = 3; i < bytesNeeded; i += pixelSize)
+                    clearBuffer[i] = 255;
                 bitmap.CopyFromMemory(clearBuffer, stride, new SharpDX.Rectangle(x, y, width, height));
             }
             finally
