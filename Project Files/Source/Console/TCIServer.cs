@@ -3805,7 +3805,7 @@ namespace Thetis
             else
             {
                 //set
-                console.ThreadSafeTCIAccessor.SafeTXProfileSet(args[1]);
+                console.ThreadSafeTCIAccessor.SafeTXProfileSet(args[0]);
             }
         }
         private void handleTXProfiles()
@@ -4150,6 +4150,10 @@ namespace Thetis
                         break;
                     case "shutdown_ex":
                         handleShutdown(); // bespoke thetis cmd  to do a full shutdown
+                        break;
+                    case "tx_profile_ex":
+                        string[] tmpArgs = new string[0];
+                        handleTXProfile(tmpArgs); // bespoke thetis cmd to select tx profile
                         break;
                 }
             }
