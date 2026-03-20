@@ -45215,9 +45215,11 @@ namespace Thetis
         }
         private void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
         {
-            //MW0LGE_21h
-            if (rx == 1) Display.CentreFreqRX1 = newFreq;
-            else if (rx == 2) Display.CentreFreqRX2 = newFreq;
+            //[2.10.3.13]MW0LGE removed as only done when frequencies are bein modified
+            //otherwise there could be some 'jiggle' due to timing
+            ////MW0LGE_21h
+            //if (rx == 1) Display.CentreFreqRX1 = newFreq;
+            //else if (rx == 2) Display.CentreFreqRX2 = newFreq;
 
             //MW0LGE_21d N1MM
             N1MM.Resize(rx);
@@ -45541,11 +45543,13 @@ namespace Thetis
         }
         private void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            if (rx == 1)
-            {
-                //used primarily to reset spectral peaks
-                Display.CentreFreqRX1 = CentreFrequency;
-            }
+            //[2.10.3.13]MW0LGE removed as only done when frequencies are bein modified
+            //otherwise there could be some 'jiggle' due to timing
+            //if (rx == 1)
+            //{
+            //    //used primarily to reset spectral peaks
+            //    Display.CentreFreqRX1 = CentreFrequency;
+            //}
 
             //cat broadcast for kenwood AI
             if (KWAutoInformation)
@@ -45560,11 +45564,13 @@ namespace Thetis
         }
         private void OnVFOBFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            if (rx == 2)
-            {
-                //used primarily to reset spectral peaks
-                Display.CentreFreqRX2 = CentreRX2Frequency;
-            }
+            //[2.10.3.13]MW0LGE removed as only done when frequencies are bein modified
+            //otherwise there could be some 'jiggle' due to timing
+            //if (rx == 2)
+            //{
+            //    //used primarily to reset spectral peaks
+            //    Display.CentreFreqRX2 = CentreRX2Frequency;
+            //}
 
             //cat broadcast for kenwood AI
             if (KWAutoInformation)
