@@ -112,6 +112,16 @@ extern __declspec (dllexport) void SendpOutboundTCIRxIQ (void (*Outbound)(int id
 extern __declspec (dllexport) void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff));
 extern __declspec (dllexport) void SetTCIRun (int active);
 extern __declspec (dllexport) void SetTXTCIAudio (int txid, int active);
+extern __declspec (dllexport) void SetVSTRxBypass (int bypass);
+extern __declspec (dllexport) int  GetVSTRxBypass (void);
+extern __declspec (dllexport) int  GetVSTRxReady  (void);
+extern __declspec (dllexport) void SetVSTRxGain   (double gain);
+extern __declspec (dllexport) double GetVSTRxGain (void);
+extern __declspec (dllexport) void SetVSTTxBypass (int bypass);
+extern __declspec (dllexport) int  GetVSTTxBypass (void);
+extern __declspec (dllexport) int  GetVSTTxReady  (void);
+extern __declspec (dllexport) void SetVSTTxGain   (double gain);
+extern __declspec (dllexport) double GetVSTTxGain (void);
 
 enum AudioCODEC
 {

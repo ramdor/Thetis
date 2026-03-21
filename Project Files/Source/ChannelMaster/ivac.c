@@ -97,6 +97,8 @@ PORT void create_ivac(
 	a->swapIQout = 0;
 	a->exclusive_in = 0;
 	a->exclusive_out = 0;
+	a->vac_apply_rx_vst = 0;
+	a->vac_bypass_tx_vst = 0;
 	a->mono_in_to_stereo_buffer = NULL;
 	a->mono_in_to_stereo_capacity = 0;
 	InitializeCriticalSectionAndSpinCount(&a->cs_ivac, 2500);
@@ -126,7 +128,7 @@ PORT void destroy_ivac(int id)
 	free (a);
 }
 
-PORT void xvacIN(int id, double* in_tx, int bypass)
+PORT int xvacIN(int id, double* in_tx, int bypass)
 {
 	// used for MIC data to TX
 	IVAC a = pvac[id];
@@ -137,9 +139,11 @@ PORT void xvacIN(int id, double* in_tx, int bypass)
 			if (a->vac_combine_input)
 				combinebuff(a->mic_size, in_tx, in_tx);// , 3); //[2.10.3.6]MW0LGE new 17.11.0 version of VS started complaining about this 3, has been there 8 months
 			scalebuff(a->mic_size, in_tx, a->vac_preamp, in_tx);
+			return 1;
 		}
 		else
 			xrmatchOUT (a->rmatchIN, a->bitbucket);
+	return 0;
 }
 
 PORT void xvacOUT(int id, int stream, double* data)
@@ -153,7 +157,10 @@ PORT void xvacOUT(int id, int stream, double* data)
 		if (!a->iq_type)
 		{	// call mixer to synchronize the two streams
 			if (stream == 1)
-				xMixAudio(a->mixer, -1, 0, data);
+			{
+				if (!a->vac_apply_rx_vst)
+					xMixAudio(a->mixer, -1, 0, data);
+			}
 			else if (stream == 2)
 				xMixAudio(a->mixer, -1, 1, data);
 		}
@@ -167,6 +174,21 @@ void xvac_out(int id, int nsamples, double* buff)
 	IVAC a = pvac[id];
 	xrmatchIN (a->rmatchOUT, buff);		// audio data from mixer
 	// if (id == 0) WriteAudio (120.0, 48000, a->audio_size, buff, 3);
+}
+
+void FeedIVACPostRxAudio(int nsamples, double* buff)
+{
+	int id;
+
+	for (id = 0; id < MAX_EXT_VACS; ++id)
+	{
+		IVAC a = pvac[id];
+
+		if (!a || !a->run || a->iq_type || !a->vac_apply_rx_vst || !a->mixer)
+			continue;
+
+		xMixAudio(a->mixer, -1, 0, buff);
+	}
 }
 
 //int CallbackIVAC(const void *input,
@@ -689,6 +711,24 @@ PORT void SetIVACcombine(int id, int combine)
 {
 	IVAC a = pvac[id];
 	a->vac_combine_input = combine;
+}
+
+PORT void SetIVACApplyRxVst(int id, int apply)
+{
+	IVAC a = pvac[id];
+	a->vac_apply_rx_vst = apply ? 1 : 0;
+}
+
+PORT void SetIVACBypassTxVst(int id, int bypass)
+{
+	IVAC a = pvac[id];
+	a->vac_bypass_tx_vst = bypass ? 1 : 0;
+}
+
+int GetIVACBypassTxVst(int id)
+{
+	IVAC a = pvac[id];
+	return a && a->vac_bypass_tx_vst;
 }
 
 void combinebuff(int n, double* a, double* combined)

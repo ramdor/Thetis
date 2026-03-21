@@ -29,6 +29,16 @@ warren@wpratt.com
 cmaster cm  = {0};
 CMASTER pcm = &cm;
 
+static void configure_vst_rx_chain()
+{
+	VST_CreateChain (VST_CHAIN_RX, pcm->audio_outrate, pcm->audio_outsize, 2);
+}
+
+static void configure_vst_tx_chain (int stream)
+{
+	VST_CreateChain (VST_CHAIN_TX, pcm->xcm_inrate[stream], pcm->xcm_insize[stream], 2);
+}
+
 // standard receiver
 void create_rcvr()
 {
@@ -273,6 +283,7 @@ void destroy_xmtr()
 void create_cmaster()
 {
 	int i, j;
+	int tx_stream;
 	for (i = 0; i < pcm->cmSTREAM; i++)
 	{
 		InitializeCriticalSectionAndSpinCount(&pcm->update[i], 2500);	// 'update' critical section
@@ -314,6 +325,10 @@ void create_cmaster()
 	}
 	create_cmasio();
 	create_router(0);
+	VST_Initialize();
+	configure_vst_rx_chain();
+	tx_stream = inid (1, 0);
+	configure_vst_tx_chain (tx_stream);
 	pcm->panalalloc = (ANALYZERS)create_analyzer_alloc(32, 40);
 	// alloc_analyzer(1, 0, 262144);
 	// alloc_analyzer(1, 0, 16384);
@@ -334,6 +349,9 @@ void destroy_cmaster()
 		destroy_cmbuffs (i);
 		_aligned_free (pcm->in[i]);
 	}
+	VST_DestroyChain (VST_CHAIN_TX);
+	VST_DestroyChain (VST_CHAIN_RX);
+	VST_Shutdown();
 }
 
 PORT
@@ -386,6 +404,8 @@ void xcmaster (int stream)
 		}
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
+		if (!GetTXVACVstBypass(tx))
+			VST_ProcessInterleavedDouble (VST_CHAIN_TX, pcm->in[stream], pcm->xcm_insize[stream]);
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
 		// WriteAudio(10.0, pcm->xmtr[tx].ch_outrate, pcm->xmtr[tx].ch_outsize, pcm->xmtr[tx].out[0], 3);
 		xsidetone(tx);
@@ -444,6 +464,66 @@ void SetTXTCIAudio (int txid, int active)
 }
 
 PORT
+void SetVSTRxBypass (int bypass)
+{
+	VST_SetChainBypass (VST_CHAIN_RX, bypass);
+}
+
+PORT
+int GetVSTRxBypass (void)
+{
+	return VST_GetChainBypass (VST_CHAIN_RX);
+}
+
+PORT
+int GetVSTRxReady (void)
+{
+	return VST_GetChainReady (VST_CHAIN_RX);
+}
+
+PORT
+void SetVSTRxGain (double gain)
+{
+	VST_SetChainGain (VST_CHAIN_RX, gain);
+}
+
+PORT
+double GetVSTRxGain (void)
+{
+	return VST_GetChainGain (VST_CHAIN_RX);
+}
+
+PORT
+void SetVSTTxBypass (int bypass)
+{
+	VST_SetChainBypass (VST_CHAIN_TX, bypass);
+}
+
+PORT
+int GetVSTTxBypass (void)
+{
+	return VST_GetChainBypass (VST_CHAIN_TX);
+}
+
+PORT
+int GetVSTTxReady (void)
+{
+	return VST_GetChainReady (VST_CHAIN_TX);
+}
+
+PORT
+void SetVSTTxGain (double gain)
+{
+	VST_SetChainGain (VST_CHAIN_TX, gain);
+}
+
+PORT
+double GetVSTTxGain (void)
+{
+	return VST_GetChainGain (VST_CHAIN_TX);
+}
+
+PORT
 void SetRunPanadapter (int id, int run)
 {
 	_InterlockedExchange (&pcm->rcvr[id].run_pan, run);
@@ -493,6 +573,7 @@ void SetXcmInrate (int in_id, int rate)	// 2014-12-18:  called for streams 0, 1,
 			SetIVACmicRate (0, rate);											// PIPE - set vacIN0 input rate
 			SetIVACmicSize (1, pcm->xcm_insize[in_id]);							// PIPE - set vacIN1 input size
 			SetIVACmicRate (1, rate);											// PIPE - set vacIN1 input rate
+			configure_vst_tx_chain (in_id);
 			break;
 		case 2:	// special0 for stitched rx display
 			sp0 = sp0id (in_id);
@@ -515,6 +596,7 @@ void SetCMAudioOutrate (int in_id, int rate)		// 2014-11-24:  NOT called by cons
 	SetAAudioOutRate     (0, 0, pcm->audio_outrate);
 	SetAAudioRingInsize  (0, 0, pcm->audio_outsize);
 	SetAAudioRingOutsize (0, 0, pcm->audio_outsize);
+	configure_vst_rx_chain();
 	LeaveCriticalSection (&pcm->update[in_id]);
 }
 
