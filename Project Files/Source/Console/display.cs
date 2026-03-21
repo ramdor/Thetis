@@ -6634,10 +6634,11 @@ namespace Thetis
                         clearWaterfallBitmapRegion(waterfallBitmap, 0, 0, W, (int)waterfallBitmap.Size.Height);
                     }
 
-                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, (int)waterfallBitmap.Size.Height - 1),
+                    int preservedBitmapHeight = (int)waterfallBitmap.Size.Height - (addRow ? 1 : 0);
+                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight),
                         new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
 
-                    topPixels.CopyFromBitmap(waterfallBitmap, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
+                    topPixels.CopyFromBitmap(waterfallBitmap, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, preservedBitmapHeight));
 
                     #region colours
                     switch (cScheme)
@@ -7561,25 +7562,26 @@ namespace Thetis
                         }
 
                         int copyWidth = W - Math.Abs(horizontalShiftPixels);
+                        int shiftedRowTop = addRow ? 1 : 0;
                         if (copyWidth > 0)
                         {
                             int sourceX = horizontalShiftPixels < 0 ? -horizontalShiftPixels : 0;
                             int destX = horizontalShiftPixels > 0 ? horizontalShiftPixels : 0;
-                            waterfallBitmap.CopyFromBitmap(topPixels, new SharpDX.Point(destX, addRow ? 1 : 0),
-                                new SharpDX.Rectangle(sourceX, 0, copyWidth, (int)topPixels.Size.Height));
+                            waterfallBitmap.CopyFromBitmap(topPixels, new SharpDX.Point(destX, shiftedRowTop),
+                                new SharpDX.Rectangle(sourceX, 0, copyWidth, preservedBitmapHeight));
                         }
 
                         if (horizontalShiftPixels > 0)
                         {
-                            clearWaterfallBitmapRegion(waterfallBitmap, 0, 1, horizontalShiftPixels, (int)topPixels.Size.Height);
+                            clearWaterfallBitmapRegion(waterfallBitmap, 0, shiftedRowTop, horizontalShiftPixels, preservedBitmapHeight);
                         }
                         else if (horizontalShiftPixels < 0)
                         {
-                            clearWaterfallBitmapRegion(waterfallBitmap, W + horizontalShiftPixels, 1, -horizontalShiftPixels, (int)topPixels.Size.Height);
+                            clearWaterfallBitmapRegion(waterfallBitmap, W + horizontalShiftPixels, shiftedRowTop, -horizontalShiftPixels, preservedBitmapHeight);
                         }
                         else if (copyWidth <= 0)
                         {
-                            clearWaterfallBitmapRegion(waterfallBitmap, 0, 1, W, (int)topPixels.Size.Height);
+                            clearWaterfallBitmapRegion(waterfallBitmap, 0, shiftedRowTop, W, preservedBitmapHeight);
                         }
 
                         if (addRow)
