@@ -1,0 +1,30 @@
+<map id="ShepardController" name="ShepardController">
+<area shape="rect" id="Node000001" title=" " alt="" coords="372,1795,534,1993"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1mda_1_1BaseController.html" title=" " alt="" coords="358,1393,548,1747"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="456,1762,456,1795,450,1795,450,1762"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditControllerEx1.html" title=" " alt="" coords="267,1031,437,1345"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="400,1359,409,1393,404,1394,395,1361"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditController.html" title=" " alt="" coords="160,668,330,983"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="298,996,308,1030,303,1032,293,998"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ComponentBase.html" title=" " alt="" coords="5,305,135,620"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="144,610,172,667,167,669,139,612"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="204,165,286,248"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="195,255,150,307,137,326,133,323,146,304,191,252"/>
+<area shape="rect" id="Node000009" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IEditController.html" title=" " alt="" coords="160,315,330,610"/>
+<area shape="poly" id="edge10_Node000009_Node000006" title=" " alt="" coords="248,262,248,315,242,315,242,262"/>
+<area shape="rect" id="Node000007" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="356,5,465,107"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="347,118,287,171,284,167,343,114"/>
+<area shape="rect" id="Node000008" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IConnectionPoint.html" title=" " alt="" coords="47,155,152,257"/>
+<area shape="poly" id="edge8_Node000008_Node000007" title=" " alt="" coords="343,89,193,158,153,178,151,174,190,153,341,84"/>
+<area shape="rect" id="Node000010" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IEditController2.html" title=" " alt="" coords="354,412,466,514"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="413,122,413,412,408,412,408,122"/>
+<area shape="rect" id="Node000011" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IUnitInfo.html" title=" " alt="" coords="354,687,518,963"/>
+<area shape="poly" id="edge14_Node000011_Node000007" title=" " alt="" coords="435,120,461,207,481,305,491,393,493,462,490,532,481,620,471,688,466,687,476,620,484,531,488,462,486,394,476,306,456,208,430,122"/>
+<area shape="rect" id="Node000012" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IMidiMapping.html" title=" " alt="" coords="461,1156,650,1220"/>
+<area shape="poly" id="edge16_Node000012_Node000007" title=" " alt="" coords="460,118,478,154,492,195,499,228,506,305,532,562,548,813,556,1023,558,1156,553,1157,550,1023,543,813,527,563,501,306,493,229,487,196,473,156,455,121"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="95,273,91,306,86,305,90,272"/>
+<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="248,625,248,668,242,668,242,625"/>
+<area shape="poly" id="edge11_Node000004_Node000010" title=" " alt="" coords="386,528,345,621,322,669,318,667,340,619,381,526"/>
+<area shape="poly" id="edge13_Node000003_Node000011" title=" " alt="" coords="403,978,391,1031,385,1030,398,977"/>
+<area shape="poly" id="edge15_Node000002_Node000012" title=" " alt="" coords="546,1234,503,1394,498,1393,541,1233"/>
+</map>

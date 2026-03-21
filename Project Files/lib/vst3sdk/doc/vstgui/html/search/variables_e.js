@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['name_0',['name',['../class_v_s_t_g_u_i_1_1_animation_1_1_finished_message.html#a09e22a4fb92bd07811d0c535629da6be',1,'VSTGUI::Animation::FinishedMessage::name'],['../struct_v_s_t_g_u_i_1_1_c_s_s_named_color.html#a329ce10e50c4d7bf907650067491b43a',1,'VSTGUI::CSSNamedColor::name'],['../class_v_s_t_g_u_i_1_1_c_font_desc.html#a820ae9ca94c72fb06fcac9cc544ea24b',1,'VSTGUI::CFontDesc::name'],['../struct_v_s_t_g_u_i_1_1_c_segment_button_1_1_segment.html#a820ae9ca94c72fb06fcac9cc544ea24b',1,'VSTGUI::CSegmentButton::Segment::name'],['../class_v_s_t_g_u_i_1_1_c_resource_description.html#aa8c787104fc8d7babca567f2e6e73697',1,'VSTGUI::CResourceDescription::name'],['../struct_v_s_t_g_u_i_1_1_standalone_1_1_application_1_1_info.html#a820ae9ca94c72fb06fcac9cc544ea24b',1,'VSTGUI::Standalone::Application::Info::name'],['../struct_v_s_t_g_u_i_1_1_standalone_1_1_command.html#a820ae9ca94c72fb06fcac9cc544ea24b',1,'VSTGUI::Standalone::Command::name']]],
+  ['namedcolors_1',['namedColors',['../namespace_v_s_t_g_u_i.html#ac83dfc79c104486758f3ea2c22acbcce',1,'VSTGUI']]],
+  ['nbitemspercolumn_2',['nbItemsPerColumn',['../class_v_s_t_g_u_i_1_1_c_option_menu.html#a2e7426caa14893518f9f47319fd04c35',1,'VSTGUI::COptionMenu']]],
+  ['nbled_3',['nbLed',['../class_v_s_t_g_u_i_1_1_c_vu_meter.html#a32a44394287bc235fc902448ed7ab71f',1,'VSTGUI::CVuMeter']]],
+  ['new_4',['New',['../namespace_v_s_t_g_u_i_1_1_standalone_1_1_command_name.html#ac8e97ffc79a9b7f51ddb6f9001d44eb6',1,'VSTGUI::Standalone::CommandName']]],
+  ['newdocument_5',['NewDocument',['../namespace_v_s_t_g_u_i_1_1_standalone_1_1_commands.html#a33e1a9b06671ce59afbf377e48fff5e3',1,'VSTGUI::Standalone::Commands']]],
+  ['newrect_6',['newRect',['../class_v_s_t_g_u_i_1_1_animation_1_1_view_size_animation.html#a48e21c657a710f50d28cac79cbdcae7d',1,'VSTGUI::Animation::ViewSizeAnimation']]],
+  ['newview_7',['newView',['../class_v_s_t_g_u_i_1_1_animation_1_1_exchange_view_animation.html#a6bf5eb681f9cdfb7bb4c8ccbd7fe1afa',1,'VSTGUI::Animation::ExchangeViewAnimation']]],
+  ['newviewalphavalueend_8',['newViewAlphaValueEnd',['../class_v_s_t_g_u_i_1_1_animation_1_1_exchange_view_animation.html#a18d4421a8c17e6db4b80c548c81d1a24',1,'VSTGUI::Animation::ExchangeViewAnimation']]],
+  ['nodes_9',['nodes',['../struct_v_s_t_g_u_i_1_1_u_i_description_1_1_impl.html#a1c0237c5e67c91de1eade505b52d77a3',1,'VSTGUI::UIDescription::Impl']]],
+  ['noneditrect_10',['nonEditRect',['../class_v_s_t_g_u_i_1_1_v_s_t3_editor.html#a7f1d9cdabba6986bd3cc78eb50dc1044',1,'VSTGUI::VST3Editor']]],
+  ['normalfont_11',['normalFont',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#a844226a113e4b2e1a1899336d75271fe',1,'VSTGUI::GlobalFonts']]],
+  ['normalfontbig_12',['normalFontBig',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#acbba89c98e133923c0b93fa473bcd597',1,'VSTGUI::GlobalFonts']]],
+  ['normalfontsmall_13',['normalFontSmall',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#a5925ab03b3f438f6d64dac4dbacc5f71',1,'VSTGUI::GlobalFonts']]],
+  ['normalfontsmaller_14',['normalFontSmaller',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#af2d888dc7ccfdac4a8ad92f9c10426e8',1,'VSTGUI::GlobalFonts']]],
+  ['normalfontverybig_15',['normalFontVeryBig',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#a061abdaa46918e3d3c3c7ba04f0e20b3',1,'VSTGUI::GlobalFonts']]],
+  ['normalfontverysmall_16',['normalFontVerySmall',['../struct_v_s_t_g_u_i_1_1_global_fonts.html#a3729ad9883813d03460c08eb8d495b2f',1,'VSTGUI::GlobalFonts']]],
+  ['nothandled_17',['NotHandled',['../struct_v_s_t_g_u_i_1_1_event_consume_state.html#a8f13b276344ed5f0d86069166ab1a5e4',1,'VSTGUI::EventConsumeState']]],
+  ['num_5fchars_18',['num_chars',['../struct_v_s_t_g_u_i_1_1_text_editor_1_1_stb_textedit_row.html#a0681a562ded625bd152a9dc65a4a223c',1,'VSTGUI::TextEditor::StbTexteditRow']]],
+  ['numberofchilds_19',['numberOfChilds',['../class_v_s_t_g_u_i_1_1_c_tab_view.html#a3c344778bc85c0867810d11d4e653031',1,'VSTGUI::CTabView']]],
+  ['numframes_20',['numFrames',['../struct_v_s_t_g_u_i_1_1_c_multi_frame_bitmap_description.html#aa1496e76b22f53183e34a50f248bd9ca',1,'VSTGUI::CMultiFrameBitmapDescription']]]
+];

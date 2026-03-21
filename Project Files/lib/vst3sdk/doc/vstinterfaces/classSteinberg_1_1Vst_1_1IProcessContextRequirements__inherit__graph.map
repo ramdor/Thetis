@@ -1,0 +1,9 @@
+<map id="IProcessContextRequirements" name="IProcessContextRequirements">
+<area shape="rect" id="Node000001" title="Extended IAudioProcessor interface for a component: Vst::IProcessContextRequirements." alt="" coords="96,155,307,219"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1AudioEffect.html" title=" " alt="" coords="5,325,190,581"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,234,150,326,145,324,182,232"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1SingleComponentEffect.html" title=" " alt="" coords="215,267,400,639"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="222,232,236,266,231,268,217,234"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="147,5,256,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,122,204,156,199,156,199,122"/>
+</map>

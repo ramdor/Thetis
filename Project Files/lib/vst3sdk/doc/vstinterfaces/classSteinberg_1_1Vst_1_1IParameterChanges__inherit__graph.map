@@ -1,0 +1,7 @@
+<map id="IParameterChanges" name="IParameterChanges">
+<area shape="rect" id="Node000001" title="All parameter changes of a processing block: Vst::IParameterChanges." alt="" coords="9,155,147,257"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ParameterChanges.html" title=" " alt="" coords="5,305,150,504"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="80,272,80,306,75,306,75,272"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="23,5,132,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,122,80,155,75,155,75,122"/>
+</map>

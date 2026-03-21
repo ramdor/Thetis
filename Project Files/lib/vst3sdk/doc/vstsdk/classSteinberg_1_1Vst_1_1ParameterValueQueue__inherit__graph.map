@@ -1,0 +1,7 @@
+<map id="ParameterValueQueue" name="ParameterValueQueue">
+<area shape="rect" id="Node000001" title="Implementation&#39;s example of IParamValueQueue &#45; not threadsave!" alt="" coords="5,325,168,543"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IParamValueQueue.html" title=" " alt="" coords="28,155,146,277"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,292,90,325,84,325,84,292"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="32,5,141,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="90,122,90,156,84,156,84,122"/>
+</map>

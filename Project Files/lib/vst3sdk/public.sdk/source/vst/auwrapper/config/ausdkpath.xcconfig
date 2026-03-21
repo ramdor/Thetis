@@ -1,0 +1,17 @@
+//------------------------------------------------------------------------
+// Project     : VST SDK
+//
+// Category    : Helpers
+// Filename    : ausdkpath.xcconfig
+// Created by  : Steinberg, 5/24/12
+// Description : Xcode configuration file to specify paths to the AU SDK files, VST 3 -> AU Wrapper           
+//
+//-----------------------------------------------------------------------------
+// This file is part of a Steinberg SDK. It is subject to the license terms
+// in the LICENSE file found in the top-level directory of this distribution
+// and at www.steinberg.net/sdklicenses.
+// No part of the SDK, including this file, may be copied, modified, propagated,
+// or distributed except according to the terms contained in the LICENSE file.
+//-----------------------------------------------------------------------------
+// If you are building with Xcode >= 4.x please add the path to your downloaded Audio Tools for Xcode
+CUSTOM_AU_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/ // AUWRAPPER_CHANGE

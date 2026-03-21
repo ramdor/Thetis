@@ -1,0 +1,110 @@
+//-----------------------------------------------------------------------------
+// Flags       : clang-format auto
+// Project     : VST SDK
+//
+// Category    : EditorHost
+// Filename    : public.sdk/samples/vst-hosting/editorhost/source/platform/linux/runloop.h
+// Created by  : Steinberg 09.2016
+// Description : Example of opening a plug-in editor
+//
+//-----------------------------------------------------------------------------
+// This file is part of a Steinberg SDK. It is subject to the license terms
+// in the LICENSE file found in the top-level directory of this distribution
+// and at www.steinberg.net/sdklicenses.
+// No part of the SDK, including this file, may be copied, modified, propagated,
+// or distributed except according to the terms contained in the LICENSE file.
+//-----------------------------------------------------------------------------
+
+#pragma once
+
+#include <X11/Xlib.h>
+#include <chrono>
+#include <functional>
+#include <mutex>
+#include <thread>
+#include <unordered_map>
+#include <vector>
+
+//------------------------------------------------------------------------
+namespace Steinberg {
+namespace Vst {
+namespace EditorHost {
+
+//------------------------------------------------------------------------
+using TimerID = uint64_t;
+using TimerInterval = uint64_t;
+using TimerCallback = std::function<void (TimerID)>;
+
+//------------------------------------------------------------------------
+class TimerProcessor
+{
+public:
+	TimerID registerTimer (TimerInterval interval, const TimerCallback& callback);
+	void unregisterTimer (TimerID id);
+
+	static constexpr uint64_t noTimers = std::numeric_limits<uint64_t>::max ();
+	uint64_t handleTimersAndReturnNextFireTimeInMs ();
+
+private:
+	using Clock = std::chrono::steady_clock;
+	using Millisecond = std::chrono::milliseconds;
+	using TimePoint = std::chrono::time_point<Clock, Millisecond>;
+
+	struct Timer
+	{
+		TimerID id;
+		TimerInterval interval;
+		TimerCallback callback;
+		TimePoint nextFireTime;
+	};
+	using Timers = std::vector<Timer>;
+	Timers timers;
+	TimerID timerIdCounter {0};
+
+	void updateTimerNextFireTime (Timer& timer, TimePoint current);
+	void sortTimers ();
+	TimePoint now ();
+};
+
+//------------------------------------------------------------------------
+class RunLoop
+{
+public:
+	using EventCallback = std::function<bool (const XEvent& event)>;
+	using FileDescriptorCallback = std::function<void (int fd)>;
+
+	static RunLoop& instance ();
+
+	void setDisplay (Display* display);
+
+	void registerWindow (XID window, const EventCallback& callback);
+	void unregisterWindow (XID window);
+
+	void registerFileDescriptor (int fd, const FileDescriptorCallback& callback);
+	void unregisterFileDescriptor (int fd);
+
+	TimerID registerTimer (TimerInterval interval, const TimerCallback& callback);
+	void unregisterTimer (TimerID id);
+
+	void start ();
+	void stop ();
+
+private:
+	void select (timeval* timeout = nullptr);
+	bool handleEvents ();
+
+	using WindowMap = std::unordered_map<XID, EventCallback>;
+	using FileDescriptorCallbacks = std::unordered_map<int, FileDescriptorCallback>;
+
+	WindowMap map;
+	FileDescriptorCallbacks fileDescriptors;
+	TimerProcessor timerProcessor;
+
+	Display* display {nullptr};
+	bool running {false};
+};
+
+//------------------------------------------------------------------------
+} // EditorHost
+} // Vst
+} // Steinberg

@@ -1,0 +1,13 @@
+<map id="IEditController" name="IEditController">
+<area shape="rect" id="Node000001" title="Edit controller component interface: Vst::IEditController." alt="" coords="13,286,183,581"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditController.html" title=" " alt="" coords="13,629,183,944"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="100,596,100,629,95,629,95,596"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="57,155,139,238"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,253,100,286,95,286,95,253"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="43,5,152,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="100,122,100,155,95,155,95,122"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditControllerEx1.html" title=" " alt="" coords="13,992,183,1307"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="100,959,100,993,95,993,95,959"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1SingleComponentEffect.html" title=" " alt="" coords="5,1355,190,1727"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="100,1322,100,1355,95,1355,95,1322"/>
+</map>

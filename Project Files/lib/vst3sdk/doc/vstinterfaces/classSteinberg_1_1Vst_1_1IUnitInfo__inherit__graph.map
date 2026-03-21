@@ -1,0 +1,9 @@
+<map id="IUnitInfo" name="IUnitInfo">
+<area shape="rect" id="Node000001" title="Edit controller extension to describe the plug&#45;in structure: Vst::IUnitInfo." alt="" coords="16,155,180,431"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditControllerEx1.html" title=" " alt="" coords="13,479,183,794"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="100,446,100,480,95,480,95,446"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="43,5,152,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,122,100,156,95,156,95,122"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1SingleComponentEffect.html" title=" " alt="" coords="5,842,190,1215"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="100,809,100,842,95,842,95,809"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="String" name="String">
+<area shape="rect" id="Node000001" title="String." alt="" coords="137,967,244,1243"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1StringObject.html" title="StringObject implements IStringResult and IString methods." alt="" coords="140,1291,241,1548"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="193,1258,193,1292,188,1292,188,1258"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1ConstString.html" title="Invariant String." alt="" coords="5,5,375,919"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,934,193,968,188,968,188,934"/>
+</map>

@@ -1,0 +1,279 @@
+// This file is part of VSTGUI. It is subject to the license terms
+// in the LICENSE file found in the top-level directory of this
+// distribution and at http://github.com/steinbergmedia/vstgui/LICENSE
+
+#include "../common/fileresourceinputstream.h"
+#include "../iplatformfont.h"
+#include "../iplatformframe.h"
+#include "../iplatformframecallback.h"
+#include "../iplatformresourceinputstream.h"
+#include "../iplatformstring.h"
+#include "../iplatformtimer.h"
+#include "cfontmac.h"
+#include "cgbitmap.h"
+#include "quartzgraphicspath.h"
+#include "coregraphicsdevicecontext.h"
+#include "cocoa/nsviewframe.h"
+#include "ios/uiviewframe.h"
+#include "macclipboard.h"
+#include "mactaskexecutor.h"
+#include "macfactory.h"
+#include "macfileselector.h"
+#include "macglobals.h"
+#include "macstring.h"
+#include "mactimer.h"
+#include <list>
+#include <mach/mach_time.h>
+#include <memory>
+
+//-----------------------------------------------------------------------------
+namespace VSTGUI {
+
+//-----------------------------------------------------------------------------
+struct MacFactory::Impl
+{
+	struct mach_timebase_info timebaseInfo;
+	CFBundleRef bundle {nullptr};
+	bool useAsynchronousLayerDrawing {true};
+	bool visualizeRedrawAreas {false};
+	CoreGraphicsDeviceFactory graphicsDeviceFactory;
+	PlatformTaskExecutorPtr taskExecutor;
+};
+
+//-----------------------------------------------------------------------------
+MacFactory::MacFactory (CFBundleRef bundle)
+{
+	impl = std::unique_ptr<Impl> (new Impl);
+	impl->bundle = bundle;
+	mach_timebase_info (&impl->timebaseInfo);
+	impl->taskExecutor = std::make_unique<MacTaskExecutor> ();
+}
+
+MacFactory::~MacFactory () noexcept = default;
+
+//------------------------------------------------------------------------
+void MacFactory::finalize () noexcept { impl->taskExecutor->waitAllTasksExecuted (); }
+
+//-----------------------------------------------------------------------------
+CFBundleRef MacFactory::getBundle () const noexcept
+{
+	return impl->bundle;
+}
+
+//-----------------------------------------------------------------------------
+void MacFactory::setUseAsynchronousLayerDrawing (bool state) const noexcept
+{
+	impl->useAsynchronousLayerDrawing = state;
+}
+
+//-----------------------------------------------------------------------------
+bool MacFactory::getUseAsynchronousLayerDrawing () const noexcept
+{
+	return impl->useAsynchronousLayerDrawing;
+}
+
+//-----------------------------------------------------------------------------
+void MacFactory::enableVisualizeRedrawAreas (bool state) const noexcept
+{
+	impl->visualizeRedrawAreas = state;
+}
+
+//-----------------------------------------------------------------------------
+bool MacFactory::enableVisualizeRedrawAreas () const noexcept
+{
+	return impl->visualizeRedrawAreas;
+}
+
+//-----------------------------------------------------------------------------
+uint64_t MacFactory::getTicks () const noexcept
+{
+	uint64_t absTime = mach_absolute_time ();
+	auto d = ((absTime * impl->timebaseInfo.numer) / impl->timebaseInfo.denom) / 1000000;
+	return d;
+}
+
+//-----------------------------------------------------------------------------
+PlatformFramePtr MacFactory::createFrame (IPlatformFrameCallback* frame, const CRect& size,
+										  void* parent, PlatformType parentType,
+										  IPlatformFrameConfig* config) const noexcept
+{
+#if TARGET_OS_IPHONE
+	return makeOwned<UIViewFrame> (frame, size, (__bridge UIView*)parent);
+#else
+	return makeOwned<NSViewFrame> (frame, size, reinterpret_cast<NSView*> (parent), config);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+PlatformFontPtr MacFactory::createFont (const UTF8String& name, const CCoord& size,
+										const int32_t& style) const noexcept
+{
+	auto font = makeOwned<CoreTextFont> (name, size, style);
+	if (font->getFontRef ())
+		return std::move (font);
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+bool MacFactory::getAllFontFamilies (const FontFamilyCallback& callback) const noexcept
+{
+	return CoreTextFont::getAllFontFamilies (callback);
+}
+
+//-----------------------------------------------------------------------------
+PlatformBitmapPtr MacFactory::createBitmap (const CPoint& size) const noexcept
+{
+	return CGBitmap::create (&const_cast<CPoint&> (size));
+}
+
+//-----------------------------------------------------------------------------
+PlatformBitmapPtr MacFactory::createBitmap (const CResourceDescription& desc) const noexcept
+{
+	if (auto bitmap = makeOwned<CGBitmap> ())
+	{
+		if (bitmap->load (desc))
+			return bitmap;
+	}
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+PlatformBitmapPtr MacFactory::createBitmapFromPath (UTF8StringPtr absolutePath) const noexcept
+{
+	return CGBitmap::createFromPath (absolutePath);
+}
+
+//-----------------------------------------------------------------------------
+PlatformBitmapPtr MacFactory::createBitmapFromMemory (const void* ptr,
+													  uint32_t memSize) const noexcept
+{
+	return CGBitmap::createFromMemory (ptr, memSize);
+}
+
+//-----------------------------------------------------------------------------
+PNGBitmapBuffer
+	MacFactory::createBitmapMemoryPNGRepresentation (const PlatformBitmapPtr& bitmap) const noexcept
+{
+	return CGBitmap::createMemoryPNGRepresentation (bitmap);
+}
+
+//-----------------------------------------------------------------------------
+PlatformResourceInputStreamPtr
+	MacFactory::createResourceInputStream (const CResourceDescription& desc) const noexcept
+{
+	if (desc.type == CResourceDescription::kIntegerType)
+		return nullptr;
+	if (auto bundle = getBundleRef ())
+	{
+		PlatformResourceInputStreamPtr result;
+		CFStringRef cfStr = CFStringCreateWithCString (nullptr, desc.u.name, kCFStringEncodingUTF8);
+		if (cfStr)
+		{
+			CFURLRef url = CFBundleCopyResourceURL (bundle, cfStr, nullptr, nullptr);
+			if (url)
+			{
+				char filePath[PATH_MAX];
+				if (CFURLGetFileSystemRepresentation (url, true, (UInt8*)filePath, PATH_MAX))
+				{
+					result = FileResourceInputStream::create (filePath);
+				}
+				CFRelease (url);
+			}
+			CFRelease (cfStr);
+		}
+		return result;
+	}
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+PlatformStringPtr MacFactory::createString (UTF8StringPtr utf8String) const noexcept
+{
+	return makeOwned<MacString> (utf8String);
+}
+
+//-----------------------------------------------------------------------------
+PlatformTimerPtr MacFactory::createTimer (IPlatformTimerCallback* callback) const noexcept
+{
+	return makeOwned<MacTimer> (callback);
+}
+
+//------------------------------------------------------------------------
+bool MacFactory::setClipboard (const DataPackagePtr& data) const noexcept
+{
+#if TARGET_OS_IPHONE
+	return false;
+#else
+	MacClipboard::setClipboard (data);
+	return true;
+#endif
+}
+
+//------------------------------------------------------------------------
+auto MacFactory::getClipboard () const noexcept -> DataPackagePtr
+{
+#if TARGET_OS_IPHONE
+	return nullptr;
+#else
+	return MacClipboard::createClipboardDataPackage ();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+PlatformGradientPtr MacFactory::createGradient () const noexcept
+{
+	return std::make_unique<QuartzGradient> ();
+}
+
+//-----------------------------------------------------------------------------
+PlatformFileSelectorPtr MacFactory::createFileSelector (PlatformFileSelectorStyle style,
+														IPlatformFrame* frame) const noexcept
+{
+#if !TARGET_OS_IPHONE
+	auto nsViewFrame = dynamic_cast<NSViewFrame*> (frame);
+	return createCocoaFileSelector (style, nsViewFrame);
+#endif
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+const IPlatformGraphicsDeviceFactory& MacFactory::getGraphicsDeviceFactory () const noexcept
+{
+	return impl->graphicsDeviceFactory;
+}
+
+//------------------------------------------------------------------------
+const IPlatformTaskExecutor& MacFactory::getTaskExecutor () const noexcept
+{
+	return *impl->taskExecutor;
+}
+
+//------------------------------------------------------------------------
+bool MacFactory::replaceTaskExecutor (const ReplaceTaskExecFunc& replaceFunc) const noexcept
+{
+	if (!replaceFunc)
+		return false;
+	impl->taskExecutor = replaceFunc (std::move (impl->taskExecutor));
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+const LinuxFactory* MacFactory::asLinuxFactory () const noexcept
+{
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+const MacFactory* MacFactory::asMacFactory () const noexcept
+{
+	return this;
+}
+
+//-----------------------------------------------------------------------------
+const Win32Factory* MacFactory::asWin32Factory () const noexcept
+{
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+} // VSTGUI

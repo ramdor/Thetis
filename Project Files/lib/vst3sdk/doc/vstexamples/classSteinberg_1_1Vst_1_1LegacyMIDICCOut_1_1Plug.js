@@ -1,0 +1,26 @@
+var classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug =
+[
+    [ "Plug", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#ad139b05f833c3a1320c8eb716f68fbe3", null ],
+    [ "initialize", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a4dae123b5697706651d9ff20c9614f63", null ],
+    [ "process", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a2a13e09cc9ec3dd1b8617a38e3c07af5", null ],
+    [ "setState", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a9228db732b48ece8b5b734e69b979d10", null ],
+    [ "getState", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#aee393393dc4dccf6e0b30a43380859b4", null ],
+    [ "mLastController", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#adef5dd84aeac0dedc557af1d15e6f3f0", null ],
+    [ "mLastProgramChange", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a5b9779c9082238c3cfdeb2add34f6c27", null ],
+    [ "mLastAftertouch", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a54726a539463432651b5ea163bb1f4d7", null ],
+    [ "mLastPolyPressure", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#ab2358e8463e87bcd90c52caa6f08132b", null ],
+    [ "mLastPitchBend", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#afe7b3cdaf76945cb1b24854ae7bc0d4e", null ],
+    [ "mLastCtrlQuarterFrame", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#aee75e1ce29c0976ecb7636a6b461ff55", null ],
+    [ "mLastSystemSongSelect", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a18b6fd7e455c53ad2b41859597a06ec5", null ],
+    [ "mLastSystemSongPointer", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a1d34ca606f0e3236284d022756b68435", null ],
+    [ "mLastSystemCableSelect", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a5bc77e51012b2315309c8e29b3f8efc2", null ],
+    [ "mLastSystemTuneRequest", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a173db182c13b5d7fdd9bea7a0e1099ad", null ],
+    [ "mLastSystemMidiClockStart", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a184a5d83527c8bd47d869293a5d69542", null ],
+    [ "mLastSystemMidiClockContinue", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#ac5fdf3fac64444bb007c18224e1358f4", null ],
+    [ "mLastSystemMidiClockStop", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a182a643689a0b1ef96d69001f54a38b1", null ],
+    [ "mLastSystemActiveSensing", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#addc94d0e2c7fdbc2f44aa2a7ba900f51", null ],
+    [ "mChannel", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#afd142a7976882a274a551594880cd80b", null ],
+    [ "mControllerNum", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a972f6781da214e8103128af22850d210", null ],
+    [ "mPolyPressureKey", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#a0b9a7559eddf5414b5dc40b77bc24f0b", null ],
+    [ "bBypass", "classSteinberg_1_1Vst_1_1LegacyMIDICCOut_1_1Plug.html#abc22129b24de048752fd93a6ca2f8910", null ]
+];

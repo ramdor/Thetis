@@ -1,0 +1,49 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classSteinberg_1_1FUnknown.html" title="The basic interface of all interfaces." alt="" coords="5,475,86,499"/>
+<area shape="rect" id="Node000001" href="$structSteinberg_1_1FUnknownImpl_1_1HideIIDBase.html" title="A base class which hides the FUnknown::iid static var." alt="" coords="185,5,276,30"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="46,459,54,366,69,241,80,178,94,121,111,74,132,41,156,25,184,17,186,22,158,29,136,45,116,76,100,122,86,179,74,242,59,366,51,459"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1IAttributes.html" title="Object Data Archive Interface." alt="" coords="193,55,268,79"/>
+<area shape="poly" id="edge2_Node000000_Node000002" title=" " alt="" coords="47,459,56,375,73,265,97,160,113,119,132,90,160,73,192,65,193,70,162,78,136,94,118,121,103,162,78,266,61,376,52,459"/>
+<area shape="rect" id="Node000004" href="$classSteinberg_1_1IBStream.html" title="Base class for streams." alt="" coords="195,104,266,129"/>
+<area shape="poly" id="edge4_Node000000_Node000004" title=" " alt="" coords="48,459,58,385,76,289,100,199,115,164,132,140,146,129,161,122,194,115,195,120,163,127,148,134,136,143,120,167,105,201,81,291,63,385,53,460"/>
+<area shape="rect" id="Node000005" href="$classSteinberg_1_1ICloneable.html" title="Interface allowing an object to be copied." alt="" coords="190,153,271,178"/>
+<area shape="poly" id="edge5_Node000000_Node000005" title=" " alt="" coords="44,459,47,402,59,330,71,292,86,255,106,220,132,189,159,172,189,165,190,170,161,177,135,193,110,223,91,257,76,294,65,331,53,403,49,459"/>
+<area shape="rect" id="Node000006" href="$classSteinberg_1_1IDependent.html" title="A dependent will get notified about changes of a model." alt="" coords="188,203,273,227"/>
+<area shape="poly" id="edge6_Node000000_Node000006" title=" " alt="" coords="46,458,52,411,66,352,92,291,110,263,132,238,158,223,187,215,188,220,160,227,135,242,114,266,96,293,71,353,57,412,51,459"/>
+<area shape="rect" id="Node000007" href="$classSteinberg_1_1IErrorContext.html" title="Interface for error handling." alt="" coords="184,252,277,277"/>
+<area shape="poly" id="edge7_Node000000_Node000007" title=" " alt="" coords="49,459,58,420,74,374,98,328,132,288,156,273,183,266,184,271,158,278,135,292,102,330,78,376,63,422,54,460"/>
+<area shape="rect" id="Node000008" href="$classSteinberg_1_1IPersistent.html" title="Persistent Object Interface." alt="" coords="191,301,270,326"/>
+<area shape="poly" id="edge8_Node000000_Node000008" title=" " alt="" coords="53,458,82,397,104,364,132,337,160,322,190,314,191,320,162,327,135,341,108,368,86,400,58,461"/>
+<area shape="rect" id="Node000009" href="$classSteinberg_1_1IPlugFrame.html" title="Callback interface passed to IPlugView." alt="" coords="188,351,272,375"/>
+<area shape="poly" id="edge9_Node000000_Node000009" title=" " alt="" coords="61,460,91,422,110,402,132,386,159,373,187,366,189,371,161,378,135,391,114,406,95,425,65,463"/>
+<area shape="rect" id="Node000010" href="$classSteinberg_1_1IPlugView.html" title="Plug&#45;in definition of a view." alt="" coords="192,400,268,425"/>
+<area shape="poly" id="edge10_Node000000_Node000010" title=" " alt="" coords="78,464,133,435,191,417,192,422,135,440,80,468"/>
+<area shape="rect" id="Node000011" href="$classSteinberg_1_1IPlugViewContentScaleSupport.html" title="Plug&#45;in view content scale support." alt="" coords="134,449,327,474"/>
+<area shape="poly" id="edge11_Node000000_Node000011" title=" " alt="" coords="100,477,135,472,136,477,101,482"/>
+<area shape="rect" id="Node000012" href="$classSteinberg_1_1IPluginBase.html" title="Basic interface to a plug&#45;in component: IPluginBase." alt="" coords="187,499,274,523"/>
+<area shape="poly" id="edge12_Node000000_Node000012" title=" " alt="" coords="101,491,187,503,186,508,100,497"/>
+<area shape="rect" id="Node000013" href="$classSteinberg_1_1IPluginCompatibility.html" title="optional interface to query the compatibility of the plug&#45;ins classes" alt="" coords="165,548,296,573"/>
+<area shape="poly" id="edge13_Node000000_Node000013" title=" " alt="" coords="81,505,135,533,172,545,170,550,133,537,78,510"/>
+<area shape="rect" id="Node000014" href="$classSteinberg_1_1IPluginFactory.html" title="Class factory that any plug&#45;in defines for creating class instances: IPluginFactory." alt="" coords="181,597,280,622"/>
+<area shape="poly" id="edge14_Node000000_Node000014" title=" " alt="" coords="65,511,95,548,135,582,157,593,181,600,179,605,155,598,132,587,91,552,61,514"/>
+<area shape="rect" id="Node000017" href="$classSteinberg_1_1ISizeableStream.html" title="Stream with a size." alt="" coords="175,647,286,671"/>
+<area shape="poly" id="edge17_Node000000_Node000017" title=" " alt="" coords="58,513,86,574,108,605,135,632,154,642,175,650,173,655,152,647,132,636,104,608,82,576,53,515"/>
+<area shape="rect" id="Node000018" href="$classSteinberg_1_1IString.html" title="Interface to a string of variable size and encoding." alt="" coords="202,696,258,721"/>
+<area shape="poly" id="edge18_Node000000_Node000018" title=" " alt="" coords="54,514,63,552,79,597,102,642,135,681,151,691,168,698,202,705,201,710,166,703,148,696,132,685,98,645,74,599,58,553,49,515"/>
+<area shape="rect" id="Node000019" href="$classSteinberg_1_1IStringResult.html" title="Interface to return an ascii string of variable size." alt="" coords="185,745,276,770"/>
+<area shape="poly" id="edge19_Node000000_Node000019" title=" " alt="" coords="51,514,57,562,71,620,97,680,114,707,135,730,159,745,185,752,184,757,156,749,132,734,110,710,92,682,66,621,52,562,46,515"/>
+<area shape="rect" id="Node000020" href="$classSteinberg_1_1IUpdateHandler.html" title="Host implements dependency handling for plugins." alt="" coords="176,795,284,819"/>
+<area shape="poly" id="edge20_Node000000_Node000020" title=" " alt="" coords="49,515,53,571,65,642,76,680,91,716,111,750,135,780,154,793,177,800,175,805,152,797,132,784,106,753,86,718,71,681,60,643,47,571,44,515"/>
+<area shape="rect" id="Node000021" href="$classSteinberg_1_1Linux_1_1IEventHandler.html" title="Linux event handler interface." alt="" coords="181,844,280,869"/>
+<area shape="poly" id="edge21_Node000000_Node000021" title=" " alt="" coords="53,514,64,588,81,683,106,772,120,806,136,829,156,843,181,851,180,856,154,848,132,833,115,809,101,774,76,684,58,589,48,515"/>
+<area shape="rect" id="Node000022" href="$classSteinberg_1_1Linux_1_1IRunLoop.html" title="Linux host run loop interface." alt="" coords="193,893,268,918"/>
+<area shape="poly" id="edge22_Node000000_Node000022" title=" " alt="" coords="52,515,61,598,78,707,103,811,118,851,136,878,162,895,193,902,192,907,160,900,132,882,113,854,98,813,73,708,56,599,47,515"/>
+<area shape="rect" id="Node000023" href="$classSteinberg_1_1Linux_1_1ITimerHandler.html" title="Linux timer handler interface." alt="" coords="181,943,280,967"/>
+<area shape="poly" id="edge23_Node000000_Node000023" title=" " alt="" coords="51,515,59,608,75,732,86,794,100,851,116,897,136,928,156,942,181,950,180,955,154,947,132,932,111,899,95,852,81,795,69,732,54,608,46,515"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1IAttributes2.html" title="Extended access to Attributes; supports Attribute retrieval via iteration." alt="" coords="387,55,469,79"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="283,64,387,64,387,70,283,70"/>
+<area shape="rect" id="Node000015" href="$classSteinberg_1_1IPluginFactory2.html" title="Version 2 of class factory supporting PClassInfo2: IPluginFactory2." alt="" coords="375,597,481,622"/>
+<area shape="poly" id="edge15_Node000014_Node000015" title=" " alt="" coords="295,607,375,607,375,612,295,612"/>
+<area shape="rect" id="Node000016" href="$classSteinberg_1_1IPluginFactory3.html" title="Version 3 of class factory supporting PClassInfoW: IPluginFactory3." alt="" coords="529,597,636,622"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="497,607,529,607,529,612,497,612"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="ProcessData" name="ProcessData">
+<area shape="rect" id="Node000001" title="Any data needed in audio processing." alt="" coords="14,5,178,281"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1HostProcessData.html" title=" " alt="" coords="5,329,187,663"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,296,99,330,94,330,94,296"/>
+</map>

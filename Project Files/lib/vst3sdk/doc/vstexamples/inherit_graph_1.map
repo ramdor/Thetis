@@ -1,0 +1,10 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="51,5,145,30"/>
+<area shape="rect" id="Node000001" href="$classVSTGUI_1_1EventLogDataBrowserSource.html" title=" " alt="" coords="246,5,429,30"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="160,15,245,15,245,20,160,20"/>
+<area shape="rect" id="Node000003" href="$classVSTGUI_1_1PitchNamesDataBrowserSource.html" title=" " alt="" coords="239,55,436,79"/>
+<area shape="poly" id="edge2_Node000000_Node000003" title=" " alt="" coords="160,28,274,51,273,57,159,33"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,55,191,79"/>
+<area shape="poly" id="edge3_Node000002_Node000001" title=" " alt="" coords="176,48,273,28,274,33,177,54"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="206,64,238,64,238,70,206,70"/>
+</map>

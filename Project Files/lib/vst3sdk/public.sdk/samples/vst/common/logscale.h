@@ -1,0 +1,219 @@
+//-----------------------------------------------------------------------------
+// Project     : VST SDK
+//
+// Category    : Examples
+// Filename    : public.sdk/samples/vst/common/logscale.h
+// Created by  : Steinberg, 10/2010
+// Description :
+//
+//-----------------------------------------------------------------------------
+// This file is part of a Steinberg SDK. It is subject to the license terms
+// in the LICENSE file found in the top-level directory of this distribution
+// and at www.steinberg.net/sdklicenses.
+// No part of the SDK, including this file, may be copied, modified, propagated,
+// or distributed except according to the terms contained in the LICENSE file.
+//-----------------------------------------------------------------------------
+
+#pragma once
+
+#include "pluginterfaces/base/ftypes.h"
+#include "pluginterfaces/base/ustring.h"
+#include "public.sdk/source/vst/vstparameters.h"
+#include <cmath>
+
+namespace Steinberg {
+namespace Vst {
+
+//-----------------------------------------------------------------------------
+/** LogScale class.
+Scales [srcMin srcMax] to [destMin destMax]
+
+Scaling curve is defined by given outValue for given inValue
+
+\section example1 Example for stretched lower range
+LogScale myLogScale (0, 1, 0, 1, 0.5, 0.1); \n
+means: input and output ranges are the same, but myLogScale.scale (0.5) is 0.1 ([0, 0.5, 1] => [0, 0.1, 1])
+
+\section example2 Example for compressed lower range
+LogScale myLogScale (0, 1, 0, 1, 0.5, 0.9); \n
+means: input and output ranges are the same, but myLogScale.scale (0.5) is 0.9 ([0, 0.5, 1] => [0, 0.9, 1])
+
+\section example3 Example for filter frequency range
+LogScale myLogScale (0, 1, 80, 22000, 0.5, 2000); \n
+means: input range is between 0 and 1 and output range is between 80 and 22000 and myLogScale.scale (0.5) is 2000 
+([0, 0.5, 1] => [80, 2000, 22000])
+*/
+template <class T>
+class LogScale 
+{
+public:
+	/** Constructor. */
+	LogScale (T srcMin, T srcMax, T destMin, T destMax, T inValue=0.5, T outValue=0.1);
+	/** Default Constructor with [0, 0.5, 1] => [0, 0.1, 1]. */
+	LogScale ();
+	
+	/** Applies a new scale setting. Note that destMin should be different than destMax! The same for srcMin and srcMax. */
+	void changeScaling (T srcMin, T srcMax, T destMin, T destMax, T inValue, T outValue);
+
+	/** Computes the scale from pIn input buffer to pOut output buffer (pIn and POut could be the same buffer). */
+	void scale (T* pIn, T* pOut, int32 nSamples);
+	/** Computes for one given value the scale. */
+	T scale (T input) const;
+
+	/** Computes the inverse scale from pIn input buffer to pOut output buffer (pIn and POut could be the same buffer). */
+	void invscale (T* pIn, T* pOut, int32 nSamples);
+	/** Computes for one given value the inverse scale. */
+	T invscale (T input) const;
+	/** Same than invscale with a check of the input. */
+	T invscaleCheck (T in) const;
+
+protected:
+
+	void setScaling (T srcMin, T srcMax, T destMin, T destMax, T inValue, T outValue);
+	T scaleFactor;
+	T scaleFactorInv;
+	T srcScale;
+	T srcScaleInv;
+	T srcMin;
+	T expo;
+	T expoInv;
+	T destMin;
+};
+
+//-----------------------------------------------------------------------------
+template <class T>
+LogScale<T>::LogScale (T srcMin, T srcMax, T destMin, T destMax, T inValue, T outValue)
+{
+	setScaling (srcMin, srcMax, destMin, destMax, inValue, outValue);
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+LogScale<T>::LogScale ()
+{
+	setScaling (0.f, 1.f, 0.f, 1.f, 0.5f, 0.1f);
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+void LogScale<T>::changeScaling (T srcMin, T srcMax, T destMin, T destMax, T inValue, T outValue)
+{
+	setScaling (srcMin, srcMax, destMin, destMax, inValue, outValue);
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+void LogScale<T>::setScaling (T _srcMin, T _srcMax, T _destMin, T _destMax, T inValue, T outValue)
+{
+	srcMin = _srcMin;
+	destMin = _destMin;
+	
+	scaleFactor = (_destMax - _destMin);
+	scaleFactorInv = 1.f / scaleFactor;
+
+	inValue = (inValue - _srcMin) / (_srcMax - _srcMin);
+
+	SMTG_ASSERT (inValue > 0.);
+
+	expo = ::log ((outValue - _destMin) / scaleFactor) / ::log (inValue);
+	expoInv = 1.f / expo;
+
+	srcScale = (_srcMax - _srcMin);
+	srcScaleInv = 1.f / srcScale;
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+void LogScale<T>::scale (T* pIn, T* pOut, int32 nSamples)
+{
+	for (int32 i = 0; i < nSamples; i++)
+		pOut[i] = ::powf ((float)((pIn[i] - srcMin) * srcScaleInv), (float)expo) * scaleFactor + destMin;
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+T LogScale<T>::scale (T input) const
+{
+	return ::powf ((float)((input - srcMin) * srcScaleInv), (float)expo) * scaleFactor + destMin;
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+void LogScale<T>::invscale (T* pIn, T* pOut, int32 nSamples)
+{
+	for (int32 i = 0; i < nSamples; i++)
+		pOut[i] = ::powf ((float)((pIn[i] - destMin) * scaleFactorInv), (float)expoInv) * srcScale + srcMin;
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+T LogScale<T>::invscale (T input) const
+{
+	return ::powf ((float)((input - destMin) * scaleFactorInv), (float)expoInv) * srcScale + srcMin;
+}
+
+//-----------------------------------------------------------------------------
+template <class T>
+T LogScale<T>::invscaleCheck (T input) const
+{
+	T basis = (float)((input - destMin) * scaleFactorInv);
+	
+	if (basis < 0.)
+		basis = 0.;
+
+	return ::powf ((float)basis, (float)expoInv) * srcScale + srcMin;
+}
+
+//-----------------------------------------------------------------------------
+/** Parameter class with a LogScale.
+Define a parameter using the LogScale.
+
+\sa Steinberg::Vst::LogScale
+*/
+template <class T>
+class LogScaleParameter : public Parameter
+{
+public:
+	LogScaleParameter (const TChar* title, ParamID tag, LogScale<T>& logScale,
+	                   const TChar* units = nullptr, int32 flags = ParameterInfo::kCanAutomate,
+	                   UnitID unitID = kRootUnitId)
+	: Parameter (title, tag, units, 0., 0, flags, unitID), logScale (logScale)
+	{
+	}
+	
+	void toString (ParamValue _valueNormalized, String128 string) const SMTG_OVERRIDE
+	{
+		UString128 wrapper;
+		wrapper.printFloat (toPlain (_valueNormalized), precision);
+		wrapper.copyTo (string, 128);
+	}
+	
+	bool fromString (const TChar* string, ParamValue& _valueNormalized) const SMTG_OVERRIDE
+	{
+		UString wrapper ((TChar*)string, strlen16 (string));
+		if (wrapper.scanFloat (_valueNormalized))
+		{
+			_valueNormalized = toNormalized (_valueNormalized);
+			return true;
+		}
+		return false;
+	}
+	
+	ParamValue toPlain (ParamValue _valueNormalized) const SMTG_OVERRIDE
+	{
+		return logScale.scale (_valueNormalized);
+	}
+	
+	ParamValue toNormalized (ParamValue plainValue) const SMTG_OVERRIDE
+	{
+		return logScale.invscale (plainValue);
+	}
+
+	OBJ_METHODS (LogScaleParameter<T>, Parameter)
+protected:
+	LogScale<T>& logScale;
+};
+
+//------------------------------------------------------------------------
+} // namespace Vst
+} // namespace Steinberg

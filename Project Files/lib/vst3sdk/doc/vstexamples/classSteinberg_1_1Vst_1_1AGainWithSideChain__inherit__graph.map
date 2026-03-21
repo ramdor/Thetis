@@ -1,0 +1,27 @@
+<map id="AGainWithSideChain" name="AGainWithSideChain">
+<area shape="rect" id="Node000001" title=" " alt="" coords="287,1833,475,1974"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1AGain.html" title=" " alt="" coords="300,1335,462,1785"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="384,1800,384,1834,378,1834,378,1800"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1AudioEffect.html" title=" " alt="" coords="288,1031,474,1287"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="384,1302,384,1335,378,1335,378,1302"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1Component.html" title=" " alt="" coords="158,668,302,983"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="310,995,326,1030,321,1032,305,997"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ComponentBase.html" title=" " alt="" coords="5,305,135,620"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="144,622,164,667,159,670,139,625"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="189,165,271,248"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="184,260,149,307,137,325,133,322,144,304,180,257"/>
+<area shape="rect" id="Node000009" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IComponent.html" title=" " alt="" coords="159,354,302,572"/>
+<area shape="poly" id="edge10_Node000009_Node000006" title=" " alt="" coords="233,262,233,354,228,354,228,262"/>
+<area shape="rect" id="Node000007" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="264,5,373,107"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="283,122,256,167,252,164,279,119"/>
+<area shape="rect" id="Node000008" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IConnectionPoint.html" title=" " alt="" coords="39,155,144,257"/>
+<area shape="poly" id="edge8_Node000008_Node000007" title=" " alt="" coords="253,103,145,173,143,169,250,99"/>
+<area shape="rect" id="Node000010" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IAudioProcessor.html" title=" " alt="" coords="326,363,487,562"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="335,122,388,363,382,364,330,123"/>
+<area shape="rect" id="Node000011" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IProcessContextRequirements.html" title=" " alt="" coords="418,687,629,963"/>
+<area shape="poly" id="edge14_Node000011_Node000007" title=" " alt="" coords="380,116,413,155,447,201,477,251,501,304,515,352,526,402,540,503,543,600,541,688,535,688,538,600,534,503,521,403,510,354,496,306,472,254,442,204,409,159,376,120"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="89,273,86,306,81,305,84,272"/>
+<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="233,587,233,668,228,668,228,587"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="405,577,388,1031,383,1031,400,577"/>
+<area shape="poly" id="edge13_Node000003_Node000011" title=" " alt="" coords="461,978,438,1032,433,1030,456,976"/>
+</map>

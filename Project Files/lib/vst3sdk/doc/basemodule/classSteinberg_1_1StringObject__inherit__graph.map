@@ -1,0 +1,15 @@
+<map id="StringObject" name="StringObject">
+<area shape="rect" id="Node000001" title="StringObject implements IStringResult and IString methods." alt="" coords="271,1427,372,1683"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1FObject.html" title="Implements FUnknown and IDependent." alt="" coords="27,967,159,1379"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,1323,200,1377,273,1486,269,1489,195,1380,164,1325"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,431,80,494"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="49,508,81,968,76,968,43,509"/>
+<area shape="rect" id="Node000004" href="$classSteinberg_1_1String.html" title="String." alt="" coords="209,1035,316,1311"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="289,1325,304,1426,299,1427,283,1326"/>
+<area shape="rect" id="Node000005" href="$classSteinberg_1_1ConstString.html" title="Invariant String." alt="" coords="104,5,474,919"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="274,934,270,1035,265,1035,269,934"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="340,1141,420,1205"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="376,1219,344,1427,338,1427,371,1218"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="444,1141,490,1205"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="467,1220,457,1296,448,1338,434,1380,407,1437,374,1489,369,1487,402,1435,430,1378,442,1337,452,1295,461,1219"/>
+</map>

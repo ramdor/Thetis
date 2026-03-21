@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vstgui-ui-description version="1">
+	<fonts>
+	</fonts>
+	<colors>
+	</colors>
+	<template background-color="~ BlackCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" name="view" opacity="1" origin="0, 0" size="300, 300" transparent="false" wants-focus="false"/>
+	<bitmaps/>
+</vstgui-ui-description>

@@ -1,0 +1,9 @@
+<map id="TestEnh" name="TestEnh">
+<area shape="rect" id="Node000001" title="Test Helper." alt="" coords="32,610,130,751"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1TestBase.html" title="Test Helper." alt="" coords="5,325,157,562"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,577,84,611,79,611,79,577"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1ITest.html" title=" " alt="" coords="26,155,136,277"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,292,84,325,79,325,79,292"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="27,5,136,107"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="84,122,84,156,79,156,79,122"/>
+</map>

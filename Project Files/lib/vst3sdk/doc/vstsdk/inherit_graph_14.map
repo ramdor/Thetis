@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,31,90,55"/>
+<area shape="rect" id="Node000001" href="$classSteinberg_1_1ResizableMemoryIBStream.html" title=" " alt="" coords="138,5,308,30"/>
+<area shape="poly" id="edge84_Node000000_Node000001" title=" " alt="" coords="105,32,137,27,137,33,106,37"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1PlugProvider.html" title="Helper for creating and initializing component." alt="" coords="177,55,269,79"/>
+<area shape="poly" id="edge85_Node000000_Node000002" title=" " alt="" coords="105,48,177,58,176,63,104,53"/>
+</map>

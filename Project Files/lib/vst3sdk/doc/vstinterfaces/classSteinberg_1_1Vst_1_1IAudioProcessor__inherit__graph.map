@@ -1,0 +1,9 @@
+<map id="IAudioProcessor" name="IAudioProcessor">
+<area shape="rect" id="Node000001" title="Audio processing interface: Vst::IAudioProcessor." alt="" coords="121,155,282,354"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1AudioEffect.html" title=" " alt="" coords="5,460,190,717"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="169,369,140,461,135,460,164,367"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1SingleComponentEffect.html" title=" " alt="" coords="215,402,400,775"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="240,368,251,402,246,403,235,369"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="147,5,256,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,122,204,156,199,156,199,122"/>
+</map>

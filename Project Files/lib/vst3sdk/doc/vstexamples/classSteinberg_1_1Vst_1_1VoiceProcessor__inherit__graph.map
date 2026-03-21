@@ -1,0 +1,5 @@
+<map id="VoiceProcessor" name="VoiceProcessor">
+<area shape="rect" id="Node000001" title="A Voice Processor class." alt="" coords="61,5,204,204"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1VoiceProcessorImplementation.html" title="A Simple Voice Processor Implementation supporting note expression events." alt="" coords="5,252,260,473"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,219,135,252,130,252,130,219"/>
+</map>

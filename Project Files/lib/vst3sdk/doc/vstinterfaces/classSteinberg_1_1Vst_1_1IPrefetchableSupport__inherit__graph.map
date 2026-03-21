@@ -1,0 +1,5 @@
+<map id="IPrefetchableSupport" name="IPrefetchableSupport">
+<area shape="rect" id="Node000001" title="Indicates that the plug&#45;in could or not support Prefetch (dynamically): Vst::IPrefetchableSupport." alt="" coords="5,155,165,219"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="31,5,140,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,122,88,156,83,156,83,122"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classSteinberg_1_1UString.html" title="UTF&#45;16 string class without buffer management." alt="" coords="5,55,68,79"/>
+<area shape="rect" id="Node000001" href="$classSteinberg_1_1UStringBuffer.html" title=" " alt="" coords="129,5,264,30"/>
+<area shape="poly" id="edge27_Node000000_Node000001" title=" " alt="" coords="81,51,153,28,155,33,83,56"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1UStringBuffer.html" title=" " alt="" coords="129,55,264,79"/>
+<area shape="poly" id="edge28_Node000000_Node000002" title=" " alt="" coords="83,64,128,64,128,70,83,70"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1UStringBuffer.html" title="UTF&#45;16 string with fixed buffer size." alt="" coords="116,104,277,129"/>
+<area shape="poly" id="edge29_Node000000_Node000003" title=" " alt="" coords="83,78,155,101,153,106,81,83"/>
+</map>

@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['parameterchanges_2ecpp_0',['parameterchanges.cpp',['../../vstsdk/parameterchanges_8cpp.html',1,'']]],
+  ['parameterchanges_2eh_1',['parameterchanges.h',['../../vstsdk/parameterchanges_8h.html',1,'']]],
+  ['pluginbasefwd_2eh_2',['pluginbasefwd.h',['../../base/pluginbasefwd_8h.html',1,'']]],
+  ['pluginfactory_2eh_3',['pluginfactory.h',['../../vstsdk/pluginfactory_8h.html',1,'']]],
+  ['pluginfactory_5fconstexpr_2eh_4',['pluginfactory_constexpr.h',['../../vstsdk/pluginfactory__constexpr_8h.html',1,'']]],
+  ['pluginterfacesupport_2ecpp_5',['pluginterfacesupport.cpp',['../../vstsdk/pluginterfacesupport_8cpp.html',1,'']]],
+  ['pluginterfacesupport_2eh_6',['pluginterfacesupport.h',['../../vstsdk/pluginterfacesupport_8h.html',1,'']]],
+  ['pluginview_2eh_7',['pluginview.h',['../../vstsdk/pluginview_8h.html',1,'']]],
+  ['plugprovider_2ecpp_8',['plugprovider.cpp',['../../vstsdk/plugprovider_8cpp.html',1,'']]],
+  ['plugprovider_2eh_9',['plugprovider.h',['../../vstsdk/plugprovider_8h.html',1,'']]],
+  ['presetbrowserviewcontroller_2eh_10',['PresetBrowserViewController.h',['../../vstsdk/PresetBrowserViewController_8h.html',1,'']]],
+  ['presetbrowserviewcontroller_2emm_11',['PresetBrowserViewController.mm',['../../vstsdk/PresetBrowserViewController_8mm.html',1,'']]],
+  ['presetmanager_2eh_12',['PresetManager.h',['../../vstsdk/PresetManager_8h.html',1,'']]],
+  ['presetmanager_2emm_13',['PresetManager.mm',['../../vstsdk/PresetManager_8mm.html',1,'']]],
+  ['presetsaveviewcontroller_2eh_14',['PresetSaveViewController.h',['../../vstsdk/PresetSaveViewController_8h.html',1,'']]],
+  ['presetsaveviewcontroller_2emm_15',['PresetSaveViewController.mm',['../../vstsdk/PresetSaveViewController_8mm.html',1,'']]],
+  ['processcontextrequirements_2eh_16',['processcontextrequirements.h',['../../vstsdk/processcontextrequirements_8h.html',1,'']]],
+  ['processdata_2ecpp_17',['processdata.cpp',['../../vstsdk/processdata_8cpp.html',1,'']]],
+  ['processdata_2eh_18',['processdata.h',['../../vstsdk/processdata_8h.html',1,'']]],
+  ['processdataslicer_2eh_19',['processdataslicer.h',['../../vstsdk/processdataslicer_8h.html',1,'']]]
+];

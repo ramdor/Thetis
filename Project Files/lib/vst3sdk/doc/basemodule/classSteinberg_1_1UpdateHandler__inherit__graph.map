@@ -1,0 +1,13 @@
+<map id="UpdateHandler" name="UpdateHandler">
+<area shape="rect" id="Node000001" title="UpdateHandler implements IUpdateManager and IUpdateHandler to handle dependencies between objects to ..." alt="" coords="132,576,288,929"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1FObject.html" title="Implements FUnknown and IDependent." alt="" coords="5,117,137,528"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,540,156,576,151,577,139,542"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="34,5,109,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="74,84,74,117,69,117,69,84"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="161,291,259,354"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="213,369,213,576,207,576,207,369"/>
+<area shape="rect" id="Node000005" href="$classSteinberg_1_1IUpdateManager.html" title="Handle Send and Cancel pending message for a given object." alt="" coords="283,281,439,364"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="344,378,274,577,269,576,339,377"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="326,5,396,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="363,84,363,281,358,281,358,84"/>
+</map>

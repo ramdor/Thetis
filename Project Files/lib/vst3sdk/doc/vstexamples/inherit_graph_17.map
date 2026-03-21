@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1Parameter.html" title=" " alt="" coords="5,55,84,79"/>
+<area shape="rect" id="Node000001" href="$classSteinberg_1_1Vst_1_1LogScaleParameter.html" title="Parameter class with a LogScale." alt="" coords="132,5,289,30"/>
+<area shape="poly" id="edge181_Node000000_Node000001" title=" " alt="" coords="98,48,166,28,167,33,99,54"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1mda_1_1BaseParameter.html" title=" " alt="" coords="157,55,264,79"/>
+<area shape="poly" id="edge182_Node000000_Node000002" title=" " alt="" coords="99,64,157,64,157,70,99,70"/>
+<area shape="rect" id="Node000005" href="$classSteinberg_1_1Vst_1_1mda_1_1ProxyParameter.html" title=" " alt="" coords="156,104,265,129"/>
+<area shape="poly" id="edge185_Node000000_Node000005" title=" " alt="" coords="99,80,167,101,166,106,98,86"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1Vst_1_1mda_1_1IndexedParameter.html" title=" " alt="" coords="337,31,459,55"/>
+<area shape="poly" id="edge183_Node000002_Node000003" title=" " alt="" coords="278,56,336,48,337,53,279,61"/>
+<area shape="rect" id="Node000004" href="$classSteinberg_1_1Vst_1_1mda_1_1ScaledParameter.html" title=" " alt="" coords="340,80,456,105"/>
+<area shape="poly" id="edge184_Node000002_Node000004" title=" " alt="" coords="279,74,340,82,340,87,278,79"/>
+</map>

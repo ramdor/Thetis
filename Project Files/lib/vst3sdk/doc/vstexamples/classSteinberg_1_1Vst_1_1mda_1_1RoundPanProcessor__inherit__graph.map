@@ -1,0 +1,22 @@
+<map id="RoundPanProcessor" name="RoundPanProcessor">
+<area shape="rect" id="Node000001" title=" " alt="" coords="237,1625,389,1882"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1mda_1_1SampleAccurateBaseProcessor.html" title=" " alt="" coords="211,1456,415,1577"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="316,1592,316,1626,310,1626,310,1592"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1Vst_1_1mda_1_1Processor.html" title=" " alt="" coords="222,1035,404,1408"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="316,1423,316,1456,310,1456,310,1423"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1AudioEffect.html" title=" " alt="" coords="220,731,406,987"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="316,1003,316,1036,310,1036,310,1003"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1Component.html" title=" " alt="" coords="65,368,209,683"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="218,674,248,730,243,732,214,677"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ComponentBase.html" title=" " alt="" coords="5,5,135,320"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="105,334,111,368,106,369,99,335"/>
+<area shape="rect" id="Node000010" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IComponent.html" title=" " alt="" coords="159,54,302,272"/>
+<area shape="poly" id="edge6_Node000005_Node000010" title=" " alt="" coords="201,287,180,369,175,367,196,286"/>
+<area shape="rect" id="Node000011" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IAudioProcessor.html" title=" " alt="" coords="232,426,394,625"/>
+<area shape="poly" id="edge7_Node000004_Node000011" title=" " alt="" coords="316,640,316,731,310,731,310,640"/>
+<area shape="rect" id="Node000008" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="397,112,506,214"/>
+<area shape="poly" id="edge8_Node000011_Node000008" title=" " alt="" coords="430,228,353,427,348,425,425,226"/>
+<area shape="rect" id="Node000012" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IProcessContextRequirements.html" title=" " alt="" coords="418,387,629,663"/>
+<area shape="poly" id="edge10_Node000012_Node000008" title=" " alt="" coords="467,228,499,387,494,388,462,229"/>
+<area shape="poly" id="edge9_Node000004_Node000012" title=" " alt="" coords="431,677,396,732,391,730,426,674"/>
+</map>

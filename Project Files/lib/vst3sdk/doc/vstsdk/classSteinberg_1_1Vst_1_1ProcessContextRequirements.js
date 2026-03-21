@@ -1,0 +1,28 @@
+var classSteinberg_1_1Vst_1_1ProcessContextRequirements =
+[
+    [ "ProcessContextRequirements", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#ae40c5b12ded747e7f7ab4d52bd7c8907", null ],
+    [ "wantsNone", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a66b2287da0305547b3e220cb798a1c9e", null ],
+    [ "wantsSystemTime", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a553a19d7d76246e136f47ed22de300e7", null ],
+    [ "wantsContinousTimeSamples", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#aca126954bb843250e3066812641cf935", null ],
+    [ "wantsProjectTimeMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#ab78d0c7efd63c16105473d91f69926ce", null ],
+    [ "wantsBarPositionMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a57320a1eda79489b0b9724492b752ab8", null ],
+    [ "wantsCycleMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a832ead8a341afb462e8a900b93d58fea", null ],
+    [ "wantsSamplesToNextClock", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#ae27deb8321989bd97dee2e2a8448dfd3", null ],
+    [ "wantsTempo", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a19773bffbc35957f6945bb26d3fac092", null ],
+    [ "wantsTimeSignature", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a05f3f9cee7e63662881fbcbc01c870bf", null ],
+    [ "wantsChord", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a44c9bab46a4a3d0ffd20cd90aef5c869", null ],
+    [ "wantsFrameRate", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#ab84bb93384ea08dca4a793a1da69ab56", null ],
+    [ "wantsTransportState", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a58c07f1cd083436bc2952a0c3f36ed19", null ],
+    [ "needSystemTime", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a9dad6cecc4951b7aad2eac16beb9e078", null ],
+    [ "needContinousTimeSamples", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a2adfaeb4ae5d2cecafe2a801313fcb1e", null ],
+    [ "needProjectTimeMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a5f97bbdd1195bccd802dc2d7f7dfb419", null ],
+    [ "needBarPositionMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a62af11d078b6f3f8d3b93d1dcbf2a69f", null ],
+    [ "needCycleMusic", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a6db44cdc908fc8ecf8b25fa175b87182", null ],
+    [ "needSamplesToNextClock", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#aef7805ba8c42ca8c82fc3acc7f4979bc", null ],
+    [ "needTempo", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a15176ae65c182aff6409a4be3ae75d6c", null ],
+    [ "needTimeSignature", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a9e03cdefeff75c6d21fd347a9fa8d4cb", null ],
+    [ "needChord", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a4b186fc14d0c7adfb1806157de940039", null ],
+    [ "needFrameRate", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#aa1cb94409e455d74775caf1a49d860d2", null ],
+    [ "needTransportState", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#ad679a7c8ada720e89f75645a632cad5c", null ],
+    [ "flags", "classSteinberg_1_1Vst_1_1ProcessContextRequirements.html#a81a27ce50e78368b0d0de1e8767fd32d", null ]
+];

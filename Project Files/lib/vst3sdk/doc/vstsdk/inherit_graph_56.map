@@ -1,0 +1,19 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessage.html" title=" " alt="" coords="5,129,104,154"/>
+<area shape="rect" id="Node000001" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessage2.html" title=" " alt="" coords="190,55,296,79"/>
+<area shape="poly" id="edge90_Node000000_Node000001" title=" " alt="" coords="90,119,151,90,189,77,190,82,153,95,92,124"/>
+<area shape="rect" id="Node000006" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageChannelVoice1.html" title=" " alt="" coords="152,104,334,129"/>
+<area shape="poly" id="edge95_Node000000_Node000006" title=" " alt="" coords="119,130,151,126,152,131,120,136"/>
+<area shape="rect" id="Node000007" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageSystem.html" title=" " alt="" coords="174,153,312,178"/>
+<area shape="poly" id="edge96_Node000000_Node000007" title=" " alt="" coords="119,147,174,154,173,159,119,152"/>
+<area shape="rect" id="Node000008" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageUtility.html" title=" " alt="" coords="179,203,307,227"/>
+<area shape="poly" id="edge97_Node000000_Node000008" title=" " alt="" coords="93,159,153,187,190,200,188,205,151,192,91,164"/>
+<area shape="rect" id="Node000002" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessage4.html" title=" " alt="" coords="420,5,526,30"/>
+<area shape="poly" id="edge91_Node000001_Node000002" title=" " alt="" coords="310,50,419,26,421,32,311,55"/>
+<area shape="rect" id="Node000004" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageChannelVoice2.html" title=" " alt="" coords="382,55,564,79"/>
+<area shape="poly" id="edge93_Node000001_Node000004" title=" " alt="" coords="311,64,381,64,381,70,311,70"/>
+<area shape="rect" id="Node000005" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageSysEx.html" title=" " alt="" coords="407,104,539,129"/>
+<area shape="poly" id="edge94_Node000001_Node000005" title=" " alt="" coords="311,79,412,101,411,106,310,84"/>
+<area shape="rect" id="Node000003" href="$structSteinberg_1_1Vst_1_1UMP_1_1Detail_1_1UMPMessageData128.html" title=" " alt="" coords="612,5,758,30"/>
+<area shape="poly" id="edge92_Node000002_Node000003" title=" " alt="" coords="541,15,612,15,612,20,541,20"/>
+</map>

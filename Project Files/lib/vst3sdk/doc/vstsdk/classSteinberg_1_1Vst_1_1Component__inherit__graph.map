@@ -1,0 +1,19 @@
+<map id="Component" name="Component">
+<area shape="rect" id="Node000001" title="Default implementation for a VST 3 Component." alt="" coords="121,668,265,983"/>
+<area shape="rect" id="Node000008" href="$classSteinberg_1_1Vst_1_1AudioEffect.html" title="Default implementation for a VST 3 audio effect." alt="" coords="100,1031,286,1287"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="196,998,196,1031,190,1031,190,998"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1Vst_1_1ComponentBase.html" title="Base class for VST 3 Component and Edit Controller." alt="" coords="48,305,178,620"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,634,161,668,156,669,148,635"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,175,58,238"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="49,251,66,305,61,306,43,253"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="211,165,293,248"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="219,262,191,307,180,327,176,324,187,304,214,259"/>
+<area shape="rect" id="Node000007" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IComponent.html" title=" " alt="" coords="202,354,344,572"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="259,262,267,354,261,354,254,263"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="138,5,248,107"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="221,120,238,164,233,166,216,122"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IConnectionPoint.html" title=" " alt="" coords="82,155,187,257"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="170,122,157,156,152,154,165,120"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="132,273,129,306,123,305,126,272"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="248,587,230,669,225,668,243,586"/>
+</map>

@@ -1,0 +1,23 @@
+<map id="ADelayController" name="ADelayController">
+<area shape="rect" id="Node000001" title=" " alt="" coords="304,1031,442,1152"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1EditController.html" title=" " alt="" coords="204,668,374,983"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="346,996,357,1030,352,1032,341,998"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ComponentBase.html" title=" " alt="" coords="5,305,135,620"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="145,610,150,619,206,706,202,709,145,621,141,613"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="204,165,286,248"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="195,255,150,307,137,326,133,323,146,304,191,252"/>
+<area shape="rect" id="Node000007" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IEditController.html" title=" " alt="" coords="160,315,330,610"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="248,262,248,315,242,315,242,262"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="273,5,382,107"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="295,122,270,166,265,164,290,119"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IConnectionPoint.html" title=" " alt="" coords="47,155,152,257"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="263,103,153,174,150,169,260,98"/>
+<area shape="rect" id="Node000008" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IEditController2.html" title=" " alt="" coords="354,412,466,514"/>
+<area shape="poly" id="edge10_Node000008_Node000005" title=" " alt="" coords="343,121,403,412,398,413,338,123"/>
+<area shape="rect" id="Node000009" href="$classSteinberg_1_1Vst_1_1IDelayTestController.html" title=" " alt="" coords="420,794,542,857"/>
+<area shape="poly" id="edge12_Node000009_Node000005" title=" " alt="" coords="380,117,436,202,462,252,481,305,496,374,506,446,509,517,509,587,500,709,489,794,484,794,495,708,504,586,504,518,500,446,491,375,476,306,457,255,432,205,376,120"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="95,273,91,306,86,305,90,272"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="267,625,273,668,267,669,262,625"/>
+<area shape="poly" id="edge9_Node000002_Node000008" title=" " alt="" coords="391,528,344,669,339,667,386,527"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="465,872,400,1032,395,1030,460,870"/>
+</map>

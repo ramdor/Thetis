@@ -1,0 +1,14 @@
+<map id="CPluginFactory" name="CPluginFactory">
+<area shape="rect" id="Node000001" title="Default Class Factory implementation." alt="" coords="55,567,222,997"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginFactory3.html" title=" " alt="" coords="11,436,156,519"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,533,102,567,97,568,91,534"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginFactory2.html" title=" " alt="" coords="5,325,111,388"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="70,402,78,436,73,437,65,403"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginFactory.html" title=" " alt="" coords="36,155,147,277"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="76,292,68,325,63,324,71,291"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="84,5,193,107"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="122,122,112,156,107,155,117,121"/>
+<area shape="rect" id="Node000006" href="$classSteinberg_1_1IPluginFactoryInternal.html" title=" " alt="" coords="135,325,302,388"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="158,121,213,324,208,326,153,122"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="212,403,181,567,176,566,207,402"/>
+</map>

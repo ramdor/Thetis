@@ -1,0 +1,13 @@
+<map id="IComponent" name="IComponent">
+<area shape="rect" id="Node000001" title="Component base interface: Vst::IComponent." alt="" coords="120,286,263,504"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1Component.html" title=" " alt="" coords="26,581,170,896"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="160,519,143,582,138,581,155,518"/>
+<area shape="rect" id="Node000006" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1SingleComponentEffect.html" title=" " alt="" coords="193,552,378,925"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="228,517,237,552,232,553,222,519"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IPluginBase.html" title=" " alt="" coords="150,155,232,238"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,253,194,286,188,286,188,253"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="137,5,246,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="194,122,194,155,188,155,188,122"/>
+<area shape="rect" id="Node000005" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1AudioEffect.html" title=" " alt="" coords="5,973,190,1229"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="100,911,100,973,95,973,95,911"/>
+</map>

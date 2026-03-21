@@ -1,0 +1,9 @@
+<map id="PresetManager" name="PresetManager">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,325,207,634"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="11,184,63,248"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,261,68,324,63,326,46,263"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IInterAppAudioPresetManager.html" title=" " alt="" coords="88,155,264,277"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="159,292,150,325,145,324,153,290"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="121,5,230,107"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,122,178,156,173,156,173,122"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Bus" name="Bus">
+<area shape="rect" id="Node000001" title="Basic Bus object." alt="" coords="89,117,184,335"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1Vst_1_1AudioBus.html" title="Description of an Audio Bus." alt="" coords="5,383,124,504"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="99,350,87,384,82,382,94,348"/>
+<area shape="rect" id="Node000004" href="$classSteinberg_1_1Vst_1_1EventBus.html" title="Description of an Event Bus." alt="" coords="148,392,269,494"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,348,195,392,190,394,175,350"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="110,5,163,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="140,84,140,117,134,117,134,84"/>
+</map>

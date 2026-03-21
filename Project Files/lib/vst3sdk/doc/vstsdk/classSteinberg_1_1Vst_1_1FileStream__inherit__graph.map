@@ -1,0 +1,7 @@
+<map id="FileStream" name="FileStream">
+<area shape="rect" id="Node000001" title="Stream implementation for a file using stdio." alt="" coords="11,383,108,562"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IBStream.html" title=" " alt="" coords="15,155,105,335"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,350,62,383,57,383,57,350"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="5,5,114,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="62,122,62,156,57,156,57,122"/>
+</map>

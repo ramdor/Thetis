@@ -1,0 +1,9 @@
+<map id="ReadOnlyBStream" name="ReadOnlyBStream">
+<area shape="rect" id="Node000001" title="Stream representing a Read&#45;Only subsection of its source stream." alt="" coords="5,383,145,601"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="23,649,128,751"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="78,616,78,649,73,649,73,616"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1IBStream.html" title=" " alt="" coords="30,155,120,335"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,350,78,383,73,383,73,350"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="21,5,130,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="78,122,78,156,73,156,73,122"/>
+</map>

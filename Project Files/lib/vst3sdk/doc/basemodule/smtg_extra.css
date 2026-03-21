@@ -1,0 +1,10 @@
+/* SMTG Extra */
+
+body {
+    overflow: auto;
+}
+
+div.contents {
+    overflow: auto;
+    max-height: 100vh; /* Adjust as needed */
+}

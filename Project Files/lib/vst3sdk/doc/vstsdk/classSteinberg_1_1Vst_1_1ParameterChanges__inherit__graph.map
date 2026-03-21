@@ -1,0 +1,7 @@
+<map id="ParameterChanges" name="ParameterChanges">
+<area shape="rect" id="Node000001" title="Implementation&#39;s example of IParameterChanges &#45; not threadsave!" alt="" coords="5,305,150,504"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IParameterChanges.html" title=" " alt="" coords="9,155,147,257"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,272,80,306,75,306,75,272"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="23,5,132,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="80,122,80,155,75,155,75,122"/>
+</map>

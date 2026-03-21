@@ -1,0 +1,9 @@
+<map id="IParamValueQueue" name="IParamValueQueue">
+<area shape="rect" id="Node000001" title="Queue of changes for a specific parameter: Vst::IParamValueQueue." alt="" coords="113,155,230,277"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ParamChanges.html" title=" " alt="" coords="5,325,156,601"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="147,291,134,326,129,324,142,290"/>
+<area shape="rect" id="Node000004" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1ParameterValueQueue.html" title=" " alt="" coords="181,354,344,572"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,290,225,353,220,355,196,291"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="117,5,226,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,122,174,156,169,156,169,122"/>
+</map>

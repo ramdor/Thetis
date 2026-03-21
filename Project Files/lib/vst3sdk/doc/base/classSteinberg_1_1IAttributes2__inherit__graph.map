@@ -1,0 +1,7 @@
+<map id="IAttributes2" name="IAttributes2">
+<area shape="rect" id="Node000001" title="Extended access to Attributes; supports Attribute retrieval via iteration." alt="" coords="20,518,132,601"/>
+<area shape="rect" id="Node000002" href="$classSteinberg_1_1IAttributes.html" title="Object Data Archive Interface." alt="" coords="5,155,146,470"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,485,78,518,73,518,73,485"/>
+<area shape="rect" id="Node000003" href="$classSteinberg_1_1FUnknown.html" title="The basic interface of all interfaces." alt="" coords="21,5,130,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="78,122,78,156,73,156,73,122"/>
+</map>

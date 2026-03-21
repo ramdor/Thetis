@@ -1,0 +1,5 @@
+<map id="Graphical User Interface" name="Graphical User Interface">
+<area shape="rect" id="Node000002" href="$group__platformUIType.html" title="List of Platform UI types for IPlugView." alt="" coords="352,5,469,30"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,159,55"/>
+<area shape="rect" id="Node000003" href="$group__waylandFrame.html" title="The following interfaces allow querying information about the host plug&#45;in frame when running in a Wa..." alt="" coords="357,55,464,79"/>
+</map>

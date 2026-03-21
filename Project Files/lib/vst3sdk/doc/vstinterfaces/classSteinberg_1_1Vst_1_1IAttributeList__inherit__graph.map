@@ -1,0 +1,7 @@
+<map id="IAttributeList" name="IAttributeList">
+<area shape="rect" id="Node000001" title="Attribute list used in IMessage and IStreamAttributes: Vst::IAttributeList." alt="" coords="27,155,110,354"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstsdk/vstsdk.tag$classSteinberg_1_1Vst_1_1HostAttributeList.html" title=" " alt="" coords="5,402,132,639"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="72,369,72,402,66,402,66,369"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="14,5,123,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="72,122,72,156,66,156,66,122"/>
+</map>

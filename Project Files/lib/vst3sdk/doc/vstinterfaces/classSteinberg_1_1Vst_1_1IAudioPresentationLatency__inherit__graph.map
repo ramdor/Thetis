@@ -1,0 +1,5 @@
+<map id="IAudioPresentationLatency" name="IAudioPresentationLatency">
+<area shape="rect" id="Node000001" title="Extended IAudioProcessor interface for a component: Vst::IAudioPresentationLatency." alt="" coords="5,155,188,233"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="42,5,151,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,122,100,155,94,155,94,122"/>
+</map>

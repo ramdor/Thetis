@@ -1,0 +1,7 @@
+<map id="EventList" name="EventList">
+<area shape="rect" id="Node000001" title="Example implementation of IEventList." alt="" coords="5,305,128,543"/>
+<area shape="rect" id="Node000002" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/vstinterfaces/vstinterfaces.tag$classSteinberg_1_1Vst_1_1IEventList.html" title=" " alt="" coords="11,155,123,257"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="70,272,70,306,64,306,64,272"/>
+<area shape="rect" id="Node000003" href="/Users/buildserver/TeamCity/buildData/work/e7e95fcd18a819ac/VST_SDK/vst3sdk/doc/base/base.tag$classSteinberg_1_1FUnknown.html" title=" " alt="" coords="12,5,121,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="70,122,70,155,64,155,64,122"/>
+</map>
