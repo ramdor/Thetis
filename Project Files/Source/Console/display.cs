@@ -709,15 +709,17 @@ namespace Thetis
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
         {
+            setCurrentWaterfallBand(rx, newBand);
+
             if (rx == 1)
             {
                 FastAttackNoiseFloorRX1 = true;
-                _RX1waterfallPreviousMinValue = 20;
+                _RX1waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(1, false);
             }
             else
             {
                 FastAttackNoiseFloorRX2 = true;
-                _RX2waterfallPreviousMinValue = 20;
+                _RX2waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(2, false);
             }
         }
 
@@ -1437,6 +1439,15 @@ namespace Thetis
                 {
                     if (value != _old_mox)
                     {
+                        bool rx1WillBeTx = value && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
+                        _RX1waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(1, rx1WillBeTx);
+
+                        if (_rx2_enabled)
+                        {
+                            bool rx2WillBeTx = value && (_tx_on_vfob && _rx2_enabled);
+                            _RX2waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(2, rx2WillBeTx);
+                        }
+
                         PurgeBuffers();
                         _old_mox = value;
                     }
@@ -2592,6 +2603,90 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
+        private const float WATERFALL_AGC_RESTART_FLOOR_DBM = -150f;
+        private static readonly int[] _currentWaterfallBandByRx = new int[] { int.MinValue, int.MinValue };
+        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache =
+            new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
+
+        private struct WaterfallAgcCacheKey : IEquatable<WaterfallAgcCacheKey>
+        {
+            public readonly bool IsTx;
+            public readonly int BandValue;
+
+            public WaterfallAgcCacheKey(bool isTx, int bandValue)
+            {
+                IsTx = isTx;
+                BandValue = bandValue;
+            }
+
+            public bool Equals(WaterfallAgcCacheKey other)
+            {
+                return IsTx == other.IsTx && BandValue == other.BandValue;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is WaterfallAgcCacheKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                return (IsTx ? 397 : 211) ^ BandValue;
+            }
+        }
+
+        private struct WaterfallAgcCacheEntry
+        {
+            public float PreviousMin;
+        }
+
+        private static int getWaterfallRxIndex(int rx)
+        {
+            return rx - 1;
+        }
+
+        private static void setCurrentWaterfallBand(int rx, Band band)
+        {
+            int rxIndex = getWaterfallRxIndex(rx);
+            if (rxIndex < 0 || rxIndex >= _currentWaterfallBandByRx.Length) return;
+            _currentWaterfallBandByRx[rxIndex] = (int)band;
+        }
+
+        private static int getWaterfallContextBandValue(int rx, bool isTxContext)
+        {
+            if (!isTxContext)
+            {
+                int rxIndex = getWaterfallRxIndex(rx);
+                if (rxIndex < 0 || rxIndex >= _currentWaterfallBandByRx.Length) return int.MinValue;
+                return _currentWaterfallBandByRx[rxIndex];
+            }
+
+            int txRxIndex = (_tx_on_vfob && _rx2_enabled) ? 1 : 0;
+            if (txRxIndex < 0 || txRxIndex >= _currentWaterfallBandByRx.Length) return int.MinValue;
+            return _currentWaterfallBandByRx[txRxIndex];
+        }
+
+        private static float getWaterfallCachedPreviousMinOrFloor(int rx, bool isTxContext)
+        {
+            int bandValue = getWaterfallContextBandValue(rx, isTxContext);
+            if (bandValue != int.MinValue &&
+                _waterfallAgcCache.TryGetValue(new WaterfallAgcCacheKey(isTxContext, bandValue), out WaterfallAgcCacheEntry entry))
+            {
+                return entry.PreviousMin;
+            }
+
+            return WATERFALL_AGC_RESTART_FLOOR_DBM;
+        }
+
+        private static void updateWaterfallAgcCache(int rx, bool isTxContext, float previousMin)
+        {
+            int bandValue = getWaterfallContextBandValue(rx, isTxContext);
+            if (bandValue == int.MinValue) return;
+
+            _waterfallAgcCache[new WaterfallAgcCacheKey(isTxContext, bandValue)] =
+                new WaterfallAgcCacheEntry { PreviousMin = previousMin };
+        }
+
         private static bool _ignore_waterfall_rx1_agc = false;
         private static bool _ignore_waterfall_rx2_agc = false;
         private static double _rx1_no_agc_duration = 0;
@@ -2832,8 +2927,8 @@ namespace Thetis
             set { m_bStopRX2WaterfallOnTX = value; }
         }
 
-        private static float _RX1waterfallPreviousMinValue = 20;
-        private static float _RX2waterfallPreviousMinValue = 20;
+        private static float _RX1waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
+        private static float _RX2waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
         private static void ResetWaterfallBmp()
         {
             int H = displayTargetHeight;
@@ -6257,8 +6352,8 @@ namespace Thetis
             if (console.PowerOn != _old_power)
             {
                 _old_power = console.PowerOn;
-                _RX1waterfallPreviousMinValue = 20;
-                _RX2waterfallPreviousMinValue = 20;
+                _RX1waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
+                _RX2waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
             }
 
             if (rx == 2)
@@ -7534,6 +7629,15 @@ namespace Thetis
                                 _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (waterfall_minimum * 0.4f);
                             }
                         }
+                    }
+
+                    if (!local_mox)
+                    {
+                        updateWaterfallAgcCache(rx, false, rx == 1 ? _RX1waterfallPreviousMinValue : _RX2waterfallPreviousMinValue);
+                    }
+                    else
+                    {
+                        updateWaterfallAgcCache(rx, true, rx == 1 ? _RX1waterfallPreviousMinValue : _RX2waterfallPreviousMinValue);
                     }
                 }
 
