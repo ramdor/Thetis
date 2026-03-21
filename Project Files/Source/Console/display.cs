@@ -6146,6 +6146,25 @@ namespace Thetis
             return rx == 2 ? RX2DisplayHigh - RX2DisplayLow : RXDisplayHigh - RXDisplayLow;
         }
 
+        public static bool UseWaterfallNoiseFloorCompensation(int rx)
+        {
+            if (rx == 1)
+            {
+                return m_bWaterfallUseNFForACGRX1 &&
+                       !m_bFastAttackNoiseFloorRX1 &&
+                       m_bNoiseFloorGoodRX1;
+            }
+
+            if (rx == 2)
+            {
+                return m_bWaterfallUseNFForACGRX2 &&
+                       !m_bFastAttackNoiseFloorRX2 &&
+                       m_bNoiseFloorGoodRX2;
+            }
+
+            return false;
+        }
+
         private static int prepareWaterfallBitmapShift(int rx, int width, double centerMHz, out bool clearBitmap)
         {
             int index = rx == 2 ? 1 : 0;
@@ -6345,6 +6364,7 @@ namespace Thetis
             float waterfall_minimum = 200f;
             ColorScheme cScheme = ColorScheme.enhanced;
             Color low_color = Color.Black;
+            bool useNoiseFloorCompensation = !local_mox && UseWaterfallNoiseFloorCompensation(rx);
 
             bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
@@ -6370,19 +6390,11 @@ namespace Thetis
                     high_threshold = rx2_waterfall_high_threshold;
                     if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX2)
-                        {
-                            if (FastAttackNoiseFloorRX2)
-                            {
-                                low_threshold = _RX2waterfallPreviousMinValue;
-                                //note: no adjust if using old value
-                            }
-                            else
+                        if (useNoiseFloorCompensation)
                             {
                                 low_threshold = m_fLerpAverageRX2;
                                 low_threshold -= m_fWaterfallAGCOffsetRX2;
                             }
-                        }
                         else
                         {
                             low_threshold = _RX2waterfallPreviousMinValue;
@@ -6411,19 +6423,11 @@ namespace Thetis
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX1)
-                        {
-                            if (FastAttackNoiseFloorRX1)
-                            {
-                                low_threshold = _RX1waterfallPreviousMinValue;
-                                //note: no adjust if using old value
-                            }
-                            else
+                        if (useNoiseFloorCompensation)
                             {
                                 low_threshold = m_fLerpAverageRX1;
                                 low_threshold -= m_fWaterfallAGCOffsetRX1;
                             }
-                        }
                         else
                         {
                             low_threshold = _RX1waterfallPreviousMinValue;
@@ -7611,7 +7615,7 @@ namespace Thetis
 
                         if (rx == 1)
                         {
-                            if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds && m_bWaterfallUseNFForACGRX1)
+                            if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds && useNoiseFloorCompensation)
                             {
                                 _RX1waterfallPreviousMinValue = (_RX1waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
                             }
@@ -7622,7 +7626,7 @@ namespace Thetis
                         }
                         else
                         {
-                            if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds && m_bWaterfallUseNFForACGRX2)
+                            if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds && useNoiseFloorCompensation)
                             {
                                 _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
                             }

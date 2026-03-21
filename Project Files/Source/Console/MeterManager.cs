@@ -18491,7 +18491,7 @@ namespace Thetis
                                 {
                                     if (Display.RX1WaterfallAGC)
                                     {
-                                        if (Display.WaterfallUseNFForACGRX1)
+                                        if (Display.UseWaterfallNoiseFloorCompensation(1))
                                         {
                                             min = (int)Display.ActiveNoiseFloorRX1;
                                         }
@@ -18530,7 +18530,7 @@ namespace Thetis
                                 {
                                     if (Display.RX2WaterfallAGC)
                                     {
-                                        if (Display.WaterfallUseNFForACGRX2)
+                                        if (Display.UseWaterfallNoiseFloorCompensation(2))
                                         {
                                             min = (int)Display.ActiveNoiseFloorRX2;
                                         }
