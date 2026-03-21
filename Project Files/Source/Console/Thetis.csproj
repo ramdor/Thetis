@@ -823,6 +823,13 @@
     <Compile Include="SpotManager2.cs" />
     <Compile Include="TCIServer.cs" />
     <Compile Include="titlebar.cs" />
+    <Compile Include="vsthost.cs" />
+    <Compile Include="VstChainManagerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VstPluginPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TuneStep.cs" />
     <Compile Include="ucOtherButtonsOptionsGrid.cs" />
     <Compile Include="ucOtherButtonsOptionsGrid.Designer.cs">
@@ -1299,6 +1306,10 @@
     <ProjectReference Include="..\RawInput\RawInput.csproj">
       <Project>{4143d085-38cf-4640-bb05-2fdffaf94d76}</Project>
       <Name>RawInput</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VstPluginScanner\VstPluginScanner.csproj">
+      <Project>{90e1e59e-ea6b-4fa1-a2ab-c3b6eb842e7c}</Project>
+      <Name>VstPluginScanner</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

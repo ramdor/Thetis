@@ -97,6 +97,10 @@ namespace Thetis
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
 
         private frmBandwidth _frmBandwidth;
+        private CheckBoxTS chkVACApplyRxVst;
+        private CheckBoxTS chkVAC2ApplyRxVst;
+        private CheckBoxTS chkVACBypassTxVst;
+        private CheckBoxTS chkVAC2BypassTxVst;
 
         #endregion
 
@@ -106,6 +110,7 @@ namespace Thetis
         {
             LogTool.AddLogEntry("      Setup init components...", "INITCOMPSETUP");
             InitializeComponent();
+            InitializeVacVstControls();
 
             _original_pnlP1_adcs_location = pnlP1_adcs.Location;
 
@@ -125,6 +130,78 @@ namespace Thetis
             LogTool.Completed("INITCOMPSETUP");
 
             //everything here moved to AfterConstructor, which is called during singleton instance // G7KLJ's idea/implementation
+        }
+
+        private void InitializeVacVstControls()
+        {
+            GroupBoxTS grpVacRxVst = new GroupBoxTS();
+            grpVacRxVst.Location = new Point(230, 134);
+            grpVacRxVst.Name = "grpVacRxVst";
+            grpVacRxVst.Size = new Size(240, 140);
+            grpVacRxVst.TabIndex = 7;
+            grpVacRxVst.TabStop = false;
+            grpVacRxVst.Text = "VAC VST";
+            toolTip1.SetToolTip(grpVacRxVst, "Control whether VAC audio uses the RX and TX VST chains.");
+
+            chkVACApplyRxVst = new CheckBoxTS();
+            chkVACApplyRxVst.AutoSize = true;
+            chkVACApplyRxVst.Image = null;
+            chkVACApplyRxVst.Location = new Point(18, 24);
+            chkVACApplyRxVst.Name = "chkVACApplyRxVst";
+            chkVACApplyRxVst.Size = new Size(158, 17);
+            chkVACApplyRxVst.Text = "Apply RX VST Chain to VAC1";
+            chkVACApplyRxVst.UseVisualStyleBackColor = true;
+            toolTip1.SetToolTip(chkVACApplyRxVst, "Apply the RX VST chain to VAC1 audio output. This does not affect direct IQ output.");
+            chkVACApplyRxVst.CheckedChanged += new EventHandler(chkVACApplyRxVst_CheckedChanged);
+            grpVacRxVst.Controls.Add(chkVACApplyRxVst);
+
+            chkVAC2ApplyRxVst = new CheckBoxTS();
+            chkVAC2ApplyRxVst.AutoSize = true;
+            chkVAC2ApplyRxVst.Image = null;
+            chkVAC2ApplyRxVst.Location = new Point(18, 50);
+            chkVAC2ApplyRxVst.Name = "chkVAC2ApplyRxVst";
+            chkVAC2ApplyRxVst.Size = new Size(158, 17);
+            chkVAC2ApplyRxVst.Text = "Apply RX VST Chain to VAC2";
+            chkVAC2ApplyRxVst.UseVisualStyleBackColor = true;
+            toolTip1.SetToolTip(chkVAC2ApplyRxVst, "Apply the RX VST chain to VAC2 audio output. This does not affect direct IQ output.");
+            chkVAC2ApplyRxVst.CheckedChanged += new EventHandler(chkVAC2ApplyRxVst_CheckedChanged);
+            grpVacRxVst.Controls.Add(chkVAC2ApplyRxVst);
+
+            chkVACBypassTxVst = new CheckBoxTS();
+            chkVACBypassTxVst.AutoSize = true;
+            chkVACBypassTxVst.Image = null;
+            chkVACBypassTxVst.Location = new Point(18, 78);
+            chkVACBypassTxVst.Name = "chkVACBypassTxVst";
+            chkVACBypassTxVst.Size = new Size(170, 17);
+            chkVACBypassTxVst.Text = "Bypass TX VST Chain for VAC1";
+            chkVACBypassTxVst.UseVisualStyleBackColor = true;
+            toolTip1.SetToolTip(chkVACBypassTxVst, "When VAC1 is the active TX VAC input, bypass the TX VST chain for that VAC audio.");
+            chkVACBypassTxVst.CheckedChanged += new EventHandler(chkVACBypassTxVst_CheckedChanged);
+            grpVacRxVst.Controls.Add(chkVACBypassTxVst);
+
+            chkVAC2BypassTxVst = new CheckBoxTS();
+            chkVAC2BypassTxVst.AutoSize = true;
+            chkVAC2BypassTxVst.Image = null;
+            chkVAC2BypassTxVst.Location = new Point(18, 104);
+            chkVAC2BypassTxVst.Name = "chkVAC2BypassTxVst";
+            chkVAC2BypassTxVst.Size = new Size(170, 17);
+            chkVAC2BypassTxVst.Text = "Bypass TX VST Chain for VAC2";
+            chkVAC2BypassTxVst.UseVisualStyleBackColor = true;
+            toolTip1.SetToolTip(chkVAC2BypassTxVst, "When VAC2 is the active TX VAC input, bypass the TX VST chain for that VAC audio.");
+            chkVAC2BypassTxVst.CheckedChanged += new EventHandler(chkVAC2BypassTxVst_CheckedChanged);
+            grpVacRxVst.Controls.Add(chkVAC2BypassTxVst);
+
+            tpAudioOptions.Controls.Add(grpVacRxVst);
+
+            UpdateVacVstControlStates();
+        }
+
+        private void UpdateVacVstControlStates()
+        {
+            if (chkVACApplyRxVst != null)
+                chkVACApplyRxVst.Enabled = !chkAudioIQtoVAC.Checked;
+            if (chkVAC2ApplyRxVst != null)
+                chkVAC2ApplyRxVst.Enabled = !chkVAC2DirectIQ.Checked;
         }
         internal void AfterConstructor()
         {
@@ -3069,6 +3146,8 @@ namespace Thetis
             if (isTXProfileSettingDifferent<string>(dr, "VAC1_Buffer_Size", (string)comboAudioBuffer2.Text, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC1_IQ_Output", (bool)chkAudioIQtoVAC.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC1_IQ_Correct", (bool)chkAudioCorrectIQ.Checked, out sReportOut)) sReport += sReportOut;
+            if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Apply_RX_VST", (bool)chkVACApplyRxVst.Checked, out sReportOut)) sReport += sReportOut;
+            if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Bypass_TX_VST", (bool)chkVACBypassTxVst.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC1_PTT_OverRide", (bool)chkVACAllowBypass.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Combine_Input_Channels", (bool)chkVACCombine.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Latency_On", (bool)chkAudioLatencyManual2.Checked, out sReportOut)) sReport += sReportOut;
@@ -3094,6 +3173,8 @@ namespace Thetis
             if (isTXProfileSettingDifferent<string>(dr, "VAC2_Buffer_Size", (string)comboAudioBuffer3.Text, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC2_IQ_Output", (bool)chkVAC2DirectIQ.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC2_IQ_Correct", (bool)chkVAC2DirectIQCal.Checked, out sReportOut)) sReport += sReportOut;
+            if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Apply_RX_VST", (bool)chkVAC2ApplyRxVst.Checked, out sReportOut)) sReport += sReportOut;
+            if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Bypass_TX_VST", (bool)chkVAC2BypassTxVst.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Combine_Input_Channels", (bool)chkVAC2Combine.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Latency_On", (bool)chkVAC2LatencyManual.Checked, out sReportOut)) sReport += sReportOut;
             if (isTXProfileSettingDifferent<int>(dr, "VAC2_Latency_Duration", (int)udVAC2Latency.Value, out sReportOut)) sReport += sReportOut;
@@ -3269,6 +3350,8 @@ namespace Thetis
             if (DB.ConvertFromDBVal<string>(dr["VAC1_Buffer_Size"]) != (string)comboAudioBuffer2.Text) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_IQ_Output"]) != (bool)chkAudioIQtoVAC.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_IQ_Correct"]) != (bool)chkAudioCorrectIQ.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Apply_RX_VST"]) != (bool)chkVACApplyRxVst.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Bypass_TX_VST"]) != (bool)chkVACBypassTxVst.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_PTT_OverRide"]) != (bool)chkVACAllowBypass.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_Combine_Input_Channels"]) != (bool)chkVACCombine.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_On"]) != (bool)chkAudioLatencyManual2.Checked) return true;
@@ -3297,6 +3380,8 @@ namespace Thetis
             if (DB.ConvertFromDBVal<string>(dr["VAC2_Buffer_Size"]) != (string)comboAudioBuffer3.Text) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_IQ_Output"]) != (bool)chkVAC2DirectIQ.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_IQ_Correct"]) != (bool)chkVAC2DirectIQCal.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Apply_RX_VST"]) != (bool)chkVAC2ApplyRxVst.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Bypass_TX_VST"]) != (bool)chkVAC2BypassTxVst.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_Combine_Input_Channels"]) != (bool)chkVAC2Combine.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_On"]) != (bool)chkVAC2LatencyManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_Duration"]) != (int)udVAC2Latency.Value) return true;
@@ -3441,6 +3526,8 @@ namespace Thetis
             Common.HightlightControl(comboAudioBuffer2, bHighlight);
             Common.HightlightControl(chkAudioIQtoVAC, bHighlight);
             Common.HightlightControl(chkAudioCorrectIQ, bHighlight);
+            Common.HightlightControl(chkVACApplyRxVst, bHighlight);
+            Common.HightlightControl(chkVACBypassTxVst, bHighlight);
             Common.HightlightControl(chkVACAllowBypass, bHighlight);
             Common.HightlightControl(chkVACCombine, bHighlight);
             Common.HightlightControl(chkAudioLatencyManual2, bHighlight);
@@ -3466,6 +3553,8 @@ namespace Thetis
             Common.HightlightControl(comboAudioBuffer3, bHighlight);
             Common.HightlightControl(chkVAC2DirectIQ, bHighlight);
             Common.HightlightControl(chkVAC2DirectIQCal, bHighlight);
+            Common.HightlightControl(chkVAC2ApplyRxVst, bHighlight);
+            Common.HightlightControl(chkVAC2BypassTxVst, bHighlight);
             Common.HightlightControl(chkVAC2Combine, bHighlight);
             Common.HightlightControl(chkVAC2LatencyManual, bHighlight);
             Common.HightlightControl(udVAC2Latency, bHighlight);
@@ -3639,6 +3728,8 @@ namespace Thetis
             dr["VAC1_Buffer_Size"] = (string)comboAudioBuffer2.Text;
             dr["VAC1_IQ_Output"] = (bool)chkAudioIQtoVAC.Checked;
             dr["VAC1_IQ_Correct"] = (bool)chkAudioCorrectIQ.Checked;
+            dr["VAC1_Apply_RX_VST"] = (bool)chkVACApplyRxVst.Checked;
+            dr["VAC1_Bypass_TX_VST"] = (bool)chkVACBypassTxVst.Checked;
             dr["VAC1_PTT_OverRide"] = (bool)chkVACAllowBypass.Checked;
             dr["VAC1_Combine_Input_Channels"] = (bool)chkVACCombine.Checked;
             dr["VAC1_Latency_On"] = (bool)chkAudioLatencyManual2.Checked;
@@ -3664,6 +3755,8 @@ namespace Thetis
             dr["VAC2_Buffer_Size"] = (string)comboAudioBuffer3.Text;
             dr["VAC2_IQ_Output"] = (bool)chkVAC2DirectIQ.Checked;
             dr["VAC2_IQ_Correct"] = (bool)chkVAC2DirectIQCal.Checked;
+            dr["VAC2_Apply_RX_VST"] = (bool)chkVAC2ApplyRxVst.Checked;
+            dr["VAC2_Bypass_TX_VST"] = (bool)chkVAC2BypassTxVst.Checked;
             dr["VAC2_Combine_Input_Channels"] = (bool)chkVAC2Combine.Checked;
             dr["VAC2_Latency_On"] = (bool)chkVAC2LatencyManual.Checked;
             dr["VAC2_Latency_Duration"] = (int)udVAC2Latency.Value;
@@ -9345,6 +9438,8 @@ namespace Thetis
             comboAudioBuffer2.Text = (string)dr["VAC1_Buffer_Size"];
             chkAudioIQtoVAC.Checked = (bool)dr["VAC1_IQ_Output"];
             chkAudioCorrectIQ.Checked = (bool)dr["VAC1_IQ_Correct"];
+            chkVACApplyRxVst.Checked = DB.ConvertFromDBVal<bool>(dr["VAC1_Apply_RX_VST"]);
+            chkVACBypassTxVst.Checked = DB.ConvertFromDBVal<bool>(dr["VAC1_Bypass_TX_VST"]);
             chkVACAllowBypass.Checked = (bool)dr["VAC1_PTT_OverRide"];
             chkVACCombine.Checked = (bool)dr["VAC1_Combine_Input_Channels"];
             chkAudioLatencyManual2.Checked = (bool)dr["VAC1_Latency_On"];
@@ -9374,6 +9469,8 @@ namespace Thetis
             comboAudioBuffer3.Text = (string)dr["VAC2_Buffer_Size"];
             chkVAC2DirectIQ.Checked = (bool)dr["VAC2_IQ_Output"];
             chkVAC2DirectIQCal.Checked = (bool)dr["VAC2_IQ_Correct"];
+            chkVAC2ApplyRxVst.Checked = DB.ConvertFromDBVal<bool>(dr["VAC2_Apply_RX_VST"]);
+            chkVAC2BypassTxVst.Checked = DB.ConvertFromDBVal<bool>(dr["VAC2_Bypass_TX_VST"]);
             chkVAC2Combine.Checked = (bool)dr["VAC2_Combine_Input_Channels"];
             chkVAC2LatencyManual.Checked = (bool)dr["VAC2_Latency_On"];
             udVAC2Latency.Value = (int)dr["VAC2_Latency_Duration"];
@@ -12175,6 +12272,16 @@ namespace Thetis
             Audio.VACCombineInput = chkVACCombine.Checked;
         }
 
+        private void chkVACApplyRxVst_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.VAC1ApplyRxVst = chkVACApplyRxVst.Checked;
+        }
+
+        private void chkVACBypassTxVst_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.VAC1BypassTxVst = chkVACBypassTxVst.Checked;
+        }
+
         private void chkCWAutoSwitchMode_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
@@ -12269,6 +12376,7 @@ namespace Thetis
 
         private void chkAudioIQtoVAC_CheckedChanged(object sender, System.EventArgs e)
         {
+            UpdateVacVstControlStates();
             if (initializing) return;
             bool power = console.PowerOn;
             if (power && chkAudioEnableVAC.Checked)
@@ -12290,6 +12398,7 @@ namespace Thetis
 
         private void chkVAC2DirectIQ_CheckedChanged(object sender, System.EventArgs e)
         {
+            UpdateVacVstControlStates();
             if (initializing) return;
             bool power = console.PowerOn;
             if (power && chkVAC2Enable.Checked)
@@ -12316,6 +12425,16 @@ namespace Thetis
         private void chkVAC2IQCal_CheckChanged(object sender, System.EventArgs e)
         {
             Audio.VAC2CorrectIQ = chkVAC2DirectIQCal.Checked;
+        }
+
+        private void chkVAC2ApplyRxVst_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.VAC2ApplyRxVst = chkVAC2ApplyRxVst.Checked;
+        }
+
+        private void chkVAC2BypassTxVst_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.VAC2BypassTxVst = chkVAC2BypassTxVst.Checked;
         }
 
         private void chkRX2AutoMuteRX1OnVFOBTX_CheckedChanged(object sender, System.EventArgs e)

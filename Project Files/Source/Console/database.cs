@@ -240,7 +240,31 @@ namespace Thetis
             if (!ds.Tables.Contains("TXProfileDef"))
                 AddTXProfileTable("TXProfileDef", true);
 
+            EnsureTxProfileColumn("TXProfile", "VAC1_Apply_RX_VST", typeof(bool), false);
+            EnsureTxProfileColumn("TXProfile", "VAC2_Apply_RX_VST", typeof(bool), false);
+            EnsureTxProfileColumn("TXProfile", "VAC1_Bypass_TX_VST", typeof(bool), true);
+            EnsureTxProfileColumn("TXProfile", "VAC2_Bypass_TX_VST", typeof(bool), true);
+            EnsureTxProfileColumn("TXProfileDef", "VAC1_Apply_RX_VST", typeof(bool), false);
+            EnsureTxProfileColumn("TXProfileDef", "VAC2_Apply_RX_VST", typeof(bool), false);
+            EnsureTxProfileColumn("TXProfileDef", "VAC1_Bypass_TX_VST", typeof(bool), true);
+            EnsureTxProfileColumn("TXProfileDef", "VAC2_Bypass_TX_VST", typeof(bool), true);
+
             WriteDB();
+        }
+
+        private static void EnsureTxProfileColumn(string tableName, string columnName, Type columnType, object defaultValue)
+        {
+            if (!ds.Tables.Contains(tableName)) return;
+
+            DataTable table = ds.Tables[tableName];
+            if (!table.Columns.Contains(columnName))
+                table.Columns.Add(columnName, columnType);
+
+            foreach (DataRow row in table.Rows)
+            {
+                if (row.IsNull(columnName))
+                    row[columnName] = defaultValue;
+            }
         }
 
         #region BandStack2
@@ -4389,6 +4413,8 @@ namespace Thetis
             t.Columns.Add("VAC1_Buffer_Size", typeof(string));
             t.Columns.Add("VAC1_IQ_Output", typeof(bool));
             t.Columns.Add("VAC1_IQ_Correct", typeof(bool));
+            t.Columns.Add("VAC1_Apply_RX_VST", typeof(bool));
+            t.Columns.Add("VAC1_Bypass_TX_VST", typeof(bool));
             t.Columns.Add("VAC1_PTT_OverRide", typeof(bool));
             t.Columns.Add("VAC1_Combine_Input_Channels", typeof(bool));
             t.Columns.Add("VAC1_Latency_On", typeof(bool));
@@ -4414,6 +4440,8 @@ namespace Thetis
             t.Columns.Add("VAC2_Buffer_Size", typeof(string));
             t.Columns.Add("VAC2_IQ_Output", typeof(bool));
             t.Columns.Add("VAC2_IQ_Correct", typeof(bool));
+            t.Columns.Add("VAC2_Apply_RX_VST", typeof(bool));
+            t.Columns.Add("VAC2_Bypass_TX_VST", typeof(bool));
             t.Columns.Add("VAC2_Combine_Input_Channels", typeof(bool));
             t.Columns.Add("VAC2_Latency_On", typeof(bool));
             t.Columns.Add("VAC2_Latency_Duration", typeof(int));

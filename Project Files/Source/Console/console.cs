@@ -130,6 +130,7 @@ namespace Thetis
 
         private frmBandStack2 m_frmBandStack2;
         private frmFilterManager m_frmFilterManager;
+        private VstChainManagerForm m_frmVstChainManager;
 
         private CWX m_frmCWXForm;
 
@@ -842,6 +843,7 @@ namespace Thetis
             LogTool.AddLogEntry("Initialising radio...", "RADIO");
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
+            VstHost.LoadState(AppDataPath);
 
             specRX = new SpecRX();
             Display.specready = true;
@@ -1263,6 +1265,17 @@ namespace Thetis
                     m_frmFilterManager = new frmFilterManager();
                 }
                 return m_frmFilterManager;
+            }
+        }
+
+        public VstChainManagerForm VstChainManagerForm
+        {
+            get
+            {
+                if (m_frmVstChainManager == null || m_frmVstChainManager.IsDisposed)
+                    m_frmVstChainManager = new VstChainManagerForm();
+
+                return m_frmVstChainManager;
             }
         }
 
@@ -2765,6 +2778,7 @@ namespace Thetis
             NetworkIO.DestroyRNet();
 
             shutdownLogStringToPath("Before radio.Shutdown()");
+            VstHost.SaveState(AppDataPath);
             if (radio != null)
                 radio.Shutdown();
 
@@ -28145,6 +28159,7 @@ namespace Thetis
             if (m_frmCWXForm != null) m_frmCWXForm.Hide();
             if (EQForm != null) EQForm.Hide();
             if (XVTRForm != null) XVTRForm.Hide();
+            if (m_frmVstChainManager != null) m_frmVstChainManager.Hide();
             if (memoryForm != null) memoryForm.Hide();
             if (diversityForm != null) diversityForm.Hide();
 
@@ -28200,6 +28215,7 @@ namespace Thetis
 
             shutdownLogStringToPath("Before forms close");
             if (EQForm != null) EQForm.Close();
+            if (m_frmVstChainManager != null) m_frmVstChainManager.Close();
             if (memoryForm != null) memoryForm.Close();
             if (diversityForm != null) diversityForm.Close();
 
@@ -48217,6 +48233,27 @@ namespace Thetis
             {
                 SetupForm.Show();
                 SetupForm.Focus();
+                SetFocusMaster(false);
+            }
+        }
+
+        private void vstChainsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (VstChainManagerForm.InvokeRequired)
+            {
+                VstChainManagerForm.Invoke(new MethodInvoker(() =>
+                {
+                    VstChainManagerForm.RefreshChains();
+                    VstChainManagerForm.Show(this);
+                    VstChainManagerForm.Focus();
+                    SetFocusMaster(false);
+                }));
+            }
+            else
+            {
+                VstChainManagerForm.RefreshChains();
+                VstChainManagerForm.Show(this);
+                VstChainManagerForm.Focus();
                 SetFocusMaster(false);
             }
         }

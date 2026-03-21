@@ -134,6 +134,12 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACcombine", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACcombine(int id, int combine);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACApplyRxVst", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACApplyRxVst(int id, int apply);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACBypassTxVst", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACBypassTxVst(int id, int bypass);
+
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACmon", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACmon(int id, int mon);
 

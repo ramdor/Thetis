@@ -342,6 +342,50 @@ namespace Thetis
             }
         }
 
+        private static bool vac1_apply_rx_vst = false;
+        public static bool VAC1ApplyRxVst
+        {
+            get { return vac1_apply_rx_vst; }
+            set
+            {
+                vac1_apply_rx_vst = value;
+                ivac.SetIVACApplyRxVst(0, Convert.ToInt32(value));
+            }
+        }
+
+        private static bool vac2_apply_rx_vst = false;
+        public static bool VAC2ApplyRxVst
+        {
+            get { return vac2_apply_rx_vst; }
+            set
+            {
+                vac2_apply_rx_vst = value;
+                ivac.SetIVACApplyRxVst(1, Convert.ToInt32(value));
+            }
+        }
+
+        private static bool vac1_bypass_tx_vst = false;
+        public static bool VAC1BypassTxVst
+        {
+            get { return vac1_bypass_tx_vst; }
+            set
+            {
+                vac1_bypass_tx_vst = value;
+                ivac.SetIVACBypassTxVst(0, Convert.ToInt32(value));
+            }
+        }
+
+        private static bool vac2_bypass_tx_vst = false;
+        public static bool VAC2BypassTxVst
+        {
+            get { return vac2_bypass_tx_vst; }
+            set
+            {
+                vac2_bypass_tx_vst = value;
+                ivac.SetIVACBypassTxVst(1, Convert.ToInt32(value));
+            }
+        }
+
         #endregion
 
         #region Local Copies of External Properties
