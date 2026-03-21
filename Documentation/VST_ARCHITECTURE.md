@@ -16,6 +16,27 @@ Key capabilities:
 
 The system defaults to a safe state: both chains start bypassed and VAC TX paths skip the VST chain until explicitly configured, so enabling VST support has zero impact on audio until the operator chooses to use it.
 
+### Enabling VST Support
+
+VST hosting is disabled by default and must be explicitly enabled via one of the following two options:
+
+- Command line flag: `-vst`
+- Environment variable: `THETIS_VST_ENABLE=1`
+
+When disabled, no host processes are launched, the VST Chains menu item is hidden, and the VAC VST settings are hidden in Audio Options. ChannelMaster still calls the bridge entry point on each audio block, but the call returns immediately with negligible overhead (one interlocked read, no IPC).
+
+To set the environment variable permanently (PowerShell, requires restart of Thetis):
+
+```powershell
+[Environment]::SetEnvironmentVariable("THETIS_VST_ENABLE", "1", "User")
+```
+
+To remove it:
+
+```powershell
+[Environment]::SetEnvironmentVariable("THETIS_VST_ENABLE", $null, "User")
+```
+
 ## Overview
 
 Thetis currently hosts RX and TX audio effect chains out of process.
@@ -610,7 +631,7 @@ VST3 editors share the live audio runtime's component and controller instance.
 Current behavior:
 
 - the editor view is created on the live runtime's `IEditController`
-- output parameter changes (metering, spectrum, visualization) flow naturally from `process()` to the controller
+- output parameter changes (metering, spectrum, visualization) are buffered by the audio thread into a lock-free cache and forwarded to the controller by the host thread at ~30 Hz via `setParamNormalized`, matching the VST3 spec requirement that controller calls happen on the UI thread
 - thread safety between the audio thread and editor is handled by the existing try-lock in `VstRuntime_Process` — if a control-path operation holds the API lock, the audio thread skips the block and falls back to dry audio
 
 This single-instance model matches standard DAW practice and ensures real-time plugin visualizations work correctly.
@@ -750,6 +771,8 @@ Available operations:
 - bypass/unbypass
 - chain bypass
 - chain gain
+- pipeline latency floor (adjustable per chain, persisted)
+- live latency display in blocks and milliseconds
 - open editor
 
 ### Picker UI

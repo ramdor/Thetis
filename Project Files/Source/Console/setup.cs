@@ -97,6 +97,7 @@ namespace Thetis
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
 
         private frmBandwidth _frmBandwidth;
+        private GroupBoxTS _grpVacRxVst;
         private CheckBoxTS chkVACApplyRxVst;
         private CheckBoxTS chkVAC2ApplyRxVst;
         private CheckBoxTS chkVACBypassTxVst;
@@ -135,6 +136,8 @@ namespace Thetis
         private void InitializeVacVstControls()
         {
             GroupBoxTS grpVacRxVst = new GroupBoxTS();
+            _grpVacRxVst = grpVacRxVst;
+            grpVacRxVst.Visible = Console.VstEnabled;
             grpVacRxVst.Location = new Point(230, 134);
             grpVacRxVst.Name = "grpVacRxVst";
             grpVacRxVst.Size = new Size(240, 140);
