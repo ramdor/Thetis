@@ -18493,7 +18493,16 @@ namespace Thetis
                                     {
                                         if (Display.WaterfallUseNFForACGRX1)
                                         {
+                                            if (!Display.FastAttackNoiseFloorRX1 && Display.IsNoiseFloorGoodRX1)
+                                        {
                                             min = (int)Display.ActiveNoiseFloorRX1;
+                                        }
+                                        else
+                                        {
+                                                float calc = (_waterfall_min_agc_rx * 0.6F) + (Display.ActiveNoiseFloorRX1 * 0.4F);
+                                                _waterfall_min_agc_rx = calc;
+                                                min = (int)_waterfall_min_agc_rx;
+                                            }
                                         }
                                         else
                                         {
@@ -18532,7 +18541,16 @@ namespace Thetis
                                     {
                                         if (Display.WaterfallUseNFForACGRX2)
                                         {
+                                            if (!Display.FastAttackNoiseFloorRX2 && Display.IsNoiseFloorGoodRX2)
+                                        {
                                             min = (int)Display.ActiveNoiseFloorRX2;
+                                            }
+                                            else
+                                            {
+                                                float calc = (_waterfall_min_agc_rx * 0.6F) + (Display.ActiveNoiseFloorRX2 * 0.4F);
+                                                _waterfall_min_agc_rx = calc;
+                                                min = (int)_waterfall_min_agc_rx;
+                                            }
                                         }
                                         else
                                         {
