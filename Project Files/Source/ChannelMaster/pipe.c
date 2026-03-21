@@ -223,16 +223,8 @@ void xpipe (int stream, int pos, double** buffs)
 			{
 				xplaywave(0, 1, buff);															// wav player 0
 				xplaywave(1, 1, buff);															// wav player 1
-				if (pip.xmtr[0].txvac == 0)
-				{
-					SetTXVACVstBypass(0, xvacIN(0, buff, 0) && GetIVACBypassTxVst(0));
-					xvacIN(1, buff, 1);
-				}
-				if (pip.xmtr[0].txvac == 1)
-				{
-					SetTXVACVstBypass(0, xvacIN(1, buff, 0) && GetIVACBypassTxVst(1));
-					xvacIN(0, buff, 1);
-				}
+				if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
+				if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
 			}
 			xrecordwave(0, 1, 0, buff);															// wav recorder 0 //[2.10.3.6]MW0LGE moved after vac
 			xrecordwave(1, 1, 0, buff);															// wav recorder 1
@@ -328,12 +320,3 @@ void SetTXVAC (int txid, int txvac)
 	_InterlockedExchange (&pip.xmtr[txid].txvac, txvac);
 }
 
-void SetTXVACVstBypass (int txid, int bypass)
-{
-	_InterlockedExchange (&pip.xmtr[txid].txvac_bypass_vst, bypass ? 1 : 0);
-}
-
-int GetTXVACVstBypass (int txid)
-{
-	return _InterlockedAnd (&pip.xmtr[txid].txvac_bypass_vst, 0xffffffff);
-}

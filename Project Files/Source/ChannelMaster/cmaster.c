@@ -31,12 +31,14 @@ CMASTER pcm = &cm;
 
 static void configure_vst_rx_chain()
 {
-	VST_CreateChain (VST_CHAIN_RX, pcm->audio_outrate, pcm->audio_outsize, 2);
+	if (pcm->VstCreateRxChain)
+		pcm->VstCreateRxChain(pcm->audio_outrate, pcm->audio_outsize);
 }
 
 static void configure_vst_tx_chain (int stream)
 {
-	VST_CreateChain (VST_CHAIN_TX, pcm->xcm_inrate[stream], pcm->xcm_insize[stream], 2);
+	if (pcm->VstCreateTxChain)
+		pcm->VstCreateTxChain(pcm->xcm_inrate[stream], pcm->xcm_insize[stream]);
 }
 
 // standard receiver
@@ -325,7 +327,8 @@ void create_cmaster()
 	}
 	create_cmasio();
 	create_router(0);
-	VST_Initialize();
+	if (pcm->VstInitialize)
+		pcm->VstInitialize();
 	configure_vst_rx_chain();
 	tx_stream = inid (1, 0);
 	configure_vst_tx_chain (tx_stream);
@@ -349,9 +352,12 @@ void destroy_cmaster()
 		destroy_cmbuffs (i);
 		_aligned_free (pcm->in[i]);
 	}
-	VST_DestroyChain (VST_CHAIN_TX);
-	VST_DestroyChain (VST_CHAIN_RX);
-	VST_Shutdown();
+	if (pcm->VstDestroyTxChain)
+		pcm->VstDestroyTxChain();
+	if (pcm->VstDestroyRxChain)
+		pcm->VstDestroyRxChain();
+	if (pcm->VstShutdown)
+		pcm->VstShutdown();
 }
 
 PORT
@@ -404,8 +410,8 @@ void xcmaster (int stream)
 		}
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
-		if (!GetTXVACVstBypass(tx))
-			VST_ProcessInterleavedDouble (VST_CHAIN_TX, pcm->in[stream], pcm->xcm_insize[stream]);
+		if (pcm->VstTxProcess)
+			pcm->VstTxProcess(pcm->in[stream], pcm->xcm_insize[stream]);
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
 		// WriteAudio(10.0, pcm->xmtr[tx].ch_outrate, pcm->xmtr[tx].ch_outsize, pcm->xmtr[tx].out[0], 3);
 		xsidetone(tx);
@@ -452,6 +458,54 @@ void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff))
 }
 
 PORT
+void SendpVstRxProcess (void (*Process)(double* buff, int frames))
+{
+	pcm->VstRxProcess = Process;
+}
+
+PORT
+void SendpVstTxProcess (void (*Process)(double* buff, int frames))
+{
+	pcm->VstTxProcess = Process;
+}
+
+PORT
+void SendpVstInitialize (void (*Init)(void))
+{
+	pcm->VstInitialize = Init;
+}
+
+PORT
+void SendpVstShutdown (void (*Shutdown)(void))
+{
+	pcm->VstShutdown = Shutdown;
+}
+
+PORT
+void SendpVstCreateRxChain (void (*Create)(int sample_rate, int block_size))
+{
+	pcm->VstCreateRxChain = Create;
+}
+
+PORT
+void SendpVstCreateTxChain (void (*Create)(int sample_rate, int block_size))
+{
+	pcm->VstCreateTxChain = Create;
+}
+
+PORT
+void SendpVstDestroyRxChain (void (*Destroy)(void))
+{
+	pcm->VstDestroyRxChain = Destroy;
+}
+
+PORT
+void SendpVstDestroyTxChain (void (*Destroy)(void))
+{
+	pcm->VstDestroyTxChain = Destroy;
+}
+
+PORT
 void SetTCIRun (int active)
 {
 	_InterlockedExchange (&pcm->tci_run, active);
@@ -461,66 +515,6 @@ PORT
 void SetTXTCIAudio (int txid, int active)
 {
 	_InterlockedExchange (&pcm->xmtr[txid].use_tci_audio, active);
-}
-
-PORT
-void SetVSTRxBypass (int bypass)
-{
-	VST_SetChainBypass (VST_CHAIN_RX, bypass);
-}
-
-PORT
-int GetVSTRxBypass (void)
-{
-	return VST_GetChainBypass (VST_CHAIN_RX);
-}
-
-PORT
-int GetVSTRxReady (void)
-{
-	return VST_GetChainReady (VST_CHAIN_RX);
-}
-
-PORT
-void SetVSTRxGain (double gain)
-{
-	VST_SetChainGain (VST_CHAIN_RX, gain);
-}
-
-PORT
-double GetVSTRxGain (void)
-{
-	return VST_GetChainGain (VST_CHAIN_RX);
-}
-
-PORT
-void SetVSTTxBypass (int bypass)
-{
-	VST_SetChainBypass (VST_CHAIN_TX, bypass);
-}
-
-PORT
-int GetVSTTxBypass (void)
-{
-	return VST_GetChainBypass (VST_CHAIN_TX);
-}
-
-PORT
-int GetVSTTxReady (void)
-{
-	return VST_GetChainReady (VST_CHAIN_TX);
-}
-
-PORT
-void SetVSTTxGain (double gain)
-{
-	VST_SetChainGain (VST_CHAIN_TX, gain);
-}
-
-PORT
-double GetVSTTxGain (void)
-{
-	return VST_GetChainGain (VST_CHAIN_TX);
 }
 
 PORT

@@ -121,6 +121,32 @@ namespace Thetis
         public static extern void SendpInboundTCITxAudio(TCITxInput del);
         // end tci
 
+        // vst
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstRxProcess", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstRxProcess(VstProcessCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstTxProcess", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstTxProcess(VstProcessCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstInitialize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstInitialize(VstLifecycleCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstShutdown", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstShutdown(VstLifecycleCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstCreateRxChain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstCreateRxChain(VstCreateChainCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstCreateTxChain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstCreateTxChain(VstCreateChainCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstDestroyRxChain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstDestroyRxChain(VstLifecycleCallback del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpVstDestroyTxChain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpVstDestroyTxChain(VstLifecycleCallback del);
+        // end vst
+
         // router
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void LoadRouterAll(void* ptr, int id, int sources, int calls, int varvals, 
@@ -1129,10 +1155,53 @@ namespace Thetis
             SendpInboundTCITxAudio(TCITxAudioInDel);
             //
 
+            //vst
+            if (Console.VstEnabled)
+            {
+                SendpVstInitialize(VstInitializeDel);
+                SendpVstShutdown(VstShutdownDel);
+                SendpVstCreateRxChain(VstCreateRxChainDel);
+                SendpVstCreateTxChain(VstCreateTxChainDel);
+                SendpVstDestroyRxChain(VstDestroyRxChainDel);
+                SendpVstDestroyTxChain(VstDestroyTxChainDel);
+                SendpVstRxProcess(VstRxProcessDel);
+                SendpVstTxProcess(VstTxProcessDel);
+            }
+            //
+
             EnsureTCIStreamThreads();
             WaveThing.initWaves();
             Scope.initScope();
         }
+
+        #region VST Callbacks
+        unsafe public delegate void VstProcessCallback(double* buffer, int frames);
+        public delegate void VstLifecycleCallback();
+        public delegate void VstCreateChainCallback(int sampleRate, int blockSize);
+
+        unsafe private static VstProcessCallback VstRxProcessDel = OnVstRxProcess;
+        unsafe private static VstProcessCallback VstTxProcessDel = OnVstTxProcess;
+        private static VstLifecycleCallback VstInitializeDel = VstHost.Initialize;
+        private static VstLifecycleCallback VstShutdownDel = VstHost.Shutdown;
+        private static VstCreateChainCallback VstCreateRxChainDel = VstHost.CreateRxChain;
+        private static VstCreateChainCallback VstCreateTxChainDel = VstHost.CreateTxChain;
+        private static VstLifecycleCallback VstDestroyRxChainDel = VstHost.DestroyRxChain;
+        private static VstLifecycleCallback VstDestroyTxChainDel = VstHost.DestroyTxChain;
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "FeedIVACPostRxAudio", CallingConvention = CallingConvention.Cdecl)]
+        private static extern unsafe void NativeFeedIVACPostRxAudio(int nsamples, double* buff);
+
+        private static unsafe void OnVstRxProcess(double* buffer, int frames)
+        {
+            VstHost.ProcessRxAudio(buffer, frames);
+            NativeFeedIVACPostRxAudio(frames, buffer);
+        }
+
+        private static unsafe void OnVstTxProcess(double* buffer, int frames)
+        {
+            VstHost.ProcessTxAudio(buffer, frames);
+        }
+        #endregion
 
         #region TCI Audio
         unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);

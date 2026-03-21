@@ -48,7 +48,6 @@ warren@pratt.one
 #include "sidetone.h"
 #include "sync.h"
 #include "txgain.h"
-#include "vst_host_bridge.h"
 #include "cmUtilities.h"
 #include "vox.h"
 #include "znob.h"

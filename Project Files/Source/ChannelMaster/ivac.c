@@ -128,7 +128,7 @@ PORT void destroy_ivac(int id)
 	free (a);
 }
 
-PORT int xvacIN(int id, double* in_tx, int bypass)
+PORT void xvacIN(int id, double* in_tx, int bypass)
 {
 	// used for MIC data to TX
 	IVAC a = pvac[id];
@@ -139,11 +139,9 @@ PORT int xvacIN(int id, double* in_tx, int bypass)
 			if (a->vac_combine_input)
 				combinebuff(a->mic_size, in_tx, in_tx);// , 3); //[2.10.3.6]MW0LGE new 17.11.0 version of VS started complaining about this 3, has been there 8 months
 			scalebuff(a->mic_size, in_tx, a->vac_preamp, in_tx);
-			return 1;
 		}
 		else
 			xrmatchOUT (a->rmatchIN, a->bitbucket);
-	return 0;
 }
 
 PORT void xvacOUT(int id, int stream, double* data)
@@ -176,6 +174,7 @@ void xvac_out(int id, int nsamples, double* buff)
 	// if (id == 0) WriteAudio (120.0, 48000, a->audio_size, buff, 3);
 }
 
+PORT
 void FeedIVACPostRxAudio(int nsamples, double* buff)
 {
 	int id;
@@ -725,11 +724,6 @@ PORT void SetIVACBypassTxVst(int id, int bypass)
 	a->vac_bypass_tx_vst = bypass ? 1 : 0;
 }
 
-int GetIVACBypassTxVst(int id)
-{
-	IVAC a = pvac[id];
-	return a && a->vac_bypass_tx_vst;
-}
 
 void combinebuff(int n, double* a, double* combined)
 {

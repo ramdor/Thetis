@@ -152,36 +152,33 @@ The bridge launches and manages both. The host owns live plugin execution and ed
 
 ### 1. Audio Patch Points
 
-Main integration points:
+ChannelMaster does not link to or include any VST code directly. VST processing is wired via registered callbacks, following the same pattern as TCI audio.
 
-- RX: `Project Files/Source/ChannelMaster/aamix.c`
-- TX: `Project Files/Source/ChannelMaster/cmaster.c`
-- VAC routing: `Project Files/Source/ChannelMaster/ivac.c`
-- TX VAC bypass: `Project Files/Source/ChannelMaster/pipe.c`
+**Callback registration:**
 
-Current placement:
+The managed layer registers function pointers on the `pcm` struct during startup via `SendpVst*` functions (e.g., `SendpVstRxProcess`, `SendpVstTxProcess`, `SendpVstInitialize`, etc.). If VST is disabled, no callbacks are registered and the null-checked invocation sites are no-ops.
 
-- RX VST processing is applied near the end of the RX mixer path, before output distribution
-- TX VST processing is applied in the transmitter path before TX DSP exchange
+**Audio path integration points:**
 
-#### VAC VST Integration
+- RX: `aamix.c` — callback invoked in `mix_main()` after mixing, before outbound
+- TX: `cmaster.c` — callback invoked in `xcmaster()` after VOX/dexp, before DSP exchange
 
-VAC (Virtual Audio Cable) paths have their own VST controls, separate from the main chain bypass:
+**Lifecycle callbacks:**
 
-**RX side — Apply RX VST:**
+- `VstInitialize` / `VstShutdown` — called from `create_cmaster()` / `destroy_cmaster()`
+- `VstCreateRxChain` / `VstCreateTxChain` — called when sample rate or block size changes
+- `VstDestroyRxChain` / `VstDestroyTxChain` — called during shutdown
 
-When `VAC_Apply_RX_VST` is enabled for a VAC, the post-VST RX audio is fed directly to that VAC via `FeedIVACPostRxAudio()` instead of the VAC receiving pre-VST audio through its normal mixer path. This avoids running the RX chain a second time. The flag is per-VAC (VAC1 and VAC2 independently).
+**VAC routing:**
 
-**TX side — Bypass TX VST:**
+- `FeedIVACPostRxAudio()` in `ivac.c` is exported and called from the C# RX callback after VST processing, feeding post-VST audio to VACs with `Apply RX VST` enabled
+- `SetIVACApplyRxVst` / `SetIVACBypassTxVst` in `ivac.c` control per-VAC routing flags
 
-When `VAC_Bypass_TX_VST` is enabled for a VAC, the TX VST chain is skipped entirely for audio arriving from that VAC. This is checked in `cmaster.c` via `GetTXVACVstBypass()` before calling `VST_ProcessInterleavedDouble()`. The flag is per-VAC.
-
-**How this differs from chain bypass:**
+**How chain bypass differs from per-VAC controls:**
 
 | Mechanism | Scope | Effect |
 |-----------|-------|--------|
 | Chain bypass (`SetChainBypass`) | Global, transport-level | Skips OOP transport entirely for all sources |
-| VAC Bypass TX VST | Per-VAC, conditional | Skips TX chain only when that VAC is the active TX input |
 | VAC Apply RX VST | Per-VAC, additive | Feeds post-VST RX audio to that VAC |
 
 ### 2. Native Bridge: `VstHostBridge.dll`
@@ -193,7 +190,7 @@ Primary files:
 
 Responsibilities:
 
-- exported C ABI used by native DSP code and C# P/Invoke
+- exported C ABI used by C# P/Invoke (ChannelMaster uses registered callbacks, not direct calls)
 - host process launch/shutdown
 - control IPC client
 - shared-memory audio transport producer/consumer
@@ -839,18 +836,19 @@ Trace output includes:
 
 Typical startup sequence:
 
-1. `VST_Initialize()` launches RX and TX hosts
-2. `ChannelMaster` creates RX and TX chains with current sample rate/block sizes
-3. managed state load restores saved chain definitions
-4. bridge cache and host runtime converge on the restored chain
+1. C# registers VST callbacks on ChannelMaster during `SendCallbacks()` (only if `-vst` or `THETIS_VST_ENABLE` is set)
+2. `create_cmaster()` invokes the `VstInitialize` callback, which launches RX and TX host processes
+3. `create_cmaster()` invokes `VstCreateRxChain` and `VstCreateTxChain` callbacks with the current sample rate and block size
+4. managed state load restores saved chain definitions
+5. bridge cache and host runtime converge on the restored chain
 
 ### Shutdown
 
 Typical shutdown sequence:
 
 1. managed save writes current persistent state
-2. `VST_DestroyChain()` tears down TX and RX chains
-3. `VST_Shutdown()` requests host shutdown and closes IPC objects
+2. `destroy_cmaster()` invokes `VstDestroyTxChain` and `VstDestroyRxChain` callbacks
+3. `destroy_cmaster()` invokes the `VstShutdown` callback, which requests host shutdown and closes IPC objects
 
 If a host does not exit promptly during shutdown, it can be terminated as a final recovery action.
 

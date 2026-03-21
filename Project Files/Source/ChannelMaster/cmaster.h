@@ -67,6 +67,14 @@ typedef struct _cmaster
 	void (*OutboundTCIRxIQ)(int id, int nsamples, double* buff);		// pointer to callback with receiver IQ samples
 	void (*InboundTCITxAudio)(int nsamples, double* buff);			// pointer to callback to fill TX audio input
 	volatile long tci_run;											// run TCI RX IQ/audio callbacks
+	void (*VstRxProcess)(double* buff, int frames);					// pointer to callback to process RX audio through VST chain
+	void (*VstTxProcess)(double* buff, int frames);					// pointer to callback to process TX audio through VST chain
+	void (*VstInitialize)(void);									// pointer to callback to initialize VST hosting
+	void (*VstShutdown)(void);										// pointer to callback to shut down VST hosting
+	void (*VstCreateRxChain)(int sample_rate, int block_size);		// pointer to callback to create/reconfigure RX VST chain
+	void (*VstCreateTxChain)(int sample_rate, int block_size);		// pointer to callback to create/reconfigure TX VST chain
+	void (*VstDestroyRxChain)(void);								// pointer to callback to destroy RX VST chain
+	void (*VstDestroyTxChain)(void);								// pointer to callback to destroy TX VST chain
 	int	audioCodecId;
 	ANALYZERS panalalloc;											// pointer to additional analyzer data structure
 	
@@ -110,18 +118,16 @@ extern __declspec (dllexport) void SendpOutboundRx (void (*Outbound)(int id, int
 extern __declspec (dllexport) void SendpOutboundTx (void (*Outbound)(int id, int nsamples, double* buff));
 extern __declspec (dllexport) void SendpOutboundTCIRxIQ (void (*Outbound)(int id, int nsamples, double* buff));
 extern __declspec (dllexport) void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff));
+extern __declspec (dllexport) void SendpVstRxProcess (void (*Process)(double* buff, int frames));
+extern __declspec (dllexport) void SendpVstTxProcess (void (*Process)(double* buff, int frames));
+extern __declspec (dllexport) void SendpVstInitialize (void (*Init)(void));
+extern __declspec (dllexport) void SendpVstShutdown (void (*Shutdown)(void));
+extern __declspec (dllexport) void SendpVstCreateRxChain (void (*Create)(int sample_rate, int block_size));
+extern __declspec (dllexport) void SendpVstCreateTxChain (void (*Create)(int sample_rate, int block_size));
+extern __declspec (dllexport) void SendpVstDestroyRxChain (void (*Destroy)(void));
+extern __declspec (dllexport) void SendpVstDestroyTxChain (void (*Destroy)(void));
 extern __declspec (dllexport) void SetTCIRun (int active);
 extern __declspec (dllexport) void SetTXTCIAudio (int txid, int active);
-extern __declspec (dllexport) void SetVSTRxBypass (int bypass);
-extern __declspec (dllexport) int  GetVSTRxBypass (void);
-extern __declspec (dllexport) int  GetVSTRxReady  (void);
-extern __declspec (dllexport) void SetVSTRxGain   (double gain);
-extern __declspec (dllexport) double GetVSTRxGain (void);
-extern __declspec (dllexport) void SetVSTTxBypass (int bypass);
-extern __declspec (dllexport) int  GetVSTTxBypass (void);
-extern __declspec (dllexport) int  GetVSTTxReady  (void);
-extern __declspec (dllexport) void SetVSTTxGain   (double gain);
-extern __declspec (dllexport) double GetVSTTxGain (void);
 
 enum AudioCODEC
 {

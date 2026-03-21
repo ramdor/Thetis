@@ -346,6 +346,61 @@ namespace Thetis
         [DllImport(NativeLibrary, EntryPoint = "VST_OpenPluginEditorWindow", CallingConvention = CallingConvention.Cdecl)]
         private static extern int NativeOpenPluginEditorWindow(VstChainKind kind, int index);
 
+        [DllImport(NativeLibrary, EntryPoint = "VST_Initialize", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int NativeInitialize();
+
+        [DllImport(NativeLibrary, EntryPoint = "VST_Shutdown", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void NativeShutdown();
+
+        [DllImport(NativeLibrary, EntryPoint = "VST_CreateChain", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int NativeCreateChain(VstChainKind kind, int sampleRate, int maxBlockSize, int numChannels);
+
+        [DllImport(NativeLibrary, EntryPoint = "VST_DestroyChain", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void NativeDestroyChain(VstChainKind kind);
+
+        [DllImport(NativeLibrary, EntryPoint = "VST_ProcessInterleavedDouble", CallingConvention = CallingConvention.Cdecl)]
+        private static extern unsafe int NativeProcessInterleavedDouble(VstChainKind kind, double* buffer, int frames);
+
+        public static void Initialize()
+        {
+            NativeInitialize();
+        }
+
+        public static void Shutdown()
+        {
+            NativeShutdown();
+        }
+
+        public static void CreateRxChain(int sampleRate, int blockSize)
+        {
+            NativeCreateChain(VstChainKind.Rx, sampleRate, blockSize, 2);
+        }
+
+        public static void CreateTxChain(int sampleRate, int blockSize)
+        {
+            NativeCreateChain(VstChainKind.Tx, sampleRate, blockSize, 2);
+        }
+
+        public static void DestroyRxChain()
+        {
+            NativeDestroyChain(VstChainKind.Rx);
+        }
+
+        public static void DestroyTxChain()
+        {
+            NativeDestroyChain(VstChainKind.Tx);
+        }
+
+        public static unsafe void ProcessRxAudio(double* buffer, int frames)
+        {
+            NativeProcessInterleavedDouble(VstChainKind.Rx, buffer, frames);
+        }
+
+        public static unsafe void ProcessTxAudio(double* buffer, int frames)
+        {
+            NativeProcessInterleavedDouble(VstChainKind.Tx, buffer, frames);
+        }
+
         public static bool NativeAvailable
         {
             get { return EnsureNativeAvailable(); }

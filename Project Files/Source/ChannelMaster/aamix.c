@@ -42,11 +42,8 @@ void mix_main (void *pargs)
 	{
 		WaitForMultipleObjects (a->nactive, a->Aready, TRUE, INFINITE);
 		xaamix (a);
-		if (a->id == 0)
-		{
-			VST_ProcessInterleavedDouble (VST_CHAIN_RX, a->out, a->outsize);
-			FeedIVACPostRxAudio(a->outsize, a->out);
-		}
+		if (a->id == 0 && pcm->VstRxProcess)
+			pcm->VstRxProcess(a->out, a->outsize);
 		(*a->Outbound)(a->outbound_id, a->outsize, a->out);
 		// WriteAudio (30.0, 48000, a->outsize, a->out, 3);
 	}

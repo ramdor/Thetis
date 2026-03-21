@@ -100,13 +100,13 @@ typedef struct _ivac
 void combinebuff (int n, double* a, double* combined);
 void scalebuff (int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
-void FeedIVACPostRxAudio(int nsamples, double* buff);
+extern __declspec(dllexport) void FeedIVACPostRxAudio(int nsamples, double* buff);
 
 extern __declspec(dllexport) void *create_resampleV (int samplerate_in, int samplerate_out);
 extern __declspec(dllexport) void xresampleV (double *input, double *output, int numsamps, int *outsamps, void *ptr);
 extern __declspec(dllexport) void destroy_resampleV (/*ResSt*/ void * resst);
 extern __declspec(dllexport) void destroy_ivac (int id);
-extern __declspec(dllexport) int xvacIN(int id, double* in_tx, int bypass);
+extern __declspec(dllexport) void xvacIN(int id, double* in_tx, int bypass);
 extern __declspec(dllexport) void xvacOUT(int id, int stream, double* data);
 extern __declspec(dllexport) void create_ivac (
 	int id,
@@ -134,6 +134,5 @@ extern __declspec(dllexport) void SetIVACaudioRate (int id, int rate);
 extern __declspec(dllexport) void SetIVACaudioSize (int id, int size);
 extern __declspec(dllexport) void SetIVACApplyRxVst (int id, int apply);
 extern __declspec(dllexport) void SetIVACBypassTxVst (int id, int bypass);
-extern int GetIVACBypassTxVst (int id);
 
 #endif

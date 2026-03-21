@@ -50,7 +50,6 @@ typedef struct _pipe
 	struct // transmitter items
 	{
 		volatile long txvac;
-		volatile long txvac_bypass_vst;
 	} xmtr[cmMAXxmtr];
 	struct _spc0 // spc0 items
 	{
@@ -66,10 +65,5 @@ void create_pipe();
 void destroy_pipe();
 
 void xpipe (int stream, int pos, double** buff);
-
-void SetTXVACVstBypass (int txid, int bypass);
-
-int GetTXVACVstBypass (int txid);
-
 
 #endif
