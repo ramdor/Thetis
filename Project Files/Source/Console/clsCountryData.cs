@@ -56,12 +56,15 @@ namespace Thetis
         private static readonly Dictionary<string, string> _countryCodeAliasMap = createCountryCodeAliasMap();
         private static readonly Dictionary<string, string> _regionCountryCodeMap = createRegionCountryCodeMap();
         private static readonly Dictionary<int, string> _adifCountryCodeMap = createAdifCountryCodeMap();
+        private static readonly Dictionary<string, string> _assetCodeAliasMap = createAssetCodeAliasMap();
+        private static readonly Dictionary<int, string> _adifAssetCodeMap = createAdifAssetCodeMap();
 
         [Serializable]
         public class PrefixData
         {
             public string Country { get; set; }
-            public string Ansi2CharCountryCode { get; set; }
+            public string CountryCode { get; set; }
+            public string AssetCode { get; set; }
             public List<string> Prefixes { get; set; } = new List<string>();
             public int ADIF { get; set; }
             public int CQZone { get; set; }
@@ -84,7 +87,8 @@ namespace Thetis
                 {
                     foreach (PrefixData prefix_data in _prefixDataList)
                     {
-                        prefix_data.Ansi2CharCountryCode = getAnsi2CharCountryCode(prefix_data.Country, prefix_data.ADIF);
+                        prefix_data.CountryCode = getCountryCode(prefix_data.Country, prefix_data.ADIF);
+                        prefix_data.AssetCode = getAssetCode(prefix_data.Country, prefix_data.ADIF, prefix_data.CountryCode);
                     }
                 }
             }
@@ -217,10 +221,13 @@ namespace Thetis
                             PrefixData existingData = _prefixDataList.FirstOrDefault(pd => pd.Country == countryName);
                             if (existingData == null)
                             {
+                                string countryCode = getCountryCode(countryName, adif);
+
                                 PrefixData data = new PrefixData
                                 {
                                     Country = countryName,
-                                    Ansi2CharCountryCode = getAnsi2CharCountryCode(countryName, adif),
+                                    CountryCode = countryCode,
+                                    AssetCode = getAssetCode(countryName, adif, countryCode),
                                     Prefixes = prefixes,
                                     ADIF = adif,
                                     CQZone = cqZone,
@@ -237,9 +244,14 @@ namespace Thetis
                             {
                                 existingData.Prefixes.AddRange(prefixes);
 
-                                if (string.IsNullOrWhiteSpace(existingData.Ansi2CharCountryCode))
+                                if (string.IsNullOrWhiteSpace(existingData.CountryCode))
                                 {
-                                    existingData.Ansi2CharCountryCode = getAnsi2CharCountryCode(countryName, adif);
+                                    existingData.CountryCode = getCountryCode(countryName, adif);
+                                }
+
+                                if (string.IsNullOrWhiteSpace(existingData.AssetCode))
+                                {
+                                    existingData.AssetCode = getAssetCode(countryName, adif, existingData.CountryCode);
                                 }
                             }
                         }
@@ -253,21 +265,31 @@ namespace Thetis
             }
         }
 
-        private static string getAnsi2CharCountryCode(string country, int adif)
+        private static string getCountryCode(string country, int adif)
         {
             string normalized = normalizeCountryName(country);
             string code;
 
             if (_countryCodeAliasMap.TryGetValue(normalized, out code)) return code;
             if (_regionCountryCodeMap.TryGetValue(normalized, out code)) return code;
-
             if (_adifCountryCodeMap.TryGetValue(adif, out code)) return code;
 
             return string.Empty;
         }
 
+        private static string getAssetCode(string country, int adif, string countryCode)
+        {
+            string normalized = normalizeCountryName(country);
+            string code;
+
+            if (_assetCodeAliasMap.TryGetValue(normalized, out code)) return code;
+            if (_adifAssetCodeMap.TryGetValue(adif, out code)) return code;
+
+            return countryCode ?? string.Empty;
+        }
+
         private static Dictionary<int, string> createAdifCountryCodeMap()
-            {
+        {
             Dictionary<int, string> map = new Dictionary<int, string>();
 
             addCountryCode(map, 6, "US");
@@ -289,7 +311,7 @@ namespace Thetis
             addCountryCode(map, 47, "CL");
             addCountryCode(map, 48, "KI");
             addCountryCode(map, 54, "RU");
-            addCountryCode(map, 67, "US"); //legacy coverage
+            addCountryCode(map, 67, "US");
             addCountryCode(map, 71, "EC");
             addCountryCode(map, 98, "VC");
             addCountryCode(map, 99, "TF");
@@ -328,7 +350,7 @@ namespace Thetis
             addCountryCode(map, 240, "GS");
             addCountryCode(map, 241, "AQ");
             addCountryCode(map, 246, "MT");
-            addCountryCode(map, 247, string.Empty); //disputed, leave blank
+            addCountryCode(map, 247, string.Empty);
             addCountryCode(map, 248, "IT");
             addCountryCode(map, 250, "SH");
             addCountryCode(map, 253, "BR");
@@ -366,6 +388,17 @@ namespace Thetis
             addCountryCode(map, 520, "BQ");
             addCountryCode(map, 521, "SS");
             addCountryCode(map, 522, "XK");
+
+            return map;
+        }
+
+        private static Dictionary<int, string> createAdifAssetCodeMap()
+        {
+            Dictionary<int, string> map = new Dictionary<int, string>();
+
+            addCountryCode(map, 205, "SH-AC");
+            addCountryCode(map, 250, "SH-HL");
+            addCountryCode(map, 274, "SH-TA");
 
             return map;
         }
@@ -459,6 +492,39 @@ namespace Thetis
             addAlias(map, "Wales", "GB");
             addAlias(map, "West Malaysia", "MY");
             addAlias(map, "Willis Island", "AU");
+
+            return map;
+        }
+
+        private static Dictionary<string, string> createAssetCodeAliasMap()
+        {
+            Dictionary<string, string> map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            addAlias(map, "Arab League", "ARAB");
+            addAlias(map, "League of Arab States", "ARAB");
+            addAlias(map, "Association of Southeast Asian Nations", "ASEAN");
+            addAlias(map, "ASEAN", "ASEAN");
+            addAlias(map, "Central European Free Trade Agreement", "CEFTA");
+            addAlias(map, "CEFTA", "CEFTA");
+            addAlias(map, "East African Community", "EAC");
+            addAlias(map, "EAC", "EAC");
+            addAlias(map, "England", "GB-ENG");
+            addAlias(map, "Northern Ireland", "GB-NIR");
+            addAlias(map, "Scotland", "GB-SCT");
+            addAlias(map, "Wales", "GB-WLS");
+            addAlias(map, "Catalonia", "ES-CT");
+            addAlias(map, "Catalunya", "ES-CT");
+            addAlias(map, "Galicia", "ES-GA");
+            addAlias(map, "Basque Country", "ES-PV");
+            addAlias(map, "Pais Vasco", "ES-PV");
+            addAlias(map, "País Vasco", "ES-PV");
+            addAlias(map, "Euskadi", "ES-PV");
+            addAlias(map, "Ascension", "SH-AC");
+            addAlias(map, "Ascension Island", "SH-AC");
+            addAlias(map, "Saint Helena", "SH-HL");
+            addAlias(map, "St Helena", "SH-HL");
+            addAlias(map, "St. Helena", "SH-HL");
+            addAlias(map, "Tristan da Cunha", "SH-TA");
 
             return map;
         }

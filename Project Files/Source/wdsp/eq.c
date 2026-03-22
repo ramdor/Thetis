@@ -119,6 +119,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 
 	if (Q == NULL)
 	{
+		// non Q path
 		double* gp = (double*)malloc0((nfreqs + 2) * sizeof(double));
 		double* sary = (double*)malloc0(2 * nfreqs * sizeof(double));
 
@@ -173,6 +174,8 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 	else
 	{
 		// parametric eq with Q factor - Richard Samphire (c) 2026 - MW0LGE
+		// note atm, first/last entry should be on edges of required filter due to
+		// Q not being applied outside these
 		double nyquist_hz = samplerate * 0.5;
 		double bin_offset = (N & 1) ? 0.0 : 0.5;
 		double bin_hz = (mid > 0) ? (nyquist_hz / (double)mid) : 0.0;
@@ -182,15 +185,14 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 		int a_count = (N & 1) ? (mid + 1) : mid;
 		double low_fc_hz = 1.0e300;
 		double high_fc_hz = -1.0e300;
-		double tail_coeff = TAIL_MIX * tail_norm;
+		double tail_coeff = TAIL_MIX;// *tail_norm;
 		double tail_scale_inv = 1.0 / TAIL_SCALE;
 
 		double* fc_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* sigma_inv = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* gain_db = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* sary = (double*)malloc0(3 * nfreqs * sizeof(double));
-
-		if (!fc_hz || !sigma_inv || !gain_db || !sary) goto cleanup;
+		// dont worry about the above failing, nothing in WDSP does
 
 		fp[0] = 0.0;
 		fp[nfreqs + 1] = 1.0;
@@ -209,7 +211,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 
 		qsort(sary, nfreqs, 3 * sizeof(double), fEQcompare3);
 
-		// filter parameters
+		// and use them
 		for (i = 1, j = 0; i <= nfreqs; i++, j += 3)
 		{
 			double fc_norm = sary[j + 0];
@@ -268,11 +270,10 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 				}
 			}
 
-			// dB linear conversion
+			//linear
 			A[i] = pow(10.0, gdb * 0.05) * scale;
 		}
 
-	cleanup:
 		_aligned_free(sary);
 		_aligned_free(gain_db);
 		_aligned_free(sigma_inv);
@@ -300,7 +301,6 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			high_limit = mid - 1;
 		}
 
-		// init
 		lowmag = A[low];
 		highmag = A[high];
 		flow4 = pow(MID_NORM(low), 4.0);
