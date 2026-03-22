@@ -2605,8 +2605,7 @@ namespace Thetis
 
         private const float WATERFALL_AGC_RESTART_FLOOR_DBM = -150f;
         private static readonly int[] _currentWaterfallBandByRx = new int[] { int.MinValue, int.MinValue };
-        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache =
-            new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
+        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache = new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
 
         private struct WaterfallAgcCacheKey : IEquatable<WaterfallAgcCacheKey>
         {
@@ -5786,11 +5785,17 @@ namespace Thetis
             long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
             long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
             if (rowUtcTicks.Length > 0)
+            {
                 Array.Clear(rowUtcTicks, 0, rowUtcTicks.Length);
+            }
             if (rowLabelUtcTicks.Length > 0)
+            {
                 Array.Clear(rowLabelUtcTicks, 0, rowLabelUtcTicks.Length);
+            }
             if (rowLabelIntervalMs.Length > 0)
+            {
                 Array.Clear(rowLabelIntervalMs, 0, rowLabelIntervalMs.Length);
+            }
 
             _waterfallRowTimeCounts[rxIndex] = 0;
             _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
@@ -5801,8 +5806,7 @@ namespace Thetis
         private static void resizeWaterfallTimeOverlay(int rx, int waterHeight, int preservedRows)
         {
             int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length)
-                return;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
 
             if (waterHeight <= 0 || preservedRows <= 0)
             {
@@ -5859,7 +5863,9 @@ namespace Thetis
             if (lineIntervalMs <= 0) return computedIntervalMs;
 
             if (Math.Abs(lineIntervalMs - computedIntervalMs) > computedIntervalMs * 0.35)
+            {
                 return computedIntervalMs;
+            }
 
             return lineIntervalMs;
         }
@@ -5908,7 +5914,9 @@ namespace Thetis
         private static long getWaterfallDisplayTicks(long utcTicks)
         {
             if (m_eWaterfallTime == WaterfallTimeMode.LOCAL)
+            {
                 return new DateTime(utcTicks, DateTimeKind.Utc).ToLocalTime().Ticks;
+            }
 
             return utcTicks;
         }
@@ -5926,9 +5934,13 @@ namespace Thetis
                 if (deltaMs > 0 && deltaMs < 60000)
                 {
                     if (_waterfallLineIntervalMs[rxIndex] <= 0)
+                    {
                         _waterfallLineIntervalMs[rxIndex] = deltaMs;
+                    }
                     else
+                    {
                         _waterfallLineIntervalMs[rxIndex] = (_waterfallLineIntervalMs[rxIndex] * 0.85) + (deltaMs * 0.15);
+                    }
                 }
             }
 
@@ -5953,21 +5965,18 @@ namespace Thetis
             rowLabelIntervalMs[0] = 0;
             _waterfallRowTimeCounts[rxIndex] = Math.Min(waterHeight, rowCount + 1);
 
-            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue)
-                _waterfallRowsSinceLastLabel[rxIndex]++;
+            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue) _waterfallRowsSinceLastLabel[rxIndex]++;
 
             if (_waterfallRowTimeCounts[rxIndex] > 1)
             {
                 float minLabelSpacingRows = getWaterfallMinimumLabelSpacingRows();
-                long labelIntervalMs = getWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
+                long labelIntervalMs = chooseWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
                 long labelIntervalTicks = labelIntervalMs * TimeSpan.TicksPerMillisecond;
                 long previousDisplayTicks = getWaterfallDisplayTicks(rowUtcTicks[1]);
                 long currentDisplayTicks = getWaterfallDisplayTicks(currentUtcTicks);
                 long boundaryDisplayTicks = currentDisplayTicks - (currentDisplayTicks % labelIntervalTicks);
 
-                if (currentDisplayTicks > previousDisplayTicks &&
-                    boundaryDisplayTicks > previousDisplayTicks &&
-                    _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
+                if (currentDisplayTicks > previousDisplayTicks && boundaryDisplayTicks > previousDisplayTicks && _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
                 {
                     rowLabelUtcTicks[0] = currentUtcTicks - (currentDisplayTicks - boundaryDisplayTicks);
                     rowLabelIntervalMs[0] = labelIntervalMs;
@@ -5983,8 +5992,7 @@ namespace Thetis
             double rowsAtOneSecond = 1000.0 / safeMsPerLine;
             double minRowsForOneSecond = Math.Max(WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND, minLabelSpacing * 1.5);
 
-            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS &&
-                rowsAtOneSecond >= minRowsForOneSecond)
+            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS && rowsAtOneSecond >= minRowsForOneSecond)
                 return _waterfallTimeLabelIntervalsMs[0];
 
             if (rowsAtFiveSeconds >= WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS)
@@ -6007,17 +6015,6 @@ namespace Thetis
             return bestIntervalMs;
         }
 
-        private static long getWaterfallLabelIntervalMs(double msPerLine, double minLabelSpacing)
-        {
-            return chooseWaterfallLabelIntervalMs(msPerLine, minLabelSpacing);
-        }
-
-        private static string formatWaterfallLabelTime(long displayTicks, long labelIntervalMs)
-        {
-            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
-            return labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
-        }
-
         private static void drawWaterfallTimeLabel(
             SharpDX.Direct2D1.Brush timeBrush,
             SharpDX.Direct2D1.Brush panelBrush,
@@ -6033,7 +6030,8 @@ namespace Thetis
             float textPaddingX,
             float textPaddingY)
         {
-            string label = formatWaterfallLabelTime(displayTicks, labelIntervalMs);
+            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
+            string label = labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
             SizeF labelSize = measureStringDX2D(label, fontDX2d_font9);
             float rectWidth = labelSize.Width + (textPaddingX * 2f);
             float rectHeight = labelSize.Height + (textPaddingY * 2f);
@@ -6163,16 +6161,10 @@ namespace Thetis
                 return false;
 
             if (rx == 1)
-            {
-                return !m_bFastAttackNoiseFloorRX1 &&
-                       m_bNoiseFloorGoodRX1;
-            }
+                return !m_bFastAttackNoiseFloorRX1 &&  m_bNoiseFloorGoodRX1;
 
             if (rx == 2)
-            {
-                return !m_bFastAttackNoiseFloorRX2 &&
-                       m_bNoiseFloorGoodRX2;
-            }
+                return !m_bFastAttackNoiseFloorRX2 &&  m_bNoiseFloorGoodRX2;
 
             return false;
         }
@@ -6196,8 +6188,7 @@ namespace Thetis
                                !double.IsNaN(_waterfallBitmapSpanHz[index]) &&
                                Math.Abs(_waterfallBitmapSpanHz[index] - spanHz) > 0.5;
 
-            clearBitmap = _waterfallBitmapWidths[index] > 0 &&
-                          (_waterfallBitmapWidths[index] != width);
+            clearBitmap = _waterfallBitmapWidths[index] > 0 && (_waterfallBitmapWidths[index] != width);
 
             if (clearBitmap || spanChanged)
             {
@@ -6209,8 +6200,7 @@ namespace Thetis
 
             if (width <= 0 || spanHz <= 0.0 || double.IsNaN(centerMHz) || centerMHz <= 0.0)
             {
-                if (clearBitmap)
-                    _waterfallBitmapCenterMHz[index] = double.NaN;
+                if (clearBitmap) _waterfallBitmapCenterMHz[index] = double.NaN;
 
                 return 0;
             }
@@ -6261,7 +6251,9 @@ namespace Thetis
             {
                 Array.Clear(clearBuffer, 0, bytesNeeded);
                 for (int i = 3; i < bytesNeeded; i += pixelSize)
+                {
                     clearBuffer[i] = 255;
+                }
                 bitmap.CopyFromMemory(clearBuffer, stride, new SharpDX.Rectangle(x, y, width, height));
             }
             finally
@@ -6448,9 +6440,9 @@ namespace Thetis
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
                         if (useNoiseFloorCompensation)
-                            {
+                        {
                             low_threshold = useSettledNoiseFloorCompensation ? noiseFloorCompensationTarget : _RX1waterfallPreviousMinValue;
-                            }
+                        }
                         else
                         {
                             low_threshold = _RX1waterfallPreviousMinValue;
@@ -6474,7 +6466,9 @@ namespace Thetis
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -6498,7 +6492,9 @@ namespace Thetis
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data_bottom[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -6662,8 +6658,7 @@ namespace Thetis
                     }
 
                     int preservedBitmapHeight = (int)waterfallBitmap.Size.Height - (addRow ? 1 : 0);
-                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight),
-                        new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
+                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight), new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
 
                     topPixels.CopyFromBitmap(waterfallBitmap, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, preservedBitmapHeight));
 
