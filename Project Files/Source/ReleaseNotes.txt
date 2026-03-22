@@ -15,7 +15,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] entirely new recording/playback system added. New tab in Setup->Audio->Recording. New container gadget item, voice record/play, and cat support. ZZJS (stop record/play), ZZJR (record to slot N) ZZJR005; , ZZJP (playback slot N)  ZZJP005;
 - [add] new 5/10/18 band Parametric EQ ui for TX and RX eq, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
 - [add] new 5/10/18 band EQ Parametric EQ ui for CFC, with Q factor. Mouse wheel adjusts Q, click on a node and drag it
-- [add] flags can be shown on the TCI spots if information is provided in the JSON payload. Contact me for info about this if you want your tci software to support this, email on QRZ. v3.0.4 Cluster TCI Bridge from OE3IDE will support this
+- [add] flags can be shown on the TCI spots if a callsign can be attributed to a country. If information is provided in the JSON payload then it will take precedence. Contact me for info about this if you want your tci software to support this, email on QRZ. v3.0.4 Cluster TCI Bridge from OE3IDE will support this. Skimmers such as SDC which do not include JSON payload will have flags assigned if they can be recovered from the spotted callsign
 - [add] timing labels on the waterfall, options in Setup->Appearance->General
 - [add] protocol2 has had some extra ADC information added, the raw ADC max magnitude. There is a new meter item for this. The data will be used for full auto attenuation in later versions of Thetis. It is only supported by fpga fw v27 and p2papp v45 on the G2 at the moment
 - [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required
@@ -32,6 +32,20 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] option to show active peaks on transmit. Note, the setting is in Display RX1/RX2 tab, not the Display TX tab
 - [add] options added to the DC block to remove it before or after AGC (found in Setup->DSP->AM/SAM)
 - [add] ganymede amplifier support added including ui resets and warnings
+- [add] new tci commands added (TODO: docs)
+	- rx_channel_enable
+	- rx_sensors_enable
+	- tx_sensors_enable
+	- rx_nr_enable
+	- rx_nr_enable_ex
+	- rx_anf_enable
+	- rx_volume
+	- rx_ctun_ex
+	- tx_profile_ex
+	- calibration_ex
+ 	- tx_profiles_ex
+	- shutdown_ex
+	- tx_profile_ex
 - [change] better handing of DirectX failure
 - [change] if cpu% fails to show due to PerformanceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformanceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum
@@ -42,6 +56,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] DB merge code changed such that it attempts to pull all state settings from the source database into the new database if possible
 - [change] wave form removed from other buttons, replaced with amp view
 - [change] more info hover cursor item has a back panel now
+- [change] waterfall agc has had some rework
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots
 - [fix] diversity form now fades in along side console window at start up
