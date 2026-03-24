@@ -463,7 +463,7 @@ namespace Thetis
 
             country = pd.Country;
 
-            string country_ansi = pd.Ansi2CharCountryCode;
+            string country_ansi = pd.AssetCode;
             if (string.IsNullOrWhiteSpace(country_ansi)) return null;
 
             return getFlagImage(country_ansi);

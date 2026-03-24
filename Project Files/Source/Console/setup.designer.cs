@@ -65976,7 +65976,7 @@
             this.nudRecording_repeatDelay.Size = new System.Drawing.Size(38, 20);
             this.nudRecording_repeatDelay.TabIndex = 174;
             this.nudRecording_repeatDelay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudRecording_repeatDelay, "Auto repeat duation");
+            this.toolTip1.SetToolTip(this.nudRecording_repeatDelay, "Auto repeat duration");
             this.nudRecording_repeatDelay.Value = new decimal(new int[] {
             10,
             0,

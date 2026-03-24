@@ -100,6 +100,115 @@ namespace Thetis
     {
         #region Variable Declaration
 
+        private sealed class BandEdgeRegionCacheDX2D
+        {
+            private static readonly int[] s_usBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                5330500, 5406400, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_germanyBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 51000000, 144000000, 146000000 };
+            private static readonly int[] s_region1BandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
+            private static readonly int[] s_region2BandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                5351500, 5366500, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_region3BandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 3900000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_spainBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 1850000, 3500000, 3800000,
+                7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
+            private static readonly int[] s_australiaBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 1875000,
+                3500000, 3800000, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000,
+                18168000, 21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_ukBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5258500, 5406500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
+                21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
+            private static readonly int[] s_indiaBandEdges = new int[] { 1810000, 1860000, 3500000, 3900000, 7000000, 7200000,
+                10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_norwayBandEdges = new int[] { 1800000, 2000000, 3500000, 4000000, 5260000, 5410000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_japanBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 1875000, 1907500, 1912500,
+                3500000, 3575000, 3599000, 3612000, 3680000, 3687000, 3702000, 3716000, 3745000, 3770000, 3791000, 3805000,
+                7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
+            private static readonly int[] s_defaultBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+
+            private bool m_bInitialised = false;
+            private FRSRegion m_currentRegion = FRSRegion.FIRST;
+            private int[] m_edges = new int[0];
+            private HashSet<int> m_edgeSet = new HashSet<int>();
+
+            public int[] Edges
+            {
+                get { return m_edges; }
+            }
+
+            public void Update(FRSRegion region)
+            {
+                if (m_bInitialised && m_currentRegion == region)
+                    return;
+
+                switch (region)
+                {
+                    case FRSRegion.US:
+                        m_edges = s_usBandEdges;
+                        break;
+                    case FRSRegion.Germany:
+                        m_edges = s_germanyBandEdges;
+                        break;
+                    case FRSRegion.Region1:
+                        m_edges = s_region1BandEdges;
+                        break;
+                    case FRSRegion.Region2:
+                        m_edges = s_region2BandEdges;
+                        break;
+                    case FRSRegion.Region3:
+                        m_edges = s_region3BandEdges;
+                        break;
+                    case FRSRegion.Spain:
+                        m_edges = s_spainBandEdges;
+                        break;
+                    case FRSRegion.Australia:
+                        m_edges = s_australiaBandEdges;
+                        break;
+                    case FRSRegion.UK:
+                        m_edges = s_ukBandEdges;
+                        break;
+                    case FRSRegion.India:
+                        m_edges = s_indiaBandEdges;
+                        break;
+                    case FRSRegion.Norway:
+                        m_edges = s_norwayBandEdges;
+                        break;
+                    case FRSRegion.Japan:
+                        m_edges = s_japanBandEdges;
+                        break;
+                    default:
+                        m_edges = s_defaultBandEdges;
+                        break;
+                }
+
+                m_edgeSet = new HashSet<int>(m_edges);
+                m_currentRegion = region;
+                m_bInitialised = true;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool Contains(int frequencyHz)
+            {
+                return m_edgeSet.Contains(frequencyHz);
+            }
+        }
+
+        private static readonly BandEdgeRegionCacheDX2D m_bandEdgeRegionCacheDX2D = new BandEdgeRegionCacheDX2D();
+
         private const AlphaMode ALPHA_MODE = AlphaMode.Premultiplied; //21k9
 
         public const float CLEAR_FLAG = -999.999F;				// for resetting buffers
@@ -833,14 +942,19 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX1; }
             set
-            {                
-                if (value != m_dCentreFreqRX1)
+            {
+                double old_centre_freq_rx1_rounded = Math.Round(m_dCentreFreqRX1, 6);
+                double new_centre_freq_rx1_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx1_rounded != new_centre_freq_rx1_rounded)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
                     _rx1_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx1Waterfall = true;
                     m_dCentreFreqRX1 = value;
-                }                
+
+                    N1MM.Resize(1);
+                }
             }
         }
 
@@ -849,14 +963,19 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX2; }
             set
-            {                
-                if (value != m_dCentreFreqRX2)
+            {
+                double old_centre_freq_rx2_rounded = Math.Round(m_dCentreFreqRX2, 6);
+                double new_centre_freq_rx2_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx2_rounded != new_centre_freq_rx2_rounded)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
                     _rx2_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx2Waterfall = true;
                     m_dCentreFreqRX2 = value;
-                }                
+
+                    N1MM.Resize(2);
+                }
             }
         }
 
@@ -1022,6 +1141,8 @@ namespace Thetis
                         console.specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = displayTargetWidth / m_nDecimation;
                     }
 
+                    N1MM.Resize();
+
 #if SNOWFALL
                     if (_snowFall)
                     {
@@ -1073,10 +1194,13 @@ namespace Thetis
             get { return m_nDecimation; }
             set
             {
+                int old = m_nDecimation;
                 lock (_objDX2Lock)
                 {
                     m_nDecimation = value;
                 }
+
+                if (old != m_nDecimation) N1MM.Resize();
             }
         }
         private static int rx_display_low = -4000;
@@ -1089,8 +1213,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_low = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_low = value;
             }
         }
 
@@ -1104,8 +1231,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_high = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_high = value;
             }
         }
 
@@ -1119,8 +1249,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_low = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_low = value;
             }
         }
 
@@ -1134,8 +1267,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_high = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_high = value;
             }
         }
 
@@ -2605,8 +2741,7 @@ namespace Thetis
 
         private const float WATERFALL_AGC_RESTART_FLOOR_DBM = -150f;
         private static readonly int[] _currentWaterfallBandByRx = new int[] { int.MinValue, int.MinValue };
-        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache =
-            new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
+        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache = new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
 
         private struct WaterfallAgcCacheKey : IEquatable<WaterfallAgcCacheKey>
         {
@@ -5786,11 +5921,17 @@ namespace Thetis
             long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
             long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
             if (rowUtcTicks.Length > 0)
+            {
                 Array.Clear(rowUtcTicks, 0, rowUtcTicks.Length);
+            }
             if (rowLabelUtcTicks.Length > 0)
+            {
                 Array.Clear(rowLabelUtcTicks, 0, rowLabelUtcTicks.Length);
+            }
             if (rowLabelIntervalMs.Length > 0)
+            {
                 Array.Clear(rowLabelIntervalMs, 0, rowLabelIntervalMs.Length);
+            }
 
             _waterfallRowTimeCounts[rxIndex] = 0;
             _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
@@ -5801,8 +5942,7 @@ namespace Thetis
         private static void resizeWaterfallTimeOverlay(int rx, int waterHeight, int preservedRows)
         {
             int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length)
-                return;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
 
             if (waterHeight <= 0 || preservedRows <= 0)
             {
@@ -5859,7 +5999,9 @@ namespace Thetis
             if (lineIntervalMs <= 0) return computedIntervalMs;
 
             if (Math.Abs(lineIntervalMs - computedIntervalMs) > computedIntervalMs * 0.35)
+            {
                 return computedIntervalMs;
+            }
 
             return lineIntervalMs;
         }
@@ -5908,7 +6050,9 @@ namespace Thetis
         private static long getWaterfallDisplayTicks(long utcTicks)
         {
             if (m_eWaterfallTime == WaterfallTimeMode.LOCAL)
+            {
                 return new DateTime(utcTicks, DateTimeKind.Utc).ToLocalTime().Ticks;
+            }
 
             return utcTicks;
         }
@@ -5926,9 +6070,13 @@ namespace Thetis
                 if (deltaMs > 0 && deltaMs < 60000)
                 {
                     if (_waterfallLineIntervalMs[rxIndex] <= 0)
+                    {
                         _waterfallLineIntervalMs[rxIndex] = deltaMs;
+                    }
                     else
+                    {
                         _waterfallLineIntervalMs[rxIndex] = (_waterfallLineIntervalMs[rxIndex] * 0.85) + (deltaMs * 0.15);
+                    }
                 }
             }
 
@@ -5953,21 +6101,18 @@ namespace Thetis
             rowLabelIntervalMs[0] = 0;
             _waterfallRowTimeCounts[rxIndex] = Math.Min(waterHeight, rowCount + 1);
 
-            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue)
-                _waterfallRowsSinceLastLabel[rxIndex]++;
+            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue) _waterfallRowsSinceLastLabel[rxIndex]++;
 
             if (_waterfallRowTimeCounts[rxIndex] > 1)
             {
                 float minLabelSpacingRows = getWaterfallMinimumLabelSpacingRows();
-                long labelIntervalMs = getWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
+                long labelIntervalMs = chooseWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
                 long labelIntervalTicks = labelIntervalMs * TimeSpan.TicksPerMillisecond;
                 long previousDisplayTicks = getWaterfallDisplayTicks(rowUtcTicks[1]);
                 long currentDisplayTicks = getWaterfallDisplayTicks(currentUtcTicks);
                 long boundaryDisplayTicks = currentDisplayTicks - (currentDisplayTicks % labelIntervalTicks);
 
-                if (currentDisplayTicks > previousDisplayTicks &&
-                    boundaryDisplayTicks > previousDisplayTicks &&
-                    _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
+                if (currentDisplayTicks > previousDisplayTicks && boundaryDisplayTicks > previousDisplayTicks && _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
                 {
                     rowLabelUtcTicks[0] = currentUtcTicks - (currentDisplayTicks - boundaryDisplayTicks);
                     rowLabelIntervalMs[0] = labelIntervalMs;
@@ -5983,8 +6128,7 @@ namespace Thetis
             double rowsAtOneSecond = 1000.0 / safeMsPerLine;
             double minRowsForOneSecond = Math.Max(WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND, minLabelSpacing * 1.5);
 
-            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS &&
-                rowsAtOneSecond >= minRowsForOneSecond)
+            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS && rowsAtOneSecond >= minRowsForOneSecond)
                 return _waterfallTimeLabelIntervalsMs[0];
 
             if (rowsAtFiveSeconds >= WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS)
@@ -6007,17 +6151,6 @@ namespace Thetis
             return bestIntervalMs;
         }
 
-        private static long getWaterfallLabelIntervalMs(double msPerLine, double minLabelSpacing)
-        {
-            return chooseWaterfallLabelIntervalMs(msPerLine, minLabelSpacing);
-        }
-
-        private static string formatWaterfallLabelTime(long displayTicks, long labelIntervalMs)
-        {
-            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
-            return labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
-        }
-
         private static void drawWaterfallTimeLabel(
             SharpDX.Direct2D1.Brush timeBrush,
             SharpDX.Direct2D1.Brush panelBrush,
@@ -6033,7 +6166,8 @@ namespace Thetis
             float textPaddingX,
             float textPaddingY)
         {
-            string label = formatWaterfallLabelTime(displayTicks, labelIntervalMs);
+            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
+            string label = labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
             SizeF labelSize = measureStringDX2D(label, fontDX2d_font9);
             float rectWidth = labelSize.Width + (textPaddingX * 2f);
             float rectHeight = labelSize.Height + (textPaddingY * 2f);
@@ -6163,16 +6297,10 @@ namespace Thetis
                 return false;
 
             if (rx == 1)
-            {
-                return !m_bFastAttackNoiseFloorRX1 &&
-                       m_bNoiseFloorGoodRX1;
-            }
+                return !m_bFastAttackNoiseFloorRX1 &&  m_bNoiseFloorGoodRX1;
 
             if (rx == 2)
-            {
-                return !m_bFastAttackNoiseFloorRX2 &&
-                       m_bNoiseFloorGoodRX2;
-            }
+                return !m_bFastAttackNoiseFloorRX2 &&  m_bNoiseFloorGoodRX2;
 
             return false;
         }
@@ -6196,8 +6324,7 @@ namespace Thetis
                                !double.IsNaN(_waterfallBitmapSpanHz[index]) &&
                                Math.Abs(_waterfallBitmapSpanHz[index] - spanHz) > 0.5;
 
-            clearBitmap = _waterfallBitmapWidths[index] > 0 &&
-                          (_waterfallBitmapWidths[index] != width);
+            clearBitmap = _waterfallBitmapWidths[index] > 0 && (_waterfallBitmapWidths[index] != width);
 
             if (clearBitmap || spanChanged)
             {
@@ -6209,8 +6336,7 @@ namespace Thetis
 
             if (width <= 0 || spanHz <= 0.0 || double.IsNaN(centerMHz) || centerMHz <= 0.0)
             {
-                if (clearBitmap)
-                    _waterfallBitmapCenterMHz[index] = double.NaN;
+                if (clearBitmap) _waterfallBitmapCenterMHz[index] = double.NaN;
 
                 return 0;
             }
@@ -6261,7 +6387,9 @@ namespace Thetis
             {
                 Array.Clear(clearBuffer, 0, bytesNeeded);
                 for (int i = 3; i < bytesNeeded; i += pixelSize)
+                {
                     clearBuffer[i] = 255;
+                }
                 bitmap.CopyFromMemory(clearBuffer, stride, new SharpDX.Rectangle(x, y, width, height));
             }
             finally
@@ -6448,9 +6576,9 @@ namespace Thetis
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
                         if (useNoiseFloorCompensation)
-                            {
+                        {
                             low_threshold = useSettledNoiseFloorCompensation ? noiseFloorCompensationTarget : _RX1waterfallPreviousMinValue;
-                            }
+                        }
                         else
                         {
                             low_threshold = _RX1waterfallPreviousMinValue;
@@ -6474,7 +6602,9 @@ namespace Thetis
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -6498,7 +6628,9 @@ namespace Thetis
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data_bottom[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -6662,8 +6794,7 @@ namespace Thetis
                     }
 
                     int preservedBitmapHeight = (int)waterfallBitmap.Size.Height - (addRow ? 1 : 0);
-                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight),
-                        new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
+                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight), new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
 
                     topPixels.CopyFromBitmap(waterfallBitmap, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, preservedBitmapHeight));
 
@@ -9305,73 +9436,8 @@ namespace Thetis
             #endregion
 
             #region Band edges, H+V lines and labels
-            //MW0LGE
-            int[] band_edge_list;
-            switch (console.CurrentRegion)
-            {
-                case FRSRegion.US:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            5330500, 5406400, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Germany:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 51000000, 144000000, 146000000 };
-                    break;
-                case FRSRegion.Region1:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
-                    break;
-                case FRSRegion.Region2:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            5351500, 5366500, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Region3:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 3900000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Spain:
-                    band_edge_list = new int[] { 135700, 137800, 472000, 479000, 1810000, 1850000, 3500000, 3800000,
-            7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
-            21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Australia:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 1875000,
-             3500000, 3800000, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000,
-             18168000, 21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.UK:
-                    band_edge_list = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5258500, 5406500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
-            21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.India:
-                    band_edge_list = new int[]{ 1810000, 1860000, 3500000, 3900000, 7000000, 7200000,
-            10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Norway:
-                    band_edge_list = new int[]{ 1800000, 2000000, 3500000, 4000000, 5260000, 5410000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Japan:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 1875000, 1907500, 1912500,
-                        3500000, 3575000, 3599000, 3612000, 3680000, 3687000, 3702000, 3716000, 3745000, 3770000, 3791000, 3805000,
-            7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
-                    break;
-                default: // same as region3 but with extended 80m out to 4mhz
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-            }
-            //--
+            m_bandEdgeRegionCacheDX2D.Update(console.CurrentRegion);
+            int[] band_edge_list = m_bandEdgeRegionCacheDX2D.Edges;
 
             double vfo;
 

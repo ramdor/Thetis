@@ -56,7 +56,7 @@ namespace Thetis
 
         private struct ReceiverStoredData
         {
-            public float[] storedData;
+            public float[] spectrum_data;
             public double LowFreq;
             public double HighFreq;
             public bool Enabled;
@@ -98,6 +98,8 @@ namespace Thetis
             if (RXstoredData == null || rx > RXstoredData.Length || rx < 1) return;
 
             RXstoredData[rx - 1].Enabled = enable;
+
+            Resize(rx);
         }
         private static void setLowFrequencyMHz(int rx, double freq)
         {
@@ -147,7 +149,18 @@ namespace Thetis
         //{
         //    _console = c;
         //}
+        public static void Resize()
+        {
+            if (!Display.IsDX2DSetup) return;
 
+            for (int i = 0; i < RXstoredData.Length; i++)
+            {
+                if(RXstoredData[i].Enabled)
+                {
+                    Resize(i + 1);
+                }
+            }
+        }
         public static void Resize(int rx)
         {
             if (!Display.IsDX2DSetup) return;
@@ -157,9 +170,9 @@ namespace Thetis
 
             int width = Display.Target.Width / Display.Decimation;
 
-            if (RXstoredData[rx - 1].storedData == null || RXstoredData[rx - 1].Width < width)
+            if (RXstoredData[rx - 1].spectrum_data == null || RXstoredData[rx - 1].Width < width)
             {
-                RXstoredData[rx - 1].storedData = new float[width];
+                RXstoredData[rx - 1].spectrum_data = new float[width];
             }
             RXstoredData[rx - 1].Width = width;
 
@@ -228,7 +241,7 @@ namespace Thetis
                     unsafe
                     {
                         fixed (void* originalptr = &newData[0])
-                        fixed (void* newptr = &RXstoredData[rx - 1].storedData[0])
+                        fixed (void* newptr = &RXstoredData[rx - 1].spectrum_data[0])
                             Win32.memcpy(newptr, originalptr, RXstoredData[rx - 1].Width * sizeof(float));
                     }
 
@@ -308,7 +321,7 @@ namespace Thetis
             {
                 ReceiverStoredData rsd = RXstoredData[nn];
 
-                if (rsd.storedData != null && rsd.Enabled && rsd.DataReady)
+                if (rsd.spectrum_data != null && rsd.Enabled && rsd.DataReady)
                 {
                     XmlDocument doc = new XmlDocument();
                     doc.PreserveWhitespace = false;
@@ -357,13 +370,13 @@ namespace Thetis
                     double min = double.MaxValue;
                     for(int i = 0; i < rsd.Width; i++)
                     {
-                        if (rsd.storedData[i] < min) min = rsd.storedData[i];
+                        if (rsd.spectrum_data[i] < min) min = rsd.spectrum_data[i];
                     }
                     min = Math.Abs(min);
 
                     for (int n = 0; n < rsd.Width; n++)
                     {
-                        int v = (int)rsd.storedData[n] + (int)min;
+                        int v = (int)rsd.spectrum_data[n] + (int)min;
                         specData += v.ToString() + ",";
                     }
                     if (specData != "") specData = specData.Substring(0, specData.Length - 1); // drop ,

@@ -67,6 +67,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed issue where some modes had spaces in the TCI modulation outbound message
 - [fix] TCI server can now handle concatenated TCI commands
 - [fix] if within 15 pixels of the top of RX1/RX2 display areas, the cursor changes to EW and you can drag left/right. Filter edges and bandstacks are now not considered in this area and as such dragging of the spectrum will occur if over a bandstack for example
+- [fix] port + delay now validated for focusmaster, could cause crash if non numerics were entered
+- [fix] n1mm spectral output should now follow band changes for both rx1 + rx2
+
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
