@@ -10767,9 +10767,12 @@ namespace Thetis
             }
             set
             {
-                double dOld = m_dCentreFrequency;
+                double dOldRounded = Math.Round(m_dCentreFrequency, 6);
+                double dNewRounded = Math.Round(value, 6);
+
                 m_dCentreFrequency = value;
-                if (Math.Abs(dOld - m_dCentreFrequency) >= 0.000001) CentreFrequencyHandlers?.Invoke(1, Math.Round(dOld, 6), Math.Round(m_dCentreFrequency, 6), RX1Band, radio.GetDSPRX(0, 0).RXOsc);
+
+                if (dOldRounded != dNewRounded) CentreFrequencyHandlers?.Invoke(1, dOldRounded, dNewRounded, RX1Band, radio.GetDSPRX(0, 0).RXOsc);
             }
         }
 
@@ -10782,9 +10785,12 @@ namespace Thetis
             }
             set
             {
-                double dOld = m_dCentreRX2Frequency;
+                double dOldRounded = Math.Round(m_dCentreRX2Frequency, 6);
+                double dNewRounded = Math.Round(value, 6);
+
                 m_dCentreRX2Frequency = value;
-                if (Math.Abs(dOld - m_dCentreRX2Frequency) >= 0.000001) CentreFrequencyHandlers?.Invoke(2, Math.Round(dOld, 6), Math.Round(m_dCentreRX2Frequency, 6), RX2Band, radio.GetDSPRX(1, 0).RXOsc);
+
+                if (dOldRounded != dNewRounded) CentreFrequencyHandlers?.Invoke(2, dOldRounded, dNewRounded, RX2Band, radio.GetDSPRX(1, 0).RXOsc);
             }
         }
 
@@ -18307,12 +18313,13 @@ namespace Thetis
             txtVFOABand_LostFocus(this, EventArgs.Empty);
 
             //MW0LGE [2.9.0.7] also in UpdateVFOASub
-            if (Math.Abs(dOldVFOASubFreq - VFOASubFreq) >= 0.000001)
+            double old_vfoa_sub_freq_rounded = Math.Round(dOldVFOASubFreq, 6);
+            if (old_vfoa_sub_freq_rounded != VFOASubFreq)
             {
                 Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
                 Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
 
-                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
+                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, old_vfoa_sub_freq_rounded, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
             }
         }
@@ -31772,16 +31779,18 @@ namespace Thetis
             UpdatePreamps();
 
             //MW0LGE_21d
-            if (Math.Abs(dOldFreq - VFOAFreq) >= 0.000001)
+            double old_vfoa_freq_rounded = Math.Round(dOldFreq, 6);
+            if (old_vfoa_freq_rounded != VFOAFreq)
             {
-                VFOAFrequencyChangeHandlers?.Invoke(oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOAFreq,
+                VFOAFrequencyChangeHandlers?.Invoke(oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, old_vfoa_freq_rounded, VFOAFreq,
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
             }
 
-            if (Math.Abs(TXFreq - _old_tx_freq) >= 0.000001 || old_tx_band != TXBand)
+            double old_tx_freq_rounded = Math.Round(_old_tx_freq, 6);
+            if (old_tx_freq_rounded != TXFreq || old_tx_band != TXBand)
             {
                 double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
-                TXFrequncyChangedHandlers?.Invoke(_old_tx_freq, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
+                TXFrequncyChangedHandlers?.Invoke(old_tx_freq_rounded, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
                 _old_tx_freq = TXFreq;
                 _old_tx_band = TXBand;
             }
@@ -32768,11 +32777,12 @@ namespace Thetis
                 txtVFOBLSD.Visible = true;
             }
 
-            if (Math.Abs(dOldFreq - VFOBFreq) >= 0.000001)
+            double old_vfob_freq_rounded = Math.Round(dOldFreq, 6);
+            if (old_vfob_freq_rounded != VFOBFreq)
             {
                 if (rx2_enabled)
                 {
-                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
+                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, old_vfob_freq_rounded, VFOBFreq,
                         oldCentreFreq, CentreRX2Frequency, oldCtun, ClickTuneRX2Display, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(1, 0).RXOsc, 2);
                 }
                 else
@@ -32780,14 +32790,16 @@ namespace Thetis
                     oldBand = BandByFreq(dOldFreq, rx1_xvtr_index, current_region);
                     Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
 
-                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOBFreq,
+                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, old_vfob_freq_rounded, VFOBFreq,
                         oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
                 }
             }
-            if (Math.Abs(TXFreq - _old_tx_freq) >= 0.000001 || _old_tx_band != TXBand)
+
+            double old_tx_freq_rounded = Math.Round(_old_tx_freq, 6);
+            if (old_tx_freq_rounded != TXFreq || _old_tx_band != TXBand)
             {
                 double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
-                TXFrequncyChangedHandlers?.Invoke(_old_tx_freq, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
+                TXFrequncyChangedHandlers?.Invoke(old_tx_freq_rounded, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
                 _old_tx_freq = TXFreq;
                 _old_tx_band = TXBand;
             }
@@ -35503,12 +35515,13 @@ namespace Thetis
             }
 
             //MW0LGE [2.9.0.7] also in VFOASubUpdate
-            if (Math.Abs(dOldVFOASubFreq - VFOASubFreq) >= 0.000001)
+            double old_vfoa_sub_freq_rounded = Math.Round(dOldVFOASubFreq, 6);
+            if (old_vfoa_sub_freq_rounded != VFOASubFreq)
             {
                 Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
                 Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
 
-                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
+                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, old_vfoa_sub_freq_rounded, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
             }
         }

@@ -943,7 +943,10 @@ namespace Thetis
             get { return m_dCentreFreqRX1; }
             set
             {
-                if (Math.Abs(value - m_dCentreFreqRX1) >= 0.000001)
+                double old_centre_freq_rx1_rounded = Math.Round(m_dCentreFreqRX1, 6);
+                double new_centre_freq_rx1_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx1_rounded != new_centre_freq_rx1_rounded)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
                     _rx1_centrefreq_change_time = DateTime.UtcNow;
@@ -961,7 +964,10 @@ namespace Thetis
             get { return m_dCentreFreqRX2; }
             set
             {
-                if (Math.Abs(value - m_dCentreFreqRX2) >= 0.000001)
+                double old_centre_freq_rx2_rounded = Math.Round(m_dCentreFreqRX2, 6);
+                double new_centre_freq_rx2_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx2_rounded != new_centre_freq_rx2_rounded)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
                     _rx2_centrefreq_change_time = DateTime.UtcNow;
