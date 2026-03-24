@@ -8543,8 +8543,16 @@ namespace Thetis
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
-                            Rate[0] = ps_rate;
-                            Rate[1] = ps_rate;
+                            if (hpsdr_model == HPSDRModel.HERMESLITE) // MI0BOT: HL2 can work at a high sample rate
+                            {
+                                Rate[0] = rx1_rate;
+                                Rate[1] = rx1_rate;
+                            }
+                            else
+                            {
+                                Rate[0] = ps_rate;
+                                Rate[1] = ps_rate;
+                            }
                             cntrl1 = 4;
                             cntrl2 = 0;
                         }
