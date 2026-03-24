@@ -17520,12 +17520,12 @@ namespace Thetis
 
         private void txtFocusMasterUDPPort_TextChanged(object sender, EventArgs e)
         {
-            console.FocusMasterUDPPort = int.Parse(txtFocusMasterUDPPort.Text);
+            if (int.TryParse(txtFocusMasterUDPPort.Text, out int value)) console.FocusMasterUDPPort = value;
         }
 
         private void txtFocusMasterDelay_TextChanged(object sender, EventArgs e)
         {
-            console.FocusMasterDelay = int.Parse(txtFocusMasterDelay.Text);
+            if (int.TryParse(txtFocusMasterDelay.Text, out int value)) console.FocusMasterDelay = value;
         }
 
         private void txtFocusMasterWinTitle_KeyDown(object sender, KeyEventArgs e)
