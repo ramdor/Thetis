@@ -942,14 +942,16 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX1; }
             set
-            {                
-                if (value != m_dCentreFreqRX1)
+            {
+                if (Math.Abs(value - m_dCentreFreqRX1) >= 0.000001)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
                     _rx1_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx1Waterfall = true;
                     m_dCentreFreqRX1 = value;
-                }                
+
+                    N1MM.Resize(1);
+                }
             }
         }
 
@@ -958,14 +960,16 @@ namespace Thetis
         {
             get { return m_dCentreFreqRX2; }
             set
-            {                
-                if (value != m_dCentreFreqRX2)
+            {
+                if (Math.Abs(value - m_dCentreFreqRX2) >= 0.000001)
                 {
                     SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
                     _rx2_centrefreq_change_time = DateTime.UtcNow;
                     _stopRx2Waterfall = true;
                     m_dCentreFreqRX2 = value;
-                }                
+
+                    N1MM.Resize(2);
+                }
             }
         }
 
@@ -1131,6 +1135,8 @@ namespace Thetis
                         console.specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = displayTargetWidth / m_nDecimation;
                     }
 
+                    N1MM.Resize();
+
 #if SNOWFALL
                     if (_snowFall)
                     {
@@ -1182,10 +1188,13 @@ namespace Thetis
             get { return m_nDecimation; }
             set
             {
+                int old = m_nDecimation;
                 lock (_objDX2Lock)
                 {
                     m_nDecimation = value;
                 }
+
+                if (old != m_nDecimation) N1MM.Resize();
             }
         }
         private static int rx_display_low = -4000;
@@ -1198,8 +1207,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_low = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_low = value;
             }
         }
 
@@ -1213,8 +1225,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_high = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_high = value;
             }
         }
 
@@ -1228,8 +1243,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_low = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_low = value;
             }
         }
 
@@ -1243,8 +1261,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_high = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_high = value;
             }
         }
 

@@ -1038,10 +1038,6 @@ namespace Thetis
                 SetupForm.StartupTCPIPcatServer();
             }
 
-            //resize N1MM //MW0LGE_21k9c
-            N1MM.Resize(1);
-            if (local_rx2Enabled) N1MM.Resize(2);
-
             // go for multimeter launch -- display forms, or user controls in thetis
             MeterManager.FinishSetupAndDisplay();
 
@@ -10773,7 +10769,7 @@ namespace Thetis
             {
                 double dOld = m_dCentreFrequency;
                 m_dCentreFrequency = value;
-                if (dOld != m_dCentreFrequency) CentreFrequencyHandlers?.Invoke(1, Math.Round(dOld, 6), Math.Round(m_dCentreFrequency, 6), RX1Band, radio.GetDSPRX(0, 0).RXOsc); //MW0LGE_21d //MW0LGE_21k9d roundings
+                if (Math.Abs(dOld - m_dCentreFrequency) >= 0.000001) CentreFrequencyHandlers?.Invoke(1, Math.Round(dOld, 6), Math.Round(m_dCentreFrequency, 6), RX1Band, radio.GetDSPRX(0, 0).RXOsc);
             }
         }
 
@@ -10784,10 +10780,11 @@ namespace Thetis
             {
                 return Math.Round(m_dCentreRX2Frequency, 6); //MW0LGE_21k8
             }
-            set {
+            set
+            {
                 double dOld = m_dCentreRX2Frequency;
                 m_dCentreRX2Frequency = value;
-                if (dOld != m_dCentreRX2Frequency) CentreFrequencyHandlers?.Invoke(2, Math.Round(dOld, 6), Math.Round(m_dCentreRX2Frequency, 6), RX2Band, radio.GetDSPRX(1, 0).RXOsc); //MW0LGE_21d //MW0LGE_21k9d roundings
+                if (Math.Abs(dOld - m_dCentreRX2Frequency) >= 0.000001) CentreFrequencyHandlers?.Invoke(2, Math.Round(dOld, 6), Math.Round(m_dCentreRX2Frequency, 6), RX2Band, radio.GetDSPRX(1, 0).RXOsc);
             }
         }
 
@@ -13501,7 +13498,7 @@ namespace Thetis
         }
 
         //MW0LGE_21k9
-        public void SetupDisplayEngine(int decimation, bool resizeN1MM = true)
+        public void SetupDisplayEngine(int decimation)
         {
             int oldDecimation = Display.Decimation;
 
@@ -13509,13 +13506,6 @@ namespace Thetis
 
             Display.Decimation = decimation;
             Display.Target = pnlDisplay;
-
-            if (resizeN1MM)
-            {
-                //MW0LGE_21d N1MM
-                N1MM.Resize(1);
-                if (RX2Enabled) N1MM.Resize(2);
-            }
 
             //MW0LGE_21h
             updateBandstackOverlay(1);
@@ -18317,7 +18307,7 @@ namespace Thetis
             txtVFOABand_LostFocus(this, EventArgs.Empty);
 
             //MW0LGE [2.9.0.7] also in UpdateVFOASub
-            if (dOldVFOASubFreq != VFOASubFreq)
+            if (Math.Abs(dOldVFOASubFreq - VFOASubFreq) >= 0.000001)
             {
                 Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
                 Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
@@ -31782,13 +31772,13 @@ namespace Thetis
             UpdatePreamps();
 
             //MW0LGE_21d
-            if (dOldFreq != VFOAFreq)
+            if (Math.Abs(dOldFreq - VFOAFreq) >= 0.000001)
             {
                 VFOAFrequencyChangeHandlers?.Invoke(oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOAFreq,
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
             }
 
-            if (TXFreq != _old_tx_freq || old_tx_band != TXBand)
+            if (Math.Abs(TXFreq - _old_tx_freq) >= 0.000001 || old_tx_band != TXBand)
             {
                 double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
                 TXFrequncyChangedHandlers?.Invoke(_old_tx_freq, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
@@ -32778,15 +32768,14 @@ namespace Thetis
                 txtVFOBLSD.Visible = true;
             }
 
-            if (rx2_enabled)
+            if (Math.Abs(dOldFreq - VFOBFreq) >= 0.000001)
             {
-                if (dOldFreq != VFOBFreq)
+                if (rx2_enabled)
+                {
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
                         oldCentreFreq, CentreRX2Frequency, oldCtun, ClickTuneRX2Display, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(1, 0).RXOsc, 2);
-            }
-            else
-            {
-                if (dOldFreq != VFOBFreq)
+                }
+                else
                 {
                     oldBand = BandByFreq(dOldFreq, rx1_xvtr_index, current_region);
                     Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
@@ -32795,7 +32784,7 @@ namespace Thetis
                         oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
                 }
             }
-            if (TXFreq != _old_tx_freq || _old_tx_band != TXBand)
+            if (Math.Abs(TXFreq - _old_tx_freq) >= 0.000001 || _old_tx_band != TXBand)
             {
                 double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
                 TXFrequncyChangedHandlers?.Invoke(_old_tx_freq, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
@@ -35514,7 +35503,7 @@ namespace Thetis
             }
 
             //MW0LGE [2.9.0.7] also in VFOASubUpdate
-            if (dOldVFOASubFreq != VFOASubFreq)
+            if (Math.Abs(dOldVFOASubFreq - VFOASubFreq) >= 0.000001)
             {
                 Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
                 Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
@@ -45221,8 +45210,6 @@ namespace Thetis
             //if (rx == 1) Display.CentreFreqRX1 = newFreq;
             //else if (rx == 2) Display.CentreFreqRX2 = newFreq;
 
-            //MW0LGE_21d N1MM
-            N1MM.Resize(rx);
             //MW0LGE_21h
             if (rx == 1) updateBandstackOverlay(rx);
 
@@ -45294,9 +45281,6 @@ namespace Thetis
         }
         private void OnZoomChanged(double oldZoomFactor, double newZoomFactor, int sliderValue)
         {
-            //MW0LGE_21d N1MM
-            N1MM.Resize(1);
-            if (RX2Enabled) N1MM.Resize(2);
             //MW0LGE_21h
             updateBandstackOverlay(1);
 
@@ -45535,11 +45519,6 @@ namespace Thetis
 
             bsf = BandStackManager.GetFilter(newBand, false);
             if (bsf != null) bsf.LastVisited.Mode = newMode;
-
-            //MW0LGE [2.9.0.7] resize after entering or leaving CW so that N1MM can use cwpitch offset
-            if(newMode == DSPMode.CWL || newMode == DSPMode.CWU ||
-                oldMode == DSPMode.CWL || oldMode == DSPMode.CWU)
-                N1MM.Resize(rx);
         }
         private void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -50874,10 +50853,6 @@ namespace Thetis
 
             if (!initializing)
             {
-                //MW0LGE_21d N1MM
-                N1MM.Resize(1);
-                if (RX2Enabled) N1MM.Resize(2);
-
                 //MW0LGE_21h
                 updateBandstackOverlay(1);
 
