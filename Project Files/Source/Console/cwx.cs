@@ -1819,6 +1819,32 @@ namespace Thetis
             setkey(true);
             keying = true;
         }
+
+        public bool BeginTCIKeyDown()
+        {
+            if (!checkPTT(false)) return false;
+
+            ensureBackendRunning();
+
+            if (keying)
+                return true;
+
+            quit = true;
+            kquit = true;
+            while (quit) Thread.Sleep(10);
+            pause = 60000 / tel;
+            tqq = " . ";
+            setptt(true);
+            setkey(true);
+            keying = true;
+            return true;
+        }
+
+        public void EndTCIKeyDown()
+        {
+            quitshut();
+        }
+
         // process the 'Key' button which start transmitter with key down
         private void keyButton_Click(object sender, System.EventArgs e)	// the 'Key' button
         {

@@ -3384,6 +3384,18 @@ namespace Thetis
         {
             m_server?.StopCwMacros(this);
         }
+        private void handleKeyer(string[] args)
+        {
+            if (args == null || args.Length < 2 || args.Length > 3) return;
+            if (!int.TryParse(args[0], out int trx)) return;
+            if (trx < 0 || trx > 1) return;
+            if (!bool.TryParse(args[1], out bool pressed)) return;
+
+            int durationMs = 0;
+            if (args.Length > 2 && !int.TryParse(args[2], out durationMs)) return;
+
+            m_server?.HandleCwKeyer(this, trx, pressed, Math.Max(0, durationMs));
+        }
 		private void handleTrxMessage(string[] args)
 		{
 			int rx = 0;
@@ -4884,6 +4896,9 @@ namespace Thetis
                         break;
                     case "cw_msg":
                         handleCwMsg(args);
+                        break;
+                    case "keyer":
+                        handleKeyer(args);
                         break;
                     case "tune":
                         handleTune(args);
@@ -6452,6 +6467,11 @@ namespace Thetis
             m_cwController?.Stop(socketListener);
         }
 
+        internal void HandleCwKeyer(TCPIPtciSocketListener socketListener, int trx, bool pressed, int durationMs)
+        {
+            m_cwController?.HandleKeyer(socketListener, trx, pressed, durationMs);
+        }
+
         internal void OnSocketListenerDisconnected(TCPIPtciSocketListener socketListener)
         {
             m_cwController?.DisconnectClient(socketListener);
@@ -7599,31 +7619,45 @@ namespace Thetis
             private readonly TCPIPtciServer _server;
             private readonly object _lockObj = new object();
             private readonly System.Threading.Timer _pollTimer;
+            private readonly System.Threading.Timer _keyerReleaseTimer;
             private readonly Queue<CWTxOperation> _pendingOperations = new Queue<CWTxOperation>();
             private CWTxOperation _activeOperation = null;
             private bool _terminalEnabled = false;
             private TCPIPtciSocketListener _currentOwner = null;
             private bool _terminalMoxAsserted = false;
             private bool _releaseTerminalMoxWhenIdle = false;
+            private bool _keyerPressed = false;
+            private bool _keyerReleasePending = false;
+            private DateTime _keyerPressedAtUtc = DateTime.MinValue;
             private bool _disposed = false;
 
             public TCICWController(TCPIPtciServer server)
             {
                 _server = server;
                 _pollTimer = new System.Threading.Timer(PollCallback, null, 50, 50);
+                _keyerReleaseTimer = new System.Threading.Timer(KeyerReleaseTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
             }
 
             public void Dispose()
             {
+                bool stopKeyer;
+
                 lock (_lockObj)
                 {
                     _disposed = true;
                     _pendingOperations.Clear();
                     _activeOperation = null;
+                    stopKeyer = _keyerPressed || _keyerReleasePending;
+                    _keyerPressed = false;
+                    _keyerReleasePending = false;
+                    _keyerPressedAtUtc = DateTime.MinValue;
                     _currentOwner = null;
                 }
 
+                _keyerReleaseTimer?.Dispose();
                 _pollTimer?.Dispose();
+                if (stopKeyer)
+                    InvokeOnConsole(c => c.CWXForm.EndTCIKeyDown());
                 InvokeOnConsole(c => c.CWXForm.SetTCIInUse(false));
             }
 
@@ -7735,6 +7769,7 @@ namespace Thetis
                 {
                     if (!isCWModeLocked()) return;
                     if (!tryAcquireOwnershipLocked(owner)) return;
+                    if (_keyerPressed) return;
 
                     CWTxOperation operation = buildMacroOperation(text);
                     operation.Owner = owner;
@@ -7750,12 +7785,55 @@ namespace Thetis
                 {
                     if (!isCWModeLocked()) return;
                     if (!tryAcquireOwnershipLocked(owner)) return;
+                    if (_keyerPressed) return;
 
                     CWTxOperation operation = buildMessageOperation(prefix, callsign, suffix);
                     operation.Owner = owner;
                     _pendingOperations.Enqueue(operation);
                     startNextOperationLocked();
                     updateCwxInUseStateLocked();
+                }
+            }
+
+            public void HandleKeyer(TCPIPtciSocketListener owner, int trx, bool pressed, int durationMs)
+            {
+                lock (_lockObj)
+                {
+                    if (pressed)
+                    {
+                        if (!tryAcquireOwnershipLocked(owner)) return;
+                        if (_activeOperation != null || _pendingOperations.Count > 0) return;
+
+                        if (!selectKeyerTargetLocked(trx) || !isCWModeLocked())
+                        {
+                            releaseOwnershipIfIdleLocked();
+                            updateCwxInUseStateLocked();
+                            return;
+                        }
+
+                        cancelKeyerReleaseTimerLocked();
+
+                        if (_keyerPressed)
+                            return;
+
+                        if (!InvokeOnConsole(c => c.CWXForm.BeginTCIKeyDown(), false))
+                        {
+                            releaseOwnershipIfIdleLocked();
+                            updateCwxInUseStateLocked();
+                            return;
+                        }
+
+                        _keyerPressed = true;
+                        _keyerReleasePending = false;
+                        _keyerPressedAtUtc = DateTime.UtcNow;
+                        updateCwxInUseStateLocked();
+                        return;
+                    }
+
+                    if (!isCurrentOwnerLocked(owner)) return;
+                    if (!_keyerPressed) return;
+
+                    scheduleKeyerReleaseLocked(durationMs);
                 }
             }
 
@@ -7781,17 +7859,23 @@ namespace Thetis
             {
                 int restoreSpeed = -1;
                 bool shouldReleaseMox = false;
+                bool stopKeyer = false;
 
                 lock (_lockObj)
                 {
                     if (!isCurrentOwnerLocked(owner)) return;
 
+                    cancelKeyerReleaseTimerLocked();
                     _pendingOperations.Clear();
 
                     if (_activeOperation != null && _activeOperation.RestoreBaseSpeed)
                         restoreSpeed = _activeOperation.BaseSpeedWpm;
 
                     _activeOperation = null;
+                    stopKeyer = _keyerPressed || _keyerReleasePending;
+                    _keyerPressed = false;
+                    _keyerReleasePending = false;
+                    _keyerPressedAtUtc = DateTime.MinValue;
 
                     if (!_terminalEnabled || _releaseTerminalMoxWhenIdle)
                         shouldReleaseMox = true;
@@ -7805,6 +7889,8 @@ namespace Thetis
                     SetMacroSpeed(restoreSpeed);
 
                 InvokeOnConsole(c => c.CWXForm.AbortSending());
+                if (stopKeyer)
+                    InvokeOnConsole(c => c.CWXForm.EndTCIKeyDown());
 
                 if (shouldReleaseMox)
                 {
@@ -8003,7 +8089,7 @@ namespace Thetis
                 {
                     if (_disposed) return;
 
-                    if ((_activeOperation != null || _pendingOperations.Count > 0) && !isCWModeLocked())
+                    if ((_activeOperation != null || _pendingOperations.Count > 0 || _keyerPressed) && !isCWModeLocked())
                     {
                         abortOperationsForNonCWLocked();
                         return;
@@ -8054,7 +8140,7 @@ namespace Thetis
 
             private void startNextOperationLocked()
             {
-                if (_activeOperation != null || _pendingOperations.Count < 1) return;
+                if (_activeOperation != null || _pendingOperations.Count < 1 || _keyerPressed) return;
                 if (!isCWModeLocked()) return;
 
                 _activeOperation = _pendingOperations.Dequeue();
@@ -8109,7 +8195,7 @@ namespace Thetis
 
             private void updateCwxInUseStateLocked()
             {
-                bool inUse = _terminalEnabled || _activeOperation != null || _pendingOperations.Count > 0;
+                bool inUse = _terminalEnabled || _activeOperation != null || _pendingOperations.Count > 0 || _keyerPressed;
                 InvokeOnConsole(c => c.CWXForm.SetTCIInUse(inUse));
             }
 
@@ -8127,17 +8213,24 @@ namespace Thetis
             {
                 int restoreSpeed = -1;
 
+                cancelKeyerReleaseTimerLocked();
                 _pendingOperations.Clear();
 
                 if (_activeOperation != null && _activeOperation.RestoreBaseSpeed)
                     restoreSpeed = _activeOperation.BaseSpeedWpm;
 
                 _activeOperation = null;
+                bool stopKeyer = _keyerPressed || _keyerReleasePending;
+                _keyerPressed = false;
+                _keyerReleasePending = false;
+                _keyerPressedAtUtc = DateTime.MinValue;
 
                 if (restoreSpeed > 0)
                     SetMacroSpeedSilently(restoreSpeed);
 
                 InvokeOnConsole(c => c.CWXForm.AbortSending());
+                if (stopKeyer)
+                    InvokeOnConsole(c => c.CWXForm.EndTCIKeyDown());
                 releaseTerminalMoxIfOwnedLocked();
                 releaseOwnershipIfIdleLocked();
                 updateCwxInUseStateLocked();
@@ -8163,8 +8256,76 @@ namespace Thetis
 
             private void releaseOwnershipIfIdleLocked()
             {
-                if (!_terminalEnabled && _activeOperation == null && _pendingOperations.Count < 1)
+                if (!_terminalEnabled && _activeOperation == null && _pendingOperations.Count < 1 && !_keyerPressed)
                     _currentOwner = null;
+            }
+
+            private void KeyerReleaseTimerCallback(object state)
+            {
+                lock (_lockObj)
+                {
+                    if (_disposed || !_keyerPressed) return;
+                    releaseKeyerLocked();
+                }
+            }
+
+            private void scheduleKeyerReleaseLocked(int durationMs)
+            {
+                DateTime desiredReleaseUtc = _keyerPressedAtUtc.AddMilliseconds(Math.Max(0, durationMs));
+                double remainingMs = (desiredReleaseUtc - DateTime.UtcNow).TotalMilliseconds;
+
+                if (remainingMs <= 0)
+                {
+                    releaseKeyerLocked();
+                    return;
+                }
+
+                _keyerReleasePending = true;
+                _keyerReleaseTimer.Change(Math.Max(1, (int)Math.Ceiling(remainingMs)), Timeout.Infinite);
+                updateCwxInUseStateLocked();
+            }
+
+            private void releaseKeyerLocked()
+            {
+                cancelKeyerReleaseTimerLocked();
+
+                if (!_keyerPressed && !_keyerReleasePending) return;
+
+                _keyerPressed = false;
+                _keyerReleasePending = false;
+                _keyerPressedAtUtc = DateTime.MinValue;
+
+                InvokeOnConsole(c => c.CWXForm.EndTCIKeyDown());
+                releaseOwnershipIfIdleLocked();
+                updateCwxInUseStateLocked();
+            }
+
+            private void cancelKeyerReleaseTimerLocked()
+            {
+                _keyerReleaseTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                _keyerReleasePending = false;
+            }
+
+            private bool selectKeyerTargetLocked(int trx)
+            {
+                return InvokeOnConsole(c =>
+                {
+                    if (trx == 1)
+                    {
+                        if (!c.RX2Enabled)
+                            return false;
+
+                        if (!c.VFOBTX)
+                            c.VFOBTX = true;
+
+                        return true;
+                    }
+
+                    if (c.RX2Enabled && c.VFOBTX)
+                        c.VFOATX = true;
+
+                    return true;
+                }, false);
             }
 
             private void ensureTerminalMoxLocked()
