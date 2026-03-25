@@ -28639,6 +28639,11 @@ namespace Thetis
             }
             if (sliderForm != null)
                 sliderForm.MasterAFGain = ptbAF.Value;
+
+            if (_old_master_af != -999 && _old_master_af != ptbAF.Value)
+                VolumeChangedHandlers?.Invoke(_old_master_af, ptbAF.Value);
+
+            _old_master_af = ptbAF.Value;
         }
         private void ptbRF_Scroll(object sender, System.EventArgs e)
         {
@@ -28666,6 +28671,11 @@ namespace Thetis
             Midi2Cat.SendUpdateToMidi(CatCmd.AGCLevel_inc, pct);
             if (sliderForm != null)
                 sliderForm.RX1RFGainAGC = ptbRF.Value;
+
+            if (_old_rx1_agc_gain != -999 && _old_rx1_agc_gain != ptbRF.Value)
+                AGCGainChangedHandlers?.Invoke(1, _old_rx1_agc_gain, ptbRF.Value);
+
+            _old_rx1_agc_gain = ptbRF.Value;
         }
 
         private volatile bool _mic_muted = false;
@@ -35780,6 +35790,11 @@ namespace Thetis
             updateVFOFreqs(_mox); //[2.10.1.0] MW0LGE we might need to update everything if tx'ing on sub, use std function
 
             SetGeneralSetting(0, OtherButtonId.XIT, chkXIT.Checked);
+
+            if (!initializing && _old_xit_enabled != chkXIT.Checked)
+                XITChangedHandlers?.Invoke(_old_xit_enabled, chkXIT.Checked);
+
+            _old_xit_enabled = chkXIT.Checked;
         }
 
         private void chkRIT_CheckedChanged(object sender, System.EventArgs e)
@@ -35810,6 +35825,11 @@ namespace Thetis
             if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
 
             SetGeneralSetting(0, OtherButtonId.RIT, chkRIT.Checked);
+
+            if (!initializing && _old_rit_enabled != chkRIT.Checked)
+                RITChangedHandlers?.Invoke(_old_rit_enabled, chkRIT.Checked);
+
+            _old_rit_enabled = chkRIT.Checked;
         }
 
         private void udRIT_ValueChanged(object sender, System.EventArgs e)
@@ -35832,6 +35852,11 @@ namespace Thetis
 
             //max bin detect
             if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
+
+            if (_old_rit_value != int.MinValue && _old_rit_value != (int)udRIT.Value)
+                RITValueChangedHandlers?.Invoke(_old_rit_value, (int)udRIT.Value);
+
+            _old_rit_value = (int)udRIT.Value;
         }
 
         private void udXIT_ValueChanged(object sender, System.EventArgs e)
@@ -35854,6 +35879,11 @@ namespace Thetis
             }
 
             SetGeneralSetting(0, OtherButtonId.XIT, chkXIT.Checked);
+
+            if (_old_xit_value != int.MinValue && _old_xit_value != (int)udXIT.Value)
+                XITValueChangedHandlers?.Invoke(_old_xit_value, (int)udXIT.Value);
+
+            _old_xit_value = (int)udXIT.Value;
         }
 
         private void btnXITReset_Click(object sender, System.EventArgs e)
@@ -36352,6 +36382,11 @@ namespace Thetis
             }
             if (sliderForm != null)
                 sliderForm.RX1LRPan = ptbPanMainRX.Value;
+
+            if (_old_rx1_pan != -999 && _old_rx1_pan != ptbPanMainRX.Value)
+                BalanceChangedHandlers?.Invoke(1, false, _old_rx1_pan, ptbPanMainRX.Value);
+
+            _old_rx1_pan = ptbPanMainRX.Value;
         }
 
         private void ptbPanSubRX_Scroll(object sender, System.EventArgs e)
@@ -36367,6 +36402,10 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.SubRXLRPan = ptbPanSubRX.Value;
 
+            if (_old_rx1_sub_pan != -999 && _old_rx1_sub_pan != ptbPanSubRX.Value)
+                BalanceChangedHandlers?.Invoke(1, true, _old_rx1_sub_pan, ptbPanSubRX.Value);
+
+            _old_rx1_sub_pan = ptbPanSubRX.Value;
         }
         private bool _oldMultiRX = false;
         private bool _sub_rx_enabled = false;
@@ -36463,6 +36502,16 @@ namespace Thetis
         }
 
         private bool _old_pan_swap = false;
+        private int _old_master_af = -999;
+        private int _old_rx1_pan = -999;
+        private int _old_rx1_sub_pan = -999;
+        private int _old_rx2_pan = -999;
+        private int _old_rx1_agc_gain = -999;
+        private int _old_rx2_agc_gain = -999;
+        private int _old_rit_value = int.MinValue;
+        private int _old_xit_value = int.MinValue;
+        private bool _old_rit_enabled = false;
+        private bool _old_xit_enabled = false;
         private void chkPanSwap_CheckedChanged(object sender, System.EventArgs e)
         {
             ptbPanMainRX_Scroll(this, EventArgs.Empty);
@@ -38397,6 +38446,11 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.RX2RFGainAGC = ptbRX2RF.Value;
 
+            if (_old_rx2_agc_gain != -999 && _old_rx2_agc_gain != ptbRX2RF.Value)
+                AGCGainChangedHandlers?.Invoke(2, _old_rx2_agc_gain, ptbRX2RF.Value);
+
+            _old_rx2_agc_gain = ptbRX2RF.Value;
+
         }
         private void picRX2Squelch_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
@@ -38435,6 +38489,11 @@ namespace Thetis
             }
             if (sliderForm != null)
                 sliderForm.RX2LRPan = ptbRX2Pan.Value;
+
+            if (_old_rx2_pan != -999 && _old_rx2_pan != ptbRX2Pan.Value)
+                BalanceChangedHandlers?.Invoke(2, false, _old_rx2_pan, ptbRX2Pan.Value);
+
+            _old_rx2_pan = ptbRX2Pan.Value;
 
         }
 
@@ -43596,8 +43655,11 @@ namespace Thetis
         //MW0LGE
         private void ptbPanMainRX_DoubleClick(object sender, EventArgs e)
         {
+            ptbPanMainRX.Scroll -= ptbPanMainRX_Scroll;
             ptbPanMainRX.Value = 50;
-            radio.GetDSPRX(0, 0).Pan = 0.5f;
+            ptbPanMainRX_Scroll(this, EventArgs.Empty);
+            ptbPanMainRX.Scroll += ptbPanMainRX_Scroll;
+            //radio.GetDSPRX(0, 0).Pan = 0.5f;
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
                 ptbPanMainRX.Focus();
@@ -43606,8 +43668,11 @@ namespace Thetis
 
         private void ptbPanSubRX_DoubleClick(object sender, EventArgs e)
         {
+            ptbPanMainRX.Scroll -= ptbPanSubRX_Scroll;
             ptbPanSubRX.Value = 50;
-            radio.GetDSPRX(0, 1).Pan = 0.5f;
+            ptbPanSubRX_Scroll(this, EventArgs.Empty);
+            ptbPanMainRX.Scroll += ptbPanSubRX_Scroll;
+            //radio.GetDSPRX(0, 1).Pan = 0.5f;
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
                 ptbPanSubRX.Focus();
@@ -43616,8 +43681,11 @@ namespace Thetis
 
         private void ptbRX2Pan_DoubleClick(object sender, EventArgs e)
         {
+            ptbPanMainRX.Scroll -= ptbRX2Pan_Scroll;
             ptbRX2Pan.Value = 50;
-            radio.GetDSPRX(1, 0).Pan = 0.5f;
+            ptbRX2Pan_Scroll(this, EventArgs.Empty);
+            ptbPanMainRX.Scroll += ptbRX2Pan_Scroll;
+            //radio.GetDSPRX(1, 0).Pan = 0.5f;
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
                 ptbRX2Pan.Focus();
@@ -44721,6 +44789,13 @@ namespace Thetis
         public delegate void MuteChanged(int rx, bool oldState, bool newState);
         public delegate void MONChanged(bool oldState, bool newState);
         public delegate void MONVolumeChanged(int oldVolume, int newVolume);
+        public delegate void RITChanged(bool oldState, bool newState);
+        public delegate void XITChanged(bool oldState, bool newState);
+        public delegate void RITValueChanged(int oldValue, int newValue);
+        public delegate void XITValueChanged(int oldValue, int newValue);
+        public delegate void VolumeChanged(int oldValue, int newValue);
+        public delegate void BalanceChanged(int rx, bool is_subrx, int oldValue, int newValue);
+        public delegate void AGCGainChanged(int rx, int oldValue, int newValue);
 
         public delegate void EQChanged(bool oldState, bool newState);
         public delegate void LevelerChanged(bool oldState, bool newState);
@@ -44860,6 +44935,13 @@ namespace Thetis
         public MuteChanged MuteChangedHandlers;
         public MONChanged MONChangedHandlers;
         public MONVolumeChanged MONVolumeChangedHandlers;
+        public RITChanged RITChangedHandlers;
+        public XITChanged XITChangedHandlers;
+        public RITValueChanged RITValueChangedHandlers;
+        public XITValueChanged XITValueChangedHandlers;
+        public VolumeChanged VolumeChangedHandlers;
+        public BalanceChanged BalanceChangedHandlers;
+        public AGCGainChanged AGCGainChangedHandlers;
 
         public EQChanged EQChangedHandlers;
         public LevelerChanged LevelerChangedHandlers;

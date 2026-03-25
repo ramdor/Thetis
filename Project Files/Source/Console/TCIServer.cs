@@ -1124,6 +1124,11 @@ namespace Thetis
             if (m_disconnected) return;
             sendCTUN(rx - 1, enabled);
         }
+        public void AGCModeChanged(int rx, AGCMode mode)
+        {
+            if (m_disconnected) return;
+            sendAgcMode(rx - 1, mode);
+        }
         public void TXProfileChanged(string profile)
         {
             if (m_disconnected) return;
@@ -1162,6 +1167,47 @@ namespace Thetis
 			if (m_disconnected) return;
             sendMONVolume(linearToDbVolume(newVolume));
 		}
+        public void VolumeChanged(int newVolume)
+        {
+            if (m_disconnected) return;
+            sendVolume(linearToDbVolume(newVolume));
+        }
+        public void BalanceChanged(int rx, bool is_subrx, int newBalance)
+        {
+            if (m_disconnected) return;
+            int chan = is_subrx ? 1 : 0;
+            double balance = 40.0 - (newBalance * 0.8);
+            sendRxBalance(rx - 1, chan, balance);
+        }
+        public void AGCGainChanged(int rx, int newGain)
+        {
+            if (m_disconnected) return;
+            sendAgcGain(rx - 1, newGain);
+        }
+        public void RITChanged(bool newState)
+        {
+            if (m_disconnected) return;
+            sendRITEnable(0, newState);
+            sendRITEnable(1, newState);
+        }
+        public void XITChanged(bool newState)
+        {
+            if (m_disconnected) return;
+            sendXITEnable(0, newState);
+            sendXITEnable(1, newState);
+        }
+        public void RITValueChanged(int newValue)
+        {
+            if (m_disconnected) return;
+            sendRITOffset(0, newValue);
+            sendRITOffset(1, newValue);
+        }
+        public void XITValueChanged(int newValue)
+        {
+            if (m_disconnected) return;
+            sendXITOffset(0, newValue);
+            sendXITOffset(1, newValue);
+        }
 		public void TXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
 		{
             if (m_disconnected) return;
@@ -1485,17 +1531,17 @@ namespace Thetis
                     break;
                 case "dds":
                 case "rx_filter_band":
-                case "modulation":
+                case "rx_balance":
+                case "agc_gain":
                 case "drive":
                 case "tune_drive":
                 case "tune":
-                case "rx_enable":
-                case "tx_enable":
                     if (args.Length >= 1)
                         return command + ":" + args[0];
                     break;
                 case "tx_frequency":
                 case "tx_frequency_thetis":
+                case "volume":
                     return command;
             }
 
@@ -1704,6 +1750,26 @@ namespace Thetis
 			string s = "split_enable:" + rx.ToString() + "," + bSplit.ToString().ToLower() + ";";
 			sendTextFrame(s);
 		}
+        private void sendRITEnable(int rx, bool enabled)
+        {
+            string s = "rit_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendXITEnable(int rx, bool enabled)
+        {
+            string s = "xit_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRITOffset(int rx, int offset)
+        {
+            string s = "rit_offset:" + rx.ToString() + "," + offset.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendXITOffset(int rx, int offset)
+        {
+            string s = "xit_offset:" + rx.ToString() + "," + offset.ToString() + ";";
+            sendTextFrame(s);
+        }
 		private void sendVFO(int rx, int chan, long vfo = -1)
         {
 			bool bVFOaUseRX2;
@@ -1816,11 +1882,77 @@ namespace Thetis
             string s = "mon_enable:" + enable.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
+        private void sendVolume(double volume)
+        {
+            if (volume < -60f || volume > 0f) return;
+
+            string s = "volume:" + volume.ToString("F1", CultureInfo.InvariantCulture).ToLower() + ";";
+            sendTextFrame(s);
+        }
 		private void sendMONVolume(double volume)
 		{
             if (volume < -60f || volume > 0f) return;
 
             string s = "mon_volume:" + volume.ToString("F1", CultureInfo.InvariantCulture).ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxBalance(int rx, int chan, double balance)
+        {
+            string s = "rx_balance:" + rx.ToString() + "," + chan.ToString() + "," + balance.ToString("F2", CultureInfo.InvariantCulture) + ";";
+            sendTextFrame(s);
+        }
+        private string agcModeToTciMode(AGCMode mode)
+        {
+            switch (mode)
+            {
+                case AGCMode.FIXD:
+                    return "off";
+                case AGCMode.LONG:
+                    return "long";
+                case AGCMode.SLOW:
+                    return "slow";
+                case AGCMode.FAST:
+                    return "fast";
+                case AGCMode.CUSTOM:
+                    return "custom";
+                case AGCMode.MED:
+                    return "normal";
+                default:
+                    return "normal";
+            }
+        }
+        private AGCMode tciModeToAgcMode(string mode)
+        {
+            switch (mode.Trim().ToLowerInvariant())
+            {
+                case "off":
+                case "fixd":
+                case "fixed":
+                    return AGCMode.FIXD;
+                case "long":
+                    return AGCMode.LONG;
+                case "slow":
+                    return AGCMode.SLOW;
+                case "fast":
+                    return AGCMode.FAST;
+                case "custom":
+                    return AGCMode.CUSTOM;
+                case "normal":
+                case "med":
+                case "medium":
+                    return AGCMode.MED;
+                default:
+                    return AGCMode.MED;
+            }
+        }
+        private void sendAgcMode(int rx, AGCMode mode)
+        {
+            string s = "agc_mode:" + rx.ToString() + "," + agcModeToTciMode(mode) + ";";
+            sendTextFrame(s);
+        }
+        private void sendAgcGain(int rx, int gain)
+        {
+            string s = "agc_gain:" + rx.ToString() + "," + gain.ToString() + ";";
             sendTextFrame(s);
         }
 		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
@@ -1989,6 +2121,14 @@ namespace Thetis
             sendRxVolume(0, 1, rx1Subvol);
             sendRxVolume(1, 0, rx2vol);
             sendRxVolume(1, 1, rx2vol);
+            sendRxBalance(0, 0, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(1, false) * 0.8));
+            sendRxBalance(0, 1, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(1, true) * 0.8));
+            sendRxBalance(1, 0, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(2, false) * 0.8));
+            sendRxBalance(1, 1, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(2, true) * 0.8));
+            sendAgcMode(0, console.ThreadSafeTCIAccessor.GetAGCMode(1));
+            sendAgcMode(1, console.ThreadSafeTCIAccessor.GetAGCMode(2));
+            sendAgcGain(0, console.ThreadSafeTCIAccessor.GetAgcT(1));
+            sendAgcGain(1, console.ThreadSafeTCIAccessor.GetAgcT(2));
 
             sendCTUN(0, console.ThreadSafeTCIAccessor.GetCTUN(1));
             sendCTUN(1, console.ThreadSafeTCIAccessor.GetCTUN(2));
@@ -2002,6 +2142,15 @@ namespace Thetis
             //lock
             //TODO rx channel enable
             //rit/xit
+
+            sendRITEnable(0, console.ThreadSafeTCIAccessor.RITOn);
+            sendRITEnable(1, console.ThreadSafeTCIAccessor.RITOn);
+            sendXITEnable(0, console.ThreadSafeTCIAccessor.XITOn);
+            sendXITEnable(1, console.ThreadSafeTCIAccessor.XITOn);
+            sendRITOffset(0, console.ThreadSafeTCIAccessor.RITValue);
+            sendRITOffset(1, console.ThreadSafeTCIAccessor.RITValue);
+            sendXITOffset(0, console.ThreadSafeTCIAccessor.XITValue);
+            sendXITOffset(1, console.ThreadSafeTCIAccessor.XITValue);
 
             sendSplit(0, console.ThreadSafeTCIAccessor.VFOSplit);
 			sendSplit(1, bRX2Enabled && console.ThreadSafeTCIAccessor.VFOSplit);
@@ -2033,6 +2182,7 @@ namespace Thetis
 			sendMute(console.ThreadSafeTCIAccessor.MUT || (console.ThreadSafeTCIAccessor.MUT2 && bRX2Enabled));
 			sendMuteRX(0, console.ThreadSafeTCIAccessor.MUT);
             sendMuteRX(1, console.ThreadSafeTCIAccessor.MUT2);
+            sendVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.AF));
 
 			sendMONEnable(console.ThreadSafeTCIAccessor.MON);
             sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
@@ -2639,6 +2789,70 @@ namespace Thetis
 				}
 			}
 		}
+        private void handleRITEnableMessage(string[] args)
+        {
+            if (args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            if (args.Length == 2)
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                if (rx == 0 || rx == 1)
+                    console.ThreadSafeTCIAccessor.RITOn = enabled;
+            }
+            else
+            {
+                sendRITEnable(rx, console.ThreadSafeTCIAccessor.RITOn);
+            }
+        }
+        private void handleXITEnableMessage(string[] args)
+        {
+            if (args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            if (args.Length == 2)
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                if (rx == 0 || rx == 1)
+                    console.ThreadSafeTCIAccessor.XITOn = enabled;
+            }
+            else
+            {
+                sendXITEnable(rx, console.ThreadSafeTCIAccessor.XITOn);
+            }
+        }
+        private void handleRITOffsetMessage(string[] args)
+        {
+            if (args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            if (args.Length == 2)
+            {
+                if (!int.TryParse(args[1], out int offset)) return;
+                if (rx == 0 || rx == 1)
+                    console.ThreadSafeTCIAccessor.RITValue = offset;
+            }
+            else
+            {
+                sendRITOffset(rx, console.ThreadSafeTCIAccessor.RITValue);
+            }
+        }
+        private void handleXITOffsetMessage(string[] args)
+        {
+            if (args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+
+            if (args.Length == 2)
+            {
+                if (!int.TryParse(args[1], out int offset)) return;
+                if (rx == 0 || rx == 1)
+                    console.ThreadSafeTCIAccessor.XITValue = offset;
+            }
+            else
+            {
+                sendXITOffset(rx, console.ThreadSafeTCIAccessor.XITValue);
+            }
+        }
 		private void handleTrxMessage(string[] args)
 		{
 			int rx = 0;
@@ -3257,6 +3471,18 @@ namespace Thetis
 
             return Math.Max(dbMin, Math.Min(dbMax, dbValue));
         }
+        private int dbToLinearVolume(double dBLevel)
+        {
+            double dbMin = -60f;
+            double dbMax = 0;
+            double linearMax = 100f;
+            double linearMin = 0;
+
+            double linearValue = ((dBLevel - dbMin) / (dbMax - dbMin)) * (linearMax - linearMin) + linearMin;
+            linearValue = Math.Max(linearMin, Math.Min(linearMax, linearValue));
+
+            return (int)linearValue;
+        }
 		private void handleMONVolume(string[] args, bool hasArgs = true)
 		{
             if (hasArgs && args.Length == 1)
@@ -3265,20 +3491,25 @@ namespace Thetis
                 bool bOK = double.TryParse(args[0], out double dBLevel);
                 if (bOK)
                 {
-                    double dbMin = -60f;
-                    double dbMax = 0;
-                    double linearMax = 100f;
-                    double linearMin = 0;
-                    double linearValue = ((dBLevel - dbMin) / (dbMax - dbMin)) * (linearMax - linearMin) + linearMin;
-                    linearValue = Math.Max(linearMin, Math.Min(linearMax, linearValue));
-
-                    console.ThreadSafeTCIAccessor.TXAF = (int)linearValue;
+                    console.ThreadSafeTCIAccessor.TXAF = dbToLinearVolume(dBLevel);
                 }
             }
             else if (!hasArgs)
             {
 				//read
                 sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
+            }
+        }
+        private void handleVolume(string[] args, bool hasArgs = true)
+        {
+            if (hasArgs && args.Length == 1)
+            {
+                if (!double.TryParse(args[0], out double dBLevel)) return;
+                console.ThreadSafeTCIAccessor.AF = dbToLinearVolume(dBLevel);
+            }
+            else if (!hasArgs)
+            {
+                sendVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.AF));
             }
         }
         private void handleSpotSimulateClick(string[] args)
@@ -3750,6 +3981,65 @@ namespace Thetis
                 }
             }
         }
+        private void handleRxBalance(string[] args)
+        {
+            if (args == null || args.Length < 2 || args.Length > 3) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+            if (!int.TryParse(args[1], out int chan)) return;
+            if (chan < 0 || chan > 1) return;
+
+            bool subrx = chan == 1;
+
+            if (args.Length == 2)
+            {
+                int pan = console.ThreadSafeTCIAccessor.GetBal(rx + 1, subrx);
+                double balance = 40.0 - (pan * 0.8);
+                sendRxBalance(rx, chan, balance);
+            }
+            else
+            {
+                if (!double.TryParse(args[2], out double balance)) return;
+                balance = Math.Max(-40.0, Math.Min(40.0, balance));
+
+                int pan = (int)Math.Round((40.0 - balance) / 0.8, MidpointRounding.AwayFromZero);
+                pan = Math.Max(0, Math.Min(100, pan));
+
+                console.ThreadSafeTCIAccessor.SetBal(rx + 1, pan, subrx);
+            }
+        }
+        private void handleAgcMode(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendAgcMode(rx, console.ThreadSafeTCIAccessor.GetAGCMode(rx + 1));
+            }
+            else
+            {
+                console.ThreadSafeTCIAccessor.SetAGCMode(rx + 1, tciModeToAgcMode(args[1]));
+            }
+        }
+        private void handleAgcGain(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendAgcGain(rx, console.ThreadSafeTCIAccessor.GetAgcT(rx + 1));
+            }
+            else
+            {
+                if (!int.TryParse(args[1], out int gain)) return;
+                gain = Math.Max(-20, Math.Min(120, gain));
+                console.ThreadSafeTCIAccessor.SetAgcT(rx + 1, gain);
+            }
+        }
         private void sendCTUN(int rx, bool enabled)
         {
             string s = "rx_ctun_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
@@ -3998,6 +4288,18 @@ namespace Thetis
                     case "split_enable":
                         handleSplitEnableMessage(args);
                         break;
+                    case "rit_enable":
+                        handleRITEnableMessage(args);
+                        break;
+                    case "xit_enable":
+                        handleXITEnableMessage(args);
+                        break;
+                    case "rit_offset":
+                        handleRITOffsetMessage(args);
+                        break;
+                    case "xit_offset":
+                        handleXITOffsetMessage(args);
+                        break;
                     case "tune":
                         handleTune(args);
                         break;
@@ -4055,6 +4357,9 @@ namespace Thetis
                     case "mute":
                         handleMute(args);
                         break;
+                    case "volume":
+                        handleVolume(args);
+                        break;
                     case "rx_mute":
                         handleMuteRX(args);
                         break;
@@ -4097,6 +4402,15 @@ namespace Thetis
                     case "rx_volume":
                         handleRxVolume(args);
                         break;
+                    case "rx_balance":
+                        handleRxBalance(args);
+                        break;
+                    case "agc_mode":
+                        handleAgcMode(args);
+                        break;
+                    case "agc_gain":
+                        handleAgcGain(args);
+                        break;
                     case "rx_ctun_ex":
                         handleCTUN(args); // bespoke thetis cmd for ctun
                         break;
@@ -4126,6 +4440,9 @@ namespace Thetis
                         break;
                     case "mute":
                         handleMute(null, false);
+                        break;
+                    case "volume":
+                        handleVolume(null, false);
                         break;
                     case "mon_enable":
                         handleMONEnable(null, false);
@@ -5272,10 +5589,18 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.MuteChangedHandlers += OnMuteChanged;
 					console.ThreadSafeTCIAccessor.MONChangedHandlers += OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers += OnMONVolumeChanged;
+                    console.ThreadSafeTCIAccessor.VolumeChangedHandlers += OnVolumeChanged;
+                    console.ThreadSafeTCIAccessor.BalanceChangedHandlers += OnBalanceChanged;
+                    console.ThreadSafeTCIAccessor.AGCGainChangedHandlers += OnAGCGainChanged;
+                    console.ThreadSafeTCIAccessor.RITChangedHandlers += OnRITChanged;
+                    console.ThreadSafeTCIAccessor.XITChangedHandlers += OnXITChanged;
+                    console.ThreadSafeTCIAccessor.RITValueChangedHandlers += OnRITValueChanged;
+                    console.ThreadSafeTCIAccessor.XITValueChangedHandlers += OnXITValueChanged;
 					console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers += OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers += OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.AGCModeChangedHandlers += OnAGCModeChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers += OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers += OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers += OnTXProfileChanged;
@@ -5354,10 +5679,18 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MuteChangedHandlers -= OnMuteChanged;
                     console.ThreadSafeTCIAccessor.MONChangedHandlers -= OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers -= OnMONVolumeChanged;
+                    console.ThreadSafeTCIAccessor.VolumeChangedHandlers -= OnVolumeChanged;
+                    console.ThreadSafeTCIAccessor.BalanceChangedHandlers -= OnBalanceChanged;
+                    console.ThreadSafeTCIAccessor.AGCGainChangedHandlers -= OnAGCGainChanged;
+                    console.ThreadSafeTCIAccessor.RITChangedHandlers -= OnRITChanged;
+                    console.ThreadSafeTCIAccessor.XITChangedHandlers -= OnXITChanged;
+                    console.ThreadSafeTCIAccessor.RITValueChangedHandlers -= OnRITValueChanged;
+                    console.ThreadSafeTCIAccessor.XITValueChangedHandlers -= OnXITValueChanged;
                     console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers -= OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers -= OnNrChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers -= OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.AGCModeChangedHandlers -= OnAGCModeChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers -= OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers -= OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers -= OnTXProfileChanged;
@@ -5855,6 +6188,18 @@ namespace Thetis
                 }
             }
         }
+        private void OnAGCModeChanged(int rx, AGCMode old_mode, AGCMode new_mode)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.AGCModeChanged(rx, new_mode);
+                }
+            }
+        }
         private void OnRxAfGainChanged(int rx, bool is_subrx, int old_gain, int new_gain)
         {
             lock (m_objLocker)
@@ -5936,6 +6281,90 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MONVolumeChanged(newVolume);
+                }
+            }
+        }
+        private void OnVolumeChanged(int oldVolume, int newVolume)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.VolumeChanged(newVolume);
+                }
+            }
+        }
+        private void OnBalanceChanged(int rx, bool is_subrx, int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.BalanceChanged(rx, is_subrx, newValue);
+                }
+            }
+        }
+        private void OnAGCGainChanged(int rx, int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.AGCGainChanged(rx, newValue);
+                }
+            }
+        }
+        private void OnRITChanged(bool oldState, bool newState)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RITChanged(newState);
+                }
+            }
+        }
+        private void OnXITChanged(bool oldState, bool newState)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.XITChanged(newState);
+                }
+            }
+        }
+        private void OnRITValueChanged(int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RITValueChanged(newValue);
+                }
+            }
+        }
+        private void OnXITValueChanged(int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.XITValueChanged(newValue);
                 }
             }
         }
