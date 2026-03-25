@@ -13107,7 +13107,8 @@ namespace Thetis
             }
             set
             {
-                if (chkCWAPFEnabled != null) chkCWAPFEnabled.Checked = value;
+                if (chkCWAPFEnabled != null)
+                    chkCWAPFEnabled.Checked = value;
             }
         }
 
@@ -14631,6 +14632,8 @@ namespace Thetis
             get { return digu_click_tune_offset; }
             set
             {
+                if (digu_click_tune_offset == value) return;
+                int oldValue = digu_click_tune_offset;
                 digu_click_tune_offset = value;
                 Filter filter1 = RX1Filter;     // save RX1 filter
                 Filter filter2 = RX2Filter;     // save RX2 filter
@@ -14650,6 +14653,11 @@ namespace Thetis
                 }
                 RX1Filter = filter1;            // restore RX1 filter
                 RX2Filter = filter2;            // restore RX2 filter                     
+                if (!IsSetupFormNull && SetupForm.DigU_CT_Offset != digu_click_tune_offset)
+                    SetupForm.DigU_CT_Offset = digu_click_tune_offset;
+
+                if (oldValue != digu_click_tune_offset)
+                    DIGUOffsetChangedHandlers?.Invoke(oldValue, digu_click_tune_offset);
             }
         }
 
@@ -14659,6 +14667,8 @@ namespace Thetis
             get { return digl_click_tune_offset; }
             set
             {
+                if (digl_click_tune_offset == value) return;
+                int oldValue = digl_click_tune_offset;
                 digl_click_tune_offset = value;
                 Filter filter1 = RX1Filter;     // save RX1 filter
                 Filter filter2 = RX2Filter;     // save RX2 filter
@@ -14678,6 +14688,11 @@ namespace Thetis
                 }
                 RX1Filter = filter1;        // restore RX1 filter
                 RX2Filter = filter2;        // restore RX2 filter          
+                if (!IsSetupFormNull && SetupForm.DigL_CT_Offset != digl_click_tune_offset)
+                    SetupForm.DigL_CT_Offset = digl_click_tune_offset;
+
+                if (oldValue != digl_click_tune_offset)
+                    DIGLOffsetChangedHandlers?.Invoke(oldValue, digl_click_tune_offset);
             }
         }
 
@@ -30687,6 +30702,27 @@ namespace Thetis
 
         private void chkCWAPFEnabled_CheckedChanged(object sender, System.EventArgs e)
         {
+            int rx = 0;
+            bool oldState = false;
+            if (!IsSetupFormNull)
+            {
+                if (SetupForm.RX1APFControls)
+                {
+                    rx = 1;
+                    oldState = radio.GetDSPRX(0, 0).RXAPFRun;
+                }
+                else if (SetupForm.RX1subAPFControls)
+                {
+                    rx = 1;
+                    oldState = radio.GetDSPRX(0, 1).RXAPFRun;
+                }
+                else if (SetupForm.RX2APFControls)
+                {
+                    rx = 2;
+                    oldState = radio.GetDSPRX(1, 0).RXAPFRun;
+                }
+            }
+
             if (!IsSetupFormNull)
             {
                 if (SetupForm.RX1APFControls)
@@ -30700,6 +30736,9 @@ namespace Thetis
                 if (chkCWAPFEnabled.Checked) _cat_apf_status = 1; //-W2PA Added to enable extended CAT control
                 else _cat_apf_status = 0;
             }
+
+            if (rx != 0 && oldState != chkCWAPFEnabled.Checked)
+                APFChangedHandlers?.Invoke(rx, oldState, chkCWAPFEnabled.Checked);
         }
 
         private void ptbCWAPFFreq_Scroll(object sender, System.EventArgs e)
@@ -44796,6 +44835,10 @@ namespace Thetis
         public delegate void VolumeChanged(int oldValue, int newValue);
         public delegate void BalanceChanged(int rx, bool is_subrx, int oldValue, int newValue);
         public delegate void AGCGainChanged(int rx, int oldValue, int newValue);
+        public delegate void APFChanged(int rx, bool oldState, bool newState);
+        public delegate void SQLLevelChanged(int rx, int oldValue, int newValue);
+        public delegate void DIGLOffsetChanged(int oldValue, int newValue);
+        public delegate void DIGUOffsetChanged(int oldValue, int newValue);
 
         public delegate void EQChanged(bool oldState, bool newState);
         public delegate void LevelerChanged(bool oldState, bool newState);
@@ -44942,6 +44985,10 @@ namespace Thetis
         public VolumeChanged VolumeChangedHandlers;
         public BalanceChanged BalanceChangedHandlers;
         public AGCGainChanged AGCGainChangedHandlers;
+        public APFChanged APFChangedHandlers;
+        public SQLLevelChanged SQLLevelChangedHandlers;
+        public DIGLOffsetChanged DIGLOffsetChangedHandlers;
+        public DIGUOffsetChanged DIGUOffsetChangedHandlers;
 
         public EQChanged EQChangedHandlers;
         public LevelerChanged LevelerChangedHandlers;
@@ -47079,6 +47126,9 @@ namespace Thetis
         {
             if (_bIgnoreSqlUpdate) return; // used by chkSquelch_CheckStateChanged
 
+            int oldValue = chkSquelch.CheckState == CheckState.Indeterminate ?
+                rx1_voice_squelch_threshold_scroll :
+                (_rx1_dsp_mode == DSPMode.FM ? rx1_fm_squelch_threshold_scroll : rx1_squelch_threshold_scroll);
             int nValue;
 
             switch (chkSquelch.CheckState)
@@ -47133,6 +47183,12 @@ namespace Thetis
             if (sliderForm != null)
                 //[2.10.3.5]MW0LGE
                 sliderForm.RX1Squelch = ptbSquelch.Value;
+
+            int newValue = chkSquelch.CheckState == CheckState.Indeterminate ?
+                rx1_voice_squelch_threshold_scroll :
+                (_rx1_dsp_mode == DSPMode.FM ? rx1_fm_squelch_threshold_scroll : rx1_squelch_threshold_scroll);
+            if (oldValue != newValue)
+                SQLLevelChangedHandlers?.Invoke(1, oldValue, newValue);
         }
         private bool _bIgnoreSqlStateChange = false;// used by handleSqlFM
         private SquelchState[] _old_sql_state = new SquelchState[2] { SquelchState.OFF, SquelchState.OFF };
@@ -47420,6 +47476,9 @@ namespace Thetis
         {            
             if (_bIgnoreSqlUpdate) return; // used by chkRX2Squelch_CheckStateChanged
 
+            int oldValue = chkRX2Squelch.CheckState == CheckState.Indeterminate ?
+                rx2_voice_squelch_threshold_scroll :
+                (_rx2_dsp_mode == DSPMode.FM ? rx2_fm_squelch_threshold_scroll : rx2_squelch_threshold_scroll);
             int nValue;
 
             switch (chkRX2Squelch.CheckState)
@@ -47473,6 +47532,12 @@ namespace Thetis
             if (sliderForm != null)
                 //[2.10.3.5]MW0LGE
                 sliderForm.RX2Squelch = ptbRX2Squelch.Value;
+
+            int newValue = chkRX2Squelch.CheckState == CheckState.Indeterminate ?
+                rx2_voice_squelch_threshold_scroll :
+                (_rx2_dsp_mode == DSPMode.FM ? rx2_fm_squelch_threshold_scroll : rx2_squelch_threshold_scroll);
+            if (oldValue != newValue)
+                SQLLevelChangedHandlers?.Invoke(2, oldValue, newValue);
         }
 
         private void chkSquelch_MouseDown(object sender, MouseEventArgs e)

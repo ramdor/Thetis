@@ -1208,6 +1208,57 @@ namespace Thetis
             sendXITOffset(0, newValue);
             sendXITOffset(1, newValue);
         }
+        public void NbChanged(int rx, int newNb)
+        {
+            if (m_disconnected) return;
+            sendRxNbEnable(rx - 1, newNb == 1);
+        }
+        public void BinChanged(int rx, bool newState)
+        {
+            if (m_disconnected) return;
+            sendRxBinEnable(rx - 1, newState);
+        }
+        public void LockChanged(int rx, bool newState)
+        {
+            if (m_disconnected) return;
+            sendLock(rx - 1, newState);
+        }
+        public void VFOLocksChanged()
+        {
+            if (m_disconnected) return;
+            sendAllVFOLocks();
+        }
+        public void SqlChanged(int rx, SquelchState newState)
+        {
+            if (m_disconnected) return;
+            sendSqlEnable(rx - 1, newState != SquelchState.OFF);
+        }
+        public void SqlLevelChanged(int rx, int newValue)
+        {
+            if (m_disconnected) return;
+            sendSqlLevel(rx - 1, newValue);
+        }
+        public void ApfChanged(int rx, bool newState)
+        {
+            if (m_disconnected) return;
+            sendRxApfEnable(rx - 1, newState);
+        }
+        public void NfChanged(bool newState)
+        {
+            if (m_disconnected) return;
+            sendRxNfEnable(0, newState);
+            sendRxNfEnable(1, newState);
+        }
+        public void DiglOffsetChanged(int newValue)
+        {
+            if (m_disconnected) return;
+            sendDiglOffset(newValue);
+        }
+        public void DiguOffsetChanged(int newValue)
+        {
+            if (m_disconnected) return;
+            sendDiguOffset(newValue);
+        }
 		public void TXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
 		{
             if (m_disconnected) return;
@@ -1770,6 +1821,146 @@ namespace Thetis
             string s = "xit_offset:" + rx.ToString() + "," + offset.ToString() + ";";
             sendTextFrame(s);
         }
+        private void sendRxNbEnable(int rx, bool enabled)
+        {
+            string s = "rx_nb_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxBinEnable(int rx, bool enabled)
+        {
+            string s = "rx_bin_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxApfEnable(int rx, bool enabled)
+        {
+            string s = "rx_apf_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxNfEnable(int rx, bool enabled)
+        {
+            string s = "rx_nf_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendLock(int rx, bool enabled)
+        {
+            string s = "lock:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendVFOLock(int rx, int chan, bool enabled)
+        {
+            string s = "vfo_lock:" + rx.ToString() + "," + chan.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendSqlEnable(int rx, bool enabled)
+        {
+            string s = "sql_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendSqlLevel(int rx, int level)
+        {
+            string s = "sql_level:" + rx.ToString() + "," + level.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private bool tryGetVFOLockState(int rx, int chan, out bool enabled)
+        {
+            enabled = false;
+
+            if (rx < 0 || rx > 1 || chan < 0 || chan > 1)
+                return false;
+
+            bool rx2Enabled = console != null && console.ThreadSafeTCIAccessor.RX2Enabled;
+
+            if (!rx2Enabled)
+            {
+                if (rx != 0)
+                    return false;
+
+                enabled = chan == 0 ? console.ThreadSafeTCIAccessor.VFOALock : console.ThreadSafeTCIAccessor.VFOBLock;
+                return true;
+            }
+
+            if (rx == 0)
+            {
+                if (chan != 0)
+                    return false;
+
+                enabled = console.ThreadSafeTCIAccessor.VFOALock;
+                return true;
+            }
+
+            if (rx == 1)
+            {
+                enabled = console.ThreadSafeTCIAccessor.VFOBLock;
+            return true;
+        }
+
+            return false;
+        }
+        private bool trySetVFOLockState(int rx, int chan, bool enabled)
+        {
+            if (rx < 0 || rx > 1 || chan < 0 || chan > 1)
+                return false;
+
+            bool rx2Enabled = console != null && console.ThreadSafeTCIAccessor.RX2Enabled;
+
+            if (!rx2Enabled)
+            {
+                if (rx != 0)
+                    return false;
+
+                if (chan == 0)
+                    console.ThreadSafeTCIAccessor.VFOALock = enabled;
+                else
+                    console.ThreadSafeTCIAccessor.VFOBLock = enabled;
+                return true;
+            }
+
+            if (rx == 0)
+            {
+                if (chan != 0)
+                    return false;
+
+                console.ThreadSafeTCIAccessor.VFOALock = enabled;
+                return true;
+            }
+
+            if (rx == 1)
+            {
+                console.ThreadSafeTCIAccessor.VFOBLock = enabled;
+                return true;
+            }
+
+            return false;
+        }
+        private void sendAllVFOLocks()
+        {
+            if (console.ThreadSafeTCIAccessor.RX2Enabled)
+            {
+            if (tryGetVFOLockState(0, 0, out bool lock00))
+                sendVFOLock(0, 0, lock00);
+                if (tryGetVFOLockState(1, 0, out bool lock10))
+                    sendVFOLock(1, 0, lock10);
+                if (tryGetVFOLockState(1, 1, out bool lock11))
+                    sendVFOLock(1, 1, lock11);
+            }
+            else
+            {
+                if (tryGetVFOLockState(0, 0, out bool lock00))
+                    sendVFOLock(0, 0, lock00);
+                if (tryGetVFOLockState(0, 1, out bool lock01))
+                    sendVFOLock(0, 1, lock01);
+            }
+        }
+        private void sendDiglOffset(int offset)
+        {
+            string s = "digl_offset:" + offset.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendDiguOffset(int offset)
+        {
+            string s = "digu_offset:" + offset.ToString() + ";";
+            sendTextFrame(s);
+        }
 		private void sendVFO(int rx, int chan, long vfo = -1)
         {
 			bool bVFOaUseRX2;
@@ -2109,9 +2300,20 @@ namespace Thetis
             sendNrEnable(1, rx2nr > 0, false, rx2nr);
             sendNrEnable(0, rx1nr > 0, true, rx1nr);
             sendNrEnable(1, rx2nr > 0, true, rx2nr);
+            sendRxNbEnable(0, console.ThreadSafeTCIAccessor.GetSelectedNB(1) == 1);
+            sendRxNbEnable(1, console.ThreadSafeTCIAccessor.GetSelectedNB(2) == 1);
+            sendRxBinEnable(0, console.ThreadSafeTCIAccessor.GetBin(1));
+            sendRxBinEnable(1, console.ThreadSafeTCIAccessor.GetBin(2));
 
             sendAnfEnable(0, console.ThreadSafeTCIAccessor.GetANF(1));
             sendAnfEnable(1, console.ThreadSafeTCIAccessor.GetANF(2));
+            if (!console.IsSetupFormNull)
+            {
+                sendRxApfEnable(0, console.ThreadSafeTCIAccessor.SetupForm.RX1APFEnable);
+                sendRxApfEnable(1, console.ThreadSafeTCIAccessor.SetupForm.RX2APFEnable);
+            }
+            sendRxNfEnable(0, console.ThreadSafeTCIAccessor.GetMNF(1));
+            sendRxNfEnable(1, console.ThreadSafeTCIAccessor.GetMNF(2));
 
             double rx1vol = audioGainToDb(console.ThreadSafeTCIAccessor.RX0Gain / 100f);
             double rx1Subvol = audioGainToDb(console.ThreadSafeTCIAccessor.RX1Gain / 100f);
@@ -2151,6 +2353,16 @@ namespace Thetis
             sendRITOffset(1, console.ThreadSafeTCIAccessor.RITValue);
             sendXITOffset(0, console.ThreadSafeTCIAccessor.XITValue);
             sendXITOffset(1, console.ThreadSafeTCIAccessor.XITValue);
+            sendLock(0, console.ThreadSafeTCIAccessor.VFOALock);
+            if (bRX2Enabled)
+            sendLock(1, console.ThreadSafeTCIAccessor.VFOBLock);
+            sendAllVFOLocks();
+            sendSqlEnable(0, console.ThreadSafeTCIAccessor.GetSqlMode(1) != SquelchState.OFF);
+            sendSqlEnable(1, console.ThreadSafeTCIAccessor.GetSqlMode(2) != SquelchState.OFF);
+            sendSqlLevel(0, console.ThreadSafeTCIAccessor.GetSql(1));
+            sendSqlLevel(1, console.ThreadSafeTCIAccessor.GetSql(2));
+            sendDiglOffset(console.ThreadSafeTCIAccessor.DIGLClickTuneOffset);
+            sendDiguOffset(console.ThreadSafeTCIAccessor.DIGUClickTuneOffset);
 
             sendSplit(0, console.ThreadSafeTCIAccessor.VFOSplit);
 			sendSplit(1, bRX2Enabled && console.ThreadSafeTCIAccessor.VFOSplit);
@@ -2852,6 +3064,172 @@ namespace Thetis
             {
                 sendXITOffset(rx, console.ThreadSafeTCIAccessor.XITValue);
             }
+        }
+        private void handleRxNbEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendRxNbEnable(rx, console.ThreadSafeTCIAccessor.GetSelectedNB(rx + 1) == 1);
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                console.ThreadSafeTCIAccessor.SetSelectedNB(rx + 1, enabled ? 1 : 0);
+            }
+        }
+        private void handleRxBinEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendRxBinEnable(rx, console.ThreadSafeTCIAccessor.GetBin(rx + 1));
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                console.ThreadSafeTCIAccessor.SetBin(rx + 1, enabled);
+            }
+        }
+        private void handleRxApfEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+            if (console.IsSetupFormNull) return;
+
+            if (args.Length == 1)
+            {
+                bool enabled = rx == 0 ? console.ThreadSafeTCIAccessor.SetupForm.RX1APFEnable : console.ThreadSafeTCIAccessor.SetupForm.RX2APFEnable;
+                sendRxApfEnable(rx, enabled);
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                    if (rx == 0)
+                {
+                    console.ThreadSafeTCIAccessor.SetupForm.RX1APFEnable = enabled;
+                }
+                else
+                {
+                    console.ThreadSafeTCIAccessor.SetupForm.RX2APFEnable = enabled;
+                }
+            }
+        }
+        private void handleRxNfEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendRxNfEnable(rx, console.ThreadSafeTCIAccessor.GetMNF(rx + 1));
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                console.ThreadSafeTCIAccessor.TNFActive = enabled;
+            }
+        }
+        private void handleLock(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendLock(rx, rx == 0 ? console.ThreadSafeTCIAccessor.VFOALock : console.ThreadSafeTCIAccessor.VFOBLock);
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                if (rx == 0)
+                    console.ThreadSafeTCIAccessor.VFOALock = enabled;
+                else
+                    console.ThreadSafeTCIAccessor.VFOBLock = enabled;
+            }
+        }
+        private void handleVFOLock(string[] args)
+        {
+            if (args == null || args.Length < 2 || args.Length > 3) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (!int.TryParse(args[1], out int chan)) return;
+
+            if (args.Length == 2)
+            {
+                if (tryGetVFOLockState(rx, chan, out bool enabled))
+                    sendVFOLock(rx, chan, enabled);
+            }
+            else
+            {
+                if (!bool.TryParse(args[2], out bool enabled)) return;
+                trySetVFOLockState(rx, chan, enabled);
+            }
+        }
+        private void handleSqlEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendSqlEnable(rx, console.ThreadSafeTCIAccessor.GetSqlMode(rx + 1) != SquelchState.OFF);
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                console.ThreadSafeTCIAccessor.SetSqlMode(rx + 1, enabled ? SquelchState.SQL : SquelchState.OFF);
+            }
+        }
+        private void handleSqlLevel(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendSqlLevel(rx, console.ThreadSafeTCIAccessor.GetSql(rx + 1));
+            }
+            else
+            {
+                if (!int.TryParse(args[1], out int level)) return;
+                level = Math.Max(-140, Math.Min(0, level));
+                console.ThreadSafeTCIAccessor.SetSql(rx + 1, level);
+            }
+        }
+        private void handleDiglOffset(string[] args, bool hasArgs = true)
+        {
+            if (!hasArgs || args == null || args.Length == 0)
+            {
+                sendDiglOffset(console.ThreadSafeTCIAccessor.DIGLClickTuneOffset);
+                return;
+            }
+
+            if (!int.TryParse(args[0], out int offset)) return;
+            offset = Math.Max(0, Math.Min(4000, offset));
+            console.ThreadSafeTCIAccessor.DIGLClickTuneOffset = offset;
+        }
+        private void handleDiguOffset(string[] args, bool hasArgs = true)
+        {
+            if (!hasArgs || args == null || args.Length == 0)
+            {
+                sendDiguOffset(console.ThreadSafeTCIAccessor.DIGUClickTuneOffset);
+                return;
+            }
+
+            if (!int.TryParse(args[0], out int offset)) return;
+            offset = Math.Max(0, Math.Min(4000, offset));
+            console.ThreadSafeTCIAccessor.DIGUClickTuneOffset = offset;
         }
 		private void handleTrxMessage(string[] args)
 		{
@@ -4300,6 +4678,36 @@ namespace Thetis
                     case "xit_offset":
                         handleXITOffsetMessage(args);
                         break;
+                    case "rx_nb_enable":
+                        handleRxNbEnable(args);
+                        break;
+                    case "rx_bin_enable":
+                        handleRxBinEnable(args);
+                        break;
+                    case "rx_apf_enable":
+                        handleRxApfEnable(args);
+                        break;
+                    case "rx_nf_enable":
+                        handleRxNfEnable(args);
+                        break;
+                    case "lock":
+                        handleLock(args);
+                        break;
+                    case "vfo_lock":
+                        handleVFOLock(args);
+                        break;
+                    case "sql_enable":
+                        handleSqlEnable(args);
+                        break;
+                    case "sql_level":
+                        handleSqlLevel(args);
+                        break;
+                    case "digl_offset":
+                        handleDiglOffset(args);
+                        break;
+                    case "digu_offset":
+                        handleDiguOffset(args);
+                        break;
                     case "tune":
                         handleTune(args);
                         break;
@@ -4449,6 +4857,12 @@ namespace Thetis
                         break;
                     case "mon_volume":
                         handleMONVolume(null, false);
+                        break;
+                    case "digl_offset":
+                        handleDiglOffset(null, false);
+                        break;
+                    case "digu_offset":
+                        handleDiguOffset(null, false);
                         break;
                     case "iq_samplerate":
                         sendIQSampleRate(getPublishedIQSampleRate());
@@ -5599,8 +6013,18 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers += OnNrChanged;
+                    console.ThreadSafeTCIAccessor.NBChangedHandlers += OnNbChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers += OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.BINChangedHandlers += OnBinChanged;
                     console.ThreadSafeTCIAccessor.AGCModeChangedHandlers += OnAGCModeChanged;
+                    console.ThreadSafeTCIAccessor.VfoALockChangedHandlers += OnVfoALockChanged;
+                    console.ThreadSafeTCIAccessor.VfoBLockChangedHandlers += OnVfoBLockChanged;
+                    console.ThreadSafeTCIAccessor.SQLChangedHandlers += OnSqlChanged;
+                    console.ThreadSafeTCIAccessor.SQLLevelChangedHandlers += OnSqlLevelChanged;
+                    console.ThreadSafeTCIAccessor.APFChangedHandlers += OnApfChanged;
+                    console.ThreadSafeTCIAccessor.TNFChangedHandlers += OnTnfChanged;
+                    console.ThreadSafeTCIAccessor.DIGLOffsetChangedHandlers += OnDiglOffsetChanged;
+                    console.ThreadSafeTCIAccessor.DIGUOffsetChangedHandlers += OnDiguOffsetChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers += OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers += OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers += OnTXProfileChanged;
@@ -5689,8 +6113,18 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
                     console.ThreadSafeTCIAccessor.MeterReadingsChangedHandlers -= OnMeterReadingsChanged;
                     console.ThreadSafeTCIAccessor.NRChangedHandlers -= OnNrChanged;
+                    console.ThreadSafeTCIAccessor.NBChangedHandlers -= OnNbChanged;
                     console.ThreadSafeTCIAccessor.ANFChangedHandlers -= OnAnfChanged;
+                    console.ThreadSafeTCIAccessor.BINChangedHandlers -= OnBinChanged;
                     console.ThreadSafeTCIAccessor.AGCModeChangedHandlers -= OnAGCModeChanged;
+                    console.ThreadSafeTCIAccessor.VfoALockChangedHandlers -= OnVfoALockChanged;
+                    console.ThreadSafeTCIAccessor.VfoBLockChangedHandlers -= OnVfoBLockChanged;
+                    console.ThreadSafeTCIAccessor.SQLChangedHandlers -= OnSqlChanged;
+                    console.ThreadSafeTCIAccessor.SQLLevelChangedHandlers -= OnSqlLevelChanged;
+                    console.ThreadSafeTCIAccessor.APFChangedHandlers -= OnApfChanged;
+                    console.ThreadSafeTCIAccessor.TNFChangedHandlers -= OnTnfChanged;
+                    console.ThreadSafeTCIAccessor.DIGLOffsetChangedHandlers -= OnDiglOffsetChanged;
+                    console.ThreadSafeTCIAccessor.DIGUOffsetChangedHandlers -= OnDiguOffsetChanged;
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers -= OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers -= OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers -= OnTXProfileChanged;
@@ -6176,6 +6610,18 @@ namespace Thetis
                 }
             }
         }
+        private void OnNbChanged(int rx, int old_nb, int new_nb)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.NbChanged(rx, new_nb);
+                }
+            }
+        }
         private void OnAnfChanged(int rx, bool old_state, bool new_state)
         {
             lock (m_objLocker)
@@ -6188,6 +6634,18 @@ namespace Thetis
                 }
             }
         }
+        private void OnBinChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.BinChanged(rx, new_state);
+                }
+            }
+        }
         private void OnAGCModeChanged(int rx, AGCMode old_mode, AGCMode new_mode)
         {
             lock (m_objLocker)
@@ -6197,6 +6655,105 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.AGCModeChanged(rx, new_mode);
+                }
+            }
+        }
+        private void OnVfoALockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.LockChanged(1, new_state);
+                    socketListener.VFOLocksChanged();
+                }
+            }
+        }
+        private void OnVfoBLockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    if (rx == 2)
+                    socketListener.LockChanged(2, new_state);
+                    socketListener.VFOLocksChanged();
+                }
+            }
+        }
+        private void OnSqlChanged(int rx, SquelchState old_state, SquelchState new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.SqlChanged(rx, new_state);
+                }
+            }
+        }
+        private void OnSqlLevelChanged(int rx, int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.SqlLevelChanged(rx, newValue);
+                }
+            }
+        }
+        private void OnApfChanged(int rx, bool oldState, bool newState)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.ApfChanged(rx, newState);
+                }
+            }
+        }
+        private void OnTnfChanged(bool old_tnf, bool new_tnf)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.NfChanged(new_tnf);
+                }
+            }
+        }
+        private void OnDiglOffsetChanged(int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.DiglOffsetChanged(newValue);
+                }
+            }
+        }
+        private void OnDiguOffsetChanged(int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.DiguOffsetChanged(newValue);
                 }
             }
         }
