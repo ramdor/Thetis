@@ -75,6 +75,11 @@ namespace Thetis
 
 		#endregion Constructors
 
+        private bool IsCWXLockedByTCI()
+        {
+            return console != null && console.CWXForm != null && console.CWXForm.IsTCIInUse;
+        }
+
 		// Commands getting this far have been checked for a valid prefix, a correct suffix length,
 		// and a terminator.  All we need to do in this class is to decide what kind of command
 		// (read or set) and execute it.  Only read commands generate answers.
@@ -502,6 +507,9 @@ namespace Thetis
 		//Sends text data to CWX for conversion to Morse
 		public string KY(string s)
 		{
+            if (s.Length == parser.nSet && IsCWXLockedByTCI())
+                return "";
+
 			// Make sure we are in a cw mode.
 			switch(console.RX1DSPMode)
 			{
@@ -3546,6 +3554,9 @@ namespace Thetis
 
                 if (qn > 0 || qn < 10)
                 {
+                    if (IsCWXLockedByTCI())
+                        return "";
+
                     console.CWXForm.StartQueue = qn;
                     return "";
                 }
@@ -3563,6 +3574,9 @@ namespace Thetis
 
 			if(s.Length == parser.nSet)
 			{
+                if (IsCWXLockedByTCI())
+                    return "";
+
 				cws = Convert.ToInt32(s);
 				//cws = Math.Max(1, cws);
 				//cws = Math.Min(99, cws);
@@ -3584,6 +3598,8 @@ namespace Thetis
 		{
 			if(s.Length == parser.nSet)
 			{
+                if (IsCWXLockedByTCI())
+                    return "";
 
 			// Make sure we are in a cw mode.
 			switch(console.RX1DSPMode)
@@ -6471,6 +6487,9 @@ namespace Thetis
 
         public string ZZSS()
         {
+            if (IsCWXLockedByTCI())
+                return "";
+
             console.CWXForm.CWXStop();
             return "";
         } 

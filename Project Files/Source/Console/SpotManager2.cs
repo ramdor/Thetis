@@ -504,17 +504,20 @@ namespace Thetis
                 if (swl_seconds_to_live < 0) swl_seconds_to_live = 0;
             }
 
-            string temp_country = null;
-            if (!string.IsNullOrEmpty(callsign) && flag_image == null)
+            if (!string.IsNullOrEmpty(callsign) && !callsign.StartsWith("CQ_", StringComparison.OrdinalIgnoreCase))
             {
-                flag_image = getFlagImageFromCallsign(callsign, out temp_country);
+                string temp_country = null;
+                if (!string.IsNullOrEmpty(callsign) && flag_image == null)
+                {
+                    flag_image = getFlagImageFromCallsign(callsign, out temp_country);
+                }
+                if (string.IsNullOrEmpty(spot_country) && !string.IsNullOrEmpty(temp_country)) spot_country = temp_country;
+
+                string spotter_tmp = string.IsNullOrEmpty(spotter) ? callsign : spotter;
+
+                if (!string.IsNullOrEmpty(spotter_tmp) && flag_spotter_image == null)
+                    flag_spotter_image = getFlagImageFromCallsign(spotter_tmp, out _);
             }
-            if (string.IsNullOrEmpty(spot_country) && !string.IsNullOrEmpty(temp_country)) spot_country = temp_country;
-
-            string spotter_tmp = string.IsNullOrEmpty(spotter) ? callsign : spotter;
-
-            if (!string.IsNullOrEmpty(spotter_tmp) && flag_spotter_image == null)
-                flag_spotter_image = getFlagImageFromCallsign(spotter_tmp, out _);
 
             DateTime spotted_time = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(date_time))
