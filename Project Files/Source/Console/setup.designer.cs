@@ -1948,7 +1948,7 @@
             this.labelTS660 = new System.Windows.Forms.LabelTS();
             this.nudRecording_stop_free_space = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS659 = new System.Windows.Forms.LabelTS();
-            this.groupBoxTS68 = new System.Windows.Forms.GroupBoxTS();
+            this.grpGlobalStopPlayRecord = new System.Windows.Forms.GroupBoxTS();
             this.btnRecording_globalkeybind_assign = new System.Windows.Forms.ButtonTS();
             this.chkRecording_globalkeybind = new System.Windows.Forms.CheckBoxTS();
             this.txtRecording_globalkeybind = new System.Windows.Forms.TextBoxTS();
@@ -4816,7 +4816,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).BeginInit();
             this.groupBoxTS60.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).BeginInit();
-            this.groupBoxTS68.SuspendLayout();
+            this.grpGlobalStopPlayRecord.SuspendLayout();
             this.groupBoxTS67.SuspendLayout();
             this.groupBoxTS65.SuspendLayout();
             this.groupBoxTS59.SuspendLayout();
@@ -32289,7 +32289,7 @@
             this.groupBoxTS60.Controls.Add(this.labelTS660);
             this.groupBoxTS60.Controls.Add(this.nudRecording_stop_free_space);
             this.groupBoxTS60.Controls.Add(this.labelTS659);
-            this.groupBoxTS60.Controls.Add(this.groupBoxTS68);
+            this.groupBoxTS60.Controls.Add(this.grpGlobalStopPlayRecord);
             this.groupBoxTS60.Controls.Add(this.chkRecording_enable_monIfMox);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS67);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS65);
@@ -32368,17 +32368,17 @@
             this.labelTS659.TabIndex = 97;
             this.labelTS659.Text = "Recording will stop if storage has less than";
             // 
-            // groupBoxTS68
+            // grpGlobalStopPlayRecord
             // 
-            this.groupBoxTS68.Controls.Add(this.btnRecording_globalkeybind_assign);
-            this.groupBoxTS68.Controls.Add(this.chkRecording_globalkeybind);
-            this.groupBoxTS68.Controls.Add(this.txtRecording_globalkeybind);
-            this.groupBoxTS68.Location = new System.Drawing.Point(416, 90);
-            this.groupBoxTS68.Name = "groupBoxTS68";
-            this.groupBoxTS68.Size = new System.Drawing.Size(162, 68);
-            this.groupBoxTS68.TabIndex = 96;
-            this.groupBoxTS68.TabStop = false;
-            this.groupBoxTS68.Text = "Global Stop Play/Record";
+            this.grpGlobalStopPlayRecord.Controls.Add(this.btnRecording_globalkeybind_assign);
+            this.grpGlobalStopPlayRecord.Controls.Add(this.chkRecording_globalkeybind);
+            this.grpGlobalStopPlayRecord.Controls.Add(this.txtRecording_globalkeybind);
+            this.grpGlobalStopPlayRecord.Location = new System.Drawing.Point(416, 90);
+            this.grpGlobalStopPlayRecord.Name = "grpGlobalStopPlayRecord";
+            this.grpGlobalStopPlayRecord.Size = new System.Drawing.Size(162, 68);
+            this.grpGlobalStopPlayRecord.TabIndex = 96;
+            this.grpGlobalStopPlayRecord.TabStop = false;
+            this.grpGlobalStopPlayRecord.Text = "Global Stop Play/Record";
             // 
             // btnRecording_globalkeybind_assign
             // 
@@ -71016,8 +71016,8 @@
             this.groupBoxTS60.ResumeLayout(false);
             this.groupBoxTS60.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).EndInit();
-            this.groupBoxTS68.ResumeLayout(false);
-            this.groupBoxTS68.PerformLayout();
+            this.grpGlobalStopPlayRecord.ResumeLayout(false);
+            this.grpGlobalStopPlayRecord.PerformLayout();
             this.groupBoxTS67.ResumeLayout(false);
             this.groupBoxTS67.PerformLayout();
             this.groupBoxTS65.ResumeLayout(false);
@@ -76337,7 +76337,7 @@
         private LabelTS labelTS654;
         private NumericUpDownTS nudRecording_tx_gain_adjust;
         private CheckBoxTS chkRecording_ignore_record_tempchanges;
-        private GroupBoxTS groupBoxTS68;
+        private GroupBoxTS grpGlobalStopPlayRecord;
         private ButtonTS btnRecording_globalkeybind_assign;
         private CheckBoxTS chkRecording_globalkeybind;
         private TextBoxTS txtRecording_globalkeybind;
