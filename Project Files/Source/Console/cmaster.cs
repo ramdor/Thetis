@@ -49,6 +49,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Thetis
 {
@@ -1355,7 +1356,7 @@ namespace Thetis
                 requestsNeeded--;
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void resetTCITxState()
         {
             lock (m_objTCITxStateLock)
@@ -1375,7 +1376,7 @@ namespace Thetis
                 }
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate, TCITxStereoInputMode stereoInputMode)
         {
             if (queuedAudio == null || queuedAudio.Samples == null || queuedAudio.ComplexSamples <= 0)
@@ -1424,7 +1425,7 @@ namespace Thetis
                 m_tciTxQueuedSamples += output.Length;
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe float[] resampleTCITxSamples(float[] input, int inputRate, int targetRate)
         {
             if (input == null || input.Length == 0)
@@ -1468,7 +1469,7 @@ namespace Thetis
                 return resized;
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void destroyTCIIQResampler(int receiver)
         {
             if (receiver < 0 || receiver >= cmRCVR)
@@ -1489,7 +1490,7 @@ namespace Thetis
             m_tciIQResamplerInputRates[receiver] = 0;
             m_tciIQResamplerOutputRates[receiver] = 0;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe float[] resampleTCIIQSamples(int receiver, float[] input, int inputRate, int targetRate)
         {
             if (input == null || input.Length == 0)
@@ -1566,6 +1567,7 @@ namespace Thetis
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float[] rentTCIFloatBuffer(int length)
         {
             if (length <= 0)
@@ -1579,7 +1581,7 @@ namespace Thetis
 
             return new float[length];
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void returnTCIFloatBuffer(float[] buffer)
         {
             if (buffer == null || buffer.Length == 0)
@@ -1597,7 +1599,7 @@ namespace Thetis
                     pool.Push(buffer);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TCIIQBlock rentTCIIQBlock()
         {
             lock (m_objTCIStreamPoolLock)
@@ -1608,7 +1610,7 @@ namespace Thetis
 
             return new TCIIQBlock();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void returnTCIIQBlock(TCIIQBlock block)
         {
             if (block == null)
@@ -1626,7 +1628,7 @@ namespace Thetis
                     m_tciIQBlockPool.Push(block);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TCIAudioBlock rentTCIAudioBlock()
         {
             lock (m_objTCIStreamPoolLock)
@@ -1637,7 +1639,7 @@ namespace Thetis
 
             return new TCIAudioBlock();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void returnTCIAudioBlock(TCIAudioBlock block)
         {
             if (block == null)
@@ -1657,7 +1659,7 @@ namespace Thetis
                     m_tciAudioBlockPool.Push(block);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void enqueueTCIIQ(TCIIQBlock block)
         {
             lock (m_objTCIStreamQueueLock)
@@ -1667,7 +1669,7 @@ namespace Thetis
                 m_tciIQQueue.Enqueue(block);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void enqueueTCIAudio(TCIAudioBlock block)
         {
             lock (m_objTCIStreamQueueLock)
@@ -1677,7 +1679,7 @@ namespace Thetis
                 m_tciAudioQueue.Enqueue(block);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool tryDequeueTCIIQ(out TCIIQBlock block)
         {
             lock (m_objTCIStreamQueueLock)
@@ -1692,7 +1694,7 @@ namespace Thetis
             block = null;
             return false;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool tryDequeueTCIAudio(out TCIAudioBlock block)
         {
             lock (m_objTCIStreamQueueLock)

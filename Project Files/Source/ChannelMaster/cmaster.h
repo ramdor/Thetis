@@ -64,7 +64,7 @@ typedef struct _cmaster
 	int aamix_inrates[cmMAXrcvr * cmMAXSubRcvr + cmMAXxmtr];
 	void (*OutboundRx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by aamix with rx audio from the global mixer
 	void (*OutboundTx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by ilv with xmtr samples from the interleaver
-	void (*OutboundTCIRxIQ)(int id, int nsamples, double* buff);		// pointer to callback with receiver IQ samples
+	void (*OutboundTCIRxIQ)(int id, int nsamples, double* buff);	// pointer to callback with receiver IQ samples
 	void (*InboundTCITxAudio)(int nsamples, double* buff);			// pointer to callback to fill TX audio input
 	volatile long tci_run;											// run TCI RX IQ/audio callbacks
 	int	audioCodecId;

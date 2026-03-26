@@ -12650,10 +12650,10 @@ namespace Thetis
         {
             string fileName = _current_profile;
 
-            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            string invalid = new string(Path.GetInvalidFileNameChars());
             foreach (char c in invalid)
             {
-                fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
+                fileName = fileName.Replace(c, '_');  // Remove profile name chars that are invalid in filenames.
             }
 
             //[2.10.3.9]MW0LGE now requests file location, incrementing filename functionality removed
@@ -37565,6 +37565,7 @@ namespace Thetis
         }
         private void btnRecording_globalkeybind_assign_Click(object sender, EventArgs e)
         {
+            grpGlobalStopPlayRecord.Focus();//move focus off the button, so that space/enter can be used
             _setting_globalkeybind = true;
             handleAssignKeybind();
         }
@@ -37572,6 +37573,7 @@ namespace Thetis
         private readonly System.Windows.Forms.Timer _recording_keybind_timer = new System.Windows.Forms.Timer();
         private void btnRecording_assingnkeybind_Click(object sender, EventArgs e)
         {
+            pnlVoiceRecordPlayback.Focus();//move focus off the button, so that space/enter can be used
             _setting_globalkeybind = false;
             handleAssignKeybind();
         }
@@ -37990,7 +37992,14 @@ namespace Thetis
                 if (fulldata)
                 {
                     file = $"{json_data.mode}_{json_data.frequency}MHz_[{json_data.bit_depth}bits_{json_data.sample_rate}Hz]_{json_data.utc_time}.wav";
+
+                    string invalid = new string(Path.GetInvalidFileNameChars());
+                    foreach (char c in invalid)
+                    {
+                        file = file.Replace(c, '_');
+                    }
                 }
+                
             }
 
             string save_filename = null;
