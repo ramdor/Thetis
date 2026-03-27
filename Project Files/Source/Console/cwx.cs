@@ -179,10 +179,7 @@ namespace Thetis
         private System.Windows.Forms.NumericUpDownTS udWPM;
         private CheckBoxTS chkForceToCWmode;
         private CheckBoxTS chkFocusRequired;
-        private System.Windows.Forms.Panel pnlTCILockout;
-        private System.Windows.Forms.LabelTS lblTCILockout;
         private ASCIIEncoding AE = new ASCIIEncoding();
-        private bool _tciInUse = false;
 
         #endregion
 
@@ -727,73 +724,6 @@ namespace Thetis
             get { return rb.ReadSpace(); }
         }
 
-        public bool IsTCIInUse
-        {
-            get { return _tciInUse; }
-        }
-
-        public void SetTCIInUse(bool inUse)
-        {
-            if (inUse)
-                ensureBackendRunning();
-
-            if (_tciInUse == inUse) return;
-
-            _tciInUse = inUse;
-            updateTCIInterlockState();
-        }
-
-        private void ensureBackendRunning()
-        {
-            setup_timer();
-            startThreads();
-        }
-
-        private void updateTCIInterlockState()
-        {
-            bool interactiveEnabled = !_tciInUse;
-            bool powerEnabled = interactiveEnabled && console != null && console.PowerOn;
-
-            txt1.Enabled = interactiveEnabled;
-            txt2.Enabled = interactiveEnabled;
-            txt3.Enabled = interactiveEnabled;
-            txt4.Enabled = interactiveEnabled;
-            txt5.Enabled = interactiveEnabled;
-            txt6.Enabled = interactiveEnabled;
-            txt7.Enabled = interactiveEnabled;
-            txt8.Enabled = interactiveEnabled;
-            txt9.Enabled = interactiveEnabled;
-            udWPM.Enabled = interactiveEnabled;
-            udDelay.Enabled = interactiveEnabled;
-            udDrop.Enabled = interactiveEnabled;
-            udPtt.Enabled = interactiveEnabled;
-            chkPause.Enabled = interactiveEnabled;
-            clearButton.Enabled = interactiveEnabled;
-            stopButton.Enabled = interactiveEnabled;
-            notesButton.Enabled = interactiveEnabled;
-            cbMorse.Enabled = interactiveEnabled;
-            chkAlwaysOnTop.Enabled = interactiveEnabled;
-            chkForceToCWmode.Enabled = interactiveEnabled;
-            chkFocusRequired.Enabled = interactiveEnabled;
-            expandButton.Enabled = interactiveEnabled;
-
-            keyButton.Enabled = powerEnabled;
-            keyboardButton.Enabled = powerEnabled;
-            s1.Enabled = powerEnabled;
-            s2.Enabled = powerEnabled;
-            s3.Enabled = powerEnabled;
-            s4.Enabled = powerEnabled;
-            s5.Enabled = powerEnabled;
-            s6.Enabled = powerEnabled;
-            s7.Enabled = powerEnabled;
-            s8.Enabled = powerEnabled;
-            s9.Enabled = powerEnabled;
-
-            pnlTCILockout.Visible = _tciInUse;
-            if (_tciInUse)
-                pnlTCILockout.BringToFront();
-        }
-
         public void CWXStop()
         {
 
@@ -1001,8 +931,6 @@ namespace Thetis
             this.label4 = new System.Windows.Forms.LabelTS();
             this.udDelay = new System.Windows.Forms.NumericUpDownTS();
             this.chkFocusRequired = new System.Windows.Forms.CheckBoxTS();
-            this.pnlTCILockout = new System.Windows.Forms.Panel();
-            this.lblTCILockout = new System.Windows.Forms.LabelTS();
             ((System.ComponentModel.ISupportInitialize)(this.udWPM)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPtt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDrop)).BeginInit();
@@ -1580,31 +1508,6 @@ namespace Thetis
             this.chkFocusRequired.Text = "Focus";
             this.toolTip1.SetToolTip(this.chkFocusRequired, "Window focus is needed for Fn keys and Alt Digits");
             this.chkFocusRequired.UseVisualStyleBackColor = true;
-            // 
-            // pnlTCILockout
-            // 
-            this.pnlTCILockout.BackColor = System.Drawing.Color.Gainsboro;
-            this.pnlTCILockout.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlTCILockout.Controls.Add(this.lblTCILockout);
-            this.pnlTCILockout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlTCILockout.Location = new System.Drawing.Point(0, 0);
-            this.pnlTCILockout.Name = "pnlTCILockout";
-            this.pnlTCILockout.Size = new System.Drawing.Size(704, 281);
-            this.pnlTCILockout.TabIndex = 60;
-            this.pnlTCILockout.Visible = false;
-            // 
-            // lblTCILockout
-            // 
-            this.lblTCILockout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTCILockout.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTCILockout.Image = null;
-            this.lblTCILockout.Location = new System.Drawing.Point(0, 0);
-            this.lblTCILockout.Name = "lblTCILockout";
-            this.lblTCILockout.Size = new System.Drawing.Size(702, 279);
-            this.lblTCILockout.TabIndex = 0;
-            this.lblTCILockout.Text = "In use by TCI. Please wait...";
-            this.lblTCILockout.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1654,7 +1557,6 @@ namespace Thetis
             this.Controls.Add(this.s3);
             this.Controls.Add(this.s2);
             this.Controls.Add(this.s1);
-            this.Controls.Add(this.pnlTCILockout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -1721,8 +1623,6 @@ namespace Thetis
         // this guy checks for the release of the Alt key
         private void CWX_KeyUp_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if (_tciInUse) return;
-
             kkk++;
             label6.Text = kkk.ToString() + " " +
                 e.KeyCode.ToString() + " " +
@@ -1736,7 +1636,6 @@ namespace Thetis
         // the Alt key press is detected here and altkey set to true
         private void CWX_KeyDown_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if (_tciInUse) return;
             if (!console.PowerOn) return;
 
             char key = (char)e.KeyValue;
@@ -1784,7 +1683,6 @@ namespace Thetis
 
         private void keyboardButton_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            if (_tciInUse) return;
             if (!console.PowerOn) return;
 
             process_key(e.KeyChar);
@@ -1792,7 +1690,6 @@ namespace Thetis
 
         public void KeyAction()
         {
-            if (_tciInUse) return;
             if (!_shown) return;
 
             if (keying)
@@ -1821,31 +1718,6 @@ namespace Thetis
             setptt(true);
             setkey(true);
             keying = true;
-        }
-
-        public bool BeginTCIKeyDown()
-        {
-            if (!checkPTT(false)) return false;
-
-            ensureBackendRunning();
-
-            if (keying)
-                return true;
-
-            quit = true;
-            kquit = true;
-            while (quit) Thread.Sleep(10);
-            pause = 60000 / tel;
-            tqq = " . ";
-            setptt(true);
-            setkey(true);
-            keying = true;
-            return true;
-        }
-
-        public void EndTCIKeyDown()
-        {
-            quitshut();
         }
 
         // process the 'Key' button which start transmitter with key down
@@ -1936,7 +1808,6 @@ namespace Thetis
 
         public void PressFNkey(int fn_number)
         {
-            if (_tciInUse) return;
             if (!_shown) return;
             if (fn_number < 1 || fn_number > 9) return;
             queue_start(fn_number);
@@ -2037,7 +1908,6 @@ namespace Thetis
 
         public void StopAction()
         {
-            if (_tciInUse) return;
             stopActionCore();
         }
 
@@ -2110,13 +1980,6 @@ namespace Thetis
 
         private void chkPause_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (_tciInUse)
-            {
-                if (chkPause.Checked)
-                    chkPause.Checked = false;
-                return;
-            }
-
             pause_checked = chkPause.Checked;
         }
 
@@ -2220,7 +2083,6 @@ namespace Thetis
 
         private void clearButton_Click(object sender, System.EventArgs e)
         {
-            if (_tciInUse) return;
             clear_show();
         }
         private void clear_show()
@@ -2637,7 +2499,6 @@ namespace Thetis
         }
         private void process_key(char key)	// keys from keyboardButton_KeyPress event
         {
-            if (_tciInUse) return;
 #if(CWX_DEBUG)
 			Debug.WriteLine((char)key + "key " + (int)key);
 #endif
@@ -2763,11 +2624,9 @@ namespace Thetis
             s9.Enabled = bPowerState;
 
             stopActionCore();
-            updateTCIInterlockState();
         }
         private void onGlobalKeyDown(Keys keycode)
         {
-            if (_tciInUse) return;
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)
             {
@@ -2777,7 +2636,6 @@ namespace Thetis
         }
         private void onGlobalKeyUp(Keys keycode)
         {
-            if (_tciInUse) return;
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)
             {
