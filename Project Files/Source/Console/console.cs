@@ -25373,6 +25373,40 @@ namespace Thetis
         private bool mon_recall = false;
         private static readonly HiPerfTimer vox_timer = new HiPerfTimer();
 
+        private PTTMode getFallbackPTTModeAfterTCIRelease(DSPMode tx_mode, bool mic_ptt, bool cw_ptt, bool cat_ptt, bool vox_ptt)
+        {
+            if (cat_ptt)
+                return PTTMode.CAT;
+
+            if ((tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU) && (cw_ptt || mic_ptt))
+                return PTTMode.CW;
+
+            if ((tx_mode == DSPMode.LSB ||
+                tx_mode == DSPMode.USB ||
+                tx_mode == DSPMode.DSB ||
+                tx_mode == DSPMode.AM ||
+                tx_mode == DSPMode.SAM ||
+                tx_mode == DSPMode.DIGU ||
+                tx_mode == DSPMode.DIGL ||
+                tx_mode == DSPMode.FM ||
+                _all_mode_mic_ptt) &&
+                mic_ptt)
+                return PTTMode.MIC;
+
+            if ((tx_mode == DSPMode.LSB ||
+                tx_mode == DSPMode.USB ||
+                tx_mode == DSPMode.DSB ||
+                tx_mode == DSPMode.AM ||
+                tx_mode == DSPMode.SAM ||
+                tx_mode == DSPMode.DIGU ||
+                tx_mode == DSPMode.DIGL ||
+                tx_mode == DSPMode.FM) &&
+                vox_ptt)
+                return PTTMode.VOX;
+
+            return PTTMode.NONE;
+        }
+
         private async void PollPTT()
         {
             while (chkPower.Checked)
@@ -25473,11 +25507,24 @@ namespace Thetis
                         switch (_current_ptt_mode)
                         {
                             case PTTMode.TCI:
-                                if (!_tci_ptt)
+                                if (_tci_ptt)
                                 {
-                                    chkMOX.Checked = false;
+                                    vac_bypass_disable = true;
                                 }
-                                vac_bypass_disable = true;
+                                else
+                                {
+                                    PTTMode fallbackMode = getFallbackPTTModeAfterTCIRelease(tx_mode, mic_ptt, cw_ptt, cat_ptt, vox_ptt);
+                                    if (fallbackMode == PTTMode.NONE)
+                                    {
+                                        chkMOX.Checked = false;
+                                        vac_bypass_disable = true;
+                                    }
+                                    else
+                                    {
+                                        _current_ptt_mode = fallbackMode;
+                                        vac_bypass_disable = fallbackMode == PTTMode.CAT;
+                                    }
+                                }
                                 break;
                             case PTTMode.CAT:
                                 if (!cat_ptt)
