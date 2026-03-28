@@ -1230,10 +1230,10 @@ namespace Thetis
             if (m_disconnected) return;
             sendCwKeyerSpeed(newSpeed);
         }
-        public void CwMacrosEmpty()
+        public void CwMacrosEmpty(int rx)
         {
             if (m_disconnected) return;
-            sendCwMacrosEmpty();
+            sendCwMacrosEmpty(rx);
         }
         public void CwCallsignSent(string callsign)
         {
@@ -1947,9 +1947,9 @@ namespace Thetis
         {
             sendTextFrame("cw_keyer_speed:" + speed.ToString() + ";");
         }
-        private void sendCwMacrosEmpty()
+        private void sendCwMacrosEmpty(int rx)
         {
-            sendTextFrame("cw_macros_empty;");
+            sendTextFrame("cw_macros_empty:" + rx.ToString() + ";");
         }
         private void sendCallsignSend(string callsign)
         {
@@ -3404,17 +3404,20 @@ namespace Thetis
         private void handleCwMacros(string[] args)
         {
             if (args == null || args.Length < 2) return;
-            if (!int.TryParse(args[0], out int trx)) return;
-            if (trx < 0 || trx > 1) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
 
             string text = string.Join(",", args.Skip(1).ToArray());
-            m_server?.SendCwMacro(this, trx, text);
+            m_server?.SendCwMacro(this, rx, text);
         }
         private void handleCwTerminal(string[] args)
         {
-            if (args == null || args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled)) return;
-            m_server?.SetCwTerminalEnabled(this, enabled);
+            if (args == null || args.Length != 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+            if (!bool.TryParse(args[1], out bool enabled)) return;
+
+            m_server?.SetCwTerminalEnabled(this, rx, enabled);
         }
         private void handleCwMsg(string[] args)
         {
@@ -3427,13 +3430,13 @@ namespace Thetis
             }
 
             if (args.Length < 4) return;
-            if (!int.TryParse(args[0], out int trx)) return;
-            if (trx < 0 || trx > 1) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
 
             string prefix = args[1];
             string callsign = args[2];
             string suffix = string.Join(",", args.Skip(3).ToArray());
-            m_server?.SendCwMessage(this, trx, prefix, callsign, suffix);
+            m_server?.SendCwMessage(this, rx, prefix, callsign, suffix);
         }
         private void handleCwMacrosStop()
         {
@@ -3442,14 +3445,14 @@ namespace Thetis
         private void handleKeyer(string[] args)
         {
             if (args == null || args.Length < 2 || args.Length > 3) return;
-            if (!int.TryParse(args[0], out int trx)) return;
-            if (trx < 0 || trx > 1) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
             if (!bool.TryParse(args[1], out bool pressed)) return;
 
             int durationMs = 0;
             if (args.Length > 2 && !int.TryParse(args[2], out durationMs)) return;
 
-            m_server?.HandleCwKeyer(this, trx, pressed, Math.Max(0, durationMs));
+            m_server?.HandleCwKeyer(this, rx, pressed, Math.Max(0, durationMs));
         }
 		private void handleTrxMessage(string[] args)
 		{
@@ -6330,9 +6333,12 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.TNFChangedHandlers += OnTnfChanged;
                     console.ThreadSafeTCIAccessor.DIGLOffsetChangedHandlers += OnDiglOffsetChanged;
                     console.ThreadSafeTCIAccessor.DIGUOffsetChangedHandlers += OnDiguOffsetChanged;
+
                     console.ThreadSafeTCIAccessor.CWXSpeedChangedHandlers += OnCwMacrosSpeedChanged;
                     console.ThreadSafeTCIAccessor.CWXDelayChangedHandlers += OnCwMacrosDelayChanged;
+                    console.ThreadSafeTCIAccessor.CWXRemoteCharacterStartedHandlers += OnCwRemoteCharacterStarted;
                     console.ThreadSafeTCIAccessor.CWKeyerSpeedChangedHandlers += OnCwKeyerSpeedChanged;
+
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers += OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers += OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers += OnTXProfileChanged;
@@ -6433,9 +6439,12 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.TNFChangedHandlers -= OnTnfChanged;
                     console.ThreadSafeTCIAccessor.DIGLOffsetChangedHandlers -= OnDiglOffsetChanged;
                     console.ThreadSafeTCIAccessor.DIGUOffsetChangedHandlers -= OnDiguOffsetChanged;
+
                     console.ThreadSafeTCIAccessor.CWXSpeedChangedHandlers -= OnCwMacrosSpeedChanged;
                     console.ThreadSafeTCIAccessor.CWXDelayChangedHandlers -= OnCwMacrosDelayChanged;
+                    console.ThreadSafeTCIAccessor.CWXRemoteCharacterStartedHandlers -= OnCwRemoteCharacterStarted;
                     console.ThreadSafeTCIAccessor.CWKeyerSpeedChangedHandlers -= OnCwKeyerSpeedChanged;
+
                     console.ThreadSafeTCIAccessor.RXGainChangedHandlers -= OnRxAfGainChanged;
                     console.ThreadSafeTCIAccessor.CTUNChangedHandlers -= OnCTUNChanged;
                     console.ThreadSafeTCIAccessor.TXProfileChangedHandlers -= OnTXProfileChanged;
@@ -6533,19 +6542,19 @@ namespace Thetis
             m_cwController?.DecreaseMacroSpeed(amount);
         }
 
-        internal void SetCwTerminalEnabled(TCPIPtciSocketListener socketListener, bool enabled)
+        internal void SetCwTerminalEnabled(TCPIPtciSocketListener socketListener, int rx, bool enabled)
         {
-            m_cwController?.SetTerminalEnabled(socketListener, enabled);
+            m_cwController?.SetTerminalEnabled(socketListener, rx, enabled);
         }
 
-        internal void SendCwMacro(TCPIPtciSocketListener socketListener, int trx, string text)
+        internal void SendCwMacro(TCPIPtciSocketListener socketListener, int rx, string text)
         {
-            m_cwController?.SendMacro(socketListener, trx, text);
+            m_cwController?.SendMacro(socketListener, rx, text);
         }
 
-        internal void SendCwMessage(TCPIPtciSocketListener socketListener, int trx, string prefix, string callsign, string suffix)
+        internal void SendCwMessage(TCPIPtciSocketListener socketListener, int rx, string prefix, string callsign, string suffix)
         {
-            m_cwController?.SendMessage(socketListener, trx, prefix, callsign, suffix);
+            m_cwController?.SendMessage(socketListener, rx, prefix, callsign, suffix);
         }
 
         internal void UpdateCwMessageCallsign(TCPIPtciSocketListener socketListener, string callsign)
@@ -6558,9 +6567,9 @@ namespace Thetis
             m_cwController?.Stop(socketListener);
         }
 
-        internal void HandleCwKeyer(TCPIPtciSocketListener socketListener, int trx, bool pressed, int durationMs)
+        internal void HandleCwKeyer(TCPIPtciSocketListener socketListener, int rx, bool pressed, int durationMs)
         {
-            m_cwController?.HandleKeyer(socketListener, trx, pressed, durationMs);
+            m_cwController?.HandleKeyer(socketListener, rx, pressed, durationMs);
         }
 
         internal void NotifyCwTciPttReleased(TCPIPtciSocketListener socketListener)
@@ -6573,7 +6582,7 @@ namespace Thetis
             m_cwController?.DisconnectClient(socketListener);
         }
 
-        internal void OnCwMacrosEmpty()
+        internal void OnCwMacrosEmpty(int rx)
         {
             lock (m_objLocker)
             {
@@ -6581,7 +6590,7 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    socketListener.CwMacrosEmpty();
+                    socketListener.CwMacrosEmpty(rx);
                 }
             }
         }
@@ -6626,6 +6635,11 @@ namespace Thetis
                     socketListener.CwMacrosDelayChanged(newDelay);
                 }
             }
+        }
+
+        private void OnCwRemoteCharacterStarted(int remainingRemoteCharacters, int pendingElements)
+        {
+            m_cwController?.OnRemoteCharacterStarted(remainingRemoteCharacters, pendingElements);
         }
 
         private void OnCwKeyerSpeedChanged(int oldSpeed, int newSpeed)
@@ -7703,6 +7717,7 @@ namespace Thetis
             private sealed class CWTxOperation
             {
                 public readonly List<CWTxSegment> Segments = new List<CWTxSegment>();
+                public int Rx;
                 public int NextSegmentIndex;
                 public int ActiveSegmentIndex = -1;
                 public int CallsignSegmentIndex = -1;
@@ -7860,10 +7875,12 @@ namespace Thetis
                 SetMacroSpeed(GetMacroSpeed() - Math.Max(0, amount));
             }
 
-            public void SetTerminalEnabled(TCPIPtciSocketListener owner, bool enabled)
+            public void SetTerminalEnabled(TCPIPtciSocketListener owner, int rx, bool enabled)
             {
                 lock (_lockObj)
                 {
+                    if (rx < 0 || rx > 1) return;
+
                     if (enabled)
                     {
                         if (!tryAcquireOwnershipLocked(owner)) return;
@@ -7894,7 +7911,7 @@ namespace Thetis
                 }
             }
 
-            public void SendMacro(TCPIPtciSocketListener owner, int trx, string text)
+            public void SendMacro(TCPIPtciSocketListener owner, int rx, string text)
             {
                 lock (_lockObj)
                 {
@@ -7902,14 +7919,14 @@ namespace Thetis
                     if (!tryAcquireOwnershipLocked(owner)) return;
                     if (_keyerPressed) return;
 
-                    CWTxOperation operation = buildMacroOperation(text);
+                    CWTxOperation operation = buildMacroOperation(rx, text);
                     operation.Owner = owner;
                     _pendingOperations.Enqueue(operation);
                     startNextOperationLocked();
                 }
             }
 
-            public void SendMessage(TCPIPtciSocketListener owner, int trx, string prefix, string callsign, string suffix)
+            public void SendMessage(TCPIPtciSocketListener owner, int rx, string prefix, string callsign, string suffix)
             {
                 lock (_lockObj)
                 {
@@ -7917,14 +7934,14 @@ namespace Thetis
                     if (!tryAcquireOwnershipLocked(owner)) return;
                     if (_keyerPressed) return;
 
-                    CWTxOperation operation = buildMessageOperation(prefix, callsign, suffix);
+                    CWTxOperation operation = buildMessageOperation(rx, prefix, callsign, suffix);
                     operation.Owner = owner;
                     _pendingOperations.Enqueue(operation);
                     startNextOperationLocked();
                 }
             }
 
-            public void HandleKeyer(TCPIPtciSocketListener owner, int trx, bool pressed, int durationMs)
+            public void HandleKeyer(TCPIPtciSocketListener owner, int rx, bool pressed, int durationMs)
             {
                 lock (_lockObj)
                 {
@@ -7939,7 +7956,7 @@ namespace Thetis
                         if (_keyerPressed)
                             return;
 
-                        if (!selectKeyerTargetLocked(trx) || !isCWModeLocked())
+                        if (!selectKeyerTargetLocked(rx) || !isCWModeLocked())
                         {
                             releaseOwnershipIfIdleLocked();
                             return;
@@ -7983,6 +8000,30 @@ namespace Thetis
                 }
             }
 
+            public void OnRemoteCharacterStarted(int remainingRemoteCharacters, int pendingElements)
+            {
+                bool notifyEmpty = false;
+                int rx = 0;
+
+                lock (_lockObj)
+                {
+                    if (!_terminalEnabled) return;
+                    if (_activeOperation == null) return;
+                    if (_activeOperation.EmptyNotified) return;
+                    if (_pendingOperations.Count > 0) return;
+                    if (_activeOperation.NextSegmentIndex < _activeOperation.Segments.Count) return;
+                    if (remainingRemoteCharacters > 0) return;
+                    if (pendingElements <= 0) return;
+
+                    _activeOperation.EmptyNotified = true;
+                    rx = _activeOperation.Rx;
+                    notifyEmpty = true;
+                }
+
+                if (notifyEmpty)
+                    _server.OnCwMacrosEmpty(rx);
+            }
+
             public void Stop(TCPIPtciSocketListener owner)
             {
                 int restoreSpeed = -1;
@@ -8007,8 +8048,6 @@ namespace Thetis
                     _keyerPressedAtTicks = -1;
                     _keyerReleaseAtTicks = -1;
                     shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
-
-                    if (!_terminalEnabled || _releaseTerminalTciPttWhenIdle)
                         shouldReleaseMox = true;
 
                     _releaseTerminalTciPttWhenIdle = false;
@@ -8177,12 +8216,13 @@ namespace Thetis
                 return result;
             }
 
-            private CWTxOperation buildMacroOperation(string text)
+            private CWTxOperation buildMacroOperation(int rx, string text)
             {
                 int baseSpeed = GetMacroSpeed();
                 CWTextParseResult parsed = parseMacroText(decodeTciText(text), baseSpeed);
                 CWTxOperation operation = new CWTxOperation()
                 {
+                    Rx = rx,
                     BaseSpeedWpm = baseSpeed,
                     RestoreBaseSpeed = parsed.UsedInlineSpeedChanges
                 };
@@ -8190,7 +8230,7 @@ namespace Thetis
                 return operation;
             }
 
-            private CWTxOperation buildMessageOperation(string prefix, string callsign, string suffix)
+            private CWTxOperation buildMessageOperation(int rx, string prefix, string callsign, string suffix)
             {
                 int baseSpeed = GetMacroSpeed();
                 prefix = normalizeMessageField(prefix);
@@ -8207,6 +8247,7 @@ namespace Thetis
 
                 CWTxOperation operation = new CWTxOperation()
                 {
+                    Rx = rx,
                     BaseSpeedWpm = baseSpeed,
                     RestoreBaseSpeed = prefixParsed.UsedInlineSpeedChanges || suffixParsed.UsedInlineSpeedChanges,
                     CallsignBase = callsignBase
@@ -8258,12 +8299,13 @@ namespace Thetis
 
                     if (_terminalEnabled &&
                         !_activeOperation.EmptyNotified &&
+                        _pendingOperations.Count < 1 &&
                         _activeOperation.NextSegmentIndex >= _activeOperation.Segments.Count &&
                         pendingRemote <= 0 &&
                         pendingElements > 0)
                     {
                         _activeOperation.EmptyNotified = true;
-                        _server.OnCwMacrosEmpty();
+                        _server.OnCwMacrosEmpty(_activeOperation.Rx);
                     }
 
                     if (!idle) return;
@@ -8312,17 +8354,13 @@ namespace Thetis
                 ensureTerminalTciPttLocked();
 
                 SetMacroSpeedSilently(segment.SpeedWpm);
+                _activeOperation.ActiveSegmentIndex = _activeOperation.NextSegmentIndex;
+                _activeOperation.NextSegmentIndex++;
                 InvokeOnConsole(c =>
                 {
                     byte[] bytes = Encoding.ASCII.GetBytes(text);
-                    if (bytes.Length > 1)
                         c.CWXForm.RemoteMessage(bytes);
-                    else
-                        c.CWXForm.RemoteMessage(bytes.Length == 1 ? (char)bytes[0] : ' ');
                 });
-
-                _activeOperation.ActiveSegmentIndex = _activeOperation.NextSegmentIndex;
-                _activeOperation.NextSegmentIndex++;
             }
 
             private void completeActiveOperationLocked()
@@ -8513,11 +8551,11 @@ namespace Thetis
                 _keyerScheduleEvent.Set();
             }
 
-            private bool selectKeyerTargetLocked(int trx)
+            private bool selectKeyerTargetLocked(int rx)
             {
                 return InvokeOnConsole(c =>
                 {
-                    if (trx == 1)
+                    if (rx == 1)
                     {
                         if (!c.RX2Enabled)
                             return false;

@@ -44984,13 +44984,16 @@ namespace Thetis
         public delegate void AGCAutoModeChanged(int rx, bool old_state, bool new_state);
         public delegate void GeneralSettingsChanged(int rx, OtherButtonId setting, bool old_state, bool new_state, Dictionary<OtherButtonId, bool> settings);
         public delegate void SQLChanged(int rx, SquelchState old_state, SquelchState new_state);
-        public delegate void CWXSpeedChanged(int old_speed, int new_speed);
-        public delegate void CWXDelayChanged(int old_delay_ms, int new_delay_ms);
-        public delegate void CWKeyerSpeedChanged(int old_speed, int new_speed);
-        public delegate void CWXShown(bool shown);
+
         public delegate void GlobalKeyPress(Keys keycode);
         public delegate void DarkModeChanged(bool dark_mode);
         public delegate void RXGainChanged(int rx, bool is_subrx, int old_gain, int new_gain);
+
+        public delegate void CWXSpeedChanged(int old_speed, int new_speed);
+        public delegate void CWXDelayChanged(int old_delay_ms, int new_delay_ms);
+        public delegate void CWXRemoteCharacterStarted(int remaining_remote_characters, int pending_elements);
+        public delegate void CWKeyerSpeedChanged(int old_speed, int new_speed);
+        public delegate void CWXShown(bool shown);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -45138,10 +45141,6 @@ namespace Thetis
         public AGCAutoModeChanged AGCAutoModeChangedHandlers;
         public GeneralSettingsChanged GeneralSettingsChangedHandlers;
         public SQLChanged SQLChangedHandlers;
-        public CWXSpeedChanged CWXSpeedChangedHandlers;
-        public CWXDelayChanged CWXDelayChangedHandlers;
-        public CWKeyerSpeedChanged CWKeyerSpeedChangedHandlers;
-        public CWXShown CWXShownHandlers;
 
         public GlobalKeyPress GlobalKeyPressUpHandlers;
         public GlobalKeyPress GlobalKeyPressDownHandlers;
@@ -45149,6 +45148,12 @@ namespace Thetis
         public DarkModeChanged DarkModeChangedHandlers;
 
         public RXGainChanged RXGainChangedHandlers;
+
+        public CWXSpeedChanged CWXSpeedChangedHandlers;
+        public CWXDelayChanged CWXDelayChangedHandlers;
+        public CWXRemoteCharacterStarted CWXRemoteCharacterStartedHandlers;
+        public CWKeyerSpeedChanged CWKeyerSpeedChangedHandlers;
+        public CWXShown CWXShownHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
