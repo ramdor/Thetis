@@ -682,6 +682,7 @@ namespace Thetis
                         rb.Read(buffer, buffer.Length);		//read the ringbuffer
                         chr2send = (char)buffer[0];
                         loadchar(chr2send);
+                        console?.CWXRemoteCharacterStartedHandlers?.Invoke(rb.ReadSpace(), infifo);
                         while (infifo > 2)					//number of elements left in the element fifo
                         {
                             Thread.Sleep(2);				//wait for the element fifo to catch up
@@ -2553,7 +2554,7 @@ namespace Thetis
             e.Cancel = true;
             this.Hide();
 
-            if(console != null) console.CWXShownHandlers?.Invoke(_shown);
+            if (console != null) console.CWXShownHandlers?.Invoke(_shown);
         }
 
         private void backspace()
