@@ -7737,14 +7737,16 @@ namespace Thetis
             private readonly Stopwatch _keyerStopwatch;
             private readonly Queue<CWTxOperation> _pendingOperations = new Queue<CWTxOperation>();
             private CWTxOperation _activeOperation = null;
-            private bool _terminalEnabled = false;
+            private readonly bool[] _terminalEnabledByRx = new bool[2];
             private TCPIPtciSocketListener _currentOwner = null;
             private bool _terminalTciPttAsserted = false;
+            private int _terminalTciPttRx = -1;
             private bool _releaseTerminalTciPttWhenIdle = false;
             private bool _keyerPressed = false;
             private bool _keyerReleasePending = false;
             private long _keyerPressedAtTicks = -1;
             private long _keyerReleaseAtTicks = -1;
+            private int _keyerRx = -1;
             private bool _keyerAssertedMox = false;
             private bool _disposed = false;
 
@@ -7783,9 +7785,11 @@ namespace Thetis
                     _keyerReleasePending = false;
                     _keyerPressedAtTicks = -1;
                     _keyerReleaseAtTicks = -1;
+                    _keyerRx = -1;
                     shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
                     releaseTerminalTciPtt = _terminalTciPttAsserted;
                     _terminalTciPttAsserted = false;
+                    _terminalTciPttRx = -1;
                     _currentOwner = null;
                 }
 
@@ -7890,19 +7894,19 @@ namespace Thetis
                         return;
                     }
 
-                    _terminalEnabled = enabled;
+                    _terminalEnabledByRx[rx] = enabled;
 
-                    if (_terminalEnabled)
+                    if (enabled)
                     {
-                        if (_activeOperation != null || _pendingOperations.Count > 0)
+                        if (_activeOperation != null && _activeOperation.Rx == rx)
                             ensureTerminalTciPttLocked();
                         _releaseTerminalTciPttWhenIdle = false;
                     }
-                    else if (_activeOperation != null)
+                    else if (_activeOperation != null && _activeOperation.Rx == rx)
                     {
                         _releaseTerminalTciPttWhenIdle = true;
                     }
-                    else
+                    else if (_activeOperation == null && _terminalTciPttAsserted && _terminalTciPttRx == rx)
                     {
                         releaseTerminalTciPttIfOwnedLocked();
                     }
@@ -7915,7 +7919,7 @@ namespace Thetis
             {
                 lock (_lockObj)
                 {
-                    if (!isCWModeLocked()) return;
+                    if (!isCwTargetAvailableLocked(rx)) return;
                     if (!tryAcquireOwnershipLocked(owner)) return;
                     if (_keyerPressed) return;
 
@@ -7930,7 +7934,7 @@ namespace Thetis
             {
                 lock (_lockObj)
                 {
-                    if (!isCWModeLocked()) return;
+                    if (!isCwTargetAvailableLocked(rx)) return;
                     if (!tryAcquireOwnershipLocked(owner)) return;
                     if (_keyerPressed) return;
 
@@ -7956,7 +7960,7 @@ namespace Thetis
                         if (_keyerPressed)
                             return;
 
-                        if (!selectKeyerTargetLocked(rx) || !isCWModeLocked())
+                        if (!selectCwTargetLocked(rx) || !isCWModeLocked())
                         {
                             releaseOwnershipIfIdleLocked();
                             return;
@@ -7972,6 +7976,7 @@ namespace Thetis
                         _keyerReleasePending = false;
                         _keyerPressedAtTicks = _keyerStopwatch.ElapsedTicks;
                         _keyerReleaseAtTicks = -1;
+                        _keyerRx = rx;
                         return;
                     }
 
@@ -8007,8 +8012,8 @@ namespace Thetis
 
                 lock (_lockObj)
                 {
-                    if (!_terminalEnabled) return;
                     if (_activeOperation == null) return;
+                    if (!isTerminalEnabledLocked(_activeOperation.Rx)) return;
                     if (_activeOperation.EmptyNotified) return;
                     if (_pendingOperations.Count > 0) return;
                     if (_activeOperation.NextSegmentIndex < _activeOperation.Segments.Count) return;
@@ -8047,6 +8052,7 @@ namespace Thetis
                     _keyerReleasePending = false;
                     _keyerPressedAtTicks = -1;
                     _keyerReleaseAtTicks = -1;
+                    _keyerRx = -1;
                     shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
                         shouldReleaseMox = true;
 
@@ -8093,7 +8099,9 @@ namespace Thetis
                 {
                     if (!isCurrentOwnerLocked(owner)) return;
 
-                    _terminalEnabled = false;
+                    for (int i = 0; i < _terminalEnabledByRx.Length; i++)
+                        _terminalEnabledByRx[i] = false;
+
                     _releaseTerminalTciPttWhenIdle = false;
                 }
 
@@ -8275,7 +8283,14 @@ namespace Thetis
                 {
                     if (_disposed) return;
 
-                    if ((_activeOperation != null || _pendingOperations.Count > 0 || _keyerPressed) && !isCWModeLocked())
+                    if (_activeOperation != null && (!selectCwTargetLocked(_activeOperation.Rx) || !isCWModeLocked()))
+                    {
+                        abortOperationsForNonCWLocked();
+                        return;
+                    }
+
+                    if ((_keyerPressed || _keyerReleasePending) &&
+                        (_keyerRx < 0 || !selectCwTargetLocked(_keyerRx) || !isCWModeLocked()))
                     {
                         abortOperationsForNonCWLocked();
                         return;
@@ -8297,7 +8312,7 @@ namespace Thetis
                     int pendingElements = InvokeOnConsole(c => c.CWXForm.Characters2Send, 0);
                     bool idle = pendingRemote <= 0 && pendingElements <= 0;
 
-                    if (_terminalEnabled &&
+                    if (isTerminalEnabledLocked(_activeOperation.Rx) &&
                         !_activeOperation.EmptyNotified &&
                         _pendingOperations.Count < 1 &&
                         _activeOperation.NextSegmentIndex >= _activeOperation.Segments.Count &&
@@ -8331,9 +8346,22 @@ namespace Thetis
             private void startNextOperationLocked()
             {
                 if (_activeOperation != null || _pendingOperations.Count < 1 || _keyerPressed) return;
-                if (!isCWModeLocked()) return;
+
+                CWTxOperation nextOperation = _pendingOperations.Peek();
+                if (!selectCwTargetLocked(nextOperation.Rx) || !isCWModeLocked())
+                {
+                    abortOperationsForNonCWLocked();
+                    return;
+                }
 
                 _activeOperation = _pendingOperations.Dequeue();
+                if (_terminalTciPttAsserted &&
+                    _terminalTciPttRx != _activeOperation.Rx &&
+                    !isTerminalEnabledLocked(_activeOperation.Rx))
+                {
+                    releaseTerminalTciPttIfOwnedLocked();
+                }
+
                 ensureTerminalTciPttLocked();
                 queueNextSegmentLocked();
             }
@@ -8342,7 +8370,7 @@ namespace Thetis
             {
                 if (_activeOperation == null) return;
                 if (_activeOperation.NextSegmentIndex >= _activeOperation.Segments.Count) return;
-                if (!isCWModeLocked())
+                if (!selectCwTargetLocked(_activeOperation.Rx) || !isCWModeLocked())
                 {
                     abortOperationsForNonCWLocked();
                     return;
@@ -8371,7 +8399,7 @@ namespace Thetis
                 if (completed != null && completed.RestoreBaseSpeed)
                     SetMacroSpeedSilently(completed.BaseSpeedWpm);
 
-                if (!_terminalEnabled || _releaseTerminalTciPttWhenIdle)
+                if (completed == null || !isTerminalEnabledLocked(completed.Rx) || _releaseTerminalTciPttWhenIdle)
                     releaseTerminalTciPttIfOwnedLocked();
 
                 startNextOperationLocked();
@@ -8404,6 +8432,7 @@ namespace Thetis
                 _keyerReleasePending = false;
                 _keyerPressedAtTicks = -1;
                 _keyerReleaseAtTicks = -1;
+                _keyerRx = -1;
                 bool shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
 
                 if (restoreSpeed > 0)
@@ -8438,7 +8467,7 @@ namespace Thetis
 
             private void releaseOwnershipIfIdleLocked()
             {
-                if (!_terminalEnabled && _activeOperation == null && _pendingOperations.Count < 1 &&
+                if (!isAnyTerminalEnabledLocked() && _activeOperation == null && _pendingOperations.Count < 1 &&
                     !_keyerPressed && !_keyerReleasePending)
                     _currentOwner = null;
             }
@@ -8536,6 +8565,7 @@ namespace Thetis
                 _keyerReleasePending = false;
                 _keyerPressedAtTicks = -1;
                 _keyerReleaseAtTicks = -1;
+                _keyerRx = -1;
                 bool shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
 
                 setDirectKeyerState(false);
@@ -8551,7 +8581,13 @@ namespace Thetis
                 _keyerScheduleEvent.Set();
             }
 
-            private bool selectKeyerTargetLocked(int rx)
+            private bool isCwTargetAvailableLocked(int rx)
+            {
+                if (rx != 1) return true;
+                return InvokeOnConsole(c => c.RX2Enabled, false);
+            }
+
+            private bool selectCwTargetLocked(int rx)
             {
                 return InvokeOnConsole(c =>
                 {
@@ -8575,15 +8611,20 @@ namespace Thetis
 
             private void ensureTerminalTciPttLocked()
             {
-                if (!_terminalEnabled) return;
-                if (_terminalTciPttAsserted) return;
-                if (_activeOperation == null && _pendingOperations.Count < 1) return;
+                if (_activeOperation == null) return;
+                if (!isTerminalEnabledLocked(_activeOperation.Rx)) return;
+                if (_terminalTciPttAsserted)
+                {
+                    _terminalTciPttRx = _activeOperation.Rx;
+                    return;
+                }
 
                 bool alreadyTciPtt = InvokeOnConsole(c => c.TCIPTT, false);
                 if (!alreadyTciPtt)
                 {
                     InvokeOnConsole(c => c.TCIPTT = true);
                     _terminalTciPttAsserted = true;
+                    _terminalTciPttRx = _activeOperation.Rx;
                 }
             }
 
@@ -8593,7 +8634,24 @@ namespace Thetis
                     InvokeOnConsole(c => c.TCIPTT = false);
 
                 _terminalTciPttAsserted = false;
+                _terminalTciPttRx = -1;
                 _releaseTerminalTciPttWhenIdle = false;
+            }
+
+            private bool isTerminalEnabledLocked(int rx)
+            {
+                return rx >= 0 && rx < _terminalEnabledByRx.Length && _terminalEnabledByRx[rx];
+            }
+
+            private bool isAnyTerminalEnabledLocked()
+            {
+                for (int i = 0; i < _terminalEnabledByRx.Length; i++)
+                {
+                    if (_terminalEnabledByRx[i])
+                        return true;
+                }
+
+                return false;
             }
 
             private bool beginDirectKeyerLocked()
