@@ -234,13 +234,13 @@
             this.panelTS14 = new System.Windows.Forms.PanelTS();
             this.radViaAllNics = new System.Windows.Forms.RadioButtonTS();
             this.radViaSpecificNic = new System.Windows.Forms.RadioButtonTS();
+            this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.panelTS7 = new System.Windows.Forms.PanelTS();
             this.txtSpecificRadio = new System.Windows.Forms.TextBoxTS();
             this.radSpecificRadio = new System.Windows.Forms.RadioButtonTS();
             this.radAnyRadio = new System.Windows.Forms.RadioButtonTS();
             this.btnRefreshNics = new System.Windows.Forms.ButtonTS();
             this.chkFirewallCheck = new System.Windows.Forms.ButtonTS();
-            this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.chkNetworkThrottleIndexTweak = new System.Windows.Forms.CheckBoxTS();
             this.grpGeneralModel = new System.Windows.Forms.GroupBoxTS();
             this.picModelBoardWarning = new System.Windows.Forms.PictureBox();
@@ -3157,6 +3157,7 @@
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
             this.groupBoxTS70 = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnWaterfall_time_label_colour = new Thetis.ColorButton();
             this.panelTS16 = new System.Windows.Forms.PanelTS();
             this.radWaterfall_timelab_local = new System.Windows.Forms.RadioButtonTS();
             this.radWaterfall_timelab_utc = new System.Windows.Forms.RadioButtonTS();
@@ -8181,7 +8182,6 @@
             this.grpOzyType.Controls.Add(this.panelTS7);
             this.grpOzyType.Controls.Add(this.btnRefreshNics);
             this.grpOzyType.Controls.Add(this.chkFirewallCheck);
-            this.grpOzyType.Controls.Add(this.chkNetworkWDT);
             this.grpOzyType.Controls.Add(this.chkNetworkThrottleIndexTweak);
             this.grpOzyType.Location = new System.Drawing.Point(174, 8);
             this.grpOzyType.Name = "grpOzyType";
@@ -8400,6 +8400,7 @@
             this.panelTS14.BackColor = System.Drawing.Color.Transparent;
             this.panelTS14.Controls.Add(this.radViaAllNics);
             this.panelTS14.Controls.Add(this.radViaSpecificNic);
+            this.panelTS14.Controls.Add(this.chkNetworkWDT);
             this.panelTS14.Location = new System.Drawing.Point(110, 18);
             this.panelTS14.Name = "panelTS14";
             this.panelTS14.Size = new System.Drawing.Size(108, 52);
@@ -8432,6 +8433,19 @@
             this.toolTip1.SetToolTip(this.radViaSpecificNic, "Discover via a specific NIC");
             this.radViaSpecificNic.UseVisualStyleBackColor = true;
             this.radViaSpecificNic.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
+            // 
+            // chkNetworkWDT
+            // 
+            this.chkNetworkWDT.Checked = true;
+            this.chkNetworkWDT.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNetworkWDT.Image = null;
+            this.chkNetworkWDT.Location = new System.Drawing.Point(323, 23);
+            this.chkNetworkWDT.Name = "chkNetworkWDT";
+            this.chkNetworkWDT.Size = new System.Drawing.Size(120, 17);
+            this.chkNetworkWDT.TabIndex = 16;
+            this.chkNetworkWDT.Text = "Network Watchdog";
+            this.toolTip1.SetToolTip(this.chkNetworkWDT, "Resets software/firmware if network becomes inactive.");
+            this.chkNetworkWDT.CheckedChanged += new System.EventHandler(this.chkNetworkWDT_CheckedChanged);
             // 
             // panelTS7
             // 
@@ -8509,19 +8523,6 @@
         "ds to be run as administrator for this to work.\r\n");
             this.chkFirewallCheck.UseVisualStyleBackColor = true;
             this.chkFirewallCheck.Click += new System.EventHandler(this.chkFirewallCheck_Click);
-            // 
-            // chkNetworkWDT
-            // 
-            this.chkNetworkWDT.Checked = true;
-            this.chkNetworkWDT.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNetworkWDT.Image = null;
-            this.chkNetworkWDT.Location = new System.Drawing.Point(312, 19);
-            this.chkNetworkWDT.Name = "chkNetworkWDT";
-            this.chkNetworkWDT.Size = new System.Drawing.Size(120, 17);
-            this.chkNetworkWDT.TabIndex = 16;
-            this.chkNetworkWDT.Text = "Network Watchdog";
-            this.toolTip1.SetToolTip(this.chkNetworkWDT, "Resets software/firmware if network becomes inactive.");
-            this.chkNetworkWDT.CheckedChanged += new System.EventHandler(this.chkNetworkWDT_CheckedChanged);
             // 
             // chkNetworkThrottleIndexTweak
             // 
@@ -52216,16 +52217,30 @@
             // 
             // groupBoxTS70
             // 
+            this.groupBoxTS70.Controls.Add(this.clrbtnWaterfall_time_label_colour);
             this.groupBoxTS70.Controls.Add(this.panelTS16);
             this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_right);
             this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_left);
             this.groupBoxTS70.Controls.Add(this.radWaterfall_timelab_none);
             this.groupBoxTS70.Location = new System.Drawing.Point(8, 269);
             this.groupBoxTS70.Name = "groupBoxTS70";
-            this.groupBoxTS70.Size = new System.Drawing.Size(167, 72);
+            this.groupBoxTS70.Size = new System.Drawing.Size(294, 72);
             this.groupBoxTS70.TabIndex = 94;
             this.groupBoxTS70.TabStop = false;
             this.groupBoxTS70.Text = "Waterfall Time Labels";
+            // 
+            // clrbtnWaterfall_time_label_colour
+            // 
+            this.clrbtnWaterfall_time_label_colour.Automatic = "Automatic";
+            this.clrbtnWaterfall_time_label_colour.Color = System.Drawing.Color.White;
+            this.clrbtnWaterfall_time_label_colour.Image = null;
+            this.clrbtnWaterfall_time_label_colour.Location = new System.Drawing.Point(178, 29);
+            this.clrbtnWaterfall_time_label_colour.MoreColors = "More Colors...";
+            this.clrbtnWaterfall_time_label_colour.Name = "clrbtnWaterfall_time_label_colour";
+            this.clrbtnWaterfall_time_label_colour.Selectable = true;
+            this.clrbtnWaterfall_time_label_colour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaterfall_time_label_colour.TabIndex = 77;
+            this.clrbtnWaterfall_time_label_colour.Changed += new System.EventHandler(this.clrbtnWaterfall_time_label_colour_Changed);
             // 
             // panelTS16
             // 
@@ -77172,5 +77187,6 @@
         private RadioButtonTS radWaterfall_timelab_left;
         private RadioButtonTS radWaterfall_timelab_none;
         private CheckBoxTS chkTCI_spot_flags;
+        private ColorButton clrbtnWaterfall_time_label_colour;
     }
 }
