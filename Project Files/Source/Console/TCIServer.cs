@@ -995,7 +995,10 @@ namespace Thetis
         private unsafe int resampleRxAudioSamples(int receiver, int inputRate, int targetRate, float[] left, float[] right, int samples, out float[] leftOut, out float[] rightOut, out bool resampled)
         {
             leftOut = left;
-            rightOut = right ?? left;
+            if (right != null)
+                rightOut = right;
+            else
+                rightOut = left;
             resampled = false;
 
             if (left == null || samples <= 0)
@@ -2765,11 +2768,10 @@ namespace Thetis
 
             try
             {
-                (server ?? m_server)?.OnSocketListenerDisconnected(this);
+                TCPIPtciServer target = server != null ? server : m_server;
+                target?.OnSocketListenerDisconnected(this);
             }
-            catch
-            {
-            }
+            catch { }
         }
 		private void sendPingFrame(string sMsg)
 		{
@@ -3496,9 +3498,17 @@ namespace Thetis
                 bool ownsActiveTciPtt = false;
 
                 if (wantsActiveTciPtt)
-                    ownsActiveTciPtt = m_server?.TryAcquireActiveTxAudioListener(this) ?? true;
+                {
+                    if (m_server != null)
+                        ownsActiveTciPtt = m_server.TryAcquireActiveTxAudioListener(this);
+                    else
+                        ownsActiveTciPtt = true;
+                }
                 else
-                    m_server?.ReleaseActiveTxAudioListener(this);
+                {
+                    if (m_server != null)
+                        m_server.ReleaseActiveTxAudioListener(this);
+                }
 
                 lock (m_objStreamLock)
                 {
@@ -8127,7 +8137,11 @@ namespace Thetis
 
             private static string translateAbbreviationToken(string token)
             {
-                switch ((token ?? string.Empty).Trim().ToUpperInvariant())
+                string value = token;
+                if (value == null)
+                    value = string.Empty;
+
+                switch (value.Trim().ToUpperInvariant())
                 {
                     case "SK": return "*";
                     case "AR": return "+";
@@ -8136,21 +8150,23 @@ namespace Thetis
                     case "BT": return "=";
                     case "BK": return "\\";
                     case "AS": return "%";
-                    default: return token ?? string.Empty;
+                    default: return value;
                 }
             }
 
-            private static string buildRepeatedCallsign(string callsignBase, int repeatCount)
+            private static string buildRepeatedCallsign(string callsign, int repeatCount)
             {
-                callsignBase = (callsignBase ?? string.Empty).Trim();
-                if (repeatCount < 2) return callsignBase;
-                return string.Join(" ", Enumerable.Repeat(callsignBase, repeatCount));
+                string tmp = callsign != null ? callsign : string.Empty;
+                callsign = tmp.Trim();
+                if (repeatCount < 2) return callsign;
+                return string.Join(" ", Enumerable.Repeat(callsign, repeatCount));
             }
 
             private static string parseCallsignBase(string callsign, out int repeatCount)
             {
                 repeatCount = 1;
-                callsign = (callsign ?? string.Empty).Trim();
+                string tmp = callsign != null ? callsign : string.Empty;
+                callsign = tmp.Trim();
 
                 int dollarIndex = callsign.LastIndexOf('$');
                 if (dollarIndex > 0 && dollarIndex < callsign.Length - 1 &&

@@ -12210,7 +12210,14 @@ namespace Thetis
                     int rate = ARP.SampleRate;
 
                     string datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                    string file = file = $"{details.Mode}_{details.Frequency}MHz_[{bitdepth.ToString()}bits_{rate.ToString()}Hz]_{datetime}.wav";
+                    string file = $"{details.Mode}_{details.Frequency}MHz_[{bitdepth.ToString()}bits_{rate.ToString()}Hz]_{datetime}.wav";
+
+                    string invalid = new string(Path.GetInvalidFileNameChars());
+                    foreach (char c in invalid)
+                    {
+                        file = file.Replace(c, '_');
+                    }
+
                     string file_path = Path.Combine(ARP.AudioFolder, "scheduled", file);
 
                     ARP.RecordToFileFromWDSP("scheduled", file_path, 0, out string error, true, details, true);
