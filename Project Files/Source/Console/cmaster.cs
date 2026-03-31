@@ -533,7 +533,7 @@ namespace Thetis
             SetPSRxIdx(0, 0);   // txid = 0, all current models use Stream0 for RX feedback
             SetPSTxIdx(0, 1);   // txid = 0, all current models use Stream1 for TX feedback
             puresignal.SetPSFeedbackRate(txch, ps_rate);
-            puresignal.SetPSHWPeak(txch, 0.2899);
+            //puresignal.SetPSHWPeak(txch, 0.2899);     // MI0BOT: Corrected for in CMLoadRouterAll()
 
             // setup transmitter display
             WDSP.TXASetSipMode(txch, 1);            // 1=>call the appropriate 'analyzer'
@@ -562,6 +562,8 @@ namespace Thetis
         {
             int txinid = cmaster.inid(1, 0);        // stream id
             int txch = cmaster.chid(txinid, 0);     // wdsp channel
+
+            puresignal.SetPSHWPeak(txch, HardwareSpecific.PSDefaultPeak);   // MI0BOT: Correct for correct PS value
 
             switch (NetworkIO.CurrentRadioProtocol)
             {

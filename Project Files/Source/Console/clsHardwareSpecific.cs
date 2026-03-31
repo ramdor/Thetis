@@ -318,6 +318,8 @@ namespace Thetis
                 { //protocol 2
                     switch (_hardware)
                     {
+                        case HPSDRHW.HermesLite:
+                            return 0.233;
                         case HPSDRHW.Saturn:
                             return 0.6121;
                         default:
