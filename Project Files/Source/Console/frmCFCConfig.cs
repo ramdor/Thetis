@@ -372,12 +372,21 @@ namespace Thetis
 
             int nfreqs = cf.Length;
 
+            bool use_q = ucCFC_comp.ParametricEQ && ucCFC_eq.ParametricEQ;
+
             //profile
             unsafe
             {
                 fixed (double* Fptr = &cf[0], Gptr = &cg[0], Eptr = &eg[0], GQptr = &cq[0], EQptr = &eq[0])
                 {
-                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, GQptr, EQptr);
+                    if (use_q)
+                    {
+                        WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, GQptr, EQptr);
+                    }
+                    else
+                    {
+                        WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr, null, null);
+                    }
                 }
             }
         }
