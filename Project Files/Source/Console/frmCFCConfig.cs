@@ -233,7 +233,8 @@ namespace Thetis
 
         private void ucCFC_comp_PointsChanged(object sender, ucParametricEq.EqDraggingEventArgs e)
         {
-
+            if (e.IsDragging) return;
+            setCFCProfile();
         }
 
         private void ucCFC_comp_PointSelected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
@@ -283,7 +284,8 @@ namespace Thetis
 
         private void ucCFC_eq_PointsChanged(object sender, ucParametricEq.EqDraggingEventArgs e)
         {
-
+            if (e.IsDragging) return;
+            setCFCProfile();
         }
 
         private void ucCFC_eq_PointSelected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
@@ -439,12 +441,14 @@ namespace Thetis
 
         private void btnResetComp_Click(object sender, EventArgs e)
         {
+            ucCFC_comp.SelectedIndex = -1;
             ucCFC_comp.GlobalGainDb = 0;
             ucCFC_comp.ResetPoints();
         }
 
         private void btnResetEQ_Click(object sender, EventArgs e)
         {
+            ucCFC_eq.SelectedIndex = -1;
             ucCFC_eq.GlobalGainDb = 0;
             ucCFC_eq.ResetPoints();
         }
