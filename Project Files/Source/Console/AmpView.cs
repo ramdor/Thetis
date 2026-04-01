@@ -57,13 +57,12 @@ namespace Thetis
 {
     public unsafe partial class AmpView : Form
     {
-        private PSForm psform;
+        private PSForm _psform;
         public AmpView(PSForm ps)
         {
             InitializeComponent();
             Common.DoubleBufferAll(this, true);
-
-            psform = ps;
+            _psform = ps;
         }
 
         //GCHandle hx, hym, hyc, hys, hcm, hcc, hcs;
@@ -86,7 +85,7 @@ namespace Thetis
         {
             Common.FadeIn(this);
 
-            PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
+            /*PSForm.ampv.*/this.ClientSize = new System.Drawing.Size(560, 445); //
             Common.RestoreForm(this, "AmpView", true); //[2.10.3.5]MW0LGE  #292
             //hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
             //hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
@@ -95,14 +94,15 @@ namespace Thetis
             //hcm = GCHandle.Alloc(cm, GCHandleType.Pinned);
             //hcc = GCHandle.Alloc(cc, GCHandleType.Pinned);
             //hcs = GCHandle.Alloc(cs, GCHandleType.Pinned);
-            double delta = 1.0 / (double)psform.Ints;
+            double delta = 1.0 / (double)_psform.Ints;
             t[0] = 0.0;
-            for (int i = 1; i <= psform.Ints; i++)
+            for (int i = 1; i <= _psform.Ints; i++)
                 t[i] = t[i - 1] + delta;
             EventArgs ex = EventArgs.Empty;
             chkAVShowGain_CheckedChanged(this, ex);
             chkAVLowRes_CheckedChanged(this, ex);
             chkAVPhaseZoom_CheckedChanged(this, ex);
+            chkStayOnTop_CheckedChanged(this, ex);
         }
         private void disp_setup()
         {
@@ -325,11 +325,11 @@ namespace Thetis
 
         private bool _init = true;
         private bool _is_closing = false;
-        private bool _in_timer = false;
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
-            this.TopMost = chkStayOnTop.Checked;
+            //this.TopMost = chkStayOnTop.Checked;
+            FixOnTop();
         }
 
         public void CloseDown()
@@ -404,8 +404,8 @@ namespace Thetis
                 chart1.Series["MagAmp"].Points.SuspendUpdates();
                 chart1.Series["PhsAmp"].Points.SuspendUpdates();
 
-                int ints = psform.Ints;
-                int spi = psform.Spi;
+                int ints = _psform.Ints;
+                int spi = _psform.Spi;
                 int instSpiTot = ints * spi;
                 if (_oldIntsSpi != instSpiTot)
                 {
@@ -485,5 +485,44 @@ namespace Thetis
         {
             PSForm.ampv = null;
         }
+
+        //
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
+
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_SHOWWINDOW = 0x0040;
+
+        public void FixOnTop()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                BeginInvoke((MethodInvoker)FixOnTop);
+                return;
+            }
+
+            if (!IsHandleCreated) return;
+
+            bool want_top = chkStayOnTop.Checked;
+
+            TopMost = want_top;
+
+            IntPtr insert_after = want_top ? HWND_TOPMOST : HWND_NOTOPMOST;
+            SetWindowPos(Handle, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            FixOnTop();
+        }
+        //
     }
 }

@@ -197,13 +197,6 @@ namespace Thetis
             if (!ds.Tables.Contains("BandText"))
                 AddBandTextTable();
 
-            //MW0LGE_21d BandStack2
-            //if (!ds.Tables.Contains("BandStack"))
-            //{
-            //    AddBandStackTable();
-            //    AddBandStackSWL(); // ke9ns add
-            //}
-
             //-BandStack2 MW0LGE_21d
             if (!ds.Tables.Contains("BandStack2Entries"))
             {
@@ -4311,6 +4304,12 @@ namespace Thetis
             t.Columns.Add("Name", typeof(string));
             t.Columns.Add("FilterLow", typeof(int));
             t.Columns.Add("FilterHigh", typeof(int));
+
+            //
+            t.Columns.Add("RXParaEQData", typeof(string));
+            t.Columns.Add("TXParaEQData", typeof(string));
+            //
+
             t.Columns.Add("TXEQNumBands", typeof(int));
             t.Columns.Add("TXEQEnabled", typeof(bool));
             t.Columns.Add("TXEQPreamp", typeof(int));
@@ -4538,12 +4537,18 @@ namespace Thetis
             t.Columns.Add("CFCEqFreq8", typeof(int));
             t.Columns.Add("CFCEqFreq9", typeof(int));
 
+            t.Columns.Add("CFCParaEQData", typeof(string));            
+
             #region Default
 
             DataRow dr = t.NewRow();
             dr["Name"] = "Default";
             dr["FilterLow"] = 100;
             dr["FilterHigh"] = 3000;
+            //
+            dr["RXParaEQData"] = "";
+            dr["TXParaEQData"] = "";
+            //
             dr["TXEQNumBands"] = 10;
             dr["TXEQEnabled"] = false;
             dr["TXEQPreamp"] = 0;
@@ -4760,6 +4765,8 @@ namespace Thetis
             dr["CFCEqFreq8"] = 5000;
             dr["CFCEqFreq9"] = 10000;
 
+            dr["CFCParaEQData"] = "";
+
             t.Rows.Add(dr);
 
             #endregion
@@ -4770,6 +4777,10 @@ namespace Thetis
             dr["Name"] = "Default DX";
             dr["FilterLow"] = 200;
             dr["FilterHigh"] = 3100;
+            //
+            dr["RXParaEQData"] = "";
+            dr["TXParaEQData"] = "";
+            //
             dr["TXEQNumBands"] = 10;
             dr["TXEQEnabled"] = false;
             dr["TXEQPreamp"] = 0;
@@ -4984,6 +4995,8 @@ namespace Thetis
             dr["CFCEqFreq8"] = 5000;
             dr["CFCEqFreq9"] = 10000;
 
+            dr["CFCParaEQData"] = "";
+
             t.Rows.Add(dr);
 
             #endregion
@@ -4996,6 +5009,10 @@ namespace Thetis
                 dr["Name"] = "Digi 1K@1500";
                 dr["FilterLow"] = 1000;
                 dr["FilterHigh"] = 2000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5209,6 +5226,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5220,6 +5239,10 @@ namespace Thetis
                 dr["Name"] = "Digi 1K@2210";
                 dr["FilterLow"] = 1710;
                 dr["FilterHigh"] = 2710;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5433,6 +5456,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5443,6 +5468,10 @@ namespace Thetis
                 dr["Name"] = "AM";
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 4000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5656,6 +5685,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5666,6 +5697,10 @@ namespace Thetis
                 dr["Name"] = "Conventional";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5879,6 +5914,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -5889,6 +5926,10 @@ namespace Thetis
                 dr["Name"] = "D-104";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = -6;
@@ -6102,6 +6143,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6112,6 +6155,10 @@ namespace Thetis
                 dr["Name"] = "D-104+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = -6;
@@ -6325,6 +6372,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6335,6 +6384,10 @@ namespace Thetis
                 dr["Name"] = "D-104+EQ";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -6;
@@ -6548,6 +6601,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6558,6 +6613,10 @@ namespace Thetis
                 dr["Name"] = "DX / Contest";
                 dr["FilterLow"] = 250;
                 dr["FilterHigh"] = 3250;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -6771,6 +6830,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -6781,6 +6842,10 @@ namespace Thetis
                 dr["Name"] = "ESSB";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -6994,6 +7059,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7004,6 +7071,10 @@ namespace Thetis
                 dr["Name"] = "HC4-5";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7216,6 +7287,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 4000;
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -7227,6 +7300,10 @@ namespace Thetis
                 dr["Name"] = "HC4-5+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7440,6 +7517,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7450,6 +7529,10 @@ namespace Thetis
                 dr["Name"] = "PR40+W2IHY";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7663,6 +7746,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7673,6 +7758,10 @@ namespace Thetis
                 dr["Name"] = "PR40+W2IHY+CPDR";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7886,6 +7975,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -7896,6 +7987,10 @@ namespace Thetis
                 dr["Name"] = "PR781+EQ";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -11;
@@ -8109,6 +8204,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8119,6 +8216,10 @@ namespace Thetis
                 dr["Name"] = "PR781+EQ+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -9;
@@ -8332,6 +8433,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 5000;
                 dr["CFCEqFreq9"] = 10000;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8342,6 +8445,10 @@ namespace Thetis
                 dr["Name"] = "SSB 2.8k CFC";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 2900;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -8555,6 +8662,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 2900;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8565,6 +8674,10 @@ namespace Thetis
                 dr["Name"] = "SSB 3.0k CFC";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -8778,6 +8891,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 3100;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -8788,6 +8903,10 @@ namespace Thetis
                 dr["Name"] = "SSB 3.3k CFC";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3350;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -9001,6 +9120,8 @@ namespace Thetis
                 dr["CFCEqFreq8"] = 2600;
                 dr["CFCEqFreq9"] = 3350;
 
+                dr["CFCParaEQData"] = "";
+
                 t.Rows.Add(dr);
 
                 #endregion
@@ -9011,6 +9132,10 @@ namespace Thetis
                 dr["Name"] = "AM 10k CFC";
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 5000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -9223,6 +9348,8 @@ namespace Thetis
                 dr["CFCEqFreq7"] = 3000;
                 dr["CFCEqFreq8"] = 4000;
                 dr["CFCEqFreq9"] = 5000;
+
+                dr["CFCParaEQData"] = "";
 
                 t.Rows.Add(dr);
 
@@ -10724,9 +10851,9 @@ namespace Thetis
                             newDB.Merge(current_inuseDB_table);
                             log += "New table not found in imported database: " + current_inuseDB_table.TableName + "\n";
                             break;
-                        }
+                        }                     
 
-                        // For each row of existingDB table, if there is matching key in corresponding oldDB table, 
+                        // For each row of existingDB current in use table, if there is matching key in corresponding oldDB table, 
                         // copy that entry, else take the existing one, into tempMergedTable.                        
 
                         foreach (DataRow row in current_inuseDB_table.Rows)
@@ -10941,6 +11068,42 @@ namespace Thetis
                         }
                         //
 
+                        // this block of code uses a string that contains all the default settings, and it will look for these in the db
+                        // that is being merged. If they are in the db, then they are imported, unless they are already there.
+                        if (tempTable.TableName == "State")
+                        {
+                            List<string> all_settings = null;
+                            try
+                            {
+                                all_settings = Common.DeserializeFromBase64<List<string>>(_default_settings);
+                            }
+                            catch { }
+
+                            if(all_settings != null)
+                            {
+                                foreach(string s in all_settings)
+                                {
+                                    string[] parts = s.Split('/');
+                                    if(parts.Length == 2)
+                                    {
+                                        string key = parts[0];
+                                        string value = parts[1];
+                                        string selector = "Key = '" + key + "'";
+                                        DataRow[] foundRow = tempTable.Select(selector);
+                                        if (foundRow.Length >= 1)
+                                        {
+                                            // found in the table being imported, lets check we dont alrady have it, if we do, ignore as would have been done above
+                                            DataRow[] already_exists = tempMergedTable.Select(selector);
+                                            if (already_exists.Length == 0)
+                                            {
+                                                tempMergedTable.ImportRow(foundRow[0]);
+                                            }                                                
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         // Merge in the assembled temp table into mergedDB 
                         newDB.Merge(tempMergedTable);
                         log += "Imported table <" + current_inuseDB_table.TableName + "> into database.\n";
@@ -10975,6 +11138,11 @@ namespace Thetis
             return true;
         }
         //
+
+        // this is a string generated by console StateListToBase64 to get default settings to apply to state table
+        // it is a complete hack, but the console object is not available in merge as it is happening in the cosntructor
+        // this should be updated from time to time
+        private static string _default_settings = "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";
 
         //--MW0LGE
         private static bool getRadioSelectedFromOldRadButton(ref DataTable tempTable, string sRadButtonName)

@@ -4,6 +4,7 @@
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
 // Copyright (C) 2010-2020  Doug Wigley
+// Copyright (C) 2019-2026  Richard Samphire
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -215,12 +216,12 @@ namespace Thetis
             set { rx2_dsp_mode = value; }
         }
         
-        private static double sample_rate = 48000.0;
+        //private static double sample_rate = 48000.0;
         private static int rx1_dsp_rate = 48000;
         private static int rx2_dsp_rate = 48000;
 		public static double SampleRate
 		{
-			get { return sample_rate; }
+			//get { return sample_rate; }
 			set 
 			{
                 switch (rx1_dsp_mode)
@@ -243,7 +244,7 @@ namespace Thetis
                         break;
                 }
                 
-                sample_rate = value;
+                //sample_rate = value;
 				WDSP.SetDSPSamplerate(WDSP.id(0, 0), rx1_dsp_rate);
 				WDSP.SetDSPSamplerate(WDSP.id(0, 1), rx1_dsp_rate);
 				WDSP.SetDSPSamplerate(WDSP.id(2, 0), rx2_dsp_rate);
@@ -289,15 +290,18 @@ namespace Thetis
             this.SetANFVals(rx.anf_taps, rx.anf_delay, rx.anf_gain, rx.anf_leak);
             this.RXAGCMode = rx.rx_agc_mode;
             this.RXEQNumBands = rx_eq_num_bands;
-            if (this.rx_eq_num_bands == 3)
+            if (this.LegacyEQ)
             {
-                this.RXEQ10 = rx.rx_eq10;
-                this.RXEQ3 = rx.rx_eq3;
-            }
-            else
-            {
-                this.RXEQ3 = rx.rx_eq3;
-                this.RXEQ10 = rx.rx_eq10;
+                if (this.rx_eq_num_bands == 3)
+                {
+                    this.RXEQ10 = rx.rx_eq10;
+                    this.RXEQ3 = rx.rx_eq3;
+                }
+                else
+                {
+                    this.RXEQ3 = rx.rx_eq3;
+                    this.RXEQ10 = rx.rx_eq10;
+                }
             }
             this.RXEQOn = rx.rx_eq_on;
             this.NBThreshold = rx.nb_threshold;
@@ -329,6 +333,7 @@ namespace Thetis
             this.RXANFPosition = rx.rx_anf_position;
             this.RXANRPosition = rx.rx_anr_position;
             this.RXCBLRun = rx.rx_cbl_run;
+            this.RXCBLPosition = rx.rx_cbl_position;
             this.RXAMDFadeLevel = rx.rx_amd_fadelevel;
             this.RXAMDSBMode = rx.rx_amd_sbmode;
             this.RXBandpassWindow = rx.rx_bandpass_window;
@@ -364,6 +369,7 @@ namespace Thetis
             //
             this.RXANR3Run = rx.rx_nr3_run;
             this.RXANR3Position = rx.rx_nr3_position;
+            this.RXANR3FixedGain = rx.rx_nr3_fixed_gain;
             this.RXANR4Run = rx.rx_nr4_run;
             this.RXANR4Position = rx.rx_nr4_position;
             this.RXASBNRreductionAmount = rx.rx_nr4_reductionAmount;
@@ -388,17 +394,20 @@ namespace Thetis
 			AutoNotchFilter = auto_notch_filter;
 			SetANFVals(anf_taps, anf_delay, anf_gain, anf_leak);
 			RXAGCMode = rx_agc_mode;
-			if(rx_eq_num_bands == 3)
-			{
-				RXEQ10 = rx_eq10;
-				RXEQ3 = rx_eq3;
-			}
-			else
-			{
-				RXEQ3 = rx_eq3;
-				RXEQ10 = rx_eq10;
-			}
-			RXEQOn = rx_eq_on;
+            if (LegacyEQ)
+            {
+                if (rx_eq_num_bands == 3)
+                {
+                    RXEQ10 = rx_eq10;
+                    RXEQ3 = rx_eq3;
+                }
+                else
+                {
+                    RXEQ3 = rx_eq3;
+                    RXEQ10 = rx_eq10;
+                }
+            }
+            RXEQOn = rx_eq_on;
 			NBThreshold = nb_threshold;
             NBTau = nb_tau;
             NBAdvTime = nb_advtime;
@@ -427,6 +436,7 @@ namespace Thetis
             RXANFPosition = rx_anf_position;
             RXANRPosition = rx_anr_position;
             RXCBLRun = rx_cbl_run;
+            RXCBLPosition = rx_cbl_position;
             RXAMDFadeLevel = rx_amd_fadelevel;
             RXAMDSBMode = rx_amd_sbmode;
             RXBandpassWindow = rx_bandpass_window;
@@ -462,6 +472,7 @@ namespace Thetis
             //
             RXANR3Run = rx_nr3_run;
             RXANR3Position = rx_nr3_position;
+            RXANR3FixedGain = rx_nr3_fixed_gain;
             RXANR4Run = rx_nr4_run;
             RXANR4Position = rx_nr4_position;
             RXASBNRreductionAmount = rx_nr4_reductionAmount;
@@ -759,8 +770,14 @@ namespace Thetis
 			get { return rx_eq_num_bands; }
 			set { rx_eq_num_bands = value; }
 		}
-        
-		private int[] rx_eq3_dsp = new int[4];
+        private bool _legacy_eq = true;
+        public bool LegacyEQ
+        {
+            get { return _legacy_eq; }
+            set { _legacy_eq = value; }
+        }
+
+        private int[] rx_eq3_dsp = new int[4];
 		private int[] rx_eq3 = new int[4];
 		public int[] RXEQ3
 		{
@@ -1641,6 +1658,25 @@ namespace Thetis
             }
         }
 
+        private int rx_cbl_position_dsp = 1; //0=before agc, 1=after
+        private int rx_cbl_position = 1;
+        public int RXCBLPosition
+        {
+            get { return rx_cbl_position; }
+            set
+            {
+                rx_cbl_position = value;
+                if (update)
+                {
+                    if (value != rx_cbl_position_dsp || force)
+                    {
+                        WDSP.SetRXACBLPosition(WDSP.id(thread, subrx), value);
+                        rx_cbl_position_dsp = value;
+                    }
+                }
+            }
+        }
+
         private int rx_amd_fadelevel_dsp = 1;
         private int rx_amd_fadelevel = 1;
         public int RXAMDFadeLevel
@@ -2252,7 +2288,24 @@ namespace Thetis
                 }
             }
         }
-
+        private int rx_nr3_fixed_gain = 1;
+        private int rx_nr3_fixed_gain_dsp = 1;
+        public int RXANR3FixedGain
+        {
+            get { return rx_nr3_fixed_gain; }
+            set
+            {
+                rx_nr3_fixed_gain = value;
+                if (update)
+                {
+                    if (value != rx_nr3_fixed_gain_dsp || force)
+                    {
+                        WDSP.SetRXARNNRUseDefaultGain(WDSP.id(thread, subrx), value);
+                        rx_nr3_fixed_gain_dsp = value;
+                    }
+                }
+            }
+        }
         //libspecbleach
         private int rx_nr4_run = 0;
         private int rx_nr4_run_dsp = 0;

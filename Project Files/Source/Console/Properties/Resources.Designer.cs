@@ -19,7 +19,7 @@ namespace Thetis.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -233,6 +233,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Command_Refresh_16 {
+            get {
+                object obj = ResourceManager.GetObject("Command-Refresh-16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap cont_copy {
             get {
                 object obj = ResourceManager.GetObject("cont_copy", resourceCulture);
@@ -291,7 +301,7 @@ namespace Thetis.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to H4sIAAAAAAAEAMS9d3gTV9f2a7ksECW0AKnEISQBQgBjagLBlmzL3bLlRvrYFraCLRHZhkAa6b333nvvPZDee++9996Ts9bse8krz/uc95zr+v74yKXl39wa394zs2fvtfeUZAWysrL+4X/yU/4Ny+awQ2NXvC/ROy2/OZ7uTaSSi2ZNL5g5vXD6vGn54f7uvv50fFEy3t+X9rqn5Uf727oT7VXxVY2pZfHkomR/d3eumB0YiK3q7Yv3TA+nurvj7X1s0zs9Ek/G04n26dWJ3r7dC3bayf0dXqU/2ZdeVeL1edtE0/Glib0Ep+X/nxVjl11yuBy0W4JL0Zu3W29idXzwbiucVW5W1mb/6x/faRfZEYMHB8Vjx4D7DJKFLH9X8be5m/6vDvL7wVwJeRJIwiAJgyUEJQyRMFTCMAnDJawnYYSEkRJGSRgtYYyE9SWMlTBOwngJG0jYUMJGEjaWsImETSVMkLCZhHwJm0uYKGELCZMkbClhKwlbS5gsYYqE [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to H4sIAAAAAAAEAMS9d3xU1RY/mrqSgyC9iIgREAERCQlNQZKZJJNkZpLJzKSAqJwkQzKSzOAkodmw916u/dp7bxe9ltgb9u61YG+oWFBU1LfW3mtNVrz3/d77fN4fDz+z9tfvnPOdffbZe+21yznJyMzIyPgL/1FK/wZmoVkUbY91x7umFzTEUl3xZGLhrBmFM2cUzSgsml7g7eno7knFFiZiPd0pt2N6QainuSPe4o+tjSZXxBILEz0dHTmkdkxmZG1Xd6xzhjfZ0RFr6Uadrhm+WCKWirfMCMS7upcV7r+//SE8pCfRnVpb5na7e4ZSseXxNQSnF/x/zMcBB2RjRuCgOGajK/egrvi6WP5Bq6xWTkbGrv/HX9//ACqK/HyHNJZk2k8e/U+GKSz8NmeX/6MCne/kkMklA2TyyOSTccgMILMDmYFkBpHZkcxgMkPIDCUzjMxwMiPIjCQzisxoMmPI7ERmLJmdyYwjswuZ8WR2JVNAZjcyE8hMJDOJzO5k [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string cty {
             get {
@@ -506,6 +516,73 @@ namespace Thetis.Properties {
             get {
                 object obj = ResourceManager.GetObject("download", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap eye_black_24 {
+            get {
+                object obj = ResourceManager.GetObject("eye_black_24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap eye_black_32 {
+            get {
+                object obj = ResourceManager.GetObject("eye_black_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flagatlas_image {
+            get {
+                object obj = ResourceManager.GetObject("flagatlas_image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;image&quot;: &quot;atlas.png&quot;,
+        ///  &quot;width&quot;: 308,
+        ///  &quot;height&quot;: 320,
+        ///  &quot;tile_width&quot;: 22,
+        ///  &quot;tile_height&quot;: 16,
+        ///  &quot;cell_width&quot;: 22,
+        ///  &quot;cell_height&quot;: 16,
+        ///  &quot;pad&quot;: 0,
+        ///  &quot;columns&quot;: 14,
+        ///  &quot;rows&quot;: 20,
+        ///  &quot;sprites&quot;: {
+        ///    &quot;ad.png&quot;: {
+        ///      &quot;x&quot;: 0,
+        ///      &quot;y&quot;: 0,
+        ///      &quot;width&quot;: 22,
+        ///      &quot;height&quot;: 16,
+        ///      &quot;cell_x&quot;: 0,
+        ///      &quot;cell_y&quot;: 0,
+        ///      &quot;cell_width&quot;: 22,
+        ///      &quot;cell_height&quot;: 16
+        ///    },
+        ///    &quot;ae.png&quot;: {
+        ///      &quot;x&quot;: 22,
+        ///      &quot;y&quot;: 0,
+        ///      &quot;width&quot;: 22,
+        ///      &quot;height&quot;: 16,
+        ///      &quot;cell_x&quot;: 22,
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string flagatlas_json {
+            get {
+                return ResourceManager.GetString("flagatlas_json", resourceCulture);
             }
         }
         
@@ -892,9 +969,9 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap picD1 {
+        internal static System.Drawing.Bitmap paflt {
             get {
-                object obj = ResourceManager.GetObject("picD1", resourceCulture);
+                object obj = ResourceManager.GetObject("paflt", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -902,29 +979,9 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap picD11 {
+        internal static System.Drawing.Bitmap paok {
             get {
-                object obj = ResourceManager.GetObject("picD11", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap picD1orig {
-            get {
-                object obj = ResourceManager.GetObject("picD1orig", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap picD2 {
-            get {
-                object obj = ResourceManager.GetObject("picD2", resourceCulture);
+                object obj = ResourceManager.GetObject("paok", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -972,6 +1029,26 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap record {
+            get {
+                object obj = ResourceManager.GetObject("record", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap refresh_64 {
+            get {
+                object obj = ResourceManager.GetObject("refresh-64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap resizegrab {
             get {
                 object obj = ResourceManager.GetObject("resizegrab", resourceCulture);
@@ -995,16 +1072,6 @@ namespace Thetis.Properties {
         internal static System.Drawing.Bitmap RXAnt {
             get {
                 object obj = ResourceManager.GetObject("RXAnt", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap s_meter_collins3 {
-            get {
-                object obj = ResourceManager.GetObject("s_meter_collins3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

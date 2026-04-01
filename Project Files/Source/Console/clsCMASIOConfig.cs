@@ -45,6 +45,27 @@ using System.Diagnostics;
 
 namespace Thetis
 {
+    internal sealed class AsioDeviceInfo
+    {
+        public AsioDeviceInfo(string name, int input_channel_count, int output_channel_count, int device_index)
+        {
+            Name = name;
+            InputChannelCount = input_channel_count;
+            OutputChannelCount = output_channel_count;
+            DeviceIndex = device_index;
+        }
+
+        public string Name { get; private set; }
+        public int InputChannelCount { get; private set; }
+        public int OutputChannelCount { get; private set; }
+        public int DeviceIndex { get; private set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
     internal static class CMASIOConfig
     {
         //SOFTWARE\\OpenHPSDR\\Thetis-x64
@@ -98,7 +119,6 @@ namespace Thetis
             }
             return null;
         }
-
         public static void SetASIOdrivername(string driverName, RegistryKey key = null)
         {
             if (key == null) key = openRegistryKey();
@@ -107,7 +127,6 @@ namespace Thetis
                 key.SetValue("ASIOdrivername", driverName, RegistryValueKind.String);
             }
         }
-
         public static int GetASIOblocknum(RegistryKey key = null)
         {
             if (key == null) key = openRegistryKey();
@@ -143,6 +162,70 @@ namespace Thetis
                 key.SetValue("ASIOblocknum", blockNum, RegistryValueKind.DWord);
             }
         }
+        public static void SetASIObaseinchannel(int base_input_channel, RegistryKey key = null)
+        {
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                key.SetValue("ASIObaseinchannel", base_input_channel, RegistryValueKind.DWord);
+            }
+        }
+        public static void SetASIObaseoutchannel(int base_output_channel, RegistryKey key = null)
+        {
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                key.SetValue("ASIObaseoutchannel", base_output_channel, RegistryValueKind.DWord);
+            }
+        }
+        public static int GetASIObaseinchannel(RegistryKey key = null)
+        {
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                object value = key.GetValue("ASIObaseinchannel");
+                if (value is int)
+                {
+                    return (int)value;
+                }
+            }
+            return 0;
+        }
+        public static int GetASIObaseoutchannel(RegistryKey key = null)
+        {
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                object value = key.GetValue("ASIObaseoutchannel");
+                if (value is int)
+                {
+                    return (int)value;
+                }
+            }
+            return 0;
+        }
+        public static void SetASIOinputmode(int input_mode, RegistryKey key = null)
+        {
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                key.SetValue("ASIOinputmode", input_mode, RegistryValueKind.DWord);
+            }
+        }
+        public static int GetASIOinputmode(RegistryKey key = null)
+        {
+            //the mic input mode, can be 0-left, 1-right, 2-both
+            if (key == null) key = openRegistryKey();
+            if (key != null)
+            {
+                object value = key.GetValue("ASIOinputmode");
+                if (value is int)
+                {
+                    return (int)value;
+                }
+            }
+            return 2; //0-left, 1-right, 2-both
+        }
         private static void deleteRegistryValue(string valueName, RegistryKey key = null)
         {
             if (key == null) key = openRegistryKey();
@@ -156,9 +239,9 @@ namespace Thetis
             }
         }
 
-        public static List<string> GetASIODevices()
+        public static List<AsioDeviceInfo> GetASIODevices()
         {
-            List<string> asioDevices = new List<string>();
+            List<AsioDeviceInfo> asioDevices = new List<AsioDeviceInfo>();
 
             int deviceCount = PA19.PA_GetDeviceCount();
             for (int i = 0; i < deviceCount; i++)
@@ -191,13 +274,16 @@ namespace Thetis
 
                         result = PA19.PA_IsFormatSupported(&inputParams, &outputParams, 48000.0);
                     }
-                    
+
                     if (result == 0 && hasInput && hasOutput && !string.IsNullOrEmpty(devInfo.name))
                     {
-                        asioDevices.Add(devInfo.name.Left(32));
+                        string name = devInfo.name.Left(32);
+                        AsioDeviceInfo device = new AsioDeviceInfo(name, devInfo.maxInputChannels, devInfo.maxOutputChannels, i);
+                        asioDevices.Add(device);
                     }
                 }
             }
+
             return asioDevices;
         }
     }

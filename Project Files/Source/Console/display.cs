@@ -76,11 +76,138 @@ namespace Thetis
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
-    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;   
+    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using System.Threading;
+
+    public enum WaterfallTimePosition
+    {
+        FIRST = -1,
+        NONE,
+        LEFT,
+        RIGHT,
+        LAST,
+    }
+
+    public enum WaterfallTimeMode
+    {
+        FIRST = -1,
+        UTC,
+        LOCAL,
+        LAST,
+    }
 
     class Display
     {
         #region Variable Declaration
+
+        private sealed class BandEdgeRegionCacheDX2D
+        {
+            private static readonly int[] s_usBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                5330500, 5406400, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_germanyBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 51000000, 144000000, 146000000 };
+            private static readonly int[] s_region1BandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
+            private static readonly int[] s_region2BandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                5351500, 5366500, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_region3BandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 3900000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_spainBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 1850000, 3500000, 3800000,
+                7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
+            private static readonly int[] s_australiaBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 1875000,
+                3500000, 3800000, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000,
+                18168000, 21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_ukBandEdges = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
+                5258500, 5406500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
+                21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
+            private static readonly int[] s_indiaBandEdges = new int[] { 1810000, 1860000, 3500000, 3900000, 7000000, 7200000,
+                10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_norwayBandEdges = new int[] { 1800000, 2000000, 3500000, 4000000, 5260000, 5410000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+            private static readonly int[] s_japanBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 1875000, 1907500, 1912500,
+                3500000, 3575000, 3599000, 3612000, 3680000, 3687000, 3702000, 3716000, 3745000, 3770000, 3791000, 3805000,
+                7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
+            private static readonly int[] s_defaultBandEdges = new int[] { 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
+                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+
+            private bool m_bInitialised = false;
+            private FRSRegion m_currentRegion = FRSRegion.FIRST;
+            private int[] m_edges = new int[0];
+            private HashSet<int> m_edgeSet = new HashSet<int>();
+
+            public int[] Edges
+            {
+                get { return m_edges; }
+            }
+
+            public void Update(FRSRegion region)
+            {
+                if (m_bInitialised && m_currentRegion == region)
+                    return;
+
+                switch (region)
+                {
+                    case FRSRegion.US:
+                        m_edges = s_usBandEdges;
+                        break;
+                    case FRSRegion.Germany:
+                        m_edges = s_germanyBandEdges;
+                        break;
+                    case FRSRegion.Region1:
+                        m_edges = s_region1BandEdges;
+                        break;
+                    case FRSRegion.Region2:
+                        m_edges = s_region2BandEdges;
+                        break;
+                    case FRSRegion.Region3:
+                        m_edges = s_region3BandEdges;
+                        break;
+                    case FRSRegion.Spain:
+                        m_edges = s_spainBandEdges;
+                        break;
+                    case FRSRegion.Australia:
+                        m_edges = s_australiaBandEdges;
+                        break;
+                    case FRSRegion.UK:
+                        m_edges = s_ukBandEdges;
+                        break;
+                    case FRSRegion.India:
+                        m_edges = s_indiaBandEdges;
+                        break;
+                    case FRSRegion.Norway:
+                        m_edges = s_norwayBandEdges;
+                        break;
+                    case FRSRegion.Japan:
+                        m_edges = s_japanBandEdges;
+                        break;
+                    default:
+                        m_edges = s_defaultBandEdges;
+                        break;
+                }
+
+                m_edgeSet = new HashSet<int>(m_edges);
+                m_currentRegion = region;
+                m_bInitialised = true;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool Contains(int frequencyHz)
+            {
+                return m_edgeSet.Contains(frequencyHz);
+            }
+        }
+
+        private static readonly BandEdgeRegionCacheDX2D m_bandEdgeRegionCacheDX2D = new BandEdgeRegionCacheDX2D();
 
         private const AlphaMode ALPHA_MODE = AlphaMode.Premultiplied; //21k9
 
@@ -88,7 +215,6 @@ namespace Thetis
         public const int BUFFER_SIZE = 16384;
 
         public static Console console;
-        public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
         public static string background_image = null;
 
         private static int[] histogram_data = null;				// histogram display buffer
@@ -108,6 +234,13 @@ namespace Thetis
         public static float[] new_waterfall_data_bottom;
         public static float[] current_waterfall_data_bottom;
 
+        private static readonly double[] _pendingWaterfallPixelRef = new double[] { double.NaN, double.NaN };
+        private static readonly double[] _currentWaterfallPixelRef = new double[] { double.NaN, double.NaN };
+        private static readonly double[] _waterfallBitmapCenterMHz = new double[] { double.NaN, double.NaN };
+        private static readonly double[] _waterfallBitmapSpanHz = new double[] { double.NaN, double.NaN };
+        private static readonly double[] _waterfallBitmapShiftRemainderPixels = new double[2];
+        private static readonly int[] _waterfallBitmapWidths = new int[2];
+
         private static float[] waterfall_data;
 
         public static float[] current_waterfall_data_copy;
@@ -115,6 +248,48 @@ namespace Thetis
 
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp_dx2d = null;					// MW0LGE
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp2_dx2d = null;
+        private static readonly long[][] _waterfallRowUtcTicks =
+        {
+            new long[0],
+            new long[0]
+        };
+        private static readonly long[][] _waterfallRowLabelUtcTicks =
+        {
+            new long[0],
+            new long[0]
+        };
+        private static readonly long[][] _waterfallRowLabelIntervalMs =
+        {
+            new long[0],
+            new long[0]
+        };
+        private static readonly int[] _waterfallRowTimeCounts = new int[2];
+        private static readonly int[] _waterfallRowsSinceLastLabel = new int[2];
+        private static readonly double[] _waterfallLineIntervalMs = new double[2];
+        private static readonly double[] _waterfallLastAdvanceFrameStart = new double[] { double.NaN, double.NaN };
+        private const double WATERFALL_TIME_LABEL_TARGET_ROWS = 56.0;
+        private const double WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS = 18.0;
+        private const double WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS = 96.0;
+        private const double WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND = 26.0;
+        private static readonly long[] _waterfallTimeLabelIntervalsMs = new long[]
+        {
+            1000,
+            5000,
+            10000,
+            15000,
+            30000,
+            60000,
+            120000,
+            300000,
+            600000,
+            900000,
+            1800000,
+            3600000,
+            7200000,
+            10800000,
+            21600000,
+            43200000
+        };
         #endregion
 
         #region Properties
@@ -618,7 +793,8 @@ namespace Thetis
         }
         private static void OnMinRXNotchWidthChanged(int rx, double width)
         {
-            _mnfMinSizeRX = width;
+            if(rx < 1 || rx > 2) return; 
+            _mnfMinSizeRX[rx-1] = width;
         }
         private static void OnMinTXNotchWidthChanged(double width)
         {
@@ -642,15 +818,17 @@ namespace Thetis
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
         {
+            setCurrentWaterfallBand(rx, newBand);
+
             if (rx == 1)
             {
                 FastAttackNoiseFloorRX1 = true;
-                _RX1waterfallPreviousMinValue = 20;
+                _RX1waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(1, false);
             }
             else
             {
                 FastAttackNoiseFloorRX2 = true;
-                _RX2waterfallPreviousMinValue = 20;
+                _RX2waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(2, false);
             }
         }
 
@@ -765,7 +943,18 @@ namespace Thetis
             get { return m_dCentreFreqRX1; }
             set
             {
-                m_dCentreFreqRX1 = value;
+                double old_centre_freq_rx1_rounded = Math.Round(m_dCentreFreqRX1, 6);
+                double new_centre_freq_rx1_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx1_rounded != new_centre_freq_rx1_rounded)
+                {
+                    SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 0), value);
+                    _rx1_centrefreq_change_time = DateTime.UtcNow;
+                    _stopRx1Waterfall = true;
+                    m_dCentreFreqRX1 = value;
+
+                    N1MM.Resize(1);
+                }
             }
         }
 
@@ -775,7 +964,18 @@ namespace Thetis
             get { return m_dCentreFreqRX2; }
             set
             {
-                m_dCentreFreqRX2 = value;
+                double old_centre_freq_rx2_rounded = Math.Round(m_dCentreFreqRX2, 6);
+                double new_centre_freq_rx2_rounded = Math.Round(value, 6);
+
+                if (old_centre_freq_rx2_rounded != new_centre_freq_rx2_rounded)
+                {
+                    SpecHPSDRDLL.SetPixelRef(cmaster.inid(0, 1), value);
+                    _rx2_centrefreq_change_time = DateTime.UtcNow;
+                    _stopRx2Waterfall = true;
+                    m_dCentreFreqRX2 = value;
+
+                    N1MM.Resize(2);
+                }
             }
         }
 
@@ -869,15 +1069,11 @@ namespace Thetis
         }
         //=======================================================
 
-        private static bool m_bSpecialPanafall = false; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
-
-        //========================================================
-
         public static bool specready = false;
         private static int displayTargetHeight = 0;	// target height
         private static int displayTargetWidth = 0;	// target width
         private static Control displayTarget = null;
-        private static double _mnfMinSizeRX = 100;
+        private static double[] _mnfMinSizeRX = { 100,100 };
         private static double _mnfMinSizeTX = 100;
 
         private static string _cpu;
@@ -915,7 +1111,8 @@ namespace Thetis
                     initDisplayArrays(displayTargetWidth, displayTargetHeight);
 
                     //UpdateMNFminWidth();
-                    _mnfMinSizeRX = console.GetMinimumRXNotchWidth(1); // just for rx1
+                    _mnfMinSizeRX[0] = console.GetMinimumRXNotchWidth(1);
+                    _mnfMinSizeRX[1] = console.GetMinimumRXNotchWidth(2);
                     _mnfMinSizeTX = console.GetMinimumTXNotchWidth();
 
                     if (!_bDX2Setup)
@@ -924,7 +1121,13 @@ namespace Thetis
                     }
                     else
                     {
-                        resizeDX2D();
+                        if (!resizeDX2D(out string err))
+                        {
+                            ShutdownDX2D();
+                            MessageBox.Show("Unable to resize DirectX render target (Target). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            return;
+                        }
+
                         ResetWaterfallBmp();
                         ResetWaterfallBmp2();
                     }                    
@@ -937,6 +1140,8 @@ namespace Thetis
                         console.specRX.GetSpecRX(1).Pixels = displayTargetWidth / m_nDecimation;
                         console.specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = displayTargetWidth / m_nDecimation;
                     }
+
+                    N1MM.Resize();
 
 #if SNOWFALL
                     if (_snowFall)
@@ -989,10 +1194,13 @@ namespace Thetis
             get { return m_nDecimation; }
             set
             {
+                int old = m_nDecimation;
                 lock (_objDX2Lock)
                 {
                     m_nDecimation = value;
                 }
+
+                if (old != m_nDecimation) N1MM.Resize();
             }
         }
         private static int rx_display_low = -4000;
@@ -1005,8 +1213,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_low = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_low = value;
             }
         }
 
@@ -1020,8 +1231,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
+
+                    rx_display_high = value;
+
+                    N1MM.Resize(1);
                 }
-                rx_display_high = value;
             }
         }
 
@@ -1035,8 +1249,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_low = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_low = value;
             }
         }
 
@@ -1050,8 +1267,11 @@ namespace Thetis
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
+
+                    rx2_display_high = value;
+
+                    N1MM.Resize(2);
                 }
-                rx2_display_high = value;
             }
         }
 
@@ -1117,7 +1337,12 @@ namespace Thetis
             get { return rx1_preamp_offset; }
             set { rx1_preamp_offset = value; }
         }
-
+        private static bool _ignore_attenuator_offset = false;
+        public static bool IgnoreAttenuatorOffset
+        {
+            get { return _ignore_attenuator_offset; }
+            set { _ignore_attenuator_offset = value; }
+        }
         private static float alex_preamp_offset = 0.0f;
         public static float AlexPreampOffset
         {
@@ -1350,6 +1575,15 @@ namespace Thetis
                 {
                     if (value != _old_mox)
                     {
+                        bool rx1WillBeTx = value && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
+                        _RX1waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(1, rx1WillBeTx);
+
+                        if (_rx2_enabled)
+                        {
+                            bool rx2WillBeTx = value && (_tx_on_vfob && _rx2_enabled);
+                            _RX2waterfallPreviousMinValue = getWaterfallCachedPreviousMinOrFloor(2, rx2WillBeTx);
+                        }
+
                         PurgeBuffers();
                         _old_mox = value;
                     }
@@ -1899,6 +2133,7 @@ namespace Thetis
         }
 
         //MW0LGE
+        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);
         private static Pen peak_blob_pen = new Pen(Color.OrangeRed);
         private static Pen peak_blob_text_pen = new Pen(Color.YellowGreen);
         private static Color data_fill_color = Color.FromArgb(128, Color.Blue);
@@ -2223,6 +2458,24 @@ namespace Thetis
                 m_bShowTXFilterOnRXWaterfall = value;
             }
         }
+        private static WaterfallTimePosition m_eShowWaterfallTime = WaterfallTimePosition.LEFT;
+        public static WaterfallTimePosition ShowWaterfallTime
+        {
+            get { return m_eShowWaterfallTime; }
+            set { m_eShowWaterfallTime = value; }
+        }
+        private static WaterfallTimeMode m_eWaterfallTime = WaterfallTimeMode.UTC;
+        public static WaterfallTimeMode WaterfallTime
+        {
+            get { return m_eWaterfallTime; }
+            set { m_eWaterfallTime = value; }
+        }
+        private static Color m_cWaterfallTimeColour = Color.White;
+        public static Color WaterfallTimeColour
+        {
+            get { return m_cWaterfallTimeColour; }
+            set { m_cWaterfallTimeColour = value; }
+        }
 
         private static bool draw_tx_filter = false;
         public static bool DrawTXFilter
@@ -2293,32 +2546,6 @@ namespace Thetis
                 }
             }
         }
-
-        //================================================================
-        // ke9ns add signal from console about Grayscale ON/OFF
-        private static byte Gray_Scale = 0; //  ke9ns ADD from console 0=RGB  1=Gray
-        public static byte GrayScale       // this is called or set in console
-        {
-            get { return Gray_Scale; }
-            set
-            {
-                Gray_Scale = value;
-            }
-        }
-
-
-        //================================================================
-        // kes9ns add signal from setup grid lines on/off
-        private static byte grid_off = 0; //  ke9ns ADD from setup 0=normal  1=gridlines off
-        public static byte GridOff       // this is called or set in setup
-        {
-            get { return grid_off; }
-            set
-            {
-                grid_off = value;
-            }
-        }
-
 
         private static Color rx2_waterfall_low_color = Color.Black;
         public static Color RX2WaterfallLowColor
@@ -2512,6 +2739,89 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
+        private const float WATERFALL_AGC_RESTART_FLOOR_DBM = -150f;
+        private static readonly int[] _currentWaterfallBandByRx = new int[] { int.MinValue, int.MinValue };
+        private static readonly Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry> _waterfallAgcCache = new Dictionary<WaterfallAgcCacheKey, WaterfallAgcCacheEntry>();
+
+        private struct WaterfallAgcCacheKey : IEquatable<WaterfallAgcCacheKey>
+        {
+            public readonly bool IsTx;
+            public readonly int BandValue;
+
+            public WaterfallAgcCacheKey(bool isTx, int bandValue)
+            {
+                IsTx = isTx;
+                BandValue = bandValue;
+            }
+
+            public bool Equals(WaterfallAgcCacheKey other)
+            {
+                return IsTx == other.IsTx && BandValue == other.BandValue;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is WaterfallAgcCacheKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                return (IsTx ? 397 : 211) ^ BandValue;
+            }
+        }
+
+        private struct WaterfallAgcCacheEntry
+        {
+            public float PreviousMin;
+        }
+
+        private static int getWaterfallRxIndex(int rx)
+        {
+            return rx - 1;
+        }
+
+        private static void setCurrentWaterfallBand(int rx, Band band)
+        {
+            int rxIndex = getWaterfallRxIndex(rx);
+            if (rxIndex < 0 || rxIndex >= _currentWaterfallBandByRx.Length) return;
+            _currentWaterfallBandByRx[rxIndex] = (int)band;
+        }
+
+        private static int getWaterfallContextBandValue(int rx, bool isTxContext)
+        {
+            if (!isTxContext)
+            {
+                int rxIndex = getWaterfallRxIndex(rx);
+                if (rxIndex < 0 || rxIndex >= _currentWaterfallBandByRx.Length) return int.MinValue;
+                return _currentWaterfallBandByRx[rxIndex];
+            }
+
+            int txRxIndex = (_tx_on_vfob && _rx2_enabled) ? 1 : 0;
+            if (txRxIndex < 0 || txRxIndex >= _currentWaterfallBandByRx.Length) return int.MinValue;
+            return _currentWaterfallBandByRx[txRxIndex];
+        }
+
+        private static float getWaterfallCachedPreviousMinOrFloor(int rx, bool isTxContext)
+        {
+            int bandValue = getWaterfallContextBandValue(rx, isTxContext);
+            if (bandValue != int.MinValue &&
+                _waterfallAgcCache.TryGetValue(new WaterfallAgcCacheKey(isTxContext, bandValue), out WaterfallAgcCacheEntry entry))
+            {
+                return entry.PreviousMin;
+            }
+
+            return WATERFALL_AGC_RESTART_FLOOR_DBM;
+        }
+
+        private static void updateWaterfallAgcCache(int rx, bool isTxContext, float previousMin)
+        {
+            int bandValue = getWaterfallContextBandValue(rx, isTxContext);
+            if (bandValue == int.MinValue) return;
+
+            _waterfallAgcCache[new WaterfallAgcCacheKey(isTxContext, bandValue)] =
+                new WaterfallAgcCacheEntry { PreviousMin = previousMin };
+        }
+
         private static bool _ignore_waterfall_rx1_agc = false;
         private static bool _ignore_waterfall_rx2_agc = false;
         private static double _rx1_no_agc_duration = 0;
@@ -2617,25 +2927,7 @@ namespace Thetis
         #region Drawing Routines
         // ======================================================
         // Drawing Routines
-        // ======================================================
-
-
-        //=========================================================
-        // ke9ns draw panadapter grid
-        //=========================================================
-
-        public static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-        public static int[] holder1 = new int[100];                          // ke9ns add
-
-        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness  DXSPOTTER
-        private static Pen p3 = new Pen(Color.Blue, 2.5f);                   // ke9ns add vert line color and thickness    MEMORY
-        private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
-
-        private static bool m_bLSB = false;                                     // ke9ns add true=LSB, false=USB
-
-        private static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
-        private static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
-        private static int VFODiff = 0;                                      // ke9ns diff high-low
+        // ======================================================        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Color changeAlpha(Color c, int A)
@@ -2770,13 +3062,14 @@ namespace Thetis
             set { m_bStopRX2WaterfallOnTX = value; }
         }
 
-        private static float _RX1waterfallPreviousMinValue = 20;
-        private static float _RX2waterfallPreviousMinValue = 20;
+        private static float _RX1waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
+        private static float _RX2waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
         private static void ResetWaterfallBmp()
         {
             int H = displayTargetHeight;
             if (current_display_mode == DisplayMode.PANAFALL) H /= 2;
             if (_rx2_enabled) H /= 2;
+            int preservedRows = 0;
 
             //override for splitter pos, when only one rx and it is panafall
             if (!_rx2_enabled && current_display_mode == DisplayMode.PANAFALL) H = displayTargetHeight - PanafallSplitBarPos;
@@ -2793,6 +3086,7 @@ namespace Thetis
                         {
                             // make copy only if widths equal
                             int h = Math.Min(H - 20, (int)_waterfall_bmp_dx2d.Size.Height);
+                            preservedRows = h;
 
                             tmp = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, h),
                                     new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE)));
@@ -2808,17 +3102,10 @@ namespace Thetis
                         _waterfall_bmp_dx2d = null;
                     }
                     _waterfall_bmp_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
+                    clearWaterfallBitmapRegion(_waterfall_bmp_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                     if (tmp != null)
                     {
-                        byte[] zeroed = new byte[displayTargetWidth * (H - 20) * 4];
-                        unsafe
-                        {
-                            fixed (void* wptr = &zeroed[0])
-                                Win32.memset(wptr, 0, zeroed.Length);
-                        }
-                        _waterfall_bmp_dx2d.CopyFromMemory(zeroed, 4);
-
                         // copy old waterfall into new bitmap
                         _waterfall_bmp_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
                         Utilities.Dispose(ref tmp);
@@ -2826,12 +3113,21 @@ namespace Thetis
                     }
                 }
             }
+
+            if (preservedRows > 0)
+                resizeWaterfallTimeOverlay(1, H - 20, preservedRows);
+            else
+            {
+            	resetWaterfallTimeOverlay(1);
+                resetWaterfallBitmapAlignment(1);
+            }
         }
         private static void ResetWaterfallBmp2()
         {
             int H = displayTargetHeight;
             if (current_display_mode_bottom == DisplayMode.PANAFALL) H /= 2;
             H /= 2; // it will always be
+            int preservedRows = 0;
 
             lock (_objDX2Lock)
             {
@@ -2845,6 +3141,7 @@ namespace Thetis
                         {
                             // make copy only if widths equal
                             int h = Math.Min(H - 20, (int)_waterfall_bmp2_dx2d.Size.Height);
+                            preservedRows = h;
 
                             tmp = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp2_dx2d.Size.Width, h),
                                     new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE)));
@@ -2860,23 +3157,24 @@ namespace Thetis
                         _waterfall_bmp2_dx2d = null;
                     }
                     _waterfall_bmp2_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
+                    clearWaterfallBitmapRegion(_waterfall_bmp2_dx2d, 0, 0, displayTargetWidth, H - 20);
 
                     if (tmp != null)
                     {
-                        byte[] zeroed = new byte[displayTargetWidth * (H - 20) * 4];
-                        unsafe
-                        {
-                            fixed (void* wptr = &zeroed[0])
-                                Win32.memset(wptr, 0, zeroed.Length);
-                        }
-                        _waterfall_bmp2_dx2d.CopyFromMemory(zeroed, 4);
-
                         // copy old waterfall into new bitmap
                         _waterfall_bmp2_dx2d.CopyFromBitmap(tmp, new SharpDX.Point(0, 0)); // anything outside will be 'ignored'
                         Utilities.Dispose(ref tmp);
                         tmp = null;
                     }
                 }
+            }
+
+            if (preservedRows > 0)
+                resizeWaterfallTimeOverlay(2, H - 20, preservedRows);
+            else
+            {
+            	resetWaterfallTimeOverlay(2);
+                resetWaterfallBitmapAlignment(2);
             }
         }
 
@@ -3346,8 +3644,14 @@ namespace Thetis
                                                        new Rational(console.DisplayFPS, 1), Format.B8G8R8A8_UNorm);
                     _swapChain1.ResizeTarget(ref modeDesc);
 
-                    // MW0LGE_21k9 must resize the back buffers, belts and braces because width/height not likely to change
-                    resizeDX2D();
+                    // must resize the back buffers, belts and braces because width/height not likely to change
+                    if (!resizeDX2D(out string err))
+                    {
+                        ShutdownDX2D();
+                        MessageBox.Show("Unable to resize DirectX render target (ResetDX2DModeDescription). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return;
+                    }
+
                 }
             }
             catch (Exception)
@@ -3355,13 +3659,17 @@ namespace Thetis
 
             }
         }
-        private static void resizeDX2D()
+        private static bool resizeDX2D(out string error)
         {
             try
             {
                 lock (_objDX2Lock)
                 {
-                    if (!_bDX2Setup) return;
+                    if (!_bDX2Setup)
+                    {
+                        error = "DirectX not setup";
+                        return false;
+                    }
 
                     Utilities.Dispose(ref _d2dRenderTarget);
                     Utilities.Dispose(ref _surface);
@@ -3388,20 +3696,26 @@ namespace Thetis
                     // clear measure string cache
                     m_stringSizeCache.Clear();
                     _stringMeasureKeys.Clear();
-                    //
+
+                    error = "";
+                    return true;
                 }
             }
             catch (Exception e)
             {
-                string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
-                    "things as possible and try again." + e.Message;
-                if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
-                {
-                    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
-                }
-                ShutdownDX2D();
-                MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                //string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                //    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                //    "things as possible and try again." + e.Message;
+                //if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                //{
+                //    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                //}
+                //ShutdownDX2D();
+                //MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                error = e.Message;
+                error += "\n\nDeviceRemovedReason : " + _device.DeviceRemovedReason.ToString();
+                return false;
             }
         }
 
@@ -3435,18 +3749,6 @@ namespace Thetis
             {
                 m_bAntiAlias = value;
                 setupAliasing();
-            }
-        }
-        public static bool SpecialPanafall
-        {
-            get { return m_bSpecialPanafall; }
-            set
-            {
-                m_bSpecialPanafall = value;
-                if (m_bSpecialPanafall)
-                    PanafallSplitBarPerc = 0.8f;
-                else
-                    PanafallSplitBarPerc = 0.5f;
             }
         }
 
@@ -3554,6 +3856,17 @@ namespace Thetis
                 Utilities.Dispose(ref dxgiSurface);
                 Utilities.Dispose(ref stagingTexture);
                 Utilities.Dispose(ref sourceTexture);
+            }
+        }
+
+        private static bool _pa_issue = false;
+        private static string _pa_state_details = "";
+        public static PAstatusIndicatorState PAStatus
+        {
+            set 
+            {
+                _pa_state_details = Console.GetPAStatusText(value);
+                _pa_issue = value != PAstatusIndicatorState.NotUsed && value != PAstatusIndicatorState.OK;
             }
         }
 
@@ -3735,6 +4048,7 @@ namespace Thetis
                                 break;
                             case DisplayMode.PANADAPTER:
                                 DrawPanadapterDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
+                                if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                 break;
                             case DisplayMode.SCOPE:
                                 DrawScopeDX2D(displayTargetWidth, m_nRX1DisplayHeight, false);
@@ -3750,6 +4064,7 @@ namespace Thetis
                                 break;
                             case DisplayMode.WATERFALL:
                                 DrawWaterfallDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
+                                if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                 break;
                             case DisplayMode.HISTOGRAM:
                                 DrawHistogramDX2D(1, displayTargetWidth, m_nRX1DisplayHeight);
@@ -3761,6 +4076,7 @@ namespace Thetis
                                     split_display = PanafallSplitBarPos <= (displayTargetHeight / 2); // add more granularity, TODO change based on avaialble height
                                     DrawPanadapterDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                                     DrawWaterfallDX2D(PanafallSplitBarPos, displayTargetWidth, displayTargetHeight - m_nRX1DisplayHeight, 1, true);
+                                    if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                     split_display = false;
                                 }
                                 break;
@@ -3771,6 +4087,7 @@ namespace Thetis
                                     split_display = true;
                                     DrawPanadapterDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                                     DrawScopeDX2D(displayTargetWidth, m_nRX1DisplayHeight, true);
+                                    if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                     split_display = false;
                                 }
                                 break;
@@ -3809,9 +4126,11 @@ namespace Thetis
                                 break;
                             case DisplayMode.PANADAPTER:
                                 DrawPanadapterDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
+                                if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                 break;
                             case DisplayMode.WATERFALL:
                                 DrawWaterfallDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
+                                if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                 break;
                             case DisplayMode.HISTOGRAM:
                                 DrawHistogramDX2D(1, displayTargetWidth, m_nRX1DisplayHeight);
@@ -3820,6 +4139,7 @@ namespace Thetis
                                 m_nRX1DisplayHeight = displayTargetHeight / 4;
                                 DrawPanadapterDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                                 DrawWaterfallDX2D(m_nRX1DisplayHeight, displayTargetWidth, m_nRX1DisplayHeight, 1, true);
+                                if (_showTCISpots) drawSpots(1, 0, displayTargetWidth, false);
                                 break;
                         }
 
@@ -3830,14 +4150,17 @@ namespace Thetis
 
                             case DisplayMode.PANADAPTER:
                                 DrawPanadapterDX2D(m_nRX2DisplayHeight, displayTargetWidth, m_nRX2DisplayHeight, 2, true);
+                                if (_showTCISpots) drawSpots(2, m_nRX2DisplayHeight, displayTargetWidth, false);
                                 break;
                             case DisplayMode.WATERFALL:
                                 DrawWaterfallDX2D(m_nRX2DisplayHeight, displayTargetWidth, m_nRX2DisplayHeight, 2, true);
+                                if (_showTCISpots) drawSpots(2, m_nRX2DisplayHeight, displayTargetWidth, false);
                                 break;
                             case DisplayMode.PANAFALL:
                                 m_nRX2DisplayHeight = displayTargetHeight / 4;
                                 DrawPanadapterDX2D(m_nRX2DisplayHeight * 2, displayTargetWidth, m_nRX2DisplayHeight, 2, false);
                                 DrawWaterfallDX2D(m_nRX2DisplayHeight * 3, displayTargetWidth, m_nRX2DisplayHeight, 2, true);
+                                if (_showTCISpots) drawSpots(2, m_nRX2DisplayHeight * 2, displayTargetWidth, false);
                                 break;
                         }
                     }
@@ -3856,16 +4179,23 @@ namespace Thetis
                         _bRebuildTXLinearGradBrush = true;
                     }
                 
-                    // HIGH swr display warning
-                    if (high_swr || _power_folded_back)
+                    // HIGH swr display warning, PA warning
+                    if (high_swr || _power_folded_back || _pa_issue)
                     {
-                        if (_power_folded_back)
+                        if (high_swr || _power_folded_back)
                         {
-                            drawStringDX2D("HIGH SWR\n\nPOWER FOLD BACK", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                            if (_power_folded_back)
+                            {
+                                drawStringDX2D("HIGH SWR\n\nPOWER FOLD BACK", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                            }
+                            else
+                            {
+                                drawStringDX2D("HIGH SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                            }
                         }
-                        else
+                        if (_pa_issue)
                         {
-                            drawStringDX2D("HIGH SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                            drawStringDX2D(_pa_state_details, fontDX2d_font14, m_bDX2_Red, 120, high_swr || _power_folded_back ? 40 : 20);
                         }
                         _d2dRenderTarget.DrawRectangle(new RectangleF(3, 3, displayTargetWidth - 6, displayTargetHeight - 6), m_bDX2_Red, 6f);
                     }
@@ -3906,7 +4236,6 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                 jump:
-
                     try
                     {
                         _d2dRenderTarget.EndDraw();
@@ -3915,8 +4244,9 @@ namespace Thetis
                     {
                         if (_dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
                     }
@@ -3935,8 +4265,9 @@ namespace Thetis
                     {
                         if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
 
@@ -3945,7 +4276,11 @@ namespace Thetis
                         if (r == SharpDX.DXGI.ResultCode.DeviceReset/*0x887A0007*/) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
                         if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                         //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
-                        
+
+                        if (_dx_fail_retry > 0)
+                        {
+                            sMsg += "\n\nDirectX failures during present have occurred " + _dx_fail_retry.ToString() + " times before this.";
+                        }                        
                         if (!string.IsNullOrEmpty(sMsg)) throw (new Exception(sMsg));
                     }
 
@@ -4594,6 +4929,20 @@ namespace Thetis
                 }
             }
         }
+
+        private static bool _activePeakInTxRX1 = false;
+        private static bool _activePeakInTxRX2 = false;
+        public static bool ActivePeakInTxRX1
+        {
+            get { return _activePeakInTxRX1; }
+            set { _activePeakInTxRX1 = value; }
+        }
+        public static bool ActivePeakInTxRX2
+        {
+            get { return _activePeakInTxRX2; }
+            set { _activePeakInTxRX2 = value; }
+        }
+
         // ExponentialMovingAverage previous values for 2tone calcs
         private static float _ema_dbc = -999; //used as the init state
         private static int _two_tone_readings_X_offset = 50;
@@ -4653,7 +5002,7 @@ namespace Thetis
 
             if (rx == 1)
             {
-                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
+                bSpectralPeakHold = (!local_mox || _activePeakInTxRX1) && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX1;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX1Blobs;
                 show_imd_measurements = local_mox && _testing_imd && _show_imd_measurements && displayduplex;
@@ -4701,7 +5050,7 @@ namespace Thetis
             }
             else// rx == 2
             {
-                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
+                bSpectralPeakHold = (!local_mox || _activePeakInTxRX2) && m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX2;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX2Blobs;
                 show_imd_measurements = false;
@@ -5369,9 +5718,7 @@ namespace Thetis
             {
                 max_y = local_max_y;
                 max_x = local_max_x;
-            }
-
-            if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
+            }            
 
             return true;
         }
@@ -5564,12 +5911,501 @@ namespace Thetis
             bAlreadyCalculated = true;
         }
 
+        #region Waterfall_Time_Overlay
+        private static void resetWaterfallTimeOverlay(int rx)
+        {
+            int rxIndex = rx - 1;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
+
+            long[] rowUtcTicks = _waterfallRowUtcTicks[rxIndex];
+            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
+            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
+            if (rowUtcTicks.Length > 0)
+            {
+                Array.Clear(rowUtcTicks, 0, rowUtcTicks.Length);
+            }
+            if (rowLabelUtcTicks.Length > 0)
+            {
+                Array.Clear(rowLabelUtcTicks, 0, rowLabelUtcTicks.Length);
+            }
+            if (rowLabelIntervalMs.Length > 0)
+            {
+                Array.Clear(rowLabelIntervalMs, 0, rowLabelIntervalMs.Length);
+            }
+
+            _waterfallRowTimeCounts[rxIndex] = 0;
+            _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
+            _waterfallLineIntervalMs[rxIndex] = 0;
+            _waterfallLastAdvanceFrameStart[rxIndex] = double.NaN;
+        }
+
+        private static void resizeWaterfallTimeOverlay(int rx, int waterHeight, int preservedRows)
+        {
+            int rxIndex = rx - 1;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
+
+            if (waterHeight <= 0 || preservedRows <= 0)
+            {
+                resetWaterfallTimeOverlay(rx);
+                return;
+            }
+
+            long[] oldRowUtcTicks = _waterfallRowUtcTicks[rxIndex];
+            long[] oldRowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
+            long[] oldRowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
+            int oldRowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], oldRowUtcTicks.Length);
+            int copyRows = Math.Min(Math.Min(preservedRows, waterHeight), oldRowCount);
+
+            long[] newRowUtcTicks = new long[waterHeight];
+            long[] newRowLabelUtcTicks = new long[waterHeight];
+            long[] newRowLabelIntervalMs = new long[waterHeight];
+
+            if (copyRows > 0)
+            {
+                Array.Copy(oldRowUtcTicks, newRowUtcTicks, copyRows);
+                Array.Copy(oldRowLabelUtcTicks, newRowLabelUtcTicks, copyRows);
+                Array.Copy(oldRowLabelIntervalMs, newRowLabelIntervalMs, copyRows);
+            }
+
+            _waterfallRowUtcTicks[rxIndex] = newRowUtcTicks;
+            _waterfallRowLabelUtcTicks[rxIndex] = newRowLabelUtcTicks;
+            _waterfallRowLabelIntervalMs[rxIndex] = newRowLabelIntervalMs;
+            _waterfallRowTimeCounts[rxIndex] = copyRows;
+            _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
+
+            for (int i = 0; i < copyRows; i++)
+            {
+                if (newRowLabelUtcTicks[i] != 0)
+                {
+                    _waterfallRowsSinceLastLabel[rxIndex] = i;
+                    break;
+                }
+            }
+        }
+
+        private static int getWaterfallUpdatePeriodForRx(int rx)
+        {
+            return Math.Max(1, rx == 2 ? rx2_waterfall_update_period : waterfall_update_period);
+        }
+
+        private static double getWaterfallLineIntervalMs(int rx)
+        {
+            int rxIndex = rx - 1;
+            if (rxIndex < 0 || rxIndex >= _waterfallLineIntervalMs.Length) return 1000.0;
+
+            int fps = Math.Max(1, m_nFps);
+            double computedIntervalMs = (1000.0 * getWaterfallUpdatePeriodForRx(rx)) / fps;
+            double lineIntervalMs = _waterfallLineIntervalMs[rxIndex];
+            if (lineIntervalMs <= 0) return computedIntervalMs;
+
+            if (Math.Abs(lineIntervalMs - computedIntervalMs) > computedIntervalMs * 0.35)
+            {
+                return computedIntervalMs;
+            }
+
+            return lineIntervalMs;
+        }
+
+        private static float getWaterfallMinimumLabelSpacingRows()
+        {
+            const float textPaddingY = 2f;
+            SizeF sampleLabelSize = measureStringDX2D("00:00:00", fontDX2d_font9);
+            float labelPanelHeight = sampleLabelSize.Height + (textPaddingY * 2f);
+            return labelPanelHeight * 2f;
+        }
+
+        private static void ensureWaterfallRowBuffers(
+            int rxIndex,
+            int waterHeight,
+            out long[] rowUtcTicks,
+            out long[] rowLabelUtcTicks,
+            out long[] rowLabelIntervalMs)
+        {
+            if (waterHeight <= 0)
+            {
+                rowUtcTicks = new long[0];
+                rowLabelUtcTicks = new long[0];
+                rowLabelIntervalMs = new long[0];
+                return;
+            }
+
+            bool resetState = _waterfallRowUtcTicks[rxIndex].Length != waterHeight ||
+                              _waterfallRowLabelUtcTicks[rxIndex].Length != waterHeight ||
+                              _waterfallRowLabelIntervalMs[rxIndex].Length != waterHeight;
+
+            if (resetState)
+            {
+                _waterfallRowUtcTicks[rxIndex] = new long[waterHeight];
+                _waterfallRowLabelUtcTicks[rxIndex] = new long[waterHeight];
+                _waterfallRowLabelIntervalMs[rxIndex] = new long[waterHeight];
+                _waterfallRowTimeCounts[rxIndex] = 0;
+                _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
+            }
+
+            rowUtcTicks = _waterfallRowUtcTicks[rxIndex];
+            rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
+            rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
+        }
+
+        private static long getWaterfallDisplayTicks(long utcTicks)
+        {
+            if (m_eWaterfallTime == WaterfallTimeMode.LOCAL)
+            {
+                return new DateTime(utcTicks, DateTimeKind.Utc).ToLocalTime().Ticks;
+            }
+
+            return utcTicks;
+        }
+
+        private static void recordWaterfallAdvance(int rx, int waterHeight)
+        {
+            int rxIndex = rx - 1;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length || waterHeight <= 0) return;
+
+            double frameStart = m_dElapsedFrameStart;
+            double lastAdvance = _waterfallLastAdvanceFrameStart[rxIndex];
+            if (!double.IsNaN(lastAdvance))
+            {
+                double deltaMs = frameStart - lastAdvance;
+                if (deltaMs > 0 && deltaMs < 60000)
+                {
+                    if (_waterfallLineIntervalMs[rxIndex] <= 0)
+                    {
+                        _waterfallLineIntervalMs[rxIndex] = deltaMs;
+                    }
+                    else
+                    {
+                        _waterfallLineIntervalMs[rxIndex] = (_waterfallLineIntervalMs[rxIndex] * 0.85) + (deltaMs * 0.15);
+                    }
+                }
+            }
+
+            _waterfallLastAdvanceFrameStart[rxIndex] = frameStart;
+
+            long[] rowUtcTicks;
+            long[] rowLabelUtcTicks;
+            long[] rowLabelIntervalMs;
+            ensureWaterfallRowBuffers(rxIndex, waterHeight, out rowUtcTicks, out rowLabelUtcTicks, out rowLabelIntervalMs);
+            int rowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], waterHeight);
+            int shiftedRows = Math.Min(rowCount, waterHeight - 1);
+            if (shiftedRows > 0)
+            {
+                Array.Copy(rowUtcTicks, 0, rowUtcTicks, 1, shiftedRows);
+                Array.Copy(rowLabelUtcTicks, 0, rowLabelUtcTicks, 1, shiftedRows);
+                Array.Copy(rowLabelIntervalMs, 0, rowLabelIntervalMs, 1, shiftedRows);
+            }
+
+            long currentUtcTicks = DateTime.UtcNow.Ticks;
+            rowUtcTicks[0] = currentUtcTicks;
+            rowLabelUtcTicks[0] = 0;
+            rowLabelIntervalMs[0] = 0;
+            _waterfallRowTimeCounts[rxIndex] = Math.Min(waterHeight, rowCount + 1);
+
+            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue) _waterfallRowsSinceLastLabel[rxIndex]++;
+
+            if (_waterfallRowTimeCounts[rxIndex] > 1)
+            {
+                float minLabelSpacingRows = getWaterfallMinimumLabelSpacingRows();
+                long labelIntervalMs = chooseWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
+                long labelIntervalTicks = labelIntervalMs * TimeSpan.TicksPerMillisecond;
+                long previousDisplayTicks = getWaterfallDisplayTicks(rowUtcTicks[1]);
+                long currentDisplayTicks = getWaterfallDisplayTicks(currentUtcTicks);
+                long boundaryDisplayTicks = currentDisplayTicks - (currentDisplayTicks % labelIntervalTicks);
+
+                if (currentDisplayTicks > previousDisplayTicks && boundaryDisplayTicks > previousDisplayTicks && _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
+                {
+                    rowLabelUtcTicks[0] = currentUtcTicks - (currentDisplayTicks - boundaryDisplayTicks);
+                    rowLabelIntervalMs[0] = labelIntervalMs;
+                    _waterfallRowsSinceLastLabel[rxIndex] = 0;
+                }
+            }
+        }
+
+        private static long chooseWaterfallLabelIntervalMs(double msPerLine, double minLabelSpacing)
+        {
+            double safeMsPerLine = Math.Max(1.0, msPerLine);
+            double rowsAtFiveSeconds = 5000.0 / safeMsPerLine;
+            double rowsAtOneSecond = 1000.0 / safeMsPerLine;
+            double minRowsForOneSecond = Math.Max(WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND, minLabelSpacing * 1.5);
+
+            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS && rowsAtOneSecond >= minRowsForOneSecond)
+                return _waterfallTimeLabelIntervalsMs[0];
+
+            if (rowsAtFiveSeconds >= WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS)
+                return 5000;
+
+            long bestIntervalMs = _waterfallTimeLabelIntervalsMs[1];
+            double bestDelta = double.MaxValue;
+            for (int i = 1; i < _waterfallTimeLabelIntervalsMs.Length; i++)
+            {
+                long candidateIntervalMs = _waterfallTimeLabelIntervalsMs[i];
+                double candidateRows = candidateIntervalMs / safeMsPerLine;
+                double delta = Math.Abs(candidateRows - WATERFALL_TIME_LABEL_TARGET_ROWS);
+                if (delta < bestDelta)
+                {
+                    bestDelta = delta;
+                    bestIntervalMs = candidateIntervalMs;
+                }
+            }
+
+            return bestIntervalMs;
+        }
+
+        private static void drawWaterfallTimeLabel(
+            SharpDX.Direct2D1.Brush timeBrush,
+            SharpDX.Direct2D1.Brush panelBrush,
+            SharpDX.Direct2D1.Brush panelBorderBrush,
+            int W,
+            float waterfallTop,
+            float waterfallBottom,
+            float labelY,
+            long displayTicks,
+            long labelIntervalMs,
+            float tickLength,
+            float edgePadding,
+            float textPaddingX,
+            float textPaddingY)
+        {
+            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
+            string label = labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
+            SizeF labelSize = measureStringDX2D(label, fontDX2d_font9);
+            float rectWidth = labelSize.Width + (textPaddingX * 2f);
+            float rectHeight = labelSize.Height + (textPaddingY * 2f);
+            float rectY = labelY - (rectHeight / 2f);
+            if (rectY < waterfallTop || rectY + rectHeight > waterfallBottom)
+                return;
+
+            const float cornerRadius = 4f;
+            float rectX;
+            float textX;
+            float tickStartX;
+            float tickEndX;
+
+            if (m_eShowWaterfallTime == WaterfallTimePosition.LEFT)
+            {
+                tickStartX = edgePadding;
+                tickEndX = edgePadding + tickLength;
+                rectX = tickEndX + 4f;
+                textX = rectX + textPaddingX;
+            }
+            else
+            {
+                tickStartX = W - edgePadding - 1f;
+                tickEndX = tickStartX - tickLength;
+                rectX = tickEndX - 4f - rectWidth;
+                textX = rectX + textPaddingX;
+            }
+
+            if (rectX < edgePadding)
+            {
+                rectX = edgePadding;
+                textX = rectX + textPaddingX;
+            }
+            else if (rectX + rectWidth > W - edgePadding)
+            {
+                rectX = W - edgePadding - rectWidth;
+                textX = rectX + textPaddingX;
+            }
+
+            drawLineDX2D(timeBrush, tickStartX, labelY, tickEndX, labelY, 1.5f);
+            RoundedRectangle rr = new RoundedRectangle();
+            rr.RadiusX = cornerRadius;
+            rr.RadiusY = cornerRadius;
+            rr.Rect = new RectangleF(rectX, rectY, rectWidth, rectHeight);
+            _d2dRenderTarget.FillRoundedRectangle(rr, panelBrush);
+            _d2dRenderTarget.DrawRoundedRectangle(rr, panelBorderBrush);
+            drawStringDX2D(label, fontDX2d_font9, timeBrush, textX, rectY + textPaddingY);
+        }
+
+        private static void drawWaterfallTimeOverlay(int nVerticalShift, int W, int H, int rx)
+        {
+            if (m_eShowWaterfallTime == WaterfallTimePosition.NONE) return;
+
+            int waterHeight = H - 20;
+            if (waterHeight <= 8) return;
+
+            int rxIndex = rx - 1;
+            if (rxIndex < 0 || rxIndex >= _waterfallRowLabelUtcTicks.Length) return;
+
+            int rowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], waterHeight);
+            if (rowCount == 0) return;
+
+            const float tickLength = 10f;
+            const float edgePadding = 2f;
+            const float textPaddingX = 4f;
+            const float textPaddingY = 2f;
+
+            float waterfallTop = nVerticalShift + 20f;
+            float waterfallBottom = waterfallTop + waterHeight;
+
+            SharpDX.Direct2D1.Brush timeBrush = getDXBrushForColour(m_cWaterfallTimeColour, 255);
+            SharpDX.Direct2D1.Brush panelBrush = getDXBrushForColour(Color.Black, 144);
+            SharpDX.Direct2D1.Brush panelBorderBrush = getDXBrushForColour(m_cWaterfallTimeColour, 96);
+
+            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
+            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
+            for (int row = 0; row < rowCount; row++)
+            {
+                long labelUtcTicks = rowLabelUtcTicks[row];
+                if (labelUtcTicks == 0) continue;
+
+                long labelIntervalMs = rowLabelIntervalMs[row];
+                if (labelIntervalMs <= 0) labelIntervalMs = 5000;
+
+                float labelY = waterfallTop + row;
+                long displayTicks = getWaterfallDisplayTicks(labelUtcTicks);
+                drawWaterfallTimeLabel(timeBrush, panelBrush, panelBorderBrush, W, waterfallTop, waterfallBottom, labelY, displayTicks, labelIntervalMs, tickLength, edgePadding, textPaddingX, textPaddingY);
+            }
+        }
+
+        public static void SetPendingWaterfallPixelRef(int rx, double pixel_ref)
+        {
+            int index = rx == 2 ? 1 : 0;
+            _pendingWaterfallPixelRef[index] = pixel_ref;
+        }
+
+        private static void resetWaterfallBitmapAlignment(int rx)
+        {
+            int index = rx == 2 ? 1 : 0;
+            _pendingWaterfallPixelRef[index] = double.NaN;
+            _currentWaterfallPixelRef[index] = double.NaN;
+            _waterfallBitmapCenterMHz[index] = double.NaN;
+            _waterfallBitmapSpanHz[index] = double.NaN;
+            _waterfallBitmapShiftRemainderPixels[index] = 0.0;
+            _waterfallBitmapWidths[index] = 0;
+        }
+
+        private static double getWaterfallSpanHz(int rx)
+        {
+            return rx == 2 ? RX2DisplayHigh - RX2DisplayLow : RXDisplayHigh - RXDisplayLow;
+        }
+
+        private static bool isWaterfallNoiseFloorCompensationEnabled(int rx)
+        {
+            if (rx == 1)
+                return m_bWaterfallUseNFForACGRX1;
+
+            if (rx == 2)
+                return m_bWaterfallUseNFForACGRX2;
+
+            return false;
+        }
+
+        private static bool useWaterfallNoiseFloorCompensation(int rx)
+        {
+            if (!isWaterfallNoiseFloorCompensationEnabled(rx))
+                return false;
+
+            if (rx == 1)
+                return !m_bFastAttackNoiseFloorRX1 &&  m_bNoiseFloorGoodRX1;
+
+            if (rx == 2)
+                return !m_bFastAttackNoiseFloorRX2 &&  m_bNoiseFloorGoodRX2;
+
+            return false;
+        }
+
+        private static float getWaterfallNoiseFloorCompensationTarget(int rx)
+        {
+            if (rx == 1)
+                return m_fLerpAverageRX1 - m_fWaterfallAGCOffsetRX1;
+
+            if (rx == 2)
+                return m_fLerpAverageRX2 - m_fWaterfallAGCOffsetRX2;
+
+            return WATERFALL_AGC_RESTART_FLOOR_DBM;
+        }
+
+        private static int prepareWaterfallBitmapShift(int rx, int width, double centerMHz, out bool clearBitmap)
+        {
+            int index = rx == 2 ? 1 : 0;
+            double spanHz = getWaterfallSpanHz(rx);
+            bool spanChanged = spanHz > 0.0 &&
+                               !double.IsNaN(_waterfallBitmapSpanHz[index]) &&
+                               Math.Abs(_waterfallBitmapSpanHz[index] - spanHz) > 0.5;
+
+            clearBitmap = _waterfallBitmapWidths[index] > 0 && (_waterfallBitmapWidths[index] != width);
+
+            if (clearBitmap || spanChanged)
+            {
+                _waterfallBitmapShiftRemainderPixels[index] = 0.0;
+            }
+
+            _waterfallBitmapWidths[index] = width;
+            _waterfallBitmapSpanHz[index] = spanHz;
+
+            if (width <= 0 || spanHz <= 0.0 || double.IsNaN(centerMHz) || centerMHz <= 0.0)
+            {
+                if (clearBitmap) _waterfallBitmapCenterMHz[index] = double.NaN;
+
+                return 0;
+            }
+
+            if (clearBitmap || double.IsNaN(_waterfallBitmapCenterMHz[index]) || _waterfallBitmapCenterMHz[index] <= 0.0)
+            {
+                _waterfallBitmapCenterMHz[index] = centerMHz;
+                _waterfallBitmapShiftRemainderPixels[index] = 0.0;
+                return 0;
+            }
+
+            if (spanChanged)
+            {
+                // preserve the existing bitmap through span/FFT-size changes instead of
+                // clearing it. Re-anchor future shifts to the new mapping
+                _waterfallBitmapCenterMHz[index] = centerMHz;
+                return 0;
+            }
+
+            double hzPerPixel = spanHz / width;
+            if (hzPerPixel <= 0.0)
+            {
+                _waterfallBitmapCenterMHz[index] = centerMHz;
+                _waterfallBitmapShiftRemainderPixels[index] = 0.0;
+                return 0;
+            }
+
+            double shiftPixels = _waterfallBitmapShiftRemainderPixels[index] - (((centerMHz - _waterfallBitmapCenterMHz[index]) * 1e6) / hzPerPixel);
+            int wholeShift = shiftPixels >= 0.0 ? (int)Math.Floor(shiftPixels) : (int)Math.Ceiling(shiftPixels);
+
+            _waterfallBitmapCenterMHz[index] = centerMHz;
+            _waterfallBitmapShiftRemainderPixels[index] = shiftPixels - wholeShift;
+
+            return wholeShift;
+        }
+
+        private static void clearWaterfallBitmapRegion(SharpDX.Direct2D1.Bitmap bitmap, int x, int y, int width, int height)
+        {
+            if (bitmap == null || bitmap.IsDisposed || width <= 0 || height <= 0)
+                return;
+
+            const int pixelSize = 4;
+            int stride = width * pixelSize;
+            int bytesNeeded = stride * height;
+            byte[] clearBuffer = ArrayPool<byte>.Shared.Rent(bytesNeeded);
+
+            try
+            {
+                Array.Clear(clearBuffer, 0, bytesNeeded);
+                for (int i = 3; i < bytesNeeded; i += pixelSize)
+                {
+                    clearBuffer[i] = 255;
+                }
+                bitmap.CopyFromMemory(clearBuffer, stride, new SharpDX.Rectangle(x, y, width, height));
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(clearBuffer);
+            }
+        }
 
         public static void ResetWaterfallTimers()
         {
             m_nRX1WaterFallFrameCount = 0;
             m_nRX2WaterFallFrameCount = 0;
+            resetWaterfallTimeOverlay(1);
+            resetWaterfallTimeOverlay(2);
         }
+        #endregion
 
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
@@ -5626,8 +6462,37 @@ namespace Thetis
             _tx_waterfall_grad_ok = true;
         }
         private static bool _old_power = false;
+        private static bool _stopRx1Waterfall = false;
+        private static bool _stopRx2Waterfall = false;
+        private static DateTime _rx1_centrefreq_change_time = DateTime.UtcNow;
+        private static DateTime _rx2_centrefreq_change_time = DateTime.UtcNow;
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
+            bool addRow;
+
+            // this add row block prevents rows from being added if the centre frequency changes
+            // for a duration 20% greater than fft fill time to allow buckets to aproach expected levels
+            // all to reduce smearing when centre frequency is changed
+            bool stopWaterfall = rx == 1 ? _stopRx1Waterfall : _stopRx2Waterfall;
+            if (stopWaterfall)                
+            {
+                DateTime stopTime = rx == 1 ? _rx1_centrefreq_change_time : _rx2_centrefreq_change_time;
+                float filltime = rx == 1 ? _fft_fill_timeRX1 : _fft_fill_timeRX2;
+                filltime += ((m_nFps / 1000f) * 2); // two extra frames
+                filltime *= 1.05f; // 5% extra time;
+                if (filltime < 100.0f) filltime = 200.0f;
+                addRow = (DateTime.UtcNow - stopTime).TotalMilliseconds > filltime;
+                if (addRow)
+                {
+                    if (rx == 1) _stopRx1Waterfall = false;
+                    else if (rx == 2) _stopRx2Waterfall = false;
+                }
+            }
+            else
+            {
+                addRow = true;
+            }
+
             // undo the rendertarget transform that is used to move linedraws to middle of pixel grid
             Matrix3x2 originalTransform = _d2dRenderTarget.Transform;
             _d2dRenderTarget.Transform = Matrix3x2.Identity;
@@ -5650,6 +6515,9 @@ namespace Thetis
             float waterfall_minimum = 200f;
             ColorScheme cScheme = ColorScheme.enhanced;
             Color low_color = Color.Black;
+            bool useNoiseFloorCompensation = !local_mox && isWaterfallNoiseFloorCompensationEnabled(rx);
+            bool useSettledNoiseFloorCompensation = !local_mox && useWaterfallNoiseFloorCompensation(rx);
+            float noiseFloorCompensationTarget = useNoiseFloorCompensation ? getWaterfallNoiseFloorCompensationTarget(rx) : WATERFALL_AGC_RESTART_FLOOR_DBM;
 
             bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
@@ -5657,8 +6525,8 @@ namespace Thetis
             if (console.PowerOn != _old_power)
             {
                 _old_power = console.PowerOn;
-                _RX1waterfallPreviousMinValue = 20;
-                _RX2waterfallPreviousMinValue = 20;
+                _RX1waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
+                _RX2waterfallPreviousMinValue = WATERFALL_AGC_RESTART_FLOOR_DBM;
             }
 
             if (rx == 2)
@@ -5675,19 +6543,10 @@ namespace Thetis
                     high_threshold = rx2_waterfall_high_threshold;
                     if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX2)
-                        {
-                            if (FastAttackNoiseFloorRX2)
+                        if (useNoiseFloorCompensation)
                             {
-                                low_threshold = _RX2waterfallPreviousMinValue;
-                                //note: no adjust if using old value
+                            low_threshold = useSettledNoiseFloorCompensation ? noiseFloorCompensationTarget : _RX2waterfallPreviousMinValue;
                             }
-                            else
-                            {
-                                low_threshold = m_fLerpAverageRX2;
-                                low_threshold -= m_fWaterfallAGCOffsetRX2;
-                            }
-                        }
                         else
                         {
                             low_threshold = _RX2waterfallPreviousMinValue;
@@ -5716,18 +6575,9 @@ namespace Thetis
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX1)
+                        if (useNoiseFloorCompensation)
                         {
-                            if (FastAttackNoiseFloorRX1)
-                            {
-                                low_threshold = _RX1waterfallPreviousMinValue;
-                                //note: no adjust if using old value
-                            }
-                            else
-                            {
-                                low_threshold = m_fLerpAverageRX1;
-                                low_threshold -= m_fWaterfallAGCOffsetRX1;
-                            }
+                            low_threshold = useSettledNoiseFloorCompensation ? noiseFloorCompensationTarget : _RX1waterfallPreviousMinValue;
                         }
                         else
                         {
@@ -5742,7 +6592,7 @@ namespace Thetis
                     cScheme = _rx1_color_scheme;
                     low_color = waterfall_low_color;
                 }                                
-            }           
+            }
 
             if (console.PowerOn)
             {
@@ -5752,7 +6602,9 @@ namespace Thetis
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -5767,6 +6619,7 @@ namespace Thetis
                     fixed (void* wptr = &current_waterfall_data_copy[0])
                         Win32.memcpy(wptr, rptr, nDecimatedWidth * sizeof(float));
 
+                    _currentWaterfallPixelRef[0] = _pendingWaterfallPixelRef[0];
                     waterfall_data_ready = false;
                 }
                 else if (rx == 2 && waterfall_data_ready_bottom)
@@ -5775,7 +6628,9 @@ namespace Thetis
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
+                        {
                             current_waterfall_data_bottom[i] = -200.0f;
+                        }
                     }
                     else
                     {
@@ -5789,6 +6644,7 @@ namespace Thetis
                     fixed (void* wptr = &current_waterfall_data_bottom_copy[0])
                         Win32.memcpy(wptr, rptr, nDecimatedWidth * sizeof(float));
 
+                    _currentWaterfallPixelRef[1] = _pendingWaterfallPixelRef[1];
                     waterfall_data_ready_bottom = false;
                 }
 
@@ -5830,7 +6686,7 @@ namespace Thetis
                     }
 
                     float max;
-                    float max_copy;                    
+                    float max_copy;
 
                     if (!local_mox)
                     {
@@ -5913,23 +6769,34 @@ namespace Thetis
                     int pixel_size = 4;
                     byte[] row = new byte[W * pixel_size];
 
+                    SharpDX.Direct2D1.Bitmap waterfallBitmap;
                     SharpDX.Direct2D1.Bitmap topPixels;
+                    int horizontalShiftPixels;
+                    bool clearExistingBitmap;
 
-                    // get top pixels, store into new bitmap, ready to display them lower down by 1 pixel
+                    double currentWaterfallCenterMHz = rx == 1 ? _currentWaterfallPixelRef[0] : _currentWaterfallPixelRef[1];
+                    horizontalShiftPixels = prepareWaterfallBitmapShift(rx, W, currentWaterfallCenterMHz, out clearExistingBitmap);
+                    if (horizontalShiftPixels > W) horizontalShiftPixels = W;
+                    else if (horizontalShiftPixels < -W) horizontalShiftPixels = -W;
+
                     if (rx == 1)
                     {
-                        topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, (int)_waterfall_bmp_dx2d.Size.Height - 1),
-                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp_dx2d.PixelFormat.Format, ALPHA_MODE)));
-
-                        topPixels.CopyFromBitmap(_waterfall_bmp_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
+                        waterfallBitmap = _waterfall_bmp_dx2d;
                     }
                     else //rx2
                     {
-                        topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp2_dx2d.Size.Width, (int)_waterfall_bmp2_dx2d.Size.Height - 1),
-                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp2_dx2d.PixelFormat.Format, ALPHA_MODE)));
-
-                        topPixels.CopyFromBitmap(_waterfall_bmp2_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
+                        waterfallBitmap = _waterfall_bmp2_dx2d;
                     }
+
+                    if (clearExistingBitmap)
+                    {
+                        clearWaterfallBitmapRegion(waterfallBitmap, 0, 0, W, (int)waterfallBitmap.Size.Height);
+                    }
+
+                    int preservedBitmapHeight = (int)waterfallBitmap.Size.Height - (addRow ? 1 : 0);
+                    topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)waterfallBitmap.Size.Width, preservedBitmapHeight), new BitmapProperties(new SDXPixelFormat(waterfallBitmap.PixelFormat.Format, ALPHA_MODE)));
+
+                    topPixels.CopyFromBitmap(waterfallBitmap, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, preservedBitmapHeight));
 
                     #region colours
                     switch (cScheme)
@@ -5955,7 +6822,7 @@ namespace Thetis
                                         cols = _rx2_waterfall_grad;
                                     }
                                 }
-                                
+
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
@@ -5983,7 +6850,7 @@ namespace Thetis
                                     }
 
                                     if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                    waterfall_minimum = dataCopy[i] + fOffset;
+                                        waterfall_minimum = dataCopy[i] + fOffset;
 
                                     // set pixel color
                                     row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
@@ -6842,21 +7709,41 @@ namespace Thetis
                         }
                     }
 
-                    if (rx == 1)
+                    bool stopWaterfallOnTx = (rx == 1 && m_bStopRX1WaterfallOnTX && local_mox) ||
+                                             (rx == 2 && m_bStopRX2WaterfallOnTX && local_mox);
+
+                    if (!stopWaterfallOnTx)
                     {
-                        if (!(m_bStopRX1WaterfallOnTX && local_mox))
+                        if (addRow)
                         {
-                            _waterfall_bmp_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
-                            _waterfall_bmp_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+                            waterfallBitmap.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
                         }
-                    }
-                    else
-                    {
-                        if (!(m_bStopRX2WaterfallOnTX && local_mox))
-                        { 
-                            _waterfall_bmp2_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
-                            _waterfall_bmp2_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+
+                        int copyWidth = W - Math.Abs(horizontalShiftPixels);
+                        int shiftedRowTop = addRow ? 1 : 0;
+                        if (copyWidth > 0)
+                        {
+                            int sourceX = horizontalShiftPixels < 0 ? -horizontalShiftPixels : 0;
+                            int destX = horizontalShiftPixels > 0 ? horizontalShiftPixels : 0;
+                            waterfallBitmap.CopyFromBitmap(topPixels, new SharpDX.Point(destX, shiftedRowTop),
+                                new SharpDX.Rectangle(sourceX, 0, copyWidth, preservedBitmapHeight));
                         }
+
+                        if (horizontalShiftPixels > 0)
+                        {
+                            clearWaterfallBitmapRegion(waterfallBitmap, 0, shiftedRowTop, horizontalShiftPixels, preservedBitmapHeight);
+                        }
+                        else if (horizontalShiftPixels < 0)
+                        {
+                            clearWaterfallBitmapRegion(waterfallBitmap, W + horizontalShiftPixels, shiftedRowTop, -horizontalShiftPixels, preservedBitmapHeight);
+                        }
+                        else if (copyWidth <= 0)
+                        {
+                            clearWaterfallBitmapRegion(waterfallBitmap, 0, shiftedRowTop, W, preservedBitmapHeight);
+                        }
+
+                        if (addRow)
+                        recordWaterfallAdvance(rx, H - 20);
                     }
 
                     Utilities.Dispose(ref topPixels);
@@ -6864,7 +7751,7 @@ namespace Thetis
 
                     bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && (_high_perf_timer.ElapsedMsec < _rx1_no_agc_duration)) ||
                                         (rx == 2 && _ignore_waterfall_rx2_agc && (_high_perf_timer.ElapsedMsec < _rx2_no_agc_duration));
-                    
+
                     if (!bIgnoreAgc)
                     {
                         if (rx == 1)
@@ -6882,9 +7769,9 @@ namespace Thetis
 
                         if (rx == 1)
                         {
-                            if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds && m_bWaterfallUseNFForACGRX1)
+                            if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds && useNoiseFloorCompensation)
                             {
-                                _RX1waterfallPreviousMinValue = (_RX1waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
+                                _RX1waterfallPreviousMinValue = (_RX1waterfallPreviousMinValue * 0.6f) + (noiseFloorCompensationTarget * 0.4f);
                             }
                             else
                             {
@@ -6893,15 +7780,24 @@ namespace Thetis
                         }
                         else
                         {
-                            if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds && m_bWaterfallUseNFForACGRX2)
+                            if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds && useNoiseFloorCompensation)
                             {
-                                _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
+                                _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (noiseFloorCompensationTarget * 0.4f);
                             }
                             else
                             {
                                 _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (waterfall_minimum * 0.4f);
                             }
                         }
+                    }
+
+                    if (!local_mox)
+                    {
+                        updateWaterfallAgcCache(rx, false, rx == 1 ? _RX1waterfallPreviousMinValue : _RX2waterfallPreviousMinValue);
+                    }
+                    else
+                    {
+                        updateWaterfallAgcCache(rx, true, rx == 1 ? _RX1waterfallPreviousMinValue : _RX2waterfallPreviousMinValue);
                     }
                 }
 
@@ -6920,9 +7816,10 @@ namespace Thetis
 
             // MW0LGE now draw any grid/labels/scales over the top of waterfall
             //if (grid_control_major)  //[2.10.3.9]MW0LGE
-            drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, true);
+            drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, true);            
 
-            if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
+            if (console.PowerOn)
+                drawWaterfallTimeOverlay(nVerticalShift, W, H, rx);
 
             //DebugText = $"previous low : {_RX1waterfallPreviousMinValue.ToString("F2")}\nlow : {low_threshold.ToString("F2")}\nhigh : {high_threshold.ToString("F2")}";
 
@@ -6952,10 +7849,20 @@ namespace Thetis
 
                 if (image != null)
                 {
-                    using (Bitmap graphicsImage = new Bitmap(image))
+                    try
                     {
-                        _bitmapBackground = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                        if (image.Width > 0 && image.Height > 0)
+                        {
+                            using (Bitmap graphicsImage = new Bitmap(image))
+                            {
+                                if (graphicsImage.Width > 0 && graphicsImage.Height > 0)
+                                {
+                                    _bitmapBackground = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                                }
+                            }
+                        }
                     }
+                    catch { }
                 }
             }
         }
@@ -6977,18 +7884,32 @@ namespace Thetis
             // Convert all pixels 
             for (int y = 0; y < bitmap.Height; y++)
             {
-                int offset = bitmapData.Stride * y;
+                //[2.10.3.13]MW0LGE fix issue where stride can be -ve for bottom up bitmaps
+                IntPtr rowPtr = IntPtr.Add(bitmapData.Scan0, bitmapData.Stride * y);
+                int offset = 0;
+
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                    byte B = Marshal.ReadByte(rowPtr, offset++);
+                    byte G = Marshal.ReadByte(rowPtr, offset++);
+                    byte R = Marshal.ReadByte(rowPtr, offset++);
+                    byte A = Marshal.ReadByte(rowPtr, offset++);
 
                     int bgra = B | (G << 8) | (R << 16) | (A << 24);
                     tempStream.Write(bgra);
                 }
 
+                //int offset = bitmapData.Stride * y;
+                //for (int x = 0; x < bitmap.Width; x++)
+                //{
+                //    byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
+
+                //    int bgra = B | (G << 8) | (R << 16) | (A << 24);
+                //    tempStream.Write(bgra);
+                //}
             }
             bitmap.UnlockBits(bitmapData);
 
@@ -7302,6 +8223,7 @@ namespace Thetis
         private static void releaseDX2Resources()
         {
             clearAllDynamicBrushes();
+            clearSpotFlagBitmapCache();
 
             if (m_brushLGDataFillRX1 != null) Utilities.Dispose(ref m_brushLGDataFillRX1);
             if (m_brushLGDataFillRX2 != null) Utilities.Dispose(ref m_brushLGDataFillRX2);
@@ -7850,7 +8772,7 @@ namespace Thetis
             List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, Low - console.MaxFilterWidth, High + console.MaxFilterWidth);
             List<clsNotchCoords> notchData = new List<clsNotchCoords>();
 
-            double min_notch_wdith = localMox(rx) ? _mnfMinSizeTX : _mnfMinSizeRX;
+            double min_notch_wdith = localMox(rx) ? _mnfMinSizeTX : _mnfMinSizeRX[rx-1];
             
             foreach (MNotch n in notches)
             {
@@ -8514,73 +9436,8 @@ namespace Thetis
             #endregion
 
             #region Band edges, H+V lines and labels
-            //MW0LGE
-            int[] band_edge_list;
-            switch (console.CurrentRegion)
-            {
-                case FRSRegion.US:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            5330500, 5406400, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Germany:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 51000000, 144000000, 146000000 };
-                    break;
-                case FRSRegion.Region1:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5351500, 5366500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
-                    break;
-                case FRSRegion.Region2:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            5351500, 5366500, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Region3:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 3900000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Spain:
-                    band_edge_list = new int[] { 135700, 137800, 472000, 479000, 1810000, 1850000, 3500000, 3800000,
-            7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
-            21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Australia:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 1875000,
-             3500000, 3800000, 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000,
-             18168000, 21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.UK:
-                    band_edge_list = new int[] { 135700, 137800, 472000, 479000, 1810000, 2000000, 3500000, 3800000,
-            5258500, 5406500, 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000,
-            21000000, 21450000, 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.India:
-                    band_edge_list = new int[]{ 1810000, 1860000, 3500000, 3900000, 7000000, 7200000,
-            10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Norway:
-                    band_edge_list = new int[]{ 1800000, 2000000, 3500000, 4000000, 5260000, 5410000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-                case FRSRegion.Japan:
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 1875000, 1907500, 1912500,
-                        3500000, 3575000, 3599000, 3612000, 3680000, 3687000, 3702000, 3716000, 3745000, 3770000, 3791000, 3805000,
-            7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
-                    break;
-                default: // same as region3 but with extended 80m out to 4mhz
-                    band_edge_list = new int[]{ 135700, 137800, 472000, 479000, 1800000, 2000000, 3500000, 4000000,
-            7000000, 7300000, 10100000, 10150000, 14000000, 14350000,  18068000, 18168000, 21000000, 21450000,
-            24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-                    break;
-            }
-            //--
+            m_bandEdgeRegionCacheDX2D.Update(console.CurrentRegion);
+            int[] band_edge_list = m_bandEdgeRegionCacheDX2D.Edges;
 
             double vfo;
 
@@ -9256,254 +10113,7 @@ namespace Thetis
                     }
                 }
             }
-            #endregion
-
-            #region Spots
-            // ke9ns add draw DX SPOTS on pandapter
-            //=====================================================================
-            //=====================================================================
-
-            if (!bIsWaterfall && SpotControl.SP_Active != 0)
-            {
-                int localRit;
-                if (rx == 1)
-                    localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
-                else
-                    localRit = 0;
-
-                int iii = 0;                          // ke9ns add stairstep holder
-
-                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
-
-                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
-
-                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
-                int H1b = 20;               // starting point of vertical line
-
-                int rxDisplayLow = RXDisplayLow;
-                int rxDisplayHigh = RXDisplayHigh;
-                SizeF length;
-
-                if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))                 // if your drawing to the bottom 
-                {
-                    vfo_hz = (int)vfob_hz;
-                    rxDisplayLow = RX2DisplayLow;
-                    rxDisplayHigh = RX2DisplayHigh;
-
-                    Console.DXK2 = 0;        // RX2 index to allow call signs to draw after all the vert lines on the screen
-                }
-                else
-                {
-                    Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
-                }
-
-                VFOLow = vfo_hz + rxDisplayLow;    // low freq (left side) in hz
-                VFOHigh = vfo_hz + rxDisplayHigh; // high freq (right side) in hz
-                VFODiff = VFOHigh - VFOLow;       // diff in hz
-
-                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) m_bLSB = true; // LSB
-                else m_bLSB = false;     // usb
-
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-                // draw DX spots
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-
-                for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
-                {
-                    if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
-                    {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow - localRit))); // determine DX spot line pos on current panadapter screen
-
-                        holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
-                        holder1[kk] = VFO_DXPos;
-
-                        kk++;
-
-                        drawLineDX2D(m_bDX2_p1, VFO_DXPos, H1b + nVerticalShift, VFO_DXPos, H1a + nVerticalShift);   // draw vertical line
-
-                    }
-
-                } // for loop through DX_Index
-
-
-                int bb = 0;
-                if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))
-                {
-                    Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
-                    bb = Console.MMK4;
-                }
-                else
-                {
-                    Console.DXK = kk; // count of spots in current panadapter
-                    bb = Console.MMK3;
-                }
-
-
-                //--------------------------------------------------------------------------------------------
-                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
-                {
-                    // font
-                    if (m_bLSB) // 1=LSB so draw on left side of line
-                    {
-
-                        if (Console.DisplaySpot) // display Spotted on Pan
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii + nVerticalShift);
-                        }
-                        else // display SPOTTER on Pan (not the Spotted)
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii + nVerticalShift);
-
-                        }
-
-                        int rx2;
-                        if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50; // allow only 50 qrz spots per Receiver
-                        else rx2 = 0;
-
-                        if (!/*mox*/local_mox) // only do when not transmitting
-                        {
-                            Console.DXW[ii + rx2] = (int)length.Width;    // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-
-                        }
-
-
-                    } // LSB side
-
-
-                    else   // 0=usb so draw on righ side of line (normal)
-                    {
-                        if (Console.DisplaySpot) // spot
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1); //  not needed here but used for qrz hyperlinking
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX station name
-                        }
-                        else // spotter
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1); //  not needed here but used for qrz hyperlinking
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX station name
-
-                        }
-
-                        int rx2;
-                        if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50;
-                        else rx2 = 0;
-
-                        if (!/*mox*/local_mox) // only do when not transmitting
-                        {
-                            Console.DXW[ii + rx2] = (int)length.Width;   // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii];
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-                        }
-
-                        if (vfo_hz >= 50000000) // 50000000 or 50mhz
-                        {
-                            iii = iii + 11;
-                            drawStringDX2D(SpotControl.DX_Grid[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX grid name
-                        }
-
-                    } // USB side
-
-                    iii = iii + 11;
-                    if (iii > 90) iii = 0;
-
-
-                }// for loop through DX_Index
-            }
-            #endregion
+            #endregion         
 
             _d2dRenderTarget.PopAxisAlignedClip();
 
@@ -9513,6 +10123,64 @@ namespace Thetis
             return center_line_x;
         }
 
+        private static void AppendCursorInfoLines(List<string> lines, string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            string[] split = text.Replace("\r\n", "\n").Split('\n');
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(split[i]))
+                    lines.Add(split[i]);
+            }
+        }
+
+        private static void DrawCursorInfoPanel(List<string> lines, int W, float yPos)
+        {
+            if (lines == null || lines.Count == 0)
+                return;
+
+            const float textPaddingX = 5f;
+            const float textPaddingY = 3f;
+            const float cornerRadius = 4f;
+            const float lineGap = 2f;
+
+            float lineHeight = measureStringDX2D("00:00:00", fontDX2d_callout).Height;
+            float maxWidth = 0f;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                float lineWidth = measureStringDX2D(lines[i], fontDX2d_callout).Width;
+                if (lineWidth > maxWidth)
+                    maxWidth = lineWidth;
+            }
+
+            float panelWidth = maxWidth + (textPaddingX * 2f);
+            float panelHeight = (lines.Count * lineHeight) + ((lines.Count - 1) * lineGap) + (textPaddingY * 2f);
+            int xPos = display_cursor_x + 12;
+            float rectX = xPos - textPaddingX;
+            float rectY = yPos - textPaddingY;
+            if (rectX + panelWidth > W)
+            {
+                xPos -= (int)panelWidth + 24;
+                rectX = xPos - textPaddingX;
+            }
+
+            RoundedRectangle rr = new RoundedRectangle();
+            rr.RadiusX = cornerRadius;
+            rr.RadiusY = cornerRadius;
+            rr.Rect = new RectangleF(rectX, rectY, panelWidth, panelHeight);
+            _d2dRenderTarget.FillRoundedRectangle(rr, getDXBrushForColour(Color.Black, 144));
+            _d2dRenderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(Color.White, 96));
+
+            float lineY = yPos;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                drawStringDX2D(lines[i], fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, lineY);
+                lineY += lineHeight + lineGap;
+            }
+        }
+
         private static void DrawCursorInfo(int W)
         {
             if (_spot_highlighted) return; // ignore if highlighting a spot
@@ -9520,53 +10188,11 @@ namespace Thetis
             //MHzCursor Display
             if ((m_bAlwaysShowCursorInfo || Common.ShiftKeyDown) && display_cursor_x != -1)
             {
-                bool bLeftSide = false;
-                int width = 0;
-                int xPos;
-
-                if (!string.IsNullOrEmpty(m_sMHzCursorDisplay))
-                {
-                    width = (int)measureStringDX2D(m_sMHzCursorDisplay, fontDX2d_callout, true).Width;
-                    xPos = display_cursor_x + 12;
-                    if (xPos + width > W)
-                    {
-                        xPos -= width + 24;
-                        bLeftSide = true;
-                    }
-                    drawStringDX2D(m_sMHzCursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y - 18);
-                }
-
-                if (!string.IsNullOrEmpty(m_sOtherData1CursorDisplay))
-                {
-                    xPos = display_cursor_x + 12;
-                    if (bLeftSide)
-                    {
-                        xPos -= width + 24;
-                    }
-                    else if (xPos + width > W)
-                    {
-                        width = (int)measureStringDX2D(m_sOtherData1CursorDisplay, fontDX2d_callout, true).Width;
-                        xPos -= width + 24;
-                        bLeftSide = true;
-                    }
-                    drawStringDX2D(m_sOtherData1CursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y + 2);
-                }
-
-                if (!string.IsNullOrEmpty(m_sOtherData2CursorDisplay))
-                {
-                    xPos = display_cursor_x + 12;
-                    if (bLeftSide)
-                    {
-                        xPos -= width + 24;
-                    }
-                    else if (xPos + width > W)
-                    {
-                        width = (int)measureStringDX2D(m_sOtherData2CursorDisplay, fontDX2d_callout, true).Width;
-                        xPos -= width + 24;
-                        bLeftSide = true;
-                    }
-                    drawStringDX2D(m_sOtherData2CursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y + 18);
-                }
+                List<string> lines = new List<string>(4);
+                AppendCursorInfoLines(lines, m_sMHzCursorDisplay);
+                AppendCursorInfoLines(lines, m_sOtherData1CursorDisplay);
+                AppendCursorInfoLines(lines, m_sOtherData2CursorDisplay);
+                DrawCursorInfoPanel(lines, W, display_cursor_y - 18);
             }
             //
         }
@@ -10640,6 +11266,7 @@ namespace Thetis
         private static List<int> _spotLayerRightRX1 = new List<int>();
         private static List<int> _spotLayerRightRX2 = new List<int>();
         private static readonly Dictionary<int, SharpDX.Direct2D1.Brush> _DX2Brushes = new Dictionary<int, SharpDX.Direct2D1.Brush>(256);
+        private static readonly Dictionary<System.Drawing.Image, SharpDX.Direct2D1.Bitmap> _spotFlagBitmapCache = new Dictionary<System.Drawing.Image, SharpDX.Direct2D1.Bitmap>(ReferenceEqualityComparer<System.Drawing.Image>.Instance);
 
         private static int getSpotLayer(int rx, int leftX)
         {
@@ -10716,9 +11343,17 @@ namespace Thetis
         {
             if (bottom) return;
 
+            SpotManager2.smSpot[] sortedSpots = SpotManager2.GetFrequencySortedSpots();
+            if (sortedSpots.Length == 0)
+            {
+                _spot_highlighted = false;
+                return;
+            }
+
             long vfo_hz;
             int rxDisplayLow;
             int rxDisplayHigh;
+            int rxIndex = rx - 1;
 
             bool local_mox = localMox(rx);
             bool duplex = isRxDuplex(rx);
@@ -10783,19 +11418,43 @@ namespace Thetis
             float HzToPixel = W / (float)vfoDiff;
             int cwShift = getCWSideToneShift(rx);
 
-            List<SpotManager2.smSpot> sortedSpots = SpotManager2.GetFrequencySortedSpots(); 
-
             SharpDX.Direct2D1.Brush spotColour;
             string sDisplayString;
 
-            foreach (SpotManager2.smSpot spot in sortedSpots)
+            for (int i = 0; i < sortedSpots.Length; i++)
             {
-                sDisplayString = getCallsignString(spot);
+                SpotManager2.smSpot spot = sortedSpots[i];
+                if (spot.frequencyHZ < vfoLow || spot.frequencyHZ > vfoHigh)
+                {
+                    spot.Visible[rxIndex] = false;
+                    continue;
+                }
 
-                spot.Size = measureStringDX2D(sDisplayString, fontDX2d_font9);
+                if (_spot_cache_dirty || ( (spot.spot_flag_in_use && spot.flag == null) || (spot.spotter_flag_in_use && spot.flag_spotter == null) ))
+                {
+                    spot.cached_display_text = "";
+                    spot.Size.Width = 0;
+                    spot.Size.Height = 0;
+                    spot.spot_flag_in_use = false;
+                    spot.spotter_flag_in_use = false;
+                }
+
+                spot.spot_flag_in_use = spot.flag != null;
+                spot.spotter_flag_in_use = spot.flag_spotter != null;
+
+                sDisplayString = getCallsignString(spot);
+                if (!string.Equals(spot.cached_display_text, sDisplayString, StringComparison.Ordinal))
+                {
+                    spot.cached_display_text = sDisplayString;
+                    spot.Size = getSpotTagSize(sDisplayString, spot.flag);
+                }
+                else if (spot.Size.Width <= 0 || spot.Size.Height <= 0)
+                {
+                    spot.Size = getSpotTagSize(sDisplayString, spot.flag);
+                }
 
                 int width = (int)spot.Size.Width;
-                int height = (int)spot.Size.Height + 2;
+                int height = (int)spot.Size.Height;
 
                 int halfWidth = width / 2;
                 float x = (spot.frequencyHZ - vfoLow - cwShift - local_rit) * HzToPixel;
@@ -10829,19 +11488,15 @@ namespace Thetis
                 if (layer > -1)
                 {
                     updateLayer(rx, layer, rightX);
-
-                    // draw only if in view
-                    if (spot.frequencyHZ >= vfoLow && spot.frequencyHZ <= vfoHigh)
-                    {
                         int textY = yTop + 20 + (layer * height);
 
                         // used for mouse over + rectangle tag
-                        spot.BoundingBoxInPixels[rx - 1].X = leftX - 1;
-                        spot.BoundingBoxInPixels[rx - 1].Y = textY - 1;
-                        spot.BoundingBoxInPixels[rx - 1].Width = (int)(spot.Size.Width + 4);
-                        spot.BoundingBoxInPixels[rx - 1].Height = (int)(spot.Size.Height + 2);
+                    spot.BoundingBoxInPixels[rxIndex].X = leftX - 1;
+                    spot.BoundingBoxInPixels[rxIndex].Y = textY - 1;
+                    spot.BoundingBoxInPixels[rxIndex].Width = width + 4;
+                    spot.BoundingBoxInPixels[rxIndex].Height = height;
 
-                        if (spot.Highlight[rx - 1])
+                    if (spot.Highlight[rxIndex])
                         {
                             spotColour = getDXBrushForColour(spot.colour, 255);
 
@@ -10855,20 +11510,21 @@ namespace Thetis
                             drawLineDX2D(spotColour, x, yTop, x, textY, 1);
                             drawFillElipseDX2D(spotColour, x, yTop, 4, 4);
                         }
-                        spot.Visible[rx - 1] = true;
+
+                    spot.Visible[rxIndex] = true;
                     }
                     else
-                        spot.Visible[rx - 1] = false;
+                {
+                    spot.Visible[rxIndex] = false;
                 }
             }
-
+            _spot_cache_dirty = false;
 
             // now plot all the tags over the lines if the spot is visible
             SharpDX.Direct2D1.Brush textBrush;
             SharpDX.Direct2D1.Brush whiteBrush = getDXBrushForColour(Color.White, 255);
             SharpDX.Direct2D1.Brush blackBrush = getDXBrushForColour(Color.Black, 255);
             SharpDX.Direct2D1.Brush brightBorder = getDXBrushForColour(Color.Yellow, 255);
-            //SharpDX.Direct2D1.Brush brightBorder_new_spot = getDXBrushForColour(Color.Yellow, _new_spot_fade);
 
             // adjust fade
             double currentTime = m_dElapsedFrameStart;
@@ -10879,19 +11535,17 @@ namespace Thetis
             _new_spot_fade = (int)(normalised * 255.0);
             //
 
-            List<SpotManager2.smSpot> visibleSpots = sortedSpots.Where(o => o.Visible[rx - 1]).ToList();
             SpotManager2.smSpot highLightedSpot = null;
-            foreach (SpotManager2.smSpot spot in visibleSpots)
+            for (int i = 0; i < sortedSpots.Length; i++)
             {
-                SharpDX.Direct2D1.Brush brightBorder_new_spot = _override_spot_flash_colour ? getDXBrushForColour(_spot_flash_colour, _new_spot_fade) : getDXBrushForColour(spot.colour, _new_spot_fade);
+                SpotManager2.smSpot spot = sortedSpots[i];
+                if (!spot.Visible[rxIndex]) continue;
 
-                sDisplayString = getCallsignString(spot);
-
-                int nLuminance = Common.GetLuminance(spot.colour);
+                sDisplayString = spot.cached_display_text ?? getCallsignString(spot);
                 spotColour = getDXBrushForColour(spot.colour, 255);
-                textBrush = nLuminance <= 128 ? whiteBrush : blackBrush;
+                textBrush = spot.use_text_colour ? getDXBrushForColour(spot.text_colour, 255) : (spot.colour_luminance <= 128 ? whiteBrush : blackBrush);
 
-                if (spot.Highlight[rx - 1])
+                if (spot.Highlight[rxIndex])
                 {
                     highLightedSpot = spot;
                     spot.previously_highlighted = true;
@@ -10899,18 +11553,20 @@ namespace Thetis
                 }
                 else
                 {
-                    drawFillRectangleDX2D(spotColour, spot.BoundingBoxInPixels[rx - 1]);
-                    drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, spot.BoundingBoxInPixels[rx - 1].X + 1, spot.BoundingBoxInPixels[rx - 1].Y + 1);
+                    drawFillRectangleDX2D(spotColour, spot.BoundingBoxInPixels[rxIndex]);
+                    drawSpotTagContent(spot, sDisplayString, textBrush, spot.BoundingBoxInPixels[rxIndex]);
 
                     if (!_flashNewTCISpots) continue;
 
                     // now draw a border around any spot that is <= 2 mins
                     if (spot.flashing && !spot.IsSWL && !spot.previously_highlighted)
                     {
-                        Rectangle r = new Rectangle(spot.BoundingBoxInPixels[rx - 1].X - 2, spot.BoundingBoxInPixels[rx - 1].Y - 2,
-                            spot.BoundingBoxInPixels[rx - 1].Width + 4, spot.BoundingBoxInPixels[rx - 1].Height + 4);
+                        SharpDX.Direct2D1.Brush brightBorderNewSpot = _override_spot_flash_colour ? getDXBrushForColour(_spot_flash_colour, _new_spot_fade) : getDXBrushForColour(spot.colour, _new_spot_fade);
 
-                        drawRectangleDX2D(brightBorder_new_spot, r, 4);
+                        Rectangle r = new Rectangle(spot.BoundingBoxInPixels[rxIndex].X - 2, spot.BoundingBoxInPixels[rxIndex].Y - 2,
+                            spot.BoundingBoxInPixels[rxIndex].Width + 4, spot.BoundingBoxInPixels[rxIndex].Height + 4);
+
+                        drawRectangleDX2D(brightBorderNewSpot, r, 4);
 
                         TimeSpan age = DateTime.UtcNow - spot.flash_start_time;
                         if (age.TotalSeconds > 120 && _new_spot_fade < 20) spot.flashing = false; // stop flashing when dim
@@ -10921,18 +11577,17 @@ namespace Thetis
             if (highLightedSpot != null)
             {
                 _spot_highlighted = true;
-                sDisplayString = getCallsignString(highLightedSpot);
+                sDisplayString = highLightedSpot.cached_display_text ?? getCallsignString(highLightedSpot);
 
-                int nLuminance = Common.GetLuminance(highLightedSpot.colour);
                 spotColour = getDXBrushForColour(highLightedSpot.colour, 255);
-                textBrush = nLuminance <= 128 ? whiteBrush : blackBrush;
+                textBrush = highLightedSpot.colour_luminance <= 128 ? whiteBrush : blackBrush;
 
-                Rectangle r = new Rectangle(highLightedSpot.BoundingBoxInPixels[rx - 1].X - 2, highLightedSpot.BoundingBoxInPixels[rx - 1].Y - 2,
-                                        highLightedSpot.BoundingBoxInPixels[rx - 1].Width + 4, highLightedSpot.BoundingBoxInPixels[rx - 1].Height + 4);
+                Rectangle r = new Rectangle(highLightedSpot.BoundingBoxInPixels[rxIndex].X - 2, highLightedSpot.BoundingBoxInPixels[rxIndex].Y - 2,
+                                        highLightedSpot.BoundingBoxInPixels[rxIndex].Width + 4, highLightedSpot.BoundingBoxInPixels[rxIndex].Height + 4);
 
                 drawFillRectangleDX2D(spotColour, r);
                 drawRectangleDX2D(brightBorder, r, 2);
-                drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, highLightedSpot.BoundingBoxInPixels[rx - 1].X + 1, highLightedSpot.BoundingBoxInPixels[rx - 1].Y + 1);
+                drawSpotTagContent(highLightedSpot, sDisplayString, textBrush, highLightedSpot.BoundingBoxInPixels[rxIndex]);
 
                 // show additional text in bubble below, and concat parts if available
                 string bubble_text = highLightedSpot.additionalText;
@@ -11089,6 +11744,8 @@ namespace Thetis
             { 
                 clearBuffers(displayTargetWidth, 1);
                 if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
+                resetWaterfallBitmapAlignment(1);
+                resetWaterfallBitmapAlignment(2);
             }
         }
 
@@ -11401,6 +12058,144 @@ namespace Thetis
                 return (int)devMode.dmDisplayFrequency;
             }
             return 60;
+        }
+
+        private static SizeF getSpotTagSize(string displayText, System.Drawing.Image flagImage)
+        {
+            SizeF textSize = measureStringDX2D(displayText, fontDX2d_font9);
+            int flagWidth;
+            int flagHeight;
+            getSpotFlagRenderSize(flagImage, (int)textSize.Height, out flagWidth, out flagHeight);
+
+            int width = (int)textSize.Width + 4;
+            if (flagWidth > 0)
+                width += flagWidth + 3;
+
+            int height = Math.Max((int)textSize.Height, flagHeight) + 2;
+            return new SizeF(width, height);
+        }
+
+        private static void drawSpotTagContent(SpotManager2.smSpot spot, string displayText, SharpDX.Direct2D1.Brush textBrush, Rectangle bounds)
+        {
+            int textX = bounds.X + 1;
+
+            if (_spot_flags)
+            {
+                int flagWidth;
+                int flagHeight;
+
+                System.Drawing.Image flagImage = _bShiftKeyDown ? spot.flag_spotter : spot.flag;
+                getSpotFlagRenderSize(flagImage, bounds.Height - 2, out flagWidth, out flagHeight);
+
+                if (flagWidth > 0)
+                {
+                    SharpDX.Direct2D1.Bitmap flagBitmap = getSpotFlagBitmap(flagImage);
+                    if (flagBitmap != null)
+                    {
+                        RectangleF destRect = new RectangleF(
+                            bounds.X + 1,
+                            bounds.Y + ((bounds.Height - flagHeight) / 2f),
+                            flagWidth,
+                            flagHeight);
+
+                        _d2dRenderTarget.DrawBitmap(flagBitmap, destRect, 1f, BitmapInterpolationMode.Linear);
+                    }
+
+                    textX += flagWidth + 3;
+                }
+            }
+
+            drawStringDX2D(displayText, fontDX2d_font9, textBrush, textX, bounds.Y + 1);
+        }
+
+        private static SharpDX.Direct2D1.Bitmap getSpotFlagBitmap(System.Drawing.Image flagImage)
+        {
+            if (flagImage == null || !_bDX2Setup || _d2dRenderTarget == null)
+                return null;
+
+            lock (_spotFlagBitmapCache)
+            {
+                SharpDX.Direct2D1.Bitmap cachedBitmap;
+                if (_spotFlagBitmapCache.TryGetValue(flagImage, out cachedBitmap))
+                    return cachedBitmap;
+            }
+
+            try
+            {
+                using (Bitmap graphicsImage = new Bitmap(flagImage))
+                {
+                    SharpDX.Direct2D1.Bitmap dxBitmap = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                    if (dxBitmap == null) return null;
+
+                    lock (_spotFlagBitmapCache)
+                    {
+                        SharpDX.Direct2D1.Bitmap cachedBitmap;
+                        if (_spotFlagBitmapCache.TryGetValue(flagImage, out cachedBitmap))
+                        {
+                            Utilities.Dispose(ref dxBitmap);
+                            return cachedBitmap;
+                        }
+
+                        _spotFlagBitmapCache[flagImage] = dxBitmap;
+                        return dxBitmap;
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static void getSpotFlagRenderSize(System.Drawing.Image flagImage, int targetHeight, out int width, out int height)
+        {
+            width = 0;
+            height = 0;
+
+            if (!_spot_flags || flagImage == null || flagImage.Width <= 0 || flagImage.Height <= 0 || targetHeight <= 0)
+                return;
+
+            height = Math.Max(1, targetHeight);
+            width = Math.Max(1, (int)Math.Round(flagImage.Width * (height / (double)flagImage.Height)));
+        }
+
+        private static void clearSpotFlagBitmapCache()
+        {
+            lock (_spotFlagBitmapCache)
+            {
+                foreach (SharpDX.Direct2D1.Bitmap bitmap in _spotFlagBitmapCache.Values)
+                {
+                    SharpDX.Direct2D1.Bitmap tempBitmap = bitmap;
+                    Utilities.Dispose(ref tempBitmap);
+                }
+
+                _spotFlagBitmapCache.Clear();
+            }
+        }
+        private static bool _spot_flags = true;
+        private static bool _spot_cache_dirty = true;
+        public static bool ShowSpotFlags
+        {
+            get { return _spot_flags; }
+            set 
+            { 
+                _spot_flags = value;
+                _spot_cache_dirty = true;
+            }
+        }
+        private sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
+        {
+            internal static readonly ReferenceEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();
+
+            public bool Equals(T x, T y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            public int GetHashCode(T obj)
+            {
+                return RuntimeHelpers.GetHashCode(obj);
+            }
         }
     }
 }

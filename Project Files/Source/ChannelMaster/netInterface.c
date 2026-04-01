@@ -127,9 +127,42 @@ int nativeGetDotDashPTT()
 PORT
 int getAndResetADC_Overload() 
 {
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
+
 	int n = prn->adc[0].adc_overload | (prn->adc[1].adc_overload << 1) | (prn->adc[2].adc_overload << 2);
 
+	//reset
+	for (int i = 0; i < MAX_ADC; i++)
+	{
+		prn->adc[i].adc_overload = 0;
+	}
+
 	return n;
+}
+
+PORT
+uint16_t getAndResetADCmaxMagnitudeAtOverload(int adc)
+{
+	if (adc < 0 || adc >= MAX_ADC) return 0;
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
+
+	short mag = prn->adc[adc].max_magnitude_at_overload;
+
+	prn->adc[adc].max_magnitude_at_overload = 0;
+
+	return mag;
+}
+
+PORT
+uint16_t getADCmaxMagnitude(int adc)
+{
+	if (adc < 0 || adc >= MAX_ADC) return 0;
+	if (prn == NULL) return 0;
+	if (prn->adc == NULL) return 0;
+
+	return prn->adc[adc].max_magnitude;
 }
 
 PORT
@@ -368,6 +401,17 @@ void SetOCBits(int b)
 	if (prn->oc_output != b)
 	{
 		prn->oc_output = b;
+		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
+			CmdHighPriority();
+	}
+}
+
+PORT
+void SetOCExtraBits(int b)
+{
+	if (prn->oc_output_extras != b)
+	{
+		prn->oc_output_extras = b;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
@@ -1375,6 +1419,9 @@ void create_rnet()
 
 	prn = (RADIONET)malloc(sizeof(radionet));
 	if (prn) {
+		bandwidth_monitor_reset();
+		prn->base_outbound_port = 1024;
+		prn->p2_custom_port_base = 1025;
 		prn->RxBuff = (double**) calloc (8, sizeof (double*));
 		for (int i = 0; i < 8; i++)
 			prn->RxBuff[i] = (double*) calloc (64, 2 * sizeof (double));
@@ -1384,7 +1431,7 @@ void create_rnet()
 		prn->OutBufp = (char*)calloc(1, sizeof(char) * 1440);
 		prn->outLRbufp = (double*)calloc(1, sizeof(double) * 1440); 
 		prn->outIQbufp = (double*)calloc(1, sizeof(double) * 1440);
-		prn->rx_base_port = 1035;
+		//prn->rx_base_port = prn->base_radio_port + 11;// RXBasePort;// 1035;
 		prn->run = 0;
 		prn->wdt = 0;
 		prn->sendHighPriority = 1;
@@ -1410,7 +1457,7 @@ void create_rnet()
 		prn->mic.line_in_gain = 0;
 		prn->mic.spp = 64; // I-samples per packet
 
-		prn->wb_base_port = 1027;
+		//prn->wb_base_port = prn->base_radio_port + 3;// WB0Port;// 1027;
 		prn->wb_base_dispid = 32;
 		prn->wb_enable = 0;
 		prn->wb_samples_per_packet = 512;

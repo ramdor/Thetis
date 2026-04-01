@@ -121,7 +121,7 @@
     <value>False</value>
   </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
+    <value>176, 19</value>
   </metadata>
   <metadata name="numericUpDownTS3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -141,9 +141,41 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
+  <data name="chkNetworkProtocolMustMatch.ToolTip" xml:space="preserve">
+    <value>The radio's protocol must match the stored entry. (default checked)
+Unchecked, a stored entry will allow that radio to have any protocol version.
+The added entry will be update accordingly once connected.</value>
+  </data>
+  <data name="chkInformHardwareP2Ports.ToolTip" xml:space="preserve">
+    <value>Default P2 UDP ports on the radio are:
+a) Port 1024 into the radio - discovery and general port, this can not be changed
+b) Others into the radio 1025-1029 - these can be changed
+c) The radio will also use its own output ports 1024-1041 which direct data to the single PC listen port - these can be changed
+
+If the [inform hardware of ports to use] is unchecked, on a router/modem you would port forward as follows
+    WANip:1024-1029 &gt; radioip:1024-1029
+    you would connect to a specific radio in this case using Thetis as WANip:1024
+
+    you may want to use different external ports, this would also work
+    WAN:51000-51005 &gt; radioip:1024-1029
+    you would connect to a specific radio in this case using Thetis as WANip:51000
+    
+    and the radio would also direct everything form its own ports 1025-1041 to the listen port
+
+If the [inform hardware of ports to use] is checked you could do the following
+    WANip:6000 &gt; radioip:1024   (as 1024 can no be changed on the radio)
+    WANip:6001-6005 &gt; radioip:6001-6005   (the radio is told of the 6000 base and now offsets its port expectation)
+    you would connect to a specific radio in this case using Thetis as WANip:6000
+    
+    and the radio would also direct everything form its own ports 6001-6018 to the listen port
+
+In all cases, if the client Thetis is behind another modem/router, then the listen port should be port forwarded back directly to the PC ip.</value>
+  </data>
+  <data name="chkNetworkThrottleIndexTweak.ToolTip" xml:space="preserve">
+    <value>When enabled NetworkThrottlingIndex is set to 0xffffffff to prevent windows from throttling the network connection.
+Thetis needs to be run as administrator for this to work.
+Reboot after the change is made.</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="picModelBoardWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -206,6 +238,14 @@
 </value>
   </data>
   <data name="pbVAC1FeedbackGainInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="pbCMasio_InOut_Info.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
         0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
@@ -391,7 +431,7 @@ textoverlay and ledindicitaor meter items. You can use %discord_general=N% and
 %discord_bot=N% to view the history, where 0 is newest, 1 is the previous etc.
 
 You do not need to be a member of discord to use this functionality but there are lots
-of us there and you can interact with many channles and actively view the
+of us there and you can interact with many channels and actively view the
 #thetis-bot channel to see what is going on.</value>
   </data>
   <data name="picMultiMeterRotatorControlInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -411,26 +451,37 @@ these settings are stored. Use the Transmit-&gt;Profile Save
 button, or use the Auto Save TX Profile options on the
 Transmit tab</value>
   </data>
+  <data name="picButtonBoxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>652, 17</value>
+    <value>325, 19</value>
   </metadata>
   <metadata name="timer_LED_Mirror.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>810, 17</value>
-  </metadata>
-  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1018, 17</value>
+    <value>510, 18</value>
   </metadata>
   <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1176, 17</value>
+    <value>776, 16</value>
   </metadata>
   <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1322, 17</value>
+    <value>963, 21</value>
   </metadata>
   <metadata name="tmrLedValid.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1462, 17</value>
+    <value>1120, 21</value>
+  </metadata>
+  <metadata name="tmrCheckStorageSpace.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 58</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>120</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

@@ -224,6 +224,10 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXACBLRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXACBLRun(int channel, bool run);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXACBLPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXACBLPosition(int channel, int position); //0=before AGC, 1=after
+        
+
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFIRRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFIRRun(int channel, bool run);
 
@@ -248,6 +252,9 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "RNNRloadModel", CallingConvention = CallingConvention.Cdecl)]
         public static extern void RNNRloadModel(string file_path);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXARNNRUseDefaultGain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXARNNRUseDefaultGain(int channel, int use_default_gain);
         //
 
         //libspecbleach
@@ -749,7 +756,7 @@ namespace Thetis
         public static extern void SetTXACFCOMPRun(int channel, int run);
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPprofile", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E);
+        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E, double* Gq, double* Eq);
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPosition", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFCOMPPosition(int channel, int pos);
@@ -778,7 +785,11 @@ namespace Thetis
 
         // TXEQ
         [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G);
+        public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G, double* Q);
+
+        // RXEQ
+        [DllImport("wdsp.dll", EntryPoint = "SetRXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAEQProfile(int channel, int nfreqs, double* F, double* G, double* Q);
 
         // GetTXACFCOMPGainAndMask
         [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPGainAndMask", CallingConvention = CallingConvention.Cdecl)]

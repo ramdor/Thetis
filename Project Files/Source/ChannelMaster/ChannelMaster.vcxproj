@@ -212,6 +212,7 @@
     <ClInclude Include="aamix.h" />
     <ClInclude Include="amix.h" />
     <ClInclude Include="analyzers.h" />
+    <ClInclude Include="bandwidth_monitor.h" />
     <ClInclude Include="cmasio.h" />
     <ClInclude Include="cmaster.h" />
     <ClInclude Include="cmbuffs.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="router.h" />
     <ClInclude Include="sidetone.h" />
     <ClInclude Include="sync.h" />
+    <ClInclude Include="tci.h" />
     <ClInclude Include="cmUtilities.h" />
     <ClInclude Include="txgain.h" />
     <ClInclude Include="version.h" />
@@ -241,6 +243,7 @@
     <ClCompile Include="aamix.c" />
     <ClCompile Include="amix.c" />
     <ClCompile Include="analyzers.c" />
+    <ClCompile Include="bandwidth_monitor.c" />
     <ClCompile Include="cmasio.c" />
     <ClCompile Include="cmaster.c" />
     <ClCompile Include="cmbuffs.c" />
@@ -258,6 +261,7 @@
     <ClCompile Include="router.c" />
     <ClCompile Include="sidetone.c" />
     <ClCompile Include="sync.c" />
+    <ClCompile Include="tci.c" />
     <ClCompile Include="cmUtilities.c" />
     <ClCompile Include="txgain.c" />
     <ClCompile Include="version.c" />

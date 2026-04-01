@@ -49,7 +49,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Thetis
 {
@@ -96,6 +96,9 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "inid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int inid(int stype, int id);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "Inbound", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void Inbound(int id, int nsamples, double* data);
+
         [DllImport("ChannelMaster.dll", EntryPoint = "chid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int chid (int stream, int subrx);
 
@@ -108,10 +111,20 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "getCMAstate", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetCMAstate();
 
-        // router
+        // tci
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIRxIQ", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpOutboundTCIRxIQ(TCIStreamSamples del);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpOutboundTCIRxAudio", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpOutboundTCIRxAudio(TCIStreamSamples del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendpInboundTCITxAudio", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendpInboundTCITxAudio(TCITxInput del);
+        // end tci
+
+        // router
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void LoadRouterAll(void* ptr, int id, int ports, int calls, int varvals, 
+        public static extern void LoadRouterAll(void* ptr, int id, int sources, int calls, int varvals, 
             int* nstreams, int* function, int* callid);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterControlBit", CallingConvention = CallingConvention.Cdecl)]
@@ -236,6 +249,21 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXVAC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXVAC(int txid, int txvac);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRun(int active);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTXTCIAudio", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXTCIAudio(int txid, int active);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMox", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMox(int id, int mox);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMon", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMon(int id, int mon);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMonVol", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMonVol(int id, double vol);
 
         // Penelope output level
 
@@ -367,13 +395,13 @@ namespace Thetis
             }
         }
 
-        private static bool MONmixState = false;
+        private static bool _MONmixState = false;
         public static bool MONMixState
         {
-            get { return MONmixState; }
+            get { return _MONmixState; }
             set
             {
-                MONmixState = value;
+                _MONmixState = value;
             }
         }
 
@@ -401,18 +429,61 @@ namespace Thetis
             {
                 ps_rate = value;
 
-                if(HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                {
-                    // get transmitter identifiers
-                    int txinid = cmaster.inid(1, 0);        // stream id  REDPITAYA Pavel
-                    int txch = cmaster.chid(txinid, 0);     // wdsp channel REDPITAYA Pavel
-
-                    puresignal.SetPSFeedbackRate(txch, ps_rate); // REDPITAYA Pavel
-                }
+                //actually change the rate
+                int txinid = cmaster.inid(1, 0);
+                int txch = cmaster.chid(txinid, 0);
+                puresignal.SetPSFeedbackRate(txch, ps_rate);
             }
         }
 
+        private sealed class TCIIQBlock
+        {
+            public int Receiver;
+            public int SampleRate;
+            public int ComplexSamples;
+            public float[] Samples;
+        }
+
+        private sealed class TCIAudioBlock
+        {
+            public int Receiver;
+            public int SampleRate;
+            public int SamplesPerChannel;
+            public float[] Left;
+            public float[] Right;
+        }
+
         public static RadioProtocol CurrentRadioProtocol { get; set; }
+        private static readonly object m_objTCIStreamQueueLock = new object();
+        private static readonly object m_objTCIStreamPoolLock = new object();
+        private static readonly object m_objTCIIQResamplerLock = new object();
+        private static readonly int[] m_tciIQResamplerInputRates = new int[cmRCVR];
+        private static readonly int[] m_tciIQResamplerOutputRates = new int[cmRCVR];
+        unsafe private static void*[] m_tciIQResamplerI = new void*[cmRCVR];
+        unsafe private static void*[] m_tciIQResamplerQ = new void*[cmRCVR];
+        private static readonly Dictionary<int, Stack<float[]>> m_tciFloatBufferPool = new Dictionary<int, Stack<float[]>>();
+        private static readonly Stack<TCIIQBlock> m_tciIQBlockPool = new Stack<TCIIQBlock>();
+        private static readonly Stack<TCIAudioBlock> m_tciAudioBlockPool = new Stack<TCIAudioBlock>();
+        private static readonly Queue<TCIIQBlock> m_tciIQQueue = new Queue<TCIIQBlock>();
+        private static readonly Queue<TCIAudioBlock> m_tciAudioQueue = new Queue<TCIAudioBlock>();
+        private static Thread m_tciRxThread;
+        private static readonly object m_objTCITxStateLock = new object();
+        private static readonly Queue<float[]> m_tciTxSampleQueue = new Queue<float[]>();
+        private static Thread m_tciTxThread;
+        private static int m_tciTxSampleQueueOffset = 0;
+        private static int m_tciTxQueuedSamples = 0;
+        private static int m_tciTxChronoOutstanding = 0;
+        private static int m_tciTxChronoReceiver = 0;
+        private static long m_tciTxLastChronoTick = 0;
+        private static int m_tciTxInputRate = 0;
+        private static int m_tciTxResamplerInputRate = 0;
+        unsafe private static void* m_tciTxResampler = null;
+        private const int TCI_TX_MAX_OUTSTANDING = 64;
+        private const int TCI_TX_EXTRA_BUFFER_MS = 50;
+        private const int TCI_MAX_IQ_STREAM_RATE = 384000;
+        private const int TCI_MAX_POOLED_BLOCKS = 64;
+        private const int TCI_MAX_POOLED_BUFFERS_PER_SIZE = 32;
+        private static volatile bool m_runTCIStreamThreads = false;
         #endregion
 
         #region logic calls
@@ -446,8 +517,15 @@ namespace Thetis
             // setup transmitter input sample rate here since it is fixed
             cmaster.SetXcmInrate(txinid, 48000);
 
-            // setup CFIR to run; it will always be ON with new protocol firmware
-            WDSP.SetTXACFIRRun(txch, true);
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) //p1
+            {
+                WDSP.SetTXACFIRRun(txch, false);
+            }
+            else
+            {
+                // setup CFIR to run; it will always be ON with new protocol firmware
+                WDSP.SetTXACFIRRun(txch, true);
+            }
 
             // set PureSignal basic parameters
             // note:  if future models have different settings, these calls could be moved to
@@ -1004,7 +1082,13 @@ namespace Thetis
                   mode == DSPMode.FM)))
             {
                 if (Audio.WavePlayback)
-                    gain = Audio.WavePreamp;
+                {
+                    double gain_in_db = 20.0 * Math.Log10(Audio.WavePreamp);
+                    gain_in_db += 20.0 * Math.Log10(Audio.WavePreampAdjust);
+                    if (gain_in_db < -70.0) gain_in_db = -70.0;
+                    if (gain_in_db > 70.0) gain_in_db = 70.0;
+                    gain = Math.Pow(10.0, gain_in_db / 20.0);
+                }
                 else
                 {
                     if (!Audio.VACEnabled && (mode == DSPMode.DIGL || mode == DSPMode.DIGU))
@@ -1036,14 +1120,688 @@ namespace Thetis
         #endregion
 
         #region callbacks
-
-        
         unsafe public static void SendCallbacks()
         {
             SendCBPushVox(0, PushVoxDel);
+
+            //tci
+            SendpOutboundTCIRxIQ(TCIRxIQOutDel);
+            SendpOutboundTCIRxAudio(TCIRxAudioOutDel);
+            SendpInboundTCITxAudio(TCITxAudioInDel);
+            //
+
+            EnsureTCIStreamThreads();
             WaveThing.initWaves();
             Scope.initScope();
         }
+
+        #region TCI Audio
+        unsafe public delegate void TCIStreamSamples(int id, int nsamples, double* data);
+        unsafe public delegate void TCITxInput(int nsamples, double* data);
+        unsafe private static TCIStreamSamples TCIRxIQOutDel = OnTCIRxIQOutSamples;
+        unsafe private static TCIStreamSamples TCIRxAudioOutDel = OnTCIRxAudioOutSamples;
+        unsafe private static TCITxInput TCITxAudioInDel = OnTCITxAudioInSamples;
+
+        private static TCPIPtciServer _tciServer = null;
+        private static readonly object _tciServer_lock = new object();
+        public static TCPIPtciServer TCIServer
+        {
+            get
+            {
+                lock (_tciServer_lock)
+                {
+                    return _tciServer;
+                }
+            }
+            set
+            {
+                lock (_tciServer_lock)
+                {
+                    _tciServer = value;
+                }
+            }
+        }
+
+        private static void EnsureTCIStreamThreads()
+        {
+            m_runTCIStreamThreads = true;
+
+            if (m_tciRxThread == null)
+            {
+                m_tciRxThread = new Thread(TCIRxThreadProc);
+                m_tciRxThread.IsBackground = true;
+                m_tciRxThread.Name = "TCI RX Stream";
+                m_tciRxThread.Priority = ThreadPriority.AboveNormal;
+                m_tciRxThread.Start();
+            }
+
+            if (m_tciTxThread == null)
+            {
+                m_tciTxThread = new Thread(TCITxThreadProc);
+                m_tciTxThread.IsBackground = true;
+                m_tciTxThread.Name = "TCI TX Stream";
+                m_tciTxThread.Priority = ThreadPriority.AboveNormal;
+                m_tciTxThread.Start();
+            }
+        }
+
+        private static void TCIRxThreadProc()
+        {
+            while (m_runTCIStreamThreads)
+            {
+                try
+                {
+                    if (TCIServer != null)
+                        ServiceTCIRxStreams();
+                }
+                catch { }
+
+                Thread.Sleep(5);
+            }
+        }
+
+        private static void ServiceTCIRxStreams()
+        {
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null)
+                return;
+
+            while (tryDequeueTCIIQ(out TCIIQBlock iqBlock))
+            {
+                try
+                {
+                    tciServer.PublishIQSamples(iqBlock.Receiver, iqBlock.SampleRate, iqBlock.Samples, iqBlock.ComplexSamples);
+                }
+                finally
+                {
+                    returnTCIIQBlock(iqBlock);
+                }
+            }
+
+            while (tryDequeueTCIAudio(out TCIAudioBlock audioBlock))
+            {
+                try
+                {
+                    tciServer.PublishRxAudioSamples(audioBlock.Receiver, audioBlock.SampleRate, audioBlock.Left, audioBlock.Right, audioBlock.SamplesPerChannel);
+                }
+                finally
+                {
+                    returnTCIAudioBlock(audioBlock);
+                }
+            }
+        }
+
+        private static void TCITxThreadProc()
+        {
+            while (m_runTCIStreamThreads)
+            {
+                try
+                {
+                    ServiceTCITxProtocol();
+                }
+                catch { }
+
+                Thread.Sleep(2);
+            }
+        }
+
+        private static void ServiceTCITxProtocol()
+        {
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null || !tciServer.UsesActiveTCITxAudio() || !Audio.MOX)
+            {
+                resetTCITxState();
+                return;
+            }
+
+            int receiver = Audio.RX2Enabled && Audio.VFOBTX ? 1 : 0;
+            int targetRate = GetInputRate(1, 0);
+            if (targetRate <= 0)
+                targetRate = 48000;
+
+            bool resetForStateChange = false;
+            lock (m_objTCITxStateLock)
+            {
+                if (m_tciTxInputRate != 0 && m_tciTxInputRate != targetRate)
+                    resetForStateChange = true;
+                else if (m_tciTxChronoReceiver != receiver)
+                    resetForStateChange = true;
+            }
+
+            if (resetForStateChange)
+                resetTCITxState();
+
+            lock (m_objTCITxStateLock)
+            {
+                m_tciTxChronoReceiver = receiver;
+                m_tciTxInputRate = targetRate;
+            }
+
+            if (!tciServer.TryGetTxAudioRequestSettings(out int requestRate, out int requestSamples, out int bufferingMs))
+            {
+                resetTCITxState();
+                return;
+            }
+
+            if (requestRate <= 0) requestRate = 48000;
+            if (requestSamples <= 0) requestSamples = 480;
+            if (bufferingMs < 50) bufferingMs = 50;
+
+            while (tciServer.TryDequeueTxAudio(out TCIQueuedTxAudio queuedAudio))
+            {
+                lock (m_objTCITxStateLock)
+                {
+                    if (m_tciTxChronoOutstanding > 0)
+                        m_tciTxChronoOutstanding--;
+                }
+
+                if (queuedAudio == null || queuedAudio.Receiver != receiver)
+                    continue;
+
+                queueTCITxAudio(queuedAudio, targetRate, tciServer.TXStereoInputMode);
+            }
+
+            int txBlock = GetBuffSize(targetRate);
+            if (txBlock <= 0)
+                txBlock = 720;
+
+            int predictedPacketSamples = Math.Max(
+                txBlock,
+                (int)Math.Ceiling((double)requestSamples * targetRate / Math.Max(1, requestRate)));
+            int targetQueuedSamples = Math.Max(
+                txBlock * 4,
+                (int)Math.Ceiling((bufferingMs + TCI_TX_EXTRA_BUFFER_MS) * targetRate / 1000.0));
+
+            int queuedSamples;
+            int outstanding;
+            long nowMs = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+            lock (m_objTCITxStateLock)
+            {
+                if (m_tciTxChronoOutstanding > 0 && nowMs - m_tciTxLastChronoTick > Math.Max(250, bufferingMs * 4))
+                    m_tciTxChronoOutstanding = 0;
+
+                queuedSamples = m_tciTxQueuedSamples;
+                outstanding = m_tciTxChronoOutstanding;
+            }
+
+            int futureSamples = queuedSamples + outstanding * predictedPacketSamples;
+            int requestsNeeded = futureSamples < targetQueuedSamples
+                ? (int)Math.Ceiling((double)(targetQueuedSamples - futureSamples) / predictedPacketSamples)
+                : 0;
+
+            while (requestsNeeded > 0)
+            {
+                bool canRequest;
+                lock (m_objTCITxStateLock)
+                {
+                    canRequest = m_tciTxChronoOutstanding < TCI_TX_MAX_OUTSTANDING;
+                    if (canRequest)
+                    {
+                        m_tciTxChronoOutstanding++;
+                        m_tciTxLastChronoTick = nowMs;
+                    }
+                }
+
+                if (!canRequest)
+                    break;
+
+                tciServer.SendTxChrono(receiver);
+                requestsNeeded--;
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void resetTCITxState()
+        {
+            lock (m_objTCITxStateLock)
+            {
+                m_tciTxSampleQueue.Clear();
+                m_tciTxSampleQueueOffset = 0;
+                m_tciTxQueuedSamples = 0;
+                m_tciTxChronoOutstanding = 0;
+                m_tciTxChronoReceiver = 0;
+                m_tciTxLastChronoTick = 0;
+                m_tciTxInputRate = 0;
+                m_tciTxResamplerInputRate = 0;
+                if (m_tciTxResampler != null)
+                {
+                    WDSP.destroy_resampleFV(m_tciTxResampler);
+                    m_tciTxResampler = null;
+                }
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate, TCITxStereoInputMode stereoInputMode)
+        {
+            if (queuedAudio == null || queuedAudio.Samples == null || queuedAudio.ComplexSamples <= 0)
+                return;
+
+            int complexSamples = Math.Min(queuedAudio.ComplexSamples, queuedAudio.Samples.Length / 2);
+            if (complexSamples <= 0)
+                return;
+
+            float[] mono = new float[complexSamples];
+            if (queuedAudio.Channels <= 1)
+            {
+                for (int i = 0; i < complexSamples; i++)
+                    mono[i] = (float)queuedAudio.Samples[2 * i];
+            }
+            else
+            {
+                for (int i = 0; i < complexSamples; i++)
+                {
+                    double left = queuedAudio.Samples[2 * i];
+                    double right = queuedAudio.Samples[2 * i + 1];
+
+                    switch (stereoInputMode)
+                    {
+                        case TCITxStereoInputMode.Left:
+                            mono[i] = (float)left;
+                            break;
+                        case TCITxStereoInputMode.Right:
+                            mono[i] = (float)right;
+                            break;
+                        case TCITxStereoInputMode.Both:
+                        default:
+                            mono[i] = (float)((left + right) * 0.5);
+                            break;
+                    }
+                }
+            }
+
+            float[] output = resampleTCITxSamples(mono, queuedAudio.SampleRate, targetRate);
+            if (output == null || output.Length == 0)
+                return;
+
+            lock (m_objTCITxStateLock)
+            {
+                m_tciTxSampleQueue.Enqueue(output);
+                m_tciTxQueuedSamples += output.Length;
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe float[] resampleTCITxSamples(float[] input, int inputRate, int targetRate)
+        {
+            if (input == null || input.Length == 0)
+                return Array.Empty<float>();
+
+            if (inputRate <= 0 || targetRate <= 0 || inputRate == targetRate)
+                return input;
+
+            lock (m_objTCITxStateLock)
+            {
+                if (m_tciTxResampler == null || m_tciTxResamplerInputRate != inputRate || m_tciTxInputRate != targetRate)
+                {
+                    if (m_tciTxResampler != null)
+                        WDSP.destroy_resampleFV(m_tciTxResampler);
+
+                    m_tciTxResampler = WDSP.create_resampleFV(inputRate, targetRate);
+                    m_tciTxResamplerInputRate = inputRate;
+                    m_tciTxInputRate = targetRate;
+                }
+
+                int maxOutputSamples = Math.Max(
+                    input.Length + 64,
+                    (int)Math.Ceiling((double)input.Length * targetRate / inputRate) + 64);
+                float[] output = new float[maxOutputSamples];
+                int outputSamples = 0;
+
+                fixed (float* pInput = input)
+                fixed (float* pOutput = output)
+                {
+                    WDSP.xresampleFV(pInput, pOutput, input.Length, &outputSamples, m_tciTxResampler);
+                }
+
+                if (outputSamples <= 0)
+                    return Array.Empty<float>();
+
+                if (outputSamples == output.Length)
+                    return output;
+
+                float[] resized = new float[outputSamples];
+                Array.Copy(output, resized, outputSamples);
+                return resized;
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void destroyTCIIQResampler(int receiver)
+        {
+            if (receiver < 0 || receiver >= cmRCVR)
+                return;
+
+            if (m_tciIQResamplerI[receiver] != null)
+            {
+                WDSP.destroy_resampleFV(m_tciIQResamplerI[receiver]);
+                m_tciIQResamplerI[receiver] = null;
+            }
+
+            if (m_tciIQResamplerQ[receiver] != null)
+            {
+                WDSP.destroy_resampleFV(m_tciIQResamplerQ[receiver]);
+                m_tciIQResamplerQ[receiver] = null;
+            }
+
+            m_tciIQResamplerInputRates[receiver] = 0;
+            m_tciIQResamplerOutputRates[receiver] = 0;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe float[] resampleTCIIQSamples(int receiver, float[] input, int inputRate, int targetRate)
+        {
+            if (input == null || input.Length == 0)
+                return Array.Empty<float>();
+
+            if (receiver < 0 || receiver >= cmRCVR || inputRate <= 0 || targetRate <= 0)
+                return input;
+
+            if (inputRate <= targetRate)
+            {
+                lock (m_objTCIIQResamplerLock)
+                {
+                    destroyTCIIQResampler(receiver);
+                }
+                return input;
+            }
+
+            int complexSamples = input.Length / 2;
+            if (complexSamples <= 0)
+                return Array.Empty<float>();
+
+            float[] iInput = new float[complexSamples];
+            float[] qInput = new float[complexSamples];
+            for (int i = 0; i < complexSamples; i++)
+            {
+                iInput[i] = input[2 * i];
+                qInput[i] = input[2 * i + 1];
+            }
+
+            lock (m_objTCIIQResamplerLock)
+            {
+                if (m_tciIQResamplerI[receiver] == null ||
+                    m_tciIQResamplerQ[receiver] == null ||
+                    m_tciIQResamplerInputRates[receiver] != inputRate ||
+                    m_tciIQResamplerOutputRates[receiver] != targetRate)
+                {
+                    destroyTCIIQResampler(receiver);
+                    m_tciIQResamplerI[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
+                    m_tciIQResamplerQ[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
+                    m_tciIQResamplerInputRates[receiver] = inputRate;
+                    m_tciIQResamplerOutputRates[receiver] = targetRate;
+                }
+
+                int maxOutputSamples = Math.Max(
+                    complexSamples + 64,
+                    (int)Math.Ceiling((double)complexSamples * targetRate / inputRate) + 64);
+
+                float[] iOutput = new float[maxOutputSamples];
+                float[] qOutput = new float[maxOutputSamples];
+                int iOutputSamples = 0;
+                int qOutputSamples = 0;
+
+                fixed (float* pIInput = iInput)
+                fixed (float* pQInput = qInput)
+                fixed (float* pIOutput = iOutput)
+                fixed (float* pQOutput = qOutput)
+                {
+                    WDSP.xresampleFV(pIInput, pIOutput, complexSamples, &iOutputSamples, m_tciIQResamplerI[receiver]);
+                    WDSP.xresampleFV(pQInput, pQOutput, complexSamples, &qOutputSamples, m_tciIQResamplerQ[receiver]);
+                }
+
+                int outputSamples = Math.Min(iOutputSamples, qOutputSamples);
+                if (outputSamples <= 0)
+                    return Array.Empty<float>();
+
+                float[] output = new float[outputSamples * 2];
+                for (int i = 0; i < outputSamples; i++)
+                {
+                    output[2 * i] = iOutput[i];
+                    output[2 * i + 1] = qOutput[i];
+                }
+
+                return output;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float[] rentTCIFloatBuffer(int length)
+        {
+            if (length <= 0)
+                return Array.Empty<float>();
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciFloatBufferPool.TryGetValue(length, out Stack<float[]> pool) && pool.Count > 0)
+                    return pool.Pop();
+            }
+
+            return new float[length];
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void returnTCIFloatBuffer(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0)
+                return;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (!m_tciFloatBufferPool.TryGetValue(buffer.Length, out Stack<float[]> pool))
+                {
+                    pool = new Stack<float[]>();
+                    m_tciFloatBufferPool[buffer.Length] = pool;
+                }
+
+                if (pool.Count < TCI_MAX_POOLED_BUFFERS_PER_SIZE)
+                    pool.Push(buffer);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static TCIIQBlock rentTCIIQBlock()
+        {
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciIQBlockPool.Count > 0)
+                    return m_tciIQBlockPool.Pop();
+            }
+
+            return new TCIIQBlock();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void returnTCIIQBlock(TCIIQBlock block)
+        {
+            if (block == null)
+                return;
+
+            returnTCIFloatBuffer(block.Samples);
+            block.Receiver = 0;
+            block.SampleRate = 0;
+            block.ComplexSamples = 0;
+            block.Samples = null;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciIQBlockPool.Count < TCI_MAX_POOLED_BLOCKS)
+                    m_tciIQBlockPool.Push(block);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static TCIAudioBlock rentTCIAudioBlock()
+        {
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciAudioBlockPool.Count > 0)
+                    return m_tciAudioBlockPool.Pop();
+            }
+
+            return new TCIAudioBlock();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void returnTCIAudioBlock(TCIAudioBlock block)
+        {
+            if (block == null)
+                return;
+
+            returnTCIFloatBuffer(block.Left);
+            returnTCIFloatBuffer(block.Right);
+            block.Receiver = 0;
+            block.SampleRate = 0;
+            block.SamplesPerChannel = 0;
+            block.Left = null;
+            block.Right = null;
+
+            lock (m_objTCIStreamPoolLock)
+            {
+                if (m_tciAudioBlockPool.Count < TCI_MAX_POOLED_BLOCKS)
+                    m_tciAudioBlockPool.Push(block);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void enqueueTCIIQ(TCIIQBlock block)
+        {
+            lock (m_objTCIStreamQueueLock)
+            {
+                while (m_tciIQQueue.Count >= 32)
+                    returnTCIIQBlock(m_tciIQQueue.Dequeue());
+                m_tciIQQueue.Enqueue(block);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void enqueueTCIAudio(TCIAudioBlock block)
+        {
+            lock (m_objTCIStreamQueueLock)
+            {
+                while (m_tciAudioQueue.Count >= 128)
+                    returnTCIAudioBlock(m_tciAudioQueue.Dequeue());
+                m_tciAudioQueue.Enqueue(block);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool tryDequeueTCIIQ(out TCIIQBlock block)
+        {
+            lock (m_objTCIStreamQueueLock)
+            {
+                if (m_tciIQQueue.Count > 0)
+                {
+                    block = m_tciIQQueue.Dequeue();
+                    return true;
+                }
+            }
+
+            block = null;
+            return false;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool tryDequeueTCIAudio(out TCIAudioBlock block)
+        {
+            lock (m_objTCIStreamQueueLock)
+            {
+                if (m_tciAudioQueue.Count > 0)
+                {
+                    block = m_tciAudioQueue.Dequeue();
+                    return true;
+                }
+            }
+
+            block = null;
+            return false;
+        }
+
+        private static unsafe void OnTCIRxIQOutSamples(int id, int nsamples, double* data)
+        {
+            TCPIPtciServer tciServer = TCIServer;
+            if (tciServer == null || data == null || nsamples <= 0) return;
+
+            int inputRate = GetInputRate(0, id);
+            int outputRate = inputRate > TCI_MAX_IQ_STREAM_RATE ? TCI_MAX_IQ_STREAM_RATE : inputRate;
+            bool iqSwap = tciServer.IQSwap;
+            float[] iq = rentTCIFloatBuffer(nsamples * 2);
+            for (int i = 0; i < nsamples; i++)
+            {
+                iq[2 * i] = (float)data[2 * i];
+                iq[2 * i + 1] = iqSwap ? (float)-data[2 * i + 1] : (float)data[2 * i + 1];
+            }
+
+            if (inputRate > TCI_MAX_IQ_STREAM_RATE)
+            {
+                float[] resampled = resampleTCIIQSamples(id, iq, inputRate, outputRate);
+                if (!object.ReferenceEquals(resampled, iq))
+                    returnTCIFloatBuffer(iq);
+                iq = resampled;
+            }
+
+            int complexSamples = iq != null ? iq.Length / 2 : 0;
+            if (complexSamples <= 0)
+            {
+                returnTCIFloatBuffer(iq);
+                return;
+            }
+
+            TCIIQBlock block = rentTCIIQBlock();
+            block.Receiver = id;
+            block.SampleRate = outputRate;
+            block.ComplexSamples = complexSamples;
+            block.Samples = iq;
+            enqueueTCIIQ(block);
+        }
+
+        private static unsafe void OnTCIRxAudioOutSamples(int id, int nsamples, double* data)
+        {
+            if (TCIServer == null || data == null || nsamples <= 0) return;
+
+            float[] left = rentTCIFloatBuffer(nsamples);
+            float[] right = rentTCIFloatBuffer(nsamples);
+            for (int i = 0; i < nsamples; i++)
+            {
+                left[i] = (float)data[2 * i];
+                right[i] = (float)data[2 * i + 1];
+            }
+
+            TCIAudioBlock block = rentTCIAudioBlock();
+            block.Receiver = id;
+            block.SampleRate = GetChannelOutputRate(0, id);
+            block.SamplesPerChannel = nsamples;
+            block.Left = left;
+            block.Right = right;
+            enqueueTCIAudio(block);
+        }
+
+        private static unsafe void OnTCITxAudioInSamples(int nsamples, double* data)
+        {
+            if (data == null || nsamples <= 0)
+                return;
+
+            lock (m_objTCITxStateLock)
+            {
+                int copied = 0;
+                while (copied < nsamples && m_tciTxSampleQueue.Count > 0)
+                {
+                    float[] block = m_tciTxSampleQueue.Peek();
+                    int available = block.Length - m_tciTxSampleQueueOffset;
+                    int toCopy = Math.Min(nsamples - copied, available);
+
+                    for (int i = 0; i < toCopy; i++)
+                    {
+                        double sample = block[m_tciTxSampleQueueOffset + i];
+                        data[2 * (copied + i)] = sample;
+                        data[2 * (copied + i) + 1] = sample;
+                    }
+
+                    copied += toCopy;
+                    m_tciTxSampleQueueOffset += toCopy;
+                    m_tciTxQueuedSamples -= toCopy;
+
+                    if (m_tciTxSampleQueueOffset >= block.Length)
+                    {
+                        m_tciTxSampleQueue.Dequeue();
+                        m_tciTxSampleQueueOffset = 0;
+                    }
+                }
+
+                for (int i = copied; i < nsamples; i++)
+                {
+                    data[2 * i] = 0.0;
+                    data[2 * i + 1] = 0.0;
+                }
+            }
+        }
+        #endregion
 
         // vox
         // declare a delegate that is of the same form as the function which it is to encapsulate
@@ -1238,6 +1996,13 @@ namespace Thetis
             SendCBWaveRecorder(id, precord[id]);
             wrecorder[id].ID = id;
         }
+        public static void UpdateMox()
+        {
+            for (int i = 0; i < nplayers; i++)
+            {
+                if (wave_file_writer[i] != null) wave_file_writer[i].UpdateMox();
+            }
+        }
         #endregion
     }
 
@@ -1266,7 +2031,7 @@ namespace Thetis
             set { condx = value; }
         }
 
-        int busy = 0;
+        int _busy = 0;
 
         float[] left = new float[2048];
         float[] right = new float[2048];
@@ -1275,16 +2040,24 @@ namespace Thetis
         {
             if (run && (condx == state))
             {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
+                if (System.Threading.Interlocked.Exchange(ref _busy, 1) != 1)
                 {
-                    int size = 2048;    // could check actual size, depending upon MOX
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
+                    try
                     {
-                        WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
-                        swizzle(size, pleft, pright, data);
+                        int size = 2048;    // could check actual size, depending upon MOX
+                        fixed (float* pleft = &left[0])
+                        fixed (float* pright = &right[0])
+                        {
+                            WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
+                            swizzle(size, pleft, pright, data);
+                        }
+                        //System.Threading.Interlocked.Exchange(ref _busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref _busy, 0);
+                    }
                 }
             }
         }
@@ -1354,76 +2127,84 @@ namespace Thetis
             {
                 if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
                 {
-                    fixed (float* pleft  = &left[0], pright = &right[0], pltemp = &ltemp[0], prtemp = &rtemp[0])
+                    try
                     {
-                        if (pos == 0)   // calling from the "pre" location
+                        fixed (float* pleft = &left[0], pright = &right[0], pltemp = &ltemp[0], prtemp = &rtemp[0])
                         {
-                            if ((state == 0) && rxpre)  // getting receive data and want receive data for 'pre' position
+                            if (pos == 0)   // calling from the "pre" location
                             {
-                                int rcvr_inrate = cmaster.GetInputRate(0, id);  // could just read these from WaveThing.wave_file_writer[id]
-                                int rcvr_insize = cmaster.GetBuffSize(rcvr_inrate);
-                                deswizzle(rcvr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_inrate)
+                                if ((state == 0) && rxpre)  // getting receive data and want receive data for 'pre' position
                                 {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    int rcvr_inrate = cmaster.GetInputRate(0, id);  // could just read these from WaveThing.wave_file_writer[id]
+                                    int rcvr_insize = cmaster.GetBuffSize(rcvr_inrate);
+                                    deswizzle(rcvr_insize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != rcvr_inrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_insize);
                                 }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_insize);
+                                if ((state == 1) && txpre)  // getting transmit data and want transmit data for 'pre' position
+                                {
+                                    int xmtr_inrate = cmaster.GetInputRate(1, 0);
+                                    int xmtr_insize = cmaster.GetBuffSize(xmtr_inrate);
+                                    deswizzle(xmtr_insize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != xmtr_inrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_insize);
+                                }
                             }
-                            if ((state == 1) && txpre)  // getting transmit data and want transmit data for 'pre' position
+                            if (pos == 1)   // calling from "post" location
                             {
-                                int xmtr_inrate = cmaster.GetInputRate(1, 0);
-                                int xmtr_insize = cmaster.GetBuffSize(xmtr_inrate);
-                                deswizzle(xmtr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_inrate)
+                                if ((state == 0) && !rxpre) // getting receive data and want receive data for 'post' position
                                 {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    int rcvr_outrate = cmaster.GetChannelOutputRate(0, id);
+                                    int rcvr_outsize = cmaster.GetBuffSize(rcvr_outrate);
+                                    deswizzle(rcvr_outsize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != rcvr_outrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_outsize);
                                 }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_insize);
+                                if ((state == 1) && !txpre) // getting transmit data and want transmit data for 'post' position
+                                {
+                                    int xmtr_outrate = cmaster.GetChannelOutputRate(1, 0);
+                                    int xmtr_outsize = cmaster.GetBuffSize(xmtr_outrate);
+                                    deswizzle(xmtr_outsize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != xmtr_outrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_outsize);
+                                }
                             }
                         }
-                        if (pos == 1)   // calling from "post" location
-                        {
-                            if ((state == 0) && !rxpre) // getting receive data and want receive data for 'post' position
-                            {
-                                int rcvr_outrate = cmaster.GetChannelOutputRate(0, id);
-                                int rcvr_outsize = cmaster.GetBuffSize(rcvr_outrate);
-                                deswizzle(rcvr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_outrate)
-                                {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_outsize);
-                            }
-                            if ((state == 1) && !txpre) // getting transmit data and want transmit data for 'post' position
-                            {
-                                int xmtr_outrate = cmaster.GetChannelOutputRate(1, 0);
-                                int xmtr_outsize = cmaster.GetBuffSize(xmtr_outrate);
-                                deswizzle(xmtr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_outrate)
-                                {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_outsize);
-                            }
-                        }
+                        //System.Threading.Interlocked.Exchange(ref busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref busy, 0);
+                    }
                 }
             }
         }
@@ -1507,15 +2288,23 @@ namespace Thetis
             {
                 if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
                 {
-                    int size = Audio.MOX ? Audio.OutCountTX : Audio.OutCount; //[2.10.3.4]MW0LGE use OutCountTX if moxing
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
+                    try
                     {
-                        deswizzle(size, data, pleft, pright);
-                        Audio.DoScope(pleft, size);
-                        Audio.DoScope2(pright, size);
+                        int size = Audio.MOX ? Audio.OutCountTX : Audio.OutCount; //[2.10.3.4]MW0LGE use OutCountTX if moxing
+                        fixed (float* pleft = &left[0])
+                        fixed (float* pright = &right[0])
+                        {
+                            deswizzle(size, data, pleft, pright);
+                            Audio.DoScope(pleft, size);
+                            Audio.DoScope2(pright, size);
+                        }
+                        //System.Threading.Interlocked.Exchange(ref busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref busy, 0);
+                    }
                 }
             }
         }

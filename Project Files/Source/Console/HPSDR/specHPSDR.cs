@@ -486,11 +486,6 @@ namespace Thetis
         }
         const double KEEP_TIME = 0.1;
         private int max_w;
-        private double freq_offset = 12000.0;
-        //private struct FlipStruct
-        //{
-        //    public int[] flip;
-        //}
        
         public void resetPixelBuffers()
         {
@@ -542,7 +537,7 @@ namespace Thetis
                         //the amount of frequency in each fft bin (for complex samples) is given by:
                         //   this is also equal to the interval width!
                         double bin_width = (double)sample_rate / (double)fft_size;
-                        double bin_width_tx = 96000.0 / (double)fft_size;
+                        //double bin_width_tx = 96000.0 / (double)fft_size;
 
                         //the number of useable bins per subspan is
                         //   the '-1' is due to clipping the Nyquist bin
@@ -699,7 +694,7 @@ namespace Thetis
                         //the amount of frequency in each fft bin (for complex samples) is given by:
                         //   this is also equal to the interval width!
                         double bin_width = (double)sample_rate / (double)fft_size;
-                        double bin_width_tx = 96000.0 / (double)fft_size;
+                        //double bin_width_tx = 96000.0 / (double)fft_size;
 
                         //the number of useable bins per subspan is
                         //   the '-1' is due to clipping the Nyquist bin
@@ -848,10 +843,21 @@ namespace Thetis
         public static extern void DestroyAnalyzer(int disp);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetPixels(int disp, int pixout, IntPtr pix, ref int flag);
+        public static extern void SetPixelRef(int disp, double pixel_ref);
 
-        [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetPixels(int disp, int pixout, float* pix, ref int flag);
+        [DllImport("WDSP.dll", EntryPoint = "GetPixels", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void GetPixelsNative(int disp, int pixout, float* pix, ref int flag, out double pixel_ref);
+
+        public static void GetPixels(int disp, int pixout, float* pix, ref int flag)
+        {
+            double pixel_ref;
+            GetPixelsNative(disp, pixout, pix, ref flag, out pixel_ref);
+        }
+
+        public static void GetPixels(int disp, int pixout, float* pix, ref int flag, out double pixel_ref)
+        {
+            GetPixelsNative(disp, pixout, pix, ref flag, out pixel_ref);
+        }
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Spectrum(int disp, int ss, int LO, float* pI, float* pQ);

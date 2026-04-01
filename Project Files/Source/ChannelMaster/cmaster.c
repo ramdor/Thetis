@@ -377,6 +377,13 @@ void xcmaster (int stream)
 	case 1:  // standard transmitter
 		tx = txid (stream);
 		asioIN(pcm->in[stream]);
+		if (_InterlockedAnd (&pcm->xmtr[tx].use_tci_audio, 1))									// from tci tx audio, service asio above so we still get other rx output, but override with tci if needed
+		{
+			if (pcm->InboundTCITxAudio)
+				(*pcm->InboundTCITxAudio)(pcm->xcm_insize[stream], pcm->in[stream]);
+			else
+				memset (pcm->in[stream], 0, pcm->xcm_insize[stream] * sizeof (complex));
+		}
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
@@ -409,6 +416,31 @@ void SendpOutboundTx(void (*Outbound)(int id, int nsamples, double* buff))
 {
 	pcm->OutboundTx = Outbound;
 	SetILVOutputPointer(0, pcm->OutboundTx);
+}
+
+PORT
+void SendpOutboundTCIRxIQ (void (*Outbound)(int id, int nsamples, double* buff))
+{
+	pcm->OutboundTCIRxIQ = Outbound;
+}
+
+
+PORT
+void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff))
+{
+	pcm->InboundTCITxAudio = Inbound;
+}
+
+PORT
+void SetTCIRun (int active)
+{
+	_InterlockedExchange (&pcm->tci_run, active);
+}
+
+PORT
+void SetTXTCIAudio (int txid, int active)
+{
+	_InterlockedExchange (&pcm->xmtr[txid].use_tci_audio, active);
 }
 
 PORT
@@ -505,6 +537,8 @@ void SetRcvrChannelOutrate (int rcvr_id, int rate, int state)	// 2014-12-18:  NO
 	}
 	SetIVACaudioRate (rcvr_id, rate);
 	SetIVACaudioSize (rcvr_id, pcm->rcvr[rcvr_id].ch_outsize);
+	SetTCIRxAudioRate (rcvr_id, rate);
+	SetTCIRxAudioSize (rcvr_id, pcm->rcvr[rcvr_id].ch_outsize);
 	// PIPE - set Scope, PSDR RX1 Only (leave in C# since scope is there)
 	// PIPE - set wave recorder, rcvr0 (leave in C# since recorder is there)
 	// PIPE - set wave recorder, rcvr1 (leave in C# since recorder is there) 
@@ -517,6 +551,7 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	int in_id = inid (1, xmtr_id);
 	int mix_in_id = mixinid (inid (1, xmtr_id), 0);
 	int size = getbuffsize (rate);
+	int i;
 	EnterCriticalSection (&pcm->update[in_id]);
 	pcm->xmtr[xmtr_id].ch_outrate = rate;									// channel out_rate
 	pcm->xmtr[xmtr_id].ch_outsize = size;									// channel out_size
@@ -538,6 +573,8 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	SetIVACtxmonSize (0, size);												// set vacOUT0 size for tx monitor
 	SetIVACtxmonRate (1, rate);												// set vacOUT1 rate for tx monitor
 	SetIVACtxmonSize (1, size);												// set vacOUT1 size for tx monitor
+	for (i = 0; i < pcm->cmRCVR; i++)
+		SetTCITxMonitorRate (i, rate);
 	// PIPE - set Wave Recorder (leave in C# since recorder is there)
 	LeaveCriticalSection (&pcm->update[in_id]);
 }

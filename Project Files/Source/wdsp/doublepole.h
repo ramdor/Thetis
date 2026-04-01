@@ -32,8 +32,6 @@ warren@pratt.one
 
 #ifndef _doublepole_h
 #define _doublepole_h
-#include <Windows.h>
-#include "fftw3.h"
 #include "firmin.h"
 
 typedef struct _doublepole

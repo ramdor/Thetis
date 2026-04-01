@@ -310,7 +310,6 @@ PaAsioHostApiRepresentation;
 static char **GetAsioDriverNames( PaAsioHostApiRepresentation *asioHostApi, PaUtilAllocationGroup *group, long driverCount )
 {
     char **result = 0;
-    int i;
 
     result =(char**)PaUtil_GroupAllocateZeroInitializedMemory(
             group, sizeof(char*) * driverCount );
@@ -322,7 +321,7 @@ static char **GetAsioDriverNames( PaAsioHostApiRepresentation *asioHostApi, PaUt
     if( !result[0] )
         goto error;
 
-    for( i=0; i<driverCount; ++i )
+    for( int i=0; i<driverCount; ++i )
         result[i] = result[0] + (32 * i);
 
     asioHostApi->asioDrivers->getDriverNames( result, driverCount );
@@ -1107,9 +1106,7 @@ static PaError InitPaDeviceInfoFromAsioDriver( PaAsioHostApiRepresentation *asio
             goto error_unload;
         }
 
-        int a;
-
-        for( a=0; a < deviceInfo->maxInputChannels; ++a ){
+        for( int a=0; a < deviceInfo->maxInputChannels; ++a ){
             asioDeviceInfo->asioChannelInfos[a].channel = a;
             asioDeviceInfo->asioChannelInfos[a].isInput = ASIOTrue;
             ASIOError asioError = ASIOGetChannelInfo( &asioDeviceInfo->asioChannelInfos[a] );
@@ -1121,7 +1118,7 @@ static PaError InitPaDeviceInfoFromAsioDriver( PaAsioHostApiRepresentation *asio
             }
         }
 
-        for( a=0; a < deviceInfo->maxOutputChannels; ++a ){
+        for( int a=0; a < deviceInfo->maxOutputChannels; ++a ){
             int b = deviceInfo->maxInputChannels + a;
             asioDeviceInfo->asioChannelInfos[b].channel = a;
             asioDeviceInfo->asioChannelInfos[b].isInput = ASIOFalse;
@@ -1160,7 +1157,7 @@ IsDebuggerPresentPtr IsDebuggerPresent_ = 0;
 PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex )
 {
     PaError result = paNoError;
-    int i, driverCount;
+    int driverCount;
     PaAsioHostApiRepresentation *asioHostApi;
     PaAsioDeviceInfo *deviceInfoArray;
     char **names;
@@ -1289,7 +1286,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
             hKeyPath = HKEY_LOCAL_MACHINE;
             status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
         }
-        for( i=0; i < driverCount; ++i )
+        for( int i=0; i < driverCount; ++i )
         {
             PA_DEBUG(("ASIO names[%d]:%s\n",i,names[i]));
 
@@ -1304,7 +1301,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
                 || strcmp (names[i],"ASIO Multimedia Driver")          == 0
                 || strncmp(names[i],"Premiere",8)                      == 0   //"Premiere Elements Windows Sound 1.0"
                 || strncmp(names[i],"Adobe",5)                         == 0   //"Adobe Default Windows Sound 1.5"
-                || strcmp (names[i], szData)                            == 0   //driver that cmASIO is using, if there is one //[2.10.3.11]MW0LGE portaudio W4WMT
+                || strcmp (names[i], szData)                           == 0   //driver that cmASIO is using, if there is one //[2.10.3.11]MW0LGE portaudio W4WMT
                )
             {
                 PA_DEBUG(("BLACKLISTED!!!\n"));
@@ -1653,9 +1650,7 @@ static PaAsioStream *theAsioStream = 0; /* due to ASIO sdk limitations there can
 
 static void ZeroOutputBuffers( PaAsioStream *stream, long index )
 {
-    int i;
-
-    for( i=0; i < stream->outputChannelCount; ++i )
+    for( int i=0; i < stream->outputChannelCount; ++i )
     {
         void *buffer = stream->asioBufferInfos[ i + stream->inputChannelCount ].buffers[index];
 
@@ -2032,7 +2027,6 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
     int asioIsInitialized = 0;
     int asioBuffersCreated = 0;
     int completedBuffersPlayedEventInited = 0;
-    int i;
     PaAsioDriverInfo *driverInfo;
     int *inputChannelSelectors = 0;
     int *outputChannelSelectors = 0;
@@ -2237,7 +2231,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
     }
 
 
-    for( i=0; i < inputChannelCount; ++i )
+    for( int i=0; i < inputChannelCount; ++i )
     {
         ASIOBufferInfo *info = &stream->asioBufferInfos[i];
 
@@ -2254,7 +2248,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         info->buffers[0] = info->buffers[1] = 0;
     }
 
-    for( i=0; i < outputChannelCount; ++i ){
+    for( int i=0; i < outputChannelCount; ++i ){
         ASIOBufferInfo *info = &stream->asioBufferInfos[inputChannelCount+i];
 
         info->isInput = ASIOFalse;
@@ -2354,7 +2348,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         goto error;
     }
 
-    for( i=0; i < inputChannelCount + outputChannelCount; ++i )
+    for( int i=0; i < inputChannelCount + outputChannelCount; ++i )
     {
         stream->asioChannelInfos[i].channel = stream->asioBufferInfos[i].channelNum;
         stream->asioChannelInfos[i].isInput = stream->asioBufferInfos[i].isInput;
@@ -2382,7 +2376,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         stream->inputBufferPtrs[0] = stream-> bufferPtrs;
         stream->inputBufferPtrs[1] = &stream->bufferPtrs[inputChannelCount];
 
-        for( i=0; i<inputChannelCount; ++i )
+        for( int i=0; i<inputChannelCount; ++i )
         {
             stream->inputBufferPtrs[0][i] = stream->asioBufferInfos[i].buffers[0];
             stream->inputBufferPtrs[1][i] = stream->asioBufferInfos[i].buffers[1];
@@ -2399,7 +2393,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         stream->outputBufferPtrs[0] = &stream->bufferPtrs[inputChannelCount*2];
         stream->outputBufferPtrs[1] = &stream->bufferPtrs[inputChannelCount*2 + outputChannelCount];
 
-        for( i=0; i<outputChannelCount; ++i )
+        for( int i=0; i<outputChannelCount; ++i )
         {
             stream->outputBufferPtrs[0][i] = stream->asioBufferInfos[inputChannelCount+i].buffers[0];
             stream->outputBufferPtrs[1][i] = stream->asioBufferInfos[inputChannelCount+i].buffers[1];
@@ -3069,8 +3063,6 @@ if( index == previousIndex )
 previousIndex = index;
 #endif
 
-                int i;
-
                 PaUtil_BeginCpuLoadMeasurement( &theAsioStream->cpuLoadMeasurer );
 
                 PaStreamCallbackTimeInfo paTimeInfo;
@@ -3116,7 +3108,7 @@ previousTime = paTimeInfo.currentTime;
 
                 if( theAsioStream->inputBufferConverter )
                 {
-                    for( i=0; i<theAsioStream->inputChannelCount; i++ )
+                    for( int i=0; i<theAsioStream->inputChannelCount; i++ )
                     {
                         theAsioStream->inputBufferConverter( theAsioStream->inputBufferPtrs[index][i],
                                 theAsioStream->inputShift, theAsioStream->framesPerHostCallback );
@@ -3129,11 +3121,11 @@ previousTime = paTimeInfo.currentTime;
                 theAsioStream->callbackFlags = 0;
 
                 PaUtil_SetInputFrameCount( &theAsioStream->bufferProcessor, 0 /* default to host buffer size */ );
-                for( i=0; i<theAsioStream->inputChannelCount; ++i )
+                for( int i=0; i<theAsioStream->inputChannelCount; ++i )
                     PaUtil_SetNonInterleavedInputChannel( &theAsioStream->bufferProcessor, i, theAsioStream->inputBufferPtrs[index][i] );
 
                 PaUtil_SetOutputFrameCount( &theAsioStream->bufferProcessor, 0 /* default to host buffer size */ );
-                for( i=0; i<theAsioStream->outputChannelCount; ++i )
+                for( int i=0; i<theAsioStream->outputChannelCount; ++i )
                     PaUtil_SetNonInterleavedOutputChannel( &theAsioStream->bufferProcessor, i, theAsioStream->outputBufferPtrs[index][i] );
 
                 int callbackResult;
@@ -3145,7 +3137,7 @@ previousTime = paTimeInfo.currentTime;
 
                 if( theAsioStream->outputBufferConverter )
                 {
-                    for( i=0; i<theAsioStream->outputChannelCount; i++ )
+                    for( int i=0; i<theAsioStream->outputChannelCount; i++ )
                     {
                         theAsioStream->outputBufferConverter( theAsioStream->outputBufferPtrs[index][i],
                                 theAsioStream->outputShift, theAsioStream->framesPerHostCallback );
@@ -3593,7 +3585,6 @@ static PaError ReadStream( PaStream      *s     ,
 
     /* Copy the input argument to avoid pointer increment! */
     const void *userBuffer;
-    unsigned int i; /* Just a counter. */
 
     /* About the time, needed to process 8 data blocks. */
     DWORD timeout = (DWORD)( 8 * lFramesPerBlock * 1000 / stream->streamRepresentation.streamInfo.sampleRate );
@@ -3615,7 +3606,7 @@ static PaError ReadStream( PaStream      *s     ,
         if( !pBp->userOutputIsInterleaved )
         {
             userBuffer = blockingState->readStreamBuffer;
-            for( i = 0; i<pBp->inputChannelCount; ++i )
+            for( unsigned int i = 0; i<pBp->inputChannelCount; ++i )
             {
                 ((void**)userBuffer)[i] = ((void**)buffer)[i];
             }
@@ -3768,7 +3759,6 @@ static PaError WriteStream( PaStream      *s     ,
 
     /* Copy the input argument to avoid pointer increment! */
     const void *userBuffer;
-    unsigned int i; /* Just a counter. */
 
 
     /* Check if the stream is still available ready to receive new data. */
@@ -3786,7 +3776,7 @@ static PaError WriteStream( PaStream      *s     ,
         if( !pBp->userOutputIsInterleaved )
         {
             userBuffer = blockingState->writeStreamBuffer;
-            for( i = 0; i<pBp->outputChannelCount; ++i )
+            for( unsigned int i = 0; i<pBp->outputChannelCount; ++i )
             {
                 ((const void**)userBuffer)[i] = ((const void**)buffer)[i];
             }

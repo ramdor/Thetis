@@ -175,6 +175,42 @@ namespace Thetis
     //        return Math.Abs(d) < Epsilon;
     //    }
     //}
+
+    //Code to handle enum renaming during deserialization
+    //needed for DisplayMode and WaterfallPalette where they have been renamed
+    //however the serialized data still has the old names
+    public sealed class TypeRenameBinder : SerializationBinder
+    {
+        private readonly Dictionary<string, Type> _map;
+
+        public TypeRenameBinder(Dictionary<string, Type> map)
+        {
+            _map = map;
+        }
+
+        public TypeRenameBinder Add(string oldFullName, Type newType)
+        {
+            _map[oldFullName] = newType;
+            return this;
+        }
+
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            Type mapped;
+
+            if (_map.TryGetValue(typeName, out mapped))
+                return mapped;
+
+            return Type.GetType(typeName + ", " + assemblyName, true);
+        }
+
+        public static TypeRenameBinder Create()
+        {
+            return new TypeRenameBinder(new Dictionary<string, Type>(StringComparer.Ordinal));
+        }
+    }
+    //
+
     public static class Common
 	{
 		public const MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
@@ -1100,8 +1136,18 @@ namespace Thetis
             {
                 using (GZipStream gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                 {
-                    IFormatter formatter = new BinaryFormatter();
-                    return (T)formatter.Deserialize(gzipStream);
+                    BinaryFormatter formatter = new BinaryFormatter();
+
+                    // required to handle renamed types in Thetis.MeterManager.clsFilterItem
+                    // DisplayMode and WaterfallPalette enums
+                    TypeRenameBinder binder = TypeRenameBinder.Create()
+                        .Add("Thetis.MeterManager+clsFilterItem+DisplayMode", typeof(MeterManager.clsFilterItem.FIDisplayMode))
+                        .Add("Thetis.MeterManager+clsFilterItem+WaterfallPalette", typeof(MeterManager.clsFilterItem.FIWaterfallPalette));
+
+                    formatter.Binder = binder;
+
+                    object obj = formatter.Deserialize(gzipStream);
+                    return (T)obj;
                 }
             }
         }
@@ -1741,6 +1787,147 @@ namespace Thetis
                 string result = Encoding.UTF8.GetString(decompressed_bytes);
                 return result;
             }
+        }
+        //
+
+        //
+        [DllImport("kernel32.dll", EntryPoint = "GetDiskFreeSpaceExW")]
+        private static extern bool GetDiskFreeSpaceExW(
+        [MarshalAs(UnmanagedType.LPWStr)] string lpDirectoryName,
+        out ulong lpFreeBytesAvailable,
+        out ulong lpTotalNumberOfBytes,
+        out ulong lpTotalNumberOfFreeBytes);
+
+        public static bool TryGetDriveTotalAndFreeBytes(string folderPath, out ulong totalBytes, out ulong freeBytes)
+        {
+            totalBytes = 0UL;
+            freeBytes = 0UL;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(folderPath)) return false;
+
+                string fullPath = folderPath.Trim();
+
+                try
+                {
+                    fullPath = Path.GetFullPath(fullPath);
+                }
+                catch
+                {
+                }
+
+                if (fullPath.StartsWith(@"\\?\UNC\", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullPath = @"\\" + fullPath.Substring(8);
+                }
+                else if (fullPath.StartsWith(@"\\?\", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullPath = fullPath.Substring(4);
+                }
+
+                string queryPath = fullPath;
+
+                try
+                {
+                    if (File.Exists(queryPath))
+                    {
+                        string dir = Path.GetDirectoryName(queryPath);
+                        if (!string.IsNullOrWhiteSpace(dir)) queryPath = dir;
+                    }
+                }
+                catch
+                {
+                }
+
+                string current = queryPath;
+                for (int i = 0; i < 64; i++)
+                {
+                    bool exists = false;
+                    try
+                    {
+                        exists = Directory.Exists(current);
+                    }
+                    catch
+                    {
+                        exists = false;
+                    }
+
+                    if (exists) break;
+
+                    string parent = null;
+                    try
+                    {
+                        parent = Path.GetDirectoryName(current);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (string.IsNullOrWhiteSpace(parent)) break;
+                    if (string.Equals(parent, current, StringComparison.Ordinal)) break;
+                    current = parent;
+                }
+
+                ulong freeAvail;
+                ulong total;
+                ulong totalFree;
+
+                bool ok = GetDiskFreeSpaceExW(current, out freeAvail, out total, out totalFree);
+                if (!ok)
+                {
+                    string root = null;
+                    try
+                    {
+                        root = Path.GetPathRoot(fullPath);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(root))
+                    {
+                        ok = GetDiskFreeSpaceExW(root, out freeAvail, out total, out totalFree);
+                    }
+
+                    if (!ok && fullPath.StartsWith(@"\\", StringComparison.Ordinal))
+                    {
+                        string uncRoot = getUncShareRoot(fullPath);
+                        if (!string.IsNullOrWhiteSpace(uncRoot))
+                        {
+                            ok = GetDiskFreeSpaceExW(uncRoot, out freeAvail, out total, out totalFree);
+                        }
+                    }
+                }
+
+                if (!ok) return false;
+
+                totalBytes = total;
+                freeBytes = freeAvail;
+                return true;
+            }
+            catch
+            {
+                totalBytes = 0UL;
+                freeBytes = 0UL;
+                return false;
+            }
+        }
+
+        private static string getUncShareRoot(string uncPath)
+        {
+            if (string.IsNullOrWhiteSpace(uncPath)) return null;
+            if (!uncPath.StartsWith(@"\\", StringComparison.Ordinal)) return null;
+
+            int first = uncPath.IndexOf('\\', 2);
+            if (first < 0) return null;
+
+            int second = uncPath.IndexOf('\\', first + 1);
+            if (second < 0) second = uncPath.Length;
+
+            string root = uncPath.Substring(0, second);
+            if (!root.EndsWith("\\", StringComparison.Ordinal)) root = root + "\\";
+            return root;
         }
         //
     }

@@ -47,7 +47,7 @@ namespace Thetis
         #region Variable Declaration
 
         private Console console;
-        public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
+        //public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
 
       
         #endregion
@@ -1387,15 +1387,35 @@ namespace Thetis
         private void buttonTS1_Click(object sender, EventArgs e)
         {
             //[2.10.3.6]MW0LGE uncommented so that the recording folder is shown. Fixes #457
-            string argument = @"/root," + wave_folder;
-           // Debug.WriteLine("path===:" + wave_folder);
+            //string argument = @"/root," + wave_folder;
+            //Debug.WriteLine("path===:" + wave_folder);
 
-            System.Diagnostics.Process.Start("explorer.exe", argument);
+            //System.Diagnostics.Process.Start("explorer.exe", argument);
 
-          //  Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
-          //  WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
-          //  Debug.WriteLine("WaveControl.scheduleNameMP3 " + WaveControl.scheduleName1);
+            //Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
+            //WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
+            //Debug.WriteLine("WaveControl.scheduleNameMP3 " + WaveControl.scheduleName1);
 
+
+            string fullPath = Path.Combine(console.ARP.AudioFolder, "scheduled");
+            try
+            {
+                //if not there make it
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
         }
 
         // ke9ns add  NOT USED AT THE MOMENT
@@ -1423,7 +1443,7 @@ namespace Thetis
             {
 
             }
-            Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
+            //Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
 
             //[2.10.3.5]MW0LGE it looks like MP3 support has been removed and commented out, above, about 5 years ago.
             //This used to remove the wav file after converting over to an MP3. This is now also commented so the recording

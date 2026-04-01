@@ -39,6 +39,9 @@
     <ClInclude Include="pipe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tci.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,6 +99,9 @@
     <ClInclude Include="sidetone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bandwidth_monitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -117,6 +123,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pipe.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tci.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ring.c">
@@ -177,6 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sidetone.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bandwidth_monitor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

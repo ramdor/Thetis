@@ -41,7 +41,7 @@ void calc_fmsq (FMSQ a)
 	a->G[1] = 0.0;
 	a->G[2] = 3.0;
 	a->G[3] = +20.0 * log10(20000.0 / *a->pllpole);
-	impulse = eq_impulse (a->nc, 3, a->F, a->G, a->rate, 1.0 / (2.0 * a->size), 0, 0);
+	impulse = eq_impulse (a->nc, 3, a->F, a->G, NULL, a->rate, 1.0 / (2.0 * a->size), 0, 0);
 	a->p = create_fircore (a->size, a->trigger, a->noise, a->nc, a->mp, impulse);
 	_aligned_free (impulse);
 	// noise averaging
@@ -259,7 +259,7 @@ void SetRXAFMSQNC (int channel, int nc)
 	if (a->nc != nc)
 	{
 		a->nc = nc;
-		impulse = eq_impulse (a->nc, 3, a->F, a->G, a->rate, 1.0 / (2.0 * a->size), 0, 0);
+		impulse = eq_impulse (a->nc, 3, a->F, a->G, NULL, a->rate, 1.0 / (2.0 * a->size), 0, 0);
 		setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}

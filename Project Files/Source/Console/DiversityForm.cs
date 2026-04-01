@@ -149,7 +149,10 @@ namespace Thetis
         private ButtonTS btnShiftUp10;
         private IContainer components;
         private Label label2;
+
         private bool _initalising;
+        private int _hover_memory_index = -1;
+        private int _mouse_down_memory_index = -1;
 
         public DiversityForm(Console c)
         {
@@ -191,7 +194,7 @@ namespace Thetis
             {
                 initMemories();
             }
-            _initalising = false;
+            //_initalising = false;
             //udFineNull.Value = 0;
             //groupBoxTS1.Visible = false;
             bool oldPhaseLock = chkLockAngle.Checked;
@@ -223,7 +226,132 @@ namespace Thetis
             AutoHideTimer = new System.Timers.Timer();
             AutoHideTimer.Elapsed += new ElapsedEventHandler(Callback);
             AutoHideTimer.Enabled = false;
+
+            // get dark mode setting from console (setup) and apply here
+            if (console != null && !console.IsSetupFormNull)
+            {
+                DarkMode = console.SetupForm.DarkMode;
+            }
         }
+
+        #region DARK-MODE
+        private bool _dark_mode = false;
+        public bool DarkMode
+        {
+            get { return _dark_mode; }
+            set
+            {
+                _dark_mode = value;
+
+                if (this.IsHandleCreated)
+                {
+                    bool ok = Common.UseImmersiveDarkMode(this.Handle, _dark_mode);
+
+                    if (_dark_mode && ok)
+                    {
+                        this.BackColor = Color.FromArgb(64, 64, 64);
+                        picRadar.BackColor = Color.FromArgb(64, 64, 64);
+                    }
+                    else
+                    {
+                        this.BackColor = SystemColors.Control;
+                        picRadar.BackColor = SystemColors.Control;
+                    }
+
+                    applyControlStyles(this, _dark_mode && ok);
+                }
+            }
+        }
+        private void applyControlStyles(Control parent, bool dark_mode)
+        {
+            Color fore_color = dark_mode ? Color.White : Color.Black;
+
+            foreach (Control control in parent.Controls)
+            {
+                control.ForeColor = fore_color;
+
+                ButtonTS button = control as ButtonTS;
+                if (button != null)
+                {
+                    if (dark_mode)
+                    {
+                        button.FlatStyle = FlatStyle.Flat;
+                        button.UseVisualStyleBackColor = false;
+                    }
+                    else
+                    {
+                        button.FlatStyle = FlatStyle.Standard;
+                        button.UseVisualStyleBackColor = true;
+                    }
+                }
+
+                CheckBoxTS checkBox = control as CheckBoxTS;
+                if (checkBox != null)
+                {
+                    checkBox.ForeColor = fore_color;
+
+                    if (checkBox.Appearance == Appearance.Button)
+                    {
+                        if (dark_mode)
+                        {
+                            checkBox.FlatStyle = FlatStyle.Flat;
+                            checkBox.UseVisualStyleBackColor = false;
+                            checkBox.FlatAppearance.CheckedBackColor = Color.LimeGreen;
+                        }
+                        else
+                        {
+                            checkBox.FlatStyle = FlatStyle.Standard;
+                            checkBox.UseVisualStyleBackColor = true;
+
+                            if (checkBox == chkVFOSync)
+                            {
+                                if (checkBox.Checked)
+                                    checkBox.BackColor = Color.LimeGreen;
+                                else
+                                    checkBox.BackColor = Color.Empty;
+                            } 
+                            else if(checkBox == chkEnableDiversity)
+                            {
+                                if (checkBox.Checked)
+                                    checkBox.BackColor = Color.LimeGreen;
+                                else
+                                    checkBox.BackColor = Color.Red;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        checkBox.UseVisualStyleBackColor = true;
+                    }
+                }
+
+                NumericUpDownTS numericUpDown = control as NumericUpDownTS;
+                if (numericUpDown != null)
+                {
+                    numericUpDown.ForeColor = fore_color;
+
+                    Color back_color = dark_mode ? Color.FromArgb(64, 64, 64) : SystemColors.Window;
+
+                    numericUpDown.BackColor = back_color;
+
+                    for (int idx = 0; idx < numericUpDown.Controls.Count; idx++)
+                    {
+                        TextBox textBox = numericUpDown.Controls[idx] as TextBox;
+                        if (textBox != null)
+                        {
+                            textBox.BackColor = back_color;
+                            textBox.ForeColor = fore_color;
+                        }
+                    }
+                }
+
+                if (control.HasChildren)
+                {
+                    applyControlStyles(control, dark_mode);
+                }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Clean up any resources being used.
@@ -262,11 +390,13 @@ namespace Thetis
             this.btnM1 = new System.Windows.Forms.ButtonTS();
             this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
             this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS2 = new System.Windows.Forms.GroupBoxTS();
             this.txtMemoryDataHidden = new System.Windows.Forms.TextBoxTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
             this.chkAuto = new System.Windows.Forms.CheckBox();
+            this.chkCrossFire = new System.Windows.Forms.CheckBoxTS();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.labelDirection = new System.Windows.Forms.LabelTS();
             this.udCalib = new System.Windows.Forms.NumericUpDownTS();
@@ -281,11 +411,11 @@ namespace Thetis
             this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.udR = new System.Windows.Forms.NumericUpDownTS();
             this.panelDivControls = new System.Windows.Forms.GroupBoxTS();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnShiftDown10 = new System.Windows.Forms.ButtonTS();
             this.btnShift90 = new System.Windows.Forms.ButtonTS();
             this.btnShiftUp10 = new System.Windows.Forms.ButtonTS();
             this.label1 = new System.Windows.Forms.Label();
-            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableDiversity = new System.Windows.Forms.CheckBoxTS();
             this.grpRxSource = new System.Windows.Forms.GroupBoxTS();
             this.radRxSourceRx1Rx2 = new System.Windows.Forms.RadioButtonTS();
@@ -299,7 +429,6 @@ namespace Thetis
             this.udGainMulti = new System.Windows.Forms.NumericUpDownTS();
             this.chkLockAngle = new System.Windows.Forms.CheckBoxTS();
             this.chkLockR = new System.Windows.Forms.CheckBoxTS();
-            this.chkCrossFire = new System.Windows.Forms.CheckBoxTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.labelTS33 = new System.Windows.Forms.LabelTS();
             this.udFineNull = new System.Windows.Forms.NumericUpDownTS();
@@ -309,7 +438,6 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
-            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.groupBoxTS2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
@@ -329,17 +457,18 @@ namespace Thetis
             // 
             // picRadar
             // 
-            this.picRadar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.picRadar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
-            this.picRadar.Location = new System.Drawing.Point(4, 272);
+            this.picRadar.Location = new System.Drawing.Point(4, 289);
             this.picRadar.Name = "picRadar";
-            this.picRadar.Size = new System.Drawing.Size(338, 338);
+            this.picRadar.Size = new System.Drawing.Size(305, 305);
             this.picRadar.TabIndex = 0;
             this.picRadar.TabStop = false;
             this.picRadar.Paint += new System.Windows.Forms.PaintEventHandler(this.picRadar_Paint);
             this.picRadar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseDown);
+            this.picRadar.MouseLeave += new System.EventHandler(this.picRadar_MouseLeave);
             this.picRadar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseMove);
             this.picRadar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseUp);
             // 
@@ -347,123 +476,122 @@ namespace Thetis
             // 
             this.btnM8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM8.Image = null;
-            this.btnM8.Location = new System.Drawing.Point(51, 202);
+            this.btnM8.Location = new System.Drawing.Point(51, 198);
             this.btnM8.Name = "btnM8";
             this.btnM8.Selectable = true;
             this.btnM8.Size = new System.Drawing.Size(36, 23);
             this.btnM8.TabIndex = 112;
             this.btnM8.Text = "M8";
             this.toolTip1.SetToolTip(this.btnM8, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM8.UseVisualStyleBackColor = true;
+            this.btnM8.UseVisualStyleBackColor = false;
             this.btnM8.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM7
             // 
             this.btnM7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM7.Image = null;
-            this.btnM7.Location = new System.Drawing.Point(6, 202);
+            this.btnM7.Location = new System.Drawing.Point(6, 198);
             this.btnM7.Name = "btnM7";
             this.btnM7.Selectable = true;
             this.btnM7.Size = new System.Drawing.Size(36, 23);
             this.btnM7.TabIndex = 111;
             this.btnM7.Text = "M7";
             this.toolTip1.SetToolTip(this.btnM7, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM7.UseVisualStyleBackColor = true;
+            this.btnM7.UseVisualStyleBackColor = false;
             this.btnM7.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM6
             // 
             this.btnM6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM6.Image = null;
-            this.btnM6.Location = new System.Drawing.Point(51, 177);
+            this.btnM6.Location = new System.Drawing.Point(51, 173);
             this.btnM6.Name = "btnM6";
             this.btnM6.Selectable = true;
             this.btnM6.Size = new System.Drawing.Size(36, 23);
             this.btnM6.TabIndex = 110;
             this.btnM6.Text = "M6";
             this.toolTip1.SetToolTip(this.btnM6, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM6.UseVisualStyleBackColor = true;
+            this.btnM6.UseVisualStyleBackColor = false;
             this.btnM6.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM5
             // 
             this.btnM5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM5.Image = null;
-            this.btnM5.Location = new System.Drawing.Point(6, 177);
+            this.btnM5.Location = new System.Drawing.Point(6, 173);
             this.btnM5.Name = "btnM5";
             this.btnM5.Selectable = true;
             this.btnM5.Size = new System.Drawing.Size(36, 23);
             this.btnM5.TabIndex = 109;
             this.btnM5.Text = "M5";
             this.toolTip1.SetToolTip(this.btnM5, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM5.UseVisualStyleBackColor = true;
+            this.btnM5.UseVisualStyleBackColor = false;
             this.btnM5.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM4
             // 
             this.btnM4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM4.Image = null;
-            this.btnM4.Location = new System.Drawing.Point(51, 151);
+            this.btnM4.Location = new System.Drawing.Point(51, 147);
             this.btnM4.Name = "btnM4";
             this.btnM4.Selectable = true;
             this.btnM4.Size = new System.Drawing.Size(36, 23);
             this.btnM4.TabIndex = 108;
             this.btnM4.Text = "M4";
             this.toolTip1.SetToolTip(this.btnM4, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM4.UseVisualStyleBackColor = true;
+            this.btnM4.UseVisualStyleBackColor = false;
             this.btnM4.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM3
             // 
             this.btnM3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM3.Image = null;
-            this.btnM3.Location = new System.Drawing.Point(6, 151);
+            this.btnM3.Location = new System.Drawing.Point(6, 147);
             this.btnM3.Name = "btnM3";
             this.btnM3.Selectable = true;
             this.btnM3.Size = new System.Drawing.Size(36, 23);
             this.btnM3.TabIndex = 107;
             this.btnM3.Text = "M3";
             this.toolTip1.SetToolTip(this.btnM3, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM3.UseVisualStyleBackColor = true;
+            this.btnM3.UseVisualStyleBackColor = false;
             this.btnM3.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM2
             // 
             this.btnM2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM2.Image = null;
-            this.btnM2.Location = new System.Drawing.Point(51, 126);
+            this.btnM2.Location = new System.Drawing.Point(51, 122);
             this.btnM2.Name = "btnM2";
             this.btnM2.Selectable = true;
             this.btnM2.Size = new System.Drawing.Size(36, 23);
             this.btnM2.TabIndex = 106;
             this.btnM2.Text = "M2";
             this.toolTip1.SetToolTip(this.btnM2, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM2.UseVisualStyleBackColor = true;
+            this.btnM2.UseVisualStyleBackColor = false;
             this.btnM2.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM1
             // 
             this.btnM1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnM1.Image = null;
-            this.btnM1.Location = new System.Drawing.Point(6, 126);
+            this.btnM1.Location = new System.Drawing.Point(6, 122);
             this.btnM1.Name = "btnM1";
             this.btnM1.Selectable = true;
             this.btnM1.Size = new System.Drawing.Size(36, 23);
             this.btnM1.TabIndex = 105;
             this.btnM1.Text = "M1";
             this.toolTip1.SetToolTip(this.btnM1, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM1.UseVisualStyleBackColor = true;
+            this.btnM1.UseVisualStyleBackColor = false;
             this.btnM1.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // chkVFOSync
             // 
             this.chkVFOSync.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkVFOSync.BackColor = System.Drawing.SystemColors.Control;
             this.chkVFOSync.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVFOSync.Image = null;
-            this.chkVFOSync.Location = new System.Drawing.Point(221, 67);
+            this.chkVFOSync.Location = new System.Drawing.Point(204, 48);
             this.chkVFOSync.Name = "chkVFOSync";
-            this.chkVFOSync.Size = new System.Drawing.Size(84, 23);
+            this.chkVFOSync.Size = new System.Drawing.Size(94, 23);
             this.chkVFOSync.TabIndex = 104;
             this.chkVFOSync.Text = "VFO Sync";
             this.chkVFOSync.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -475,7 +603,7 @@ namespace Thetis
             // 
             this.chkNoAttLink.AutoSize = true;
             this.chkNoAttLink.Image = null;
-            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
+            this.chkNoAttLink.Location = new System.Drawing.Point(204, 78);
             this.chkNoAttLink.Name = "chkNoAttLink";
             this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
             this.chkNoAttLink.TabIndex = 103;
@@ -485,12 +613,27 @@ namespace Thetis
             this.chkNoAttLink.UseVisualStyleBackColor = true;
             this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
+            // chkAlwaysOnTop
+            // 
+            this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkAlwaysOnTop.AutoSize = true;
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(247, 5);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(62, 17);
+            this.chkAlwaysOnTop.TabIndex = 102;
+            this.chkAlwaysOnTop.Text = "On Top";
+            this.chkAlwaysOnTop.UseVisualStyleBackColor = true;
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
+            // 
             // groupBoxTS2
             // 
             this.groupBoxTS2.Controls.Add(this.txtMemoryDataHidden);
             this.groupBoxTS2.Controls.Add(this.labelTS9);
             this.groupBoxTS2.Controls.Add(this.udAngle0);
             this.groupBoxTS2.Controls.Add(this.chkAuto);
+            this.groupBoxTS2.Controls.Add(this.chkCrossFire);
             this.groupBoxTS2.Controls.Add(this.textBox1);
             this.groupBoxTS2.Controls.Add(this.labelDirection);
             this.groupBoxTS2.Controls.Add(this.udCalib);
@@ -565,6 +708,19 @@ namespace Thetis
             this.chkAuto.Size = new System.Drawing.Size(48, 24);
             this.chkAuto.TabIndex = 1;
             this.chkAuto.Text = "Auto";
+            // 
+            // chkCrossFire
+            // 
+            this.chkCrossFire.AutoSize = true;
+            this.chkCrossFire.Image = null;
+            this.chkCrossFire.Location = new System.Drawing.Point(168, 228);
+            this.chkCrossFire.Name = "chkCrossFire";
+            this.chkCrossFire.Size = new System.Drawing.Size(89, 17);
+            this.chkCrossFire.TabIndex = 100;
+            this.chkCrossFire.Text = "Enable X-Fire";
+            this.chkCrossFire.UseVisualStyleBackColor = true;
+            this.chkCrossFire.Visible = false;
+            this.chkCrossFire.CheckedChanged += new System.EventHandler(this.chkCrossFire_CheckedChanged);
             // 
             // textBox1
             // 
@@ -810,7 +966,6 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.btnM1);
             this.panelDivControls.Controls.Add(this.chkVFOSync);
             this.panelDivControls.Controls.Add(this.chkNoAttLink);
-            this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
             this.panelDivControls.Controls.Add(this.chkEnableDiversity);
             this.panelDivControls.Controls.Add(this.grpRxSource);
             this.panelDivControls.Controls.Add(this.btnShiftDwn45);
@@ -819,16 +974,25 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
-            this.panelDivControls.Location = new System.Drawing.Point(10, 4);
+            this.panelDivControls.Location = new System.Drawing.Point(4, 22);
             this.panelDivControls.Name = "panelDivControls";
-            this.panelDivControls.Size = new System.Drawing.Size(352, 262);
+            this.panelDivControls.Size = new System.Drawing.Size(305, 262);
             this.panelDivControls.TabIndex = 51;
             this.panelDivControls.TabStop = false;
             this.panelDivControls.Enter += new System.EventHandler(this.panelDivControls_Enter);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label2.Location = new System.Drawing.Point(5, 240);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 13);
+            this.label2.TabIndex = 117;
+            this.label2.Text = "ctrl click to clear";
+            // 
             // btnShiftDown10
             // 
-            this.btnShiftDown10.BackColor = System.Drawing.Color.White;
             this.btnShiftDown10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftDown10.Image = null;
             this.btnShiftDown10.Location = new System.Drawing.Point(47, 87);
@@ -842,7 +1006,6 @@ namespace Thetis
             // 
             // btnShift90
             // 
-            this.btnShift90.BackColor = System.Drawing.Color.White;
             this.btnShift90.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShift90.Image = null;
             this.btnShift90.Location = new System.Drawing.Point(47, 57);
@@ -856,7 +1019,6 @@ namespace Thetis
             // 
             // btnShiftUp10
             // 
-            this.btnShiftUp10.BackColor = System.Drawing.Color.White;
             this.btnShiftUp10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftUp10.Image = null;
             this.btnShiftUp10.Location = new System.Drawing.Point(47, 27);
@@ -871,37 +1033,21 @@ namespace Thetis
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(2, 228);
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label1.Location = new System.Drawing.Point(2, 224);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 13);
             this.label1.TabIndex = 113;
             this.label1.Text = "shift click to store";
             // 
-            // chkAlwaysOnTop
-            // 
-            this.chkAlwaysOnTop.AutoSize = true;
-            this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(215, 13);
-            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
-            this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkAlwaysOnTop.Size = new System.Drawing.Size(98, 17);
-            this.chkAlwaysOnTop.TabIndex = 102;
-            this.chkAlwaysOnTop.Text = "Always On Top";
-            this.chkAlwaysOnTop.UseVisualStyleBackColor = true;
-            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
-            // 
             // chkEnableDiversity
             // 
             this.chkEnableDiversity.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkEnableDiversity.BackColor = System.Drawing.SystemColors.Control;
-            this.chkEnableDiversity.Checked = true;
-            this.chkEnableDiversity.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableDiversity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkEnableDiversity.Image = null;
-            this.chkEnableDiversity.Location = new System.Drawing.Point(221, 38);
+            this.chkEnableDiversity.Location = new System.Drawing.Point(204, 19);
             this.chkEnableDiversity.Name = "chkEnableDiversity";
-            this.chkEnableDiversity.Size = new System.Drawing.Size(84, 23);
+            this.chkEnableDiversity.Size = new System.Drawing.Size(94, 23);
             this.chkEnableDiversity.TabIndex = 101;
             this.chkEnableDiversity.Text = "Enabled";
             this.chkEnableDiversity.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -915,7 +1061,7 @@ namespace Thetis
             this.grpRxSource.Controls.Add(this.radRxSource1);
             this.grpRxSource.Location = new System.Drawing.Point(93, 19);
             this.grpRxSource.Name = "grpRxSource";
-            this.grpRxSource.Size = new System.Drawing.Size(113, 90);
+            this.grpRxSource.Size = new System.Drawing.Size(105, 90);
             this.grpRxSource.TabIndex = 52;
             this.grpRxSource.TabStop = false;
             this.grpRxSource.Text = "Receiver Source";
@@ -927,10 +1073,10 @@ namespace Thetis
             this.radRxSourceRx1Rx2.Image = null;
             this.radRxSourceRx1Rx2.Location = new System.Drawing.Point(6, 22);
             this.radRxSourceRx1Rx2.Name = "radRxSourceRx1Rx2";
-            this.radRxSourceRx1Rx2.Size = new System.Drawing.Size(75, 17);
+            this.radRxSourceRx1Rx2.Size = new System.Drawing.Size(67, 17);
             this.radRxSourceRx1Rx2.TabIndex = 2;
             this.radRxSourceRx1Rx2.TabStop = true;
-            this.radRxSourceRx1Rx2.Text = "Rx1 + Rx2";
+            this.radRxSourceRx1Rx2.Text = "Sync1+2";
             this.radRxSourceRx1Rx2.UseVisualStyleBackColor = true;
             this.radRxSourceRx1Rx2.CheckedChanged += new System.EventHandler(this.radRxSourceRx1Rx2_CheckedChanged);
             // 
@@ -940,9 +1086,9 @@ namespace Thetis
             this.radRxSource2.Image = null;
             this.radRxSource2.Location = new System.Drawing.Point(6, 66);
             this.radRxSource2.Name = "radRxSource2";
-            this.radRxSource2.Size = new System.Drawing.Size(77, 17);
+            this.radRxSource2.Size = new System.Drawing.Size(55, 17);
             this.radRxSource2.TabIndex = 1;
-            this.radRxSource2.Text = "Receiver 2";
+            this.radRxSource2.Text = "Sync2";
             this.radRxSource2.UseVisualStyleBackColor = true;
             this.radRxSource2.CheckedChanged += new System.EventHandler(this.radRxSource2_CheckedChanged);
             // 
@@ -952,15 +1098,14 @@ namespace Thetis
             this.radRxSource1.Image = null;
             this.radRxSource1.Location = new System.Drawing.Point(6, 43);
             this.radRxSource1.Name = "radRxSource1";
-            this.radRxSource1.Size = new System.Drawing.Size(77, 17);
+            this.radRxSource1.Size = new System.Drawing.Size(55, 17);
             this.radRxSource1.TabIndex = 0;
-            this.radRxSource1.Text = "Receiver 1";
+            this.radRxSource1.Text = "Sync1";
             this.radRxSource1.UseVisualStyleBackColor = true;
             this.radRxSource1.CheckedChanged += new System.EventHandler(this.radRxSource1_CheckedChanged);
             // 
             // btnShiftDwn45
             // 
-            this.btnShiftDwn45.BackColor = System.Drawing.Color.White;
             this.btnShiftDwn45.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftDwn45.Image = null;
             this.btnShiftDwn45.Location = new System.Drawing.Point(6, 87);
@@ -974,7 +1119,6 @@ namespace Thetis
             // 
             // btnShift180
             // 
-            this.btnShift180.BackColor = System.Drawing.Color.White;
             this.btnShift180.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShift180.Image = null;
             this.btnShift180.Location = new System.Drawing.Point(6, 57);
@@ -990,7 +1134,7 @@ namespace Thetis
             // 
             this.labelTS6.AutoSize = true;
             this.labelTS6.Image = null;
-            this.labelTS6.Location = new System.Drawing.Point(33, 14);
+            this.labelTS6.Location = new System.Drawing.Point(33, 10);
             this.labelTS6.Name = "labelTS6";
             this.labelTS6.Size = new System.Drawing.Size(26, 13);
             this.labelTS6.TabIndex = 54;
@@ -1002,7 +1146,6 @@ namespace Thetis
             this.groupBox_refMerc.Controls.Add(this.udGainMulti);
             this.groupBox_refMerc.Controls.Add(this.chkLockAngle);
             this.groupBox_refMerc.Controls.Add(this.chkLockR);
-            this.groupBox_refMerc.Controls.Add(this.chkCrossFire);
             this.groupBox_refMerc.Controls.Add(this.labelTS4);
             this.groupBox_refMerc.Controls.Add(this.labelTS33);
             this.groupBox_refMerc.Controls.Add(this.udFineNull);
@@ -1013,7 +1156,7 @@ namespace Thetis
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc1);
             this.groupBox_refMerc.Location = new System.Drawing.Point(93, 115);
             this.groupBox_refMerc.Name = "groupBox_refMerc";
-            this.groupBox_refMerc.Size = new System.Drawing.Size(252, 140);
+            this.groupBox_refMerc.Size = new System.Drawing.Size(205, 140);
             this.groupBox_refMerc.TabIndex = 59;
             this.groupBox_refMerc.TabStop = false;
             this.groupBox_refMerc.Text = "Reference Source";
@@ -1066,7 +1209,7 @@ namespace Thetis
             // 
             this.chkLockAngle.AutoSize = true;
             this.chkLockAngle.Image = null;
-            this.chkLockAngle.Location = new System.Drawing.Point(155, 61);
+            this.chkLockAngle.Location = new System.Drawing.Point(115, 84);
             this.chkLockAngle.Name = "chkLockAngle";
             this.chkLockAngle.Size = new System.Drawing.Size(83, 17);
             this.chkLockAngle.TabIndex = 104;
@@ -1078,7 +1221,7 @@ namespace Thetis
             // 
             this.chkLockR.AutoSize = true;
             this.chkLockR.Image = null;
-            this.chkLockR.Location = new System.Drawing.Point(70, 84);
+            this.chkLockR.Location = new System.Drawing.Point(29, 84);
             this.chkLockR.Name = "chkLockR";
             this.chkLockR.Size = new System.Drawing.Size(75, 17);
             this.chkLockR.TabIndex = 103;
@@ -1086,24 +1229,11 @@ namespace Thetis
             this.chkLockR.UseVisualStyleBackColor = true;
             this.chkLockR.CheckedChanged += new System.EventHandler(this.chkLockR_CheckedChanged);
             // 
-            // chkCrossFire
-            // 
-            this.chkCrossFire.AutoSize = true;
-            this.chkCrossFire.Image = null;
-            this.chkCrossFire.Location = new System.Drawing.Point(155, 84);
-            this.chkCrossFire.Name = "chkCrossFire";
-            this.chkCrossFire.Size = new System.Drawing.Size(89, 17);
-            this.chkCrossFire.TabIndex = 100;
-            this.chkCrossFire.Text = "Enable X-Fire";
-            this.chkCrossFire.UseVisualStyleBackColor = true;
-            this.chkCrossFire.Visible = false;
-            this.chkCrossFire.CheckedChanged += new System.EventHandler(this.chkCrossFire_CheckedChanged);
-            // 
             // labelTS4
             // 
             this.labelTS4.AutoSize = true;
             this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(167, 11);
+            this.labelTS4.Location = new System.Drawing.Point(136, 11);
             this.labelTS4.Name = "labelTS4";
             this.labelTS4.Size = new System.Drawing.Size(37, 13);
             this.labelTS4.TabIndex = 102;
@@ -1130,7 +1260,7 @@ namespace Thetis
             0,
             0,
             131072});
-            this.udFineNull.Location = new System.Drawing.Point(155, 28);
+            this.udFineNull.Location = new System.Drawing.Point(128, 28);
             this.udFineNull.Maximum = new decimal(new int[] {
             180,
             0,
@@ -1156,7 +1286,7 @@ namespace Thetis
             // 
             this.labelTS3.AutoSize = true;
             this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(90, 11);
+            this.labelTS3.Location = new System.Drawing.Point(73, 11);
             this.labelTS3.Name = "labelTS3";
             this.labelTS3.Size = new System.Drawing.Size(29, 13);
             this.labelTS3.TabIndex = 51;
@@ -1173,7 +1303,7 @@ namespace Thetis
             0,
             0,
             196608});
-            this.udR2.Location = new System.Drawing.Point(82, 53);
+            this.udR2.Location = new System.Drawing.Point(65, 53);
             this.udR2.Maximum = new decimal(new int[] {
             5,
             0,
@@ -1206,7 +1336,7 @@ namespace Thetis
             0,
             0,
             196608});
-            this.udR1.Location = new System.Drawing.Point(83, 28);
+            this.udR1.Location = new System.Drawing.Point(66, 28);
             this.udR1.Maximum = new decimal(new int[] {
             5,
             0,
@@ -1234,9 +1364,9 @@ namespace Thetis
             this.radioButtonMerc2.Image = null;
             this.radioButtonMerc2.Location = new System.Drawing.Point(6, 55);
             this.radioButtonMerc2.Name = "radioButtonMerc2";
-            this.radioButtonMerc2.Size = new System.Drawing.Size(77, 17);
+            this.radioButtonMerc2.Size = new System.Drawing.Size(55, 17);
             this.radioButtonMerc2.TabIndex = 1;
-            this.radioButtonMerc2.Text = "Receiver 2";
+            this.radioButtonMerc2.Text = "Sync2";
             this.radioButtonMerc2.UseVisualStyleBackColor = true;
             this.radioButtonMerc2.CheckedChanged += new System.EventHandler(this.radioButtonMerc2_CheckedChanged);
             // 
@@ -1247,16 +1377,15 @@ namespace Thetis
             this.radioButtonMerc1.Image = null;
             this.radioButtonMerc1.Location = new System.Drawing.Point(6, 30);
             this.radioButtonMerc1.Name = "radioButtonMerc1";
-            this.radioButtonMerc1.Size = new System.Drawing.Size(77, 17);
+            this.radioButtonMerc1.Size = new System.Drawing.Size(55, 17);
             this.radioButtonMerc1.TabIndex = 0;
             this.radioButtonMerc1.TabStop = true;
-            this.radioButtonMerc1.Text = "Receiver 1";
+            this.radioButtonMerc1.Text = "Sync1";
             this.radioButtonMerc1.UseVisualStyleBackColor = true;
             this.radioButtonMerc1.CheckedChanged += new System.EventHandler(this.radioButtonMerc1_CheckedChanged);
             // 
             // btnShiftUp45
             // 
-            this.btnShiftUp45.BackColor = System.Drawing.Color.White;
             this.btnShiftUp45.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftUp45.Image = null;
             this.btnShiftUp45.Location = new System.Drawing.Point(6, 27);
@@ -1268,26 +1397,19 @@ namespace Thetis
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label2.Location = new System.Drawing.Point(5, 244);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 13);
-            this.label2.TabIndex = 117;
-            this.label2.Text = "ctrl click to clear";
-            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(344, 612);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(313, 598);
+            this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.groupBoxTS2);
             this.Controls.Add(this.picRadar);
             this.Controls.Add(this.panelDivControls);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(360, 500);
+            this.MinimumSize = new System.Drawing.Size(329, 637);
             this.Name = "DiversityForm";
+            this.Opacity = 0D;
             this.Text = "Phasing Control";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.DiversityForm_Closing);
             this.Load += new System.EventHandler(this.DiversityForm_Load);
@@ -1313,6 +1435,7 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
         #endregion
@@ -1366,7 +1489,7 @@ namespace Thetis
         private void picRadar_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            int size = Math.Min(picRadar.Width, picRadar.Height);
+            int size = Math.Min(picRadar.ClientSize.Width, picRadar.ClientSize.Height);
             Pen pen = new Pen(lineColor);
             Pen pen3 = new Pen(Brushes.White);
             // set a couple of graphics properties to make the
@@ -1393,8 +1516,15 @@ namespace Thetis
                 if (_memories[i].enabled)
                 {
                     pp = PolarToXY(_memories[i].r, -_memories[i].angle);
-                    g.FillEllipse(Brushes.Orange, pp.X - 4, pp.Y - 4, 8, 8);
-                    g.DrawString((i + 1).ToString(), _font, Brushes.Orange, new PointF(pp.X + 2, pp.Y + 2));
+
+                    bool hovered = (i == _hover_memory_index);
+
+                    Brush brush = hovered ? Brushes.LimeGreen : Brushes.Orange;
+                    int rad = hovered ? 6 : 4;
+                    int dia = rad * 2;
+
+                    g.FillEllipse(brush, pp.X - rad, pp.Y - rad, dia, dia);
+                    g.DrawString((i + 1).ToString(), _font, brush, new PointF(pp.X + 2, pp.Y + 2));
                 }
             }
 
@@ -1508,6 +1638,9 @@ namespace Thetis
             if (_initalising) return;
             // if(!mouse_down) return;
 
+            if (!mouse_down && e.Button == MouseButtons.None)
+                updateHoverMemory(e.Location);
+
             int W = picRadar.Width;
             int H = picRadar.Height;
             int L = (int)Math.Min(W, H);
@@ -1596,12 +1729,48 @@ namespace Thetis
 
         private void picRadar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (_initalising) return;
+
+            updateHoverMemory(e.Location);
+
+            _mouse_down_memory_index = -1;
+
+            if (e.Button == MouseButtons.Left && _hover_memory_index >= 0 && _memories[_hover_memory_index].enabled && !Common.ShiftKeyDown && !Common.CtrlKeyDown)
+            {
+                _mouse_down_memory_index = _hover_memory_index;
+                return;
+            }
+
             mouse_down = true;
+
+            if (_hover_memory_index >= 0)
+            {
+                _hover_memory_index = -1;
+                picRadar.Cursor = Cursors.Default;
+                picRadar.Invalidate();
+            }
+
             picRadar_MouseMove(sender, e);
         }
 
+
         private void picRadar_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (_initalising) return;
+
+            updateHoverMemory(e.Location);
+
+            if (e.Button == MouseButtons.Left && _mouse_down_memory_index >= 0)
+            {
+                int idx = _mouse_down_memory_index;
+                _mouse_down_memory_index = -1;
+
+                if (idx == _hover_memory_index)
+                    recallMemory(idx);
+
+                return;
+            }
+
             mouse_down = false;
         }
 
@@ -1844,8 +2013,8 @@ namespace Thetis
                 udR2_ValueChanged(this, EventArgs.Empty);
                 //  chkLockR.Location = new System.Drawing.Point(199, 81);
                 //  chkLockR.BackColor = System.Drawing.SystemColors.Control;
-                udFineNull.BackColor = System.Drawing.Color.White;
-                chkLockAngle.BackColor = System.Drawing.SystemColors.Control;
+                ////udFineNull.BackColor = System.Drawing.Color.White;
+                ////chkLockAngle.BackColor = System.Drawing.SystemColors.Control;
                 if (chkLockR.Checked) udR1.Value = udR.Value;
                 // JanusAudio.SetrefMerc(1);
                 // Audio.RefMerc = 1;
@@ -2519,7 +2688,7 @@ namespace Thetis
         {
             //note: pointless doing all the rx2 changes as per the commented block below, as everything gets overwritten with the copy anyway
             console.VFOSync = chkVFOSync.Checked;
-            chkVFOSync.BackColor = chkVFOSync.Checked ? Color.LimeGreen : SystemColors.Control;
+            chkVFOSync.BackColor = chkVFOSync.Checked ? Color.LimeGreen : Color.Empty;// SystemColors.Control;
         }
 
         public bool VFOSync
@@ -2662,24 +2831,107 @@ namespace Thetis
             {            
                 grpRxSource.Text = "RX1 Source";
 
-                radRxSourceRx1Rx2.Text = "Sync 1 + 2";
-                radRxSource1.Text = "Sync 1";
-                radRxSource2.Text = "Sync 2";
+                radRxSourceRx1Rx2.Text = "Sync1+2";
+                radRxSource1.Text = "Sync1";
+                radRxSource2.Text = "Sync2";
 
-                radioButtonMerc1.Text = "Sync 1";
-                radioButtonMerc2.Text = "Sync 2";
+                radioButtonMerc1.Text = "Sync1";
+                radioButtonMerc2.Text = "Sync2";
             }
             else
             {
                 grpRxSource.Text = "Receiver Source";
 
-                radRxSourceRx1Rx2.Text = "Rx1 + Rx2";
-                radRxSource1.Text = "Receiver 1";
-                radRxSource2.Text = "Receiver 2";
+                radRxSourceRx1Rx2.Text = "Rx1+Rx2";
+                radRxSource1.Text = "Rx1";
+                radRxSource2.Text = "Rx2";
 
-                radioButtonMerc1.Text = "Receiver 1";
-                radioButtonMerc2.Text = "Receiver 2";
+                radioButtonMerc1.Text = "Rx1";
+                radioButtonMerc2.Text = "Rx2";
             }
+        }
+
+        //memory click in radar
+        private int getMemoryIndexAtPoint(Point pt, int hit_radius_px)
+        {
+            for (int idx = 0; idx < _memories.Length; idx++)
+            {
+                if (!_memories[idx].enabled) continue;
+
+                Point pp = PolarToXY(_memories[idx].r, -_memories[idx].angle);
+
+                int dx = pt.X - pp.X;
+                int dy = pt.Y - pp.Y;
+
+                if ((dx * dx + dy * dy) <= (hit_radius_px * hit_radius_px))
+                    return idx;
+            }
+
+            return -1;
+        }
+
+        private void updateHoverMemory(Point pt)
+        {
+            int hit_radius_px = 8;
+            int new_hover = getMemoryIndexAtPoint(pt, hit_radius_px);
+
+            if (new_hover == _hover_memory_index) return;
+
+            _hover_memory_index = new_hover;
+            picRadar.Cursor = _hover_memory_index >= 0 ? Cursors.Hand : Cursors.Default;
+            picRadar.Invalidate();
+        }
+
+        private void recallMemory(int index)
+        {
+            if (index < 0) return;
+            if (index >= _memories.Length) return;
+            if (!_memories[index].enabled) return;
+
+            memorySettings ms = _memories[index];
+            if (ms == null) return;
+
+            chkLockAngle.Checked = false;
+            chkLockR.Checked = false;
+
+            _initalising = true;
+            udGainMulti.Value = (decimal)ms.gainMulti;
+            _initalising = false;
+
+            udGainMulti_ValueChanged(this, EventArgs.Empty);
+
+            switch (ms.receiverSource)
+            {
+                case 0:
+                    radRxSourceRx1Rx2.Checked = true;
+                    break;
+                case 1:
+                    radRxSource1.Checked = true;
+                    break;
+                case 2:
+                    radRxSource2.Checked = true;
+                    break;
+            }
+
+            radioButtonMerc1.Checked = ms.rx1RefSource;
+            radioButtonMerc2.Checked = !ms.rx1RefSource;
+
+            udR1.Value = (decimal)ms.rx1Gain;
+            udR2.Value = (decimal)ms.rx2Gain;
+            udFineNull.Value = (decimal)ms.phase;
+
+            UpdateDiversity();
+
+            chkLockAngle.Checked = ms.lockPhase;
+            chkLockR.Checked = ms.lockGain;
+        }
+
+        private void picRadar_MouseLeave(object sender, EventArgs e)
+        {
+            if (_hover_memory_index < 0) return;
+            _hover_memory_index = -1;
+            picRadar.Cursor = Cursors.Default;
+            picRadar.Invalidate();
         }
     }
 }

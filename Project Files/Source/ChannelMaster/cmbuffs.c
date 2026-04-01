@@ -185,3 +185,5 @@ void SetCMRingOutsize (int id, int size)
 	LeaveCriticalSection (&a->csIN);				// enable Inbound() processing
 	InterlockedBitTestAndSet(&a->accept, 0);		// open the Inbound() gate
 }
+
+

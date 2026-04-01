@@ -29,8 +29,7 @@ warren@wpratt.com
 
 #define rtNVAR			(8)							// number of variable values = 2^num_variables
 #define rtMAXCALLS		(2)							// maximum number of calls for each data buffer
-#define rtMAXPORTS		(12)						// maximum number of ports to be used
-#define rtPORTBASE		(1035)						// base number for port group to be routed
+#define rtMAXSOURCES	(12)						// maximum index value for sources of data
 #define rtMAXSTREAMS	(2)							// maximum number of streams to be interleaved
 #define rtMAXSIZE		(720)						// maximum number of complex samples in a buffer of data
 
@@ -38,11 +37,11 @@ typedef struct _router
 {
 	int id;
 	volatile long controlword;						// control word used to select routing choice, contains variable values
-	int ports;										// number of ports from which input can be received
+	int sources;									// number of sources from which input can be received
 	int ncalls;										// number of calls to make when data is received
-	int function[rtMAXPORTS][rtMAXCALLS][rtNVAR];	// identifier for function to be called
-	int callid[rtMAXPORTS][rtMAXCALLS][rtNVAR];		// 'id' to be used in the call
-	int nstreams[rtMAXPORTS];						// number of data streams interleaved for each port
+	int function[rtMAXSOURCES][rtMAXCALLS][rtNVAR];	// identifier for function to be called
+	int callid[rtMAXSOURCES][rtMAXCALLS][rtNVAR];	// 'id' to be used in the call
+	int nstreams[rtMAXSOURCES];						// number of data streams interleaved for each port
 	double ddata[2 * rtMAXSIZE];					// data buffer for de-interleaved output
 	CRITICAL_SECTION cs_update;
 } router, *ROUTER;
@@ -54,6 +53,6 @@ void* create_router(
 void destroy_router(void* ptr, int id);
 
 PORT
-void xrouter(void* ptr, int id, int port, int nsamples, double* data);
+void xrouter(void* ptr, int id, int source, int nsamples, double* data);
 
 #endif

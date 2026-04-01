@@ -70,7 +70,7 @@
             "KD5TFD, Bill (Protocol 1 initial implementation, UI & various)",
             "K5SO, Joe (Diversity Reception & firmware)",
             "WA8YWQ, Dave (various)",
-            "KE9NS, Darrin (spot & various)",
+            "KE9NS, Darrin (various)",
             "",
             "WU2O, Scott (forum admin & ideas/feedback)",
             "NC3Z, Gary (forum mod)",
@@ -149,7 +149,8 @@
             "Midi",
             "cmASIO",
             "Behringer",
-            "APF Types"});
+            "APF Types",
+            "Network Settings"});
             this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);

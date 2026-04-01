@@ -679,6 +679,7 @@ namespace Thetis
                         rb.Read(buffer, buffer.Length);		//read the ringbuffer
                         chr2send = (char)buffer[0];
                         loadchar(chr2send);
+                        console?.CWXRemoteCharacterStartedHandlers?.Invoke(rb.ReadSpace(), infifo);
                         while (infifo > 2)					//number of elements left in the element fifo
                         {
                             Thread.Sleep(2);				//wait for the element fifo to catch up
@@ -700,9 +701,25 @@ namespace Thetis
             }
         }
 
+        public int PTTDelayMs
+        {
+            get { return pttdelay; }
+            set
+            {
+                int tmp = Math.Max((int)udPtt.Minimum, value);
+                tmp = Math.Min((int)udPtt.Maximum, tmp);
+                udPtt.Value = tmp;
+            }
+        }
+
         public int Characters2Send
         {
             get { return infifo; }
+        }
+
+        public int PendingRemoteCharacters
+        {
+            get { return rb.ReadSpace(); }
         }
 
         public void CWXStop()
@@ -710,6 +727,17 @@ namespace Thetis
 
             stopSending = true;
             rb.Reset();
+            stopSending = false;
+        }
+
+        public void AbortSending()
+        {
+            stopSending = true;
+            rb.Reset();
+            clear_show();
+            quit = true;
+            kquit = true;
+            quitshut();
             stopSending = false;
         }
 
@@ -732,6 +760,9 @@ namespace Thetis
             InitializeComponent();
 
             console = c;
+
+            c.GlobalKeyPressDownHandlers += onGlobalKeyDown;
+            c.GlobalKeyPressUpHandlers += onGlobalKeyUp;
 
             //
             // TODO: Add any constructor code after InitializeComponent call
@@ -828,6 +859,12 @@ namespace Thetis
             timeKillEvent(timerID);
             if (disposing)
             {
+                if(console != null)
+                {
+                    console.GlobalKeyPressDownHandlers -= onGlobalKeyDown;
+                    console.GlobalKeyPressUpHandlers -= onGlobalKeyUp;
+                }
+
                 if (components != null)
                 {
                     components.Dispose();
@@ -1469,7 +1506,6 @@ namespace Thetis
             this.chkFocusRequired.Text = "Focus";
             this.toolTip1.SetToolTip(this.chkFocusRequired, "Window focus is needed for Fn keys and Alt Digits");
             this.chkFocusRequired.UseVisualStyleBackColor = true;
-            // 
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1585,7 +1621,6 @@ namespace Thetis
         // this guy checks for the release of the Alt key
         private void CWX_KeyUp_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-
             kkk++;
             label6.Text = kkk.ToString() + " " +
                 e.KeyCode.ToString() + " " +
@@ -1682,6 +1717,7 @@ namespace Thetis
             setkey(true);
             keying = true;
         }
+
         // process the 'Key' button which start transmitter with key down
         private void keyButton_Click(object sender, System.EventArgs e)	// the 'Key' button
         {
@@ -1870,6 +1906,11 @@ namespace Thetis
 
         public void StopAction()
         {
+            stopActionCore();
+        }
+
+        private void stopActionCore()
+        {
             if (!_shown) return;
             clear_show();
             quit = true;
@@ -1882,8 +1923,11 @@ namespace Thetis
         }
         private void udWPM_ValueChanged(object sender, System.EventArgs e)
         {
+            int oldValue = cwxwpm;
             cwxwpm = (int)udWPM.Value;
             setup_timer();
+            if (oldValue != cwxwpm)
+                console?.CWXSpeedChangedHandlers?.Invoke(oldValue, cwxwpm);
         }
         private void udWPM_LostFocus(object sender, EventArgs e)
         {
@@ -1911,8 +1955,11 @@ namespace Thetis
 
         private void udPtt_ValueChanged(object sender, System.EventArgs e)
         {
+            int oldValue = pttdelay;
             pttdelay = (int)udPtt.Value;
             //udDrop.Minimum = pttdelay + pttdelay/2;
+            if (oldValue != pttdelay)
+                console?.CWXDelayChangedHandlers?.Invoke(oldValue, pttdelay);
         }
         private void udPtt_LostFocus(object sender, EventArgs e)
         {
@@ -2234,8 +2281,6 @@ namespace Thetis
             byte b;
             char c;
 
-            int a = 1;
-
             while (!stopThreads)
             {
                 if (infifo2 > 0)
@@ -2273,8 +2318,6 @@ namespace Thetis
         {
             char topkey;
             int i;
-
-            int a = 1;
 
             while (!stopThreads)
             {
@@ -2508,7 +2551,7 @@ namespace Thetis
             e.Cancel = true;
             this.Hide();
 
-            if(console != null) console.CWXShownHandlers?.Invoke(_shown);
+            if (console != null) console.CWXShownHandlers?.Invoke(_shown);
         }
 
         private void backspace()
@@ -2578,9 +2621,9 @@ namespace Thetis
             s8.Enabled = bPowerState;
             s9.Enabled = bPowerState;
 
-            stopButton_Click(this, EventArgs.Empty);
+            stopActionCore();
         }
-        public void GlobalKeyDown(Keys keycode)
+        private void onGlobalKeyDown(Keys keycode)
         {
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)
@@ -2589,7 +2632,7 @@ namespace Thetis
                 CWX_KeyDown_1(this, new KeyEventArgs(keycode));
             }
         }
-        public void GlobalKeyUp(Keys keycode)
+        private void onGlobalKeyUp(Keys keycode)
         {
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)

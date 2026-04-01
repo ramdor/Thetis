@@ -112,6 +112,7 @@ void create_pipe()
 		ppip->rcvr[i].playwave_run = 0;			// playwave run
 		ppip->rcvr[i].recordwave_run = 0;		// recordwave run
 	}
+	create_tci();
 	create_spc0();
 }
 
@@ -119,6 +120,7 @@ void destroy_pipe()
 {
 	int i;
 	destroy_spc0();
+	destroy_tci();
 	for (i = 0; i < pcm->cmRCVR; i++)
 	{
 		_aligned_free (ppip->rbuff[i]);
@@ -170,6 +172,8 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0:	// IQ data
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pcm->OutboundTCIRxIQ)
+				(*pcm->OutboundTCIRxIQ)(rx, pcm->xcm_insize[stream], buff);						// to TCI
 			xplaywave(rx, 0, buff);																// wav player
 			xrecordwave(rx, 0, 0, buff);														// wav recorder
 			xsiphonEXT(rx, buff);																// siphon for phase2 display
@@ -183,6 +187,7 @@ void xpipe (int stream, int pos, double** buffs)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xscope(rx, 0, ppip->rbuff[rx]);														// scope
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xtciOUT(rx, 1, ppip->rbuff[rx]);													// data to TCI rx audio
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			break;
 		}
@@ -192,6 +197,8 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // IQ data
+			if (_InterlockedAnd (&pcm->tci_run, 1) && pcm->OutboundTCIRxIQ)
+				(*pcm->OutboundTCIRxIQ)(rx, pcm->xcm_insize[stream], buff);						// to TCI
 			xplaywave(rx, 0, buff);																// wav player
 			xrecordwave(rx, 0, 0, buff);														// wav recorder
 			xvacOUT(rx, 0, buff);																// data to VAC
@@ -202,6 +209,7 @@ void xpipe (int stream, int pos, double** buffs)
 				for (j = 0; j < 2 * pcm->rcvr[rx].ch_outsize; j++)
 					ppip->rbuff[rx][j] += buffs[i][j];
 			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xtciOUT(rx, 1, ppip->rbuff[rx]);													// data to TCI rx audio
 			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			break;
 		}
@@ -211,10 +219,13 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // MIC data
-			xplaywave(0, 1, buff);																// wav player 0
-			xplaywave(1, 1, buff);																// wav player 1
-			if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
-			if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
+			if (!_InterlockedAnd (&pcm->xmtr[0].use_tci_audio, 1))								// stop vacs and playback if tci TX audio is active
+			{
+				xplaywave(0, 1, buff);															// wav player 0
+				xplaywave(1, 1, buff);															// wav player 1
+				if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
+				if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
+			}
 			xrecordwave(0, 1, 0, buff);															// wav recorder 0 //[2.10.3.6]MW0LGE moved after vac
 			xrecordwave(1, 1, 0, buff);															// wav recorder 1
 			break;
@@ -222,6 +233,8 @@ void xpipe (int stream, int pos, double** buffs)
 			xscope(0, 1, buffs[2]);																// scope
 			xvacOUT(0, 2, buffs[2]);															// data to VAC 0
 			xvacOUT(1, 2, buffs[2]);															// data to VAC 1
+			for (i = 0; i < pcm->cmRCVR; i++)
+				xtciOUT(i, 2, buffs[2]);														// tx monitor into each TCI rx audio stream
 			xrecordwave(0, 1, 1, buffs[2]);														// wav recorder 0
 			xrecordwave(1, 1, 1, buffs[2]);														// wav recorder 1
 			break;
