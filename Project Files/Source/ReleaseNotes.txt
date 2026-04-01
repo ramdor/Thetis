@@ -1,4 +1,4 @@
-**The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLabs community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
+IMPORTANT : if you are updating from a pre v2.10.3.13 version then make a backup of your database before using this version. If you have an existing database that pre-dates v2.10.3.13 then Thetis will pop up a message asking you to restart whilst holding down the CTRL key. Please follow the onscreen instructions.
 
 **Note: You can revisit these release notes by using the button inside the About box**
 
