@@ -1,6 +1,6 @@
 See LICENSE and LICENSE-DUAL-LICENSING for licensing details.
 
-# Latest Release v2.10.3.13 December, 1st April 2026
+# Latest Release v2.10.3.13 - 1st April 2026
 https://github.com/ramdor/Thetis/releases/tag/v2.10.3.13
 
 # Latest Release v2.10.3.5 December, 24th 2023
