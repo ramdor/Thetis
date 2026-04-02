@@ -1,12 +1,14 @@
 IMPORTANT : if you are updating from a pre v2.10.3.13 version then make a backup of your database before using this version. If you have an existing database that pre-dates v2.10.3.13 then Thetis will pop up a message asking you to restart whilst holding down the CTRL key. Please follow the onscreen instructions.
 
+Here is a video covering most of the new features in v2.10.3.13 : https://youtu.be/LQlAEiWw3h4
+
 **Note: You can revisit these release notes by using the button inside the About box**
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
-## v2.10.3.13
+## v2.10.3.13 - Change Log
 - [add] audio stream over TCI support added
 - [add] IQ stream over TCI support added
 - [add] full CW macro support added to TCI used by software such as SDC from Yuri UT4LW
@@ -124,7 +126,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] if within 15 pixels of the top of RX1/RX2 display areas, the cursor changes to EW and you can drag left/right. Filter edges and bandstacks are now not considered in this area and as such dragging of the spectrum will occur if over a bandstack for example
 - [fix] port + delay now validated for focusmaster, could cause crash if non numerics were entered
 - [fix] n1mm spectral output should now follow band changes for both rx1 + rx2
-
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
