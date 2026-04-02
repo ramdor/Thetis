@@ -1,6 +1,22 @@
 See LICENSE and LICENSE-DUAL-LICENSING for licensing details.
 
-# Latest Release v2.10.3.13, 1st April 2026
+# This project is now archived - 2nd April 2026
+
+This fork of the original Thetis, which I started tinkering with in 2019, has now been archived. I will not be performing maintenance or adding features to it for the foreseeable future. Whilst I may return to it from time to time for minor fixes and/or if I develop something for personal use that I feel may also benefit others, active development has stopped.
+
+There are a number of technical issues that would need to be addressed in order to take the project forward. The codebase still depends on an older .NET Framework version (4.8), which is increasingly outdated and is beginning to fall out of support with other libraries used by the project. Rendering is also based on SharpDX, which is itself an archived project. Although moving to a more modern rendering engine would be desirable, many suitable replacements do not properly support the older .NET Framework this fork relies on.
+
+Work on multiple RX slices is also on hold, as that would require a rewrite of the display engine. Given that the current display engine is based on SharpDX, it would not seem prudent to invest that effort into an archived and outdated library.
+
+The project is gradually falling behind, and bringing it up to date would require a substantial amount of rework. I have therefore decided to archive this repository and focus my efforts elsewhere. Thetis is hopefully a better experience than it once was, and with recent milestones now reached, including TCI audio/IQ streaming, the voice keyer, and radio network/detection improvements, I feel this is a good point to call it "done".
+
+Cheers to all who have enjoyed the ride, helped test, and found bugs. With the progression of AI, perhaps in a few years we will be able to ask it to 'modernise the project'. Time will tell.
+
+73  
+MW0LGE - Richie
+
+
+# Latest Release v2.10.3.13 - 1st April 2026
 https://github.com/ramdor/Thetis/releases/tag/v2.10.3.13
 
 # Latest Release v2.10.3.5 December, 24th 2023
