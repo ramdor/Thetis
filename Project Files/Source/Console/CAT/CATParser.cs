@@ -184,7 +184,15 @@ namespace Thetis
 					case "EX":
 						break;
 					case "FA":
-						rtncmd = cmdlist.FA(suffix);
+					    // MI0BOT: Redirect CAT to VFO B
+                        if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                        {
+							rtncmd = cmdlist.FB(suffix);
+                        }
+                        else
+                        {
+							rtncmd = cmdlist.FA(suffix);
+                        }
 						break;
 					case "FB":
 						rtncmd = cmdlist.FB(suffix);
@@ -777,7 +785,15 @@ namespace Thetis
 					rtncmd = cmdlist.ZZET(suffix);
 					break;
 				case "ZZFA":
-					rtncmd = cmdlist.ZZFA(suffix);
+				    // MI0BOT: Redirect CAT to VFO B
+                    if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                    {
+                        rtncmd = cmdlist.ZZFB(suffix);
+                    }
+                    else
+                    {
+                        rtncmd = cmdlist.ZZFA(suffix);
+                    }
 					break;
 				case "ZZFB":
 					rtncmd = cmdlist.ZZFB(suffix);
@@ -801,10 +817,26 @@ namespace Thetis
                     rtncmd = cmdlist.ZZFJ(suffix);
                     break;
 				case "ZZFL":
-					rtncmd = cmdlist.ZZFL(suffix);
+				    // MI0BOT: Redirect CAT to VFO B
+					if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+					{
+						rtncmd = cmdlist.ZZFR(suffix);
+					}
+					else
+					{
+						rtncmd = cmdlist.ZZFL(suffix);
+					}
 					break;
 				case "ZZFH":
-					rtncmd = cmdlist.ZZFH(suffix);
+				    // MI0BOT: Redirect CAT to VFO B
+					if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+					{
+						rtncmd = cmdlist.ZZFS(suffix);
+					}
+					else
+					{
+						rtncmd = cmdlist.ZZFH(suffix);
+					}
 					break;
 				case "ZZFM":
 					rtncmd = cmdlist.ZZFM();
@@ -924,7 +956,15 @@ namespace Thetis
                     rtncmd = cmdlist.ZZMB(suffix);
                     break;
 				case "ZZMD":
-					rtncmd = cmdlist.ZZMD(suffix);
+				    // MI0BOT: Redirect CAT to VFO B
+					if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+					{
+						rtncmd = cmdlist.ZZME(suffix);
+					}
+					else
+					{
+						rtncmd = cmdlist.ZZMD(suffix);
+					}
 					break;
                 case "ZZME":
                     rtncmd = cmdlist.ZZME(suffix);

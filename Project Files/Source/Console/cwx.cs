@@ -285,6 +285,9 @@ namespace Thetis
                 //    // CWKeyer.PTTEnqueue(item);
                 //}
 
+                if(HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                    NetworkIO.SetCWXPTT(Convert.ToInt32(state));
+
                 ptt = state;
                 if (state) pttLed.BackColor = System.Drawing.Color.Red;
                 else pttLed.BackColor = System.Drawing.Color.Black;

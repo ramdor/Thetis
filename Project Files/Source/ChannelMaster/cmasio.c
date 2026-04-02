@@ -52,7 +52,7 @@ void create_cmasio()
 	char* asioDriverName = (char*)calloc(32, sizeof(char));
 	if (getASIODriverString(asioDriverName) != 0) { free(asioDriverName); return; }
 	char buf[128];
-	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = \"%s\"\n\n", pcma->blocksize, samplerate, asioDriverName);
+	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = %s\n\n", pcma->blocksize, samplerate, asioDriverName);
 	OutputDebugStringA(buf);
 
 	//[2.10.3.13]MW0LGE get explicit base channel indices for the stereo pair, default to 0 if none in registry

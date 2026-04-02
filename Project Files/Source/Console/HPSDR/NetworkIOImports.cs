@@ -54,14 +54,14 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetMetisIPAddr();
 
-        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetMACAddr(byte[] addr_bytes);
+        //[DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern void GetMACAddr(byte[] addr_bytes);
 
-        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetCodeVersion(byte[] addr_bytes);
+        //[DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern void GetCodeVersion(byte[] addr_bytes);
 
-        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetBoardID(byte[] addr_bytes);
+        //[DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern void GetBoardID(byte[] addr_bytes);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int StartAudioNative();
@@ -318,6 +318,9 @@ namespace Thetis
         public static extern void SetCWX(int bit);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetCWXPTT(int bit);   // MI0BOT: Pass PTT for CWX
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCWIambic(int bit);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -376,6 +379,30 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCATPort(int port);
+        
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTxLatency(int txLatency);                                  // MI0BIT: Pass hardware TX latency to HL2
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPttHang(int pttHang);                                      // MI0BIT: Pass hardware PTT hang to HL2
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetResetOnDisconnect(int bit);                                // MI0BIT: Control reset on network disconnect
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SwapAudioChannels(int bit);                                   // MI0BIT: Control to swap the left and right audio channels send over P1
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int I2CReadInitiate(int bus, int address, int control);            // MI0BIT: I2C read start for HL2
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int I2CWriteInitiate(int bus, int address, int control, int data); // MI0BIT: I2C write start for HL2
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int I2CWrite(int bus, int address, int control, int data);         // MI0BIT: I2C write for HL2
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int I2CResponse(byte[] read_data);                                 // MI0BIT: I2C read response for HL2                               
 
         //bandwdith monitoring
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]

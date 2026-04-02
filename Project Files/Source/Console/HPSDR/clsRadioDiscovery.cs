@@ -511,9 +511,12 @@ namespace Thetis
     {
         public RadioDiscoveryRadioProtocol Protocol { get; set; }
         public IPAddress IpAddress { get; set; }
+        public string IpAddressFixedHL2 { get; set; }   // MI0BOT: Extra info from discovery for HL2
         public string MacAddress { get; set; }
         public HPSDRHW DeviceType { get; set; }
         public byte CodeVersion { get; set; }
+        public byte EeConfigHL2{ get; set; }            // MI0BOT: Extra info from discovery for HL2
+        public byte EeConfigReservedHL2{ get; set; }    // MI0BOT: Extra info from discovery for HL2
         public byte BetaVersion { get; set; }
         public byte Protocol2Supported { get; set; }
         public byte NumRxs { get; set; }
@@ -1059,6 +1062,11 @@ namespace Thetis
                         info.PortCount = parsed.Protocol == RadioDiscoveryRadioProtocol.P2 ? P2DefaultPortCount : P1DefaultPortCount;
                         info.IsApipaRadio = isApipa(rep.Address);
 
+                        info.IpAddressFixedHL2 = parsed.FixedIpHL2;                 // MI0BOT: Extra info from discovery for HL2
+                        info.EeConfigHL2 = parsed.EeConfigHL2;
+                        info.EeConfigReservedHL2 = parsed.EeConfigReservedHL2;
+
+
                         info.IsCustom = false;
                         info.CustomGuid = "";
 
@@ -1106,6 +1114,9 @@ namespace Thetis
             public bool IsBusy { get; set; }
             public RadioDiscoveryRadioProtocol Protocol { get; set; }
             public string MacAddress { get; set; }
+            public string FixedIpHL2 { get; set; }          // MI0BOT: Extra info from discovery for HL2
+            public byte EeConfigHL2 { get; set; }           // MI0BOT: Extra info from discovery for HL2
+            public byte EeConfigReservedHL2 { get; set; }   // MI0BOT: Extra info from discovery for HL2
             public HPSDRHW DeviceType { get; set; }
             public byte CodeVersion { get; set; }
             public byte BetaVersion { get; set; }
@@ -1151,9 +1162,27 @@ namespace Thetis
                 r.MacAddress = BitConverter.ToString(mac);
 
                 r.DeviceType = mapP1DeviceType(data[10]);
+
+                switch (r.DeviceType)
+                {
+                    case HPSDRHW.HermesLite:
+                        byte[] fixedIp = new byte[4];                   // MI0BOT: Extra info from discovery for HL2
+                        Array.Copy(data, 13, fixedIp, 0, 4);
+                        Array.Reverse(fixedIp);
+                        r.FixedIpHL2 = BitConverter.ToString(fixedIp);
+                        r.EeConfigHL2 = data[11];
+                        r.EeConfigReservedHL2 = data[12];
+                        r.BetaVersion = data[21];
+                        r.NumRxs = data[19];
+                        break;
+
+                    default:
+                        r.BetaVersion = 0;
+                        break;
+                }
+
                 r.ProtocolSupported = 0;
                 r.CodeVersion = data[9];
-                r.BetaVersion = 0;
 
                 if (len > 20)
                 {
@@ -1207,6 +1236,7 @@ namespace Thetis
             if (boardId == 2) return HPSDRHW.HermesII;
             if (boardId == 4) return HPSDRHW.Angelia;
             if (boardId == 5) return HPSDRHW.Orion;
+            if (boardId == 6) return HPSDRHW.HermesLite;    // MI0BOT: HL2 added
             if (boardId == 10) return HPSDRHW.OrionMKII;
             return (HPSDRHW)boardId;
         }

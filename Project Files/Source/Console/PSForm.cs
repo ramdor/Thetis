@@ -624,7 +624,7 @@ namespace Thetis
                     puresignal.GetPSMaxTX(_txachannel, ptr);
             }
             string s = _GetPSpeakval.ToString();
-            if (GetPSpeak.Text != s) GetPSpeak.Text = s;
+            if(txtGetPSpeak.Text != s) txtGetPSpeak.Text = s;
 
             // Command State-Machine
             switch (_cmdstate)
@@ -732,8 +732,10 @@ namespace Thetis
             switch (_autoAttenuateState)
             {
                 case eAAState.Monitor:// 0: // monitor
-                    if (_autoattenuate && puresignal.CalibrationAttemptsChanged
-                        && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX))
+                    if (_autoattenuate &&
+                        puresignal.CalibrationAttemptsChanged &&
+                        ((HPSDRModel.HERMESLITE != HardwareSpecific.Model && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX)) ||
+                        (HPSDRModel.HERMESLITE == HardwareSpecific.Model && puresignal.NeedToRecalibrate_HL2(console.SetupForm.ATTOnTX))))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
 
@@ -743,12 +745,28 @@ namespace Thetis
                         if (puresignal.IsFeedbackLevelOK)
                         {
                             ddB = 20.0 * Math.Log10((double)puresignal.FeedbackLevel / 152.293);
-                            if (Double.IsNaN(ddB)) ddB = 31.1;
-                            if (ddB < -100.0) ddB = -100.0;
-                            if (ddB > +100.0) ddB = +100.0;
+
+
+                            if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
+                            {
+                                if (Double.IsNaN(ddB)) ddB = 31.1;
+                                if (ddB < -100.0) ddB = -100.0;
+                                if (ddB > +100.0) ddB = +100.0;
+                            }
+                            else
+                            {
+                                if (Double.IsNaN(ddB)) ddB = 10.0;  // MI0BOT: Handle the Not A Number situation
+                                if (ddB < -100.0) ddB = -10.0;      // MI0BOT: Handle - infinity 
+                                if (ddB > +100.0) ddB = 10.0;       // MI0BOT: Handle + infinity 
+                            }
                         }
                         else
-                            ddB = 31.1;
+                        {
+                            if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
+                                ddB = 10.0;
+                            else
+                                ddB = 31.1;
+                        }
 
                         //_deltadB = Convert.ToInt32(ddB);
                         _deltadB = (int)Math.Round(ddB, MidpointRounding.AwayFromZero); //[2.10.3.12]MW0LGE use rounding, to fix Banker's rounding issue
@@ -764,11 +782,21 @@ namespace Thetis
                     _autoAttenuateState = eAAState.RestoreOperation;//2;
                     int newAtten;
                     int oldAtten = console.SetupForm.ATTOnTX;
-                    if ((oldAtten + _deltadB) > 0)
-                        newAtten = oldAtten + _deltadB;
+
+                    if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
+                    {
+                        newAtten = oldAtten + _deltadB;     //MI0BOT: HL2 can handle negative up to -28, just let it be handled in ATTOnTx section
+                    }
                     else
-                        newAtten = 0;
+                    {
+                        if ((oldAtten + _deltadB) > 0)
+                            newAtten = oldAtten + _deltadB;
+                        else
+                            newAtten = 0;
+                    }
+                    
                     if (oldAtten/*console.SetupForm.ATTOnTX*/ != newAtten)
+
                     {
                         console.SetupForm.ATTOnTX = newAtten;
 
@@ -1110,6 +1138,11 @@ namespace Thetis
             //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
             return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > 0));            
         }
+        
+        public static bool NeedToRecalibrate_HL2(int nCurrentATTonTX) {
+            //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
+            return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > -28));    // MI0BOT: Needed seperate function for HL2 as           
+        }                                                                                       //         great range in attenuation           
         public static bool IsFeedbackLevelOK {
             get { return FeedbackLevel <= 256; }
         }
