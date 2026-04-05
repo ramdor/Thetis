@@ -120,6 +120,21 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendpInboundTCITxAudio", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SendpInboundTCITxAudio(TCITxInput del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetRXTCIRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXTCIRun(int active);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTXTCIAudioRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXTCIAudioRun(int txid, int active);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMox", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMox(int id, int mox);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMon", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMon(int id, int mon);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMonVol", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTCIRxAudioMonVol(int id, double vol);
         // end tci
 
         // router
@@ -249,21 +264,6 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXVAC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXVAC(int txid, int txvac);
-
-        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRun", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTCIRun(int active);
-
-        [DllImport("ChannelMaster.dll", EntryPoint = "SetTXTCIAudio", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTXTCIAudio(int txid, int active);
-
-        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMox", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTCIRxAudioMox(int id, int mox);
-
-        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMon", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTCIRxAudioMon(int id, int mon);
-
-        [DllImport("ChannelMaster.dll", EntryPoint = "SetTCIRxAudioMonVol", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetTCIRxAudioMonVol(int id, double vol);
 
         // Penelope output level
 
@@ -468,6 +468,7 @@ namespace Thetis
         private static readonly Queue<TCIAudioBlock> m_tciAudioQueue = new Queue<TCIAudioBlock>();
         private static Thread m_tciRxThread;
         private static readonly object m_objTCITxStateLock = new object();
+        private static readonly object m_objTCITxResamplerLock = new object();
         private static readonly Queue<float[]> m_tciTxSampleQueue = new Queue<float[]>();
         private static Thread m_tciTxThread;
         private static int m_tciTxSampleQueueOffset = 0;
@@ -477,6 +478,7 @@ namespace Thetis
         private static long m_tciTxLastChronoTick = 0;
         private static int m_tciTxInputRate = 0;
         private static int m_tciTxResamplerInputRate = 0;
+        private static int m_tciTxResamplerOutputRate = 0;
         unsafe private static void* m_tciTxResampler = null;
         private const int TCI_TX_MAX_OUTSTANDING = 64;
         private const int TCI_TX_EXTRA_BUFFER_MS = 50;
@@ -1361,7 +1363,12 @@ namespace Thetis
                 m_tciTxChronoReceiver = 0;
                 m_tciTxLastChronoTick = 0;
                 m_tciTxInputRate = 0;
+            }
+
+            lock (m_objTCITxResamplerLock)
+            {
                 m_tciTxResamplerInputRate = 0;
+                m_tciTxResamplerOutputRate = 0;
                 if (m_tciTxResampler != null)
                 {
                     WDSP.destroy_resampleFV(m_tciTxResampler);
@@ -1427,16 +1434,16 @@ namespace Thetis
             if (inputRate <= 0 || targetRate <= 0 || inputRate == targetRate)
                 return input;
 
-            lock (m_objTCITxStateLock)
+            lock (m_objTCITxResamplerLock)
             {
-                if (m_tciTxResampler == null || m_tciTxResamplerInputRate != inputRate || m_tciTxInputRate != targetRate)
+                if (m_tciTxResampler == null || m_tciTxResamplerInputRate != inputRate || m_tciTxResamplerOutputRate != targetRate)
                 {
                     if (m_tciTxResampler != null)
                         WDSP.destroy_resampleFV(m_tciTxResampler);
 
                     m_tciTxResampler = WDSP.create_resampleFV(inputRate, targetRate);
                     m_tciTxResamplerInputRate = inputRate;
-                    m_tciTxInputRate = targetRate;
+                    m_tciTxResamplerOutputRate = targetRate;
                 }
 
                 int maxOutputSamples = Math.Max(

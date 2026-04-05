@@ -66,7 +66,7 @@ typedef struct _cmaster
 	void (*OutboundTx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by ilv with xmtr samples from the interleaver
 	void (*OutboundTCIRxIQ)(int id, int nsamples, double* buff);	// pointer to callback with receiver IQ samples
 	void (*InboundTCITxAudio)(int nsamples, double* buff);			// pointer to callback to fill TX audio input
-	volatile long tci_run;											// run TCI RX IQ/audio callbacks
+	volatile long tci_rx_out_run;											// run TCI RX IQ/audio callbacks
 	int	audioCodecId;
 	ANALYZERS panalalloc;											// pointer to additional analyzer data structure
 	
@@ -110,8 +110,8 @@ extern __declspec (dllexport) void SendpOutboundRx (void (*Outbound)(int id, int
 extern __declspec (dllexport) void SendpOutboundTx (void (*Outbound)(int id, int nsamples, double* buff));
 extern __declspec (dllexport) void SendpOutboundTCIRxIQ (void (*Outbound)(int id, int nsamples, double* buff));
 extern __declspec (dllexport) void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff));
-extern __declspec (dllexport) void SetTCIRun (int active);
-extern __declspec (dllexport) void SetTXTCIAudio (int txid, int active);
+extern __declspec (dllexport) void SetRXTCIRun (int active);
+extern __declspec (dllexport) void SetTXTCIAudioRun (int txid, int active);
 
 enum AudioCODEC
 {

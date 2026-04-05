@@ -117,7 +117,7 @@ static void apply_tci_audio_mix_state(int rx)
 
 static void tci_audio_out(int id, int nsamples, double* buff)
 {
-	if (_InterlockedAnd(&pcm->tci_run, 1) && ptci->OutboundTCIRxAudio)
+	if (_InterlockedAnd(&pcm->tci_rx_out_run, 1) && ptci->OutboundTCIRxAudio)
 		(*ptci->OutboundTCIRxAudio)(id, nsamples, buff);
 }
 
@@ -204,7 +204,7 @@ void xtciOUT(int id, int stream, double* data)
 	if (id < 0 || id >= pcm->cmRCVR)
 		return;
 
-	if (!(_InterlockedAnd(&pcm->tci_run, 1) && ptci->OutboundTCIRxAudio))
+	if (!(_InterlockedAnd(&pcm->tci_rx_out_run, 1) && ptci->OutboundTCIRxAudio))
 		return;
 
 	a = &ptci->rcvr[id];

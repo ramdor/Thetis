@@ -4306,6 +4306,7 @@ namespace Thetis
             t.Columns.Add("FilterHigh", typeof(int));
 
             //
+            t.Columns.Add("EQUseLegacy", typeof(bool));
             t.Columns.Add("RXParaEQData", typeof(string));
             t.Columns.Add("TXParaEQData", typeof(string));
             //
@@ -4493,6 +4494,8 @@ namespace Thetis
             //
 
             // CFC
+            t.Columns.Add("CFCUseLegacy", typeof(bool));
+
             t.Columns.Add("CFCEnabled", typeof(bool));
             t.Columns.Add("CFCPostEqEnabled", typeof(bool));
             t.Columns.Add("CFCPhaseRotatorEnabled", typeof(bool));
@@ -4546,6 +4549,7 @@ namespace Thetis
             dr["FilterLow"] = 100;
             dr["FilterHigh"] = 3000;
             //
+            dr["EQUseLegacy"] = true;
             dr["RXParaEQData"] = "";
             dr["TXParaEQData"] = "";
             //
@@ -4721,6 +4725,8 @@ namespace Thetis
             //
 
             // CFC
+            dr["CFCUseLegacy"] = true;
+
             dr["CFCEnabled"] = false;
             dr["CFCPostEqEnabled"] = false;
             dr["CFCPhaseRotatorEnabled"] = false;
@@ -4778,6 +4784,7 @@ namespace Thetis
             dr["FilterLow"] = 200;
             dr["FilterHigh"] = 3100;
             //
+            dr["EQUseLegacy"] = true;
             dr["RXParaEQData"] = "";
             dr["TXParaEQData"] = "";
             //
@@ -4951,6 +4958,8 @@ namespace Thetis
             //
 
             // CFC
+            dr["CFCUseLegacy"] = true;
+
             dr["CFCEnabled"] = false;
             dr["CFCPostEqEnabled"] = false;
             dr["CFCPhaseRotatorEnabled"] = false;
@@ -5010,6 +5019,7 @@ namespace Thetis
                 dr["FilterLow"] = 1000;
                 dr["FilterHigh"] = 2000;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -5182,6 +5192,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -5240,6 +5252,7 @@ namespace Thetis
                 dr["FilterLow"] = 1710;
                 dr["FilterHigh"] = 2710;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -5412,6 +5425,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -5469,6 +5484,7 @@ namespace Thetis
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 4000;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -5641,6 +5657,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -5698,6 +5716,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -5870,6 +5889,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -5927,6 +5948,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -6099,6 +6121,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -6156,6 +6180,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -6328,6 +6353,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -6385,6 +6412,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -6557,6 +6585,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -6614,6 +6644,7 @@ namespace Thetis
                 dr["FilterLow"] = 250;
                 dr["FilterHigh"] = 3250;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -6786,6 +6817,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -6843,6 +6876,7 @@ namespace Thetis
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -7015,6 +7049,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -7072,6 +7108,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -7244,6 +7281,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -7301,6 +7340,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -7473,6 +7513,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -7530,6 +7572,7 @@ namespace Thetis
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -7702,6 +7745,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -7759,6 +7804,7 @@ namespace Thetis
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -7931,6 +7977,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -7988,6 +8036,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -8160,6 +8209,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -8217,6 +8268,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -8389,6 +8441,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -8446,6 +8500,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 2900;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -8618,6 +8673,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -8675,6 +8732,7 @@ namespace Thetis
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -8847,6 +8905,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -8904,6 +8964,7 @@ namespace Thetis
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3350;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -9076,6 +9137,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
@@ -9133,6 +9196,7 @@ namespace Thetis
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 5000;
                 //
+                dr["EQUseLegacy"] = true;
                 dr["RXParaEQData"] = "";
                 dr["TXParaEQData"] = "";
                 //
@@ -9305,6 +9369,8 @@ namespace Thetis
                 //
 
                 // CFC
+                dr["CFCUseLegacy"] = true;
+
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;

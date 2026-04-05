@@ -6437,7 +6437,7 @@ namespace Thetis
                     m_cwController = new TCICWController(this);
 
 				m_socketListenersList = new List<TCPIPtciSocketListener>();
-                cmaster.SetTCIRun(0);
+                cmaster.SetRXTCIRun(0);
 
                 if (console != null && !m_bDelegatesAdded)
 				{
@@ -6646,7 +6646,7 @@ namespace Thetis
 
 				// Stop All clients.
 				StopAllSocketListers();
-                cmaster.SetTCIRun(0);
+                cmaster.SetRXTCIRun(0);
 
                 if (m_cwController != null)
                 {
@@ -7689,7 +7689,7 @@ namespace Thetis
                     run = true;
             }
 
-            cmaster.SetTCIRun(run ? 1 : 0);
+            cmaster.SetRXTCIRun(run ? 1 : 0);
         }
 
         public void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
@@ -7860,7 +7860,7 @@ namespace Thetis
 
         internal void RefreshTxAudioSourceState()
         {
-            cmaster.SetTXTCIAudio(0, UsesActiveTCITxAudio() ? 1 : 0);
+            cmaster.SetTXTCIAudioRun(0, UsesActiveTCITxAudio() ? 1 : 0);
         }
 
         public void SendTxChrono(int receiver)
