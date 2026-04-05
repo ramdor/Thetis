@@ -1189,6 +1189,23 @@ namespace Thetis
             double balance = 40.0 - (newBalance * 0.8);
             sendRxBalance(rx - 1, chan, balance);
         }
+        public void RxStepAttChanged(int rx, int attenuation)
+        {
+            if (m_disconnected) return;
+            sendRxStepAttEx(rx - 1, attenuation);
+        }
+        public void RxPreampAttChanged(int rx, PreampMode preamp_mode)
+        {
+            if (m_disconnected) return;
+
+            int attenuation = preampModeToAttenuation(preamp_mode);
+            sendRxPreampAttEx(rx - 1, attenuation);
+        }
+        public void RxStepAttEnabledChanged(int rx, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendRxStepAttEnabledEx(rx - 1, enabled);
+        }
         public void AGCGainChanged(int rx, int newGain)
         {
             if (m_disconnected) return;
@@ -1496,11 +1513,12 @@ namespace Thetis
 			Pong = 10 /* pong */
 		}
 
-		private static byte[] GetFrameFromString(string Message, EOpcodeType Opcode = EOpcodeType.Text)
+		private static byte[] getFrameFromString(string Message, EOpcodeType Opcode = EOpcodeType.Text)
 		{
 			byte[] response;
-			byte[] bytesRaw = Encoding.Default.GetBytes(Message);
-			byte[] frame = new byte[10];
+            //byte[] bytesRaw = Encoding.Default.GetBytes(Message);
+            byte[] bytesRaw = Encoding.UTF8.GetBytes(Message ?? string.Empty); // utf-8 required for text frame
+            byte[] frame = new byte[10];
 
 			long indexStartRawData = -1;
 			long length = (long)bytesRaw.Length;
@@ -1618,6 +1636,8 @@ namespace Thetis
                 case "dds":
                 case "rx_filter_band":
                 case "rx_balance":
+                case "rx_step_att_ex":
+                case "rx_preamp_att_ex":
                 case "agc_gain":
                 case "drive":
                 case "tune_drive":
@@ -2189,6 +2209,21 @@ namespace Thetis
             string s = "rx_balance:" + rx.ToString() + "," + chan.ToString() + "," + balance.ToString("F2", CultureInfo.InvariantCulture) + ";";
             sendTextFrame(s);
         }
+        private void sendRxStepAttEx(int rx, int attenuation)
+        {
+            string s = "rx_step_att_ex:" + rx.ToString() + "," + Math.Abs(attenuation).ToString(CultureInfo.InvariantCulture) + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxPreampAttEx(int rx, int attenuation)
+        {
+            string s = "rx_preamp_att_ex:" + rx.ToString() + "," + Math.Abs(attenuation).ToString(CultureInfo.InvariantCulture) + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxStepAttEnabledEx(int rx, bool enabled)
+        {
+            string s = "rx_step_att_enabled_ex:" + rx.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";";
+            sendTextFrame(s);
+        }
         private string agcModeToTciMode(AGCMode mode)
         {
             switch (mode)
@@ -2358,7 +2393,35 @@ namespace Thetis
 			else
 				sendStop();
         }
-		//
+        //
+        private int preampModeToAttenuation(PreampMode mode)
+        {
+            switch (mode)
+            {
+                case PreampMode.HPSDR_OFF:
+                    return 20;
+                case PreampMode.HPSDR_ON:
+                    return 0;
+                case PreampMode.HPSDR_MINUS10:
+                    return 10;
+                case PreampMode.HPSDR_MINUS20:
+                    return 20;
+                case PreampMode.HPSDR_MINUS30:
+                    return 30;
+                case PreampMode.HPSDR_MINUS40:
+                    return 40;
+                case PreampMode.HPSDR_MINUS50:
+                    return 50;
+                case PreampMode.SA_MINUS10:
+                    return 10;
+                case PreampMode.SA_MINUS20:
+                    return 20;
+                case PreampMode.SA_MINUS30:
+                    return 30;
+                default:
+                    return 0;
+            }
+        }
 
         private void sendInitialRadioState()
         {
@@ -2424,6 +2487,12 @@ namespace Thetis
             sendRxBalance(0, 1, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(1, true) * 0.8));
             sendRxBalance(1, 0, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(2, false) * 0.8));
             sendRxBalance(1, 1, 40.0 - (console.ThreadSafeTCIAccessor.GetBal(2, true) * 0.8));
+            sendRxStepAttEnabledEx(0, console.ThreadSafeTCIAccessor.RX1StepAttEnabled);
+            sendRxStepAttEnabledEx(1, console.ThreadSafeTCIAccessor.RX2StepAttEnabled);
+            sendRxStepAttEx(0, console.ThreadSafeTCIAccessor.RX1AttenuatorData);
+            sendRxStepAttEx(1, console.ThreadSafeTCIAccessor.RX2AttenuatorData);
+            sendRxPreampAttEx(0, preampModeToAttenuation(console.ThreadSafeTCIAccessor.RX1PreampMode));
+            sendRxPreampAttEx(1, preampModeToAttenuation(console.ThreadSafeTCIAccessor.RX2PreampMode));
             sendAgcMode(0, console.ThreadSafeTCIAccessor.GetAGCMode(1));
             sendAgcMode(1, console.ThreadSafeTCIAccessor.GetAGCMode(2));
             sendAgcGain(0, console.ThreadSafeTCIAccessor.GetAgcT(1));
@@ -2781,7 +2850,7 @@ namespace Thetis
 				{
 					if (m_client.Connected)
 					{
-                        enqueueOutboundFrame(GetFrameFromString(sMsg, EOpcodeType.Ping), null, TCIOutboundPriority.Urgent);
+                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Ping), null, TCIOutboundPriority.Urgent);
 					}
 				}
 			}
@@ -2799,7 +2868,7 @@ namespace Thetis
 				{
 					if (m_client.Connected)
 					{
-                        enqueueOutboundFrame(GetFrameFromString(sMsg, EOpcodeType.Pong), null, TCIOutboundPriority.Urgent);
+                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Pong), null, TCIOutboundPriority.Urgent);
 					}
 				}
 			}
@@ -2815,9 +2884,9 @@ namespace Thetis
 			{
 				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
 				{
-					if (m_client.Connected)
+                    if (m_client.Connected)
 					{
-                        enqueueOutboundFrame( GetFrameFromString(sMsg, EOpcodeType.Text),
+                        enqueueOutboundFrame( getFrameFromString(sMsg, EOpcodeType.Text),
                             sMsg, TCIOutboundPriority.Control, getCoalescedTextFrameKey(sMsg));
 					}
 				}
@@ -2855,7 +2924,7 @@ namespace Thetis
                 {
                     if (m_client.Connected)
                     {
-                        enqueueOutboundFrame(GetFrameFromString("", EOpcodeType.ClosedConnection), null, TCIOutboundPriority.Urgent);
+                        enqueueOutboundFrame(getFrameFromString("", EOpcodeType.ClosedConnection), null, TCIOutboundPriority.Urgent);
                     }
                 }
             }
@@ -4655,6 +4724,68 @@ namespace Thetis
                 console.ThreadSafeTCIAccessor.SetBal(rx + 1, pan, subrx);
             }
         }
+        private void handleRxStepAttEnabledEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                bool enabled = rx == 0 ? console.ThreadSafeTCIAccessor.RX1StepAttEnabled : console.ThreadSafeTCIAccessor.RX2StepAttEnabled;
+                sendRxStepAttEnabledEx(rx, enabled);
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                if (console == null || console.IsSetupFormNull) return;
+
+                if (rx == 0)
+                    console.ThreadSafeTCIAccessor.SetupForm.RX1EnableAtt = enabled;
+                else
+                    console.ThreadSafeTCIAccessor.SetupForm.RX2EnableAtt = enabled;
+            }
+        }
+        private void handleRxStepAttEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                int attenuation = rx == 0 ? console.ThreadSafeTCIAccessor.RX1AttenuatorData : console.ThreadSafeTCIAccessor.RX2AttenuatorData;
+                sendRxStepAttEx(rx, attenuation);
+            }
+            else
+            {
+                if (!int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int attenuation)) return;
+                if (attenuation < 0) return;
+
+                if (rx == 0)
+                    console.ThreadSafeTCIAccessor.RX1AttenuatorData = attenuation;
+                else
+                    console.ThreadSafeTCIAccessor.RX2AttenuatorData = attenuation;
+            }
+        }
+        private void handleRxPreampAttEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                PreampMode mode = rx == 0 ? console.ThreadSafeTCIAccessor.RX1PreampMode : console.ThreadSafeTCIAccessor.RX2PreampMode;
+                sendRxPreampAttEx(rx, preampModeToAttenuation(mode));
+            }
+            else
+            {
+                if (!int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int attenuation)) return;
+                if (attenuation < 0) return;
+                console.ThreadSafeTCIAccessor.SetATT(rx + 1, attenuation, Thetis.Console.SetAttMode.PREAMP_MODE);
+            }
+        }
         private void handleAgcMode(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -5108,6 +5239,15 @@ namespace Thetis
                         break;
                     case "rx_balance":
                         handleRxBalance(args);
+                        break;
+                    case "rx_step_att_enabled_ex":
+                        handleRxStepAttEnabledEx(args);
+                        break;
+                    case "rx_step_att_ex":
+                        handleRxStepAttEx(args);
+                        break;
+                    case "rx_preamp_att_ex":
+                        handleRxPreampAttEx(args);
                         break;
                     case "agc_mode":
                         handleAgcMode(args);
@@ -6107,7 +6247,7 @@ namespace Thetis
 		private bool m_bDelegatesAdded = false;
 		private int m_nRateLimit = 0;
 		private bool m_bEmulateSunSDR2Pro = false;
-		private bool m_bEmulateExpertSDR3Protocol = false;
+		private bool m_bEmulateExpertSDR3Protocol = true;
         private bool m_bIQSwap = true;
         private bool m_bAlwaysStreamIQ = false;
         private TCITxStereoInputMode m_txStereoInputMode = TCITxStereoInputMode.Both;
@@ -6323,6 +6463,9 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers += OnMONVolumeChanged;
                     console.ThreadSafeTCIAccessor.VolumeChangedHandlers += OnVolumeChanged;
                     console.ThreadSafeTCIAccessor.BalanceChangedHandlers += OnBalanceChanged;
+                    console.ThreadSafeTCIAccessor.StepAttEnabledChangedHandlers += OnStepAttEnabledChanged;
+                    console.ThreadSafeTCIAccessor.AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;
+                    console.ThreadSafeTCIAccessor.PreampModeChangedHandlers += OnPreampModeChanged;
                     console.ThreadSafeTCIAccessor.AGCGainChangedHandlers += OnAGCGainChanged;
                     console.ThreadSafeTCIAccessor.RITChangedHandlers += OnRITChanged;
                     console.ThreadSafeTCIAccessor.XITChangedHandlers += OnXITChanged;
@@ -6429,6 +6572,9 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers -= OnMONVolumeChanged;
                     console.ThreadSafeTCIAccessor.VolumeChangedHandlers -= OnVolumeChanged;
                     console.ThreadSafeTCIAccessor.BalanceChangedHandlers -= OnBalanceChanged;
+                    console.ThreadSafeTCIAccessor.StepAttEnabledChangedHandlers -= OnStepAttEnabledChanged;
+                    console.ThreadSafeTCIAccessor.AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
+                    console.ThreadSafeTCIAccessor.PreampModeChangedHandlers -= OnPreampModeChanged;
                     console.ThreadSafeTCIAccessor.AGCGainChangedHandlers -= OnAGCGainChanged;
                     console.ThreadSafeTCIAccessor.RITChangedHandlers -= OnRITChanged;
                     console.ThreadSafeTCIAccessor.XITChangedHandlers -= OnXITChanged;
@@ -7351,6 +7497,42 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.BalanceChanged(rx, is_subrx, newValue);
+                }
+            }
+        }
+        private void OnAttenuatorDataChanged(int rx, int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RxStepAttChanged(rx, newValue);
+                }
+            }
+        }
+        private void OnStepAttEnabledChanged(int rx, bool oldEnabled, bool newEnabled)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RxStepAttEnabledChanged(rx, newEnabled);
+                }
+            }
+        }
+        private void OnPreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RxPreampAttChanged(rx, newMode);
                 }
             }
         }

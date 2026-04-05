@@ -8,6 +8,15 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
+## v2.10.3.14 - Change Log
+- [add] added custom TCI commands related to preamp and step attenuator
+	rx_step_att_enabled_ex
+        rx_step_att_ex
+	rx_preamp_att_ex
+- [add] otherbutton wave record now supported. Extra folder called 'waverecord' will store these. Right click to open folder or via Setup->Audio->Recording. Similar to the [Record] button from the WaveForm of old
+- [change] TCI emulate ExpertElectroncsSDR3 selected as default for a new db/install. JTDX will now send TCI audio into Thetis with this option enabled
+- [fix] TCI server websocket text frames are now encoded utf-8. Fixes issues where certain characters in TX profiles would cause TCI clients to throw errors
+
 ## v2.10.3.13 - Change Log
 - [add] audio stream over TCI support added
 - [add] IQ stream over TCI support added

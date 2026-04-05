@@ -5037,6 +5037,7 @@ namespace Thetis
             m.Puresignal = _console.PSA;
             m.QuickPlay = _console.QuickPlay;
             m.QuickRecord = _console.QuickRec;
+            m.WaveRecord = _console.WaveRecording(m.RX);
 
             m.Vac1 = _console.VACEnabled;
             m.Vac2 = _console.VAC2Enabled;
@@ -8243,6 +8244,9 @@ namespace Thetis
             private readonly object _map_copy_lock = new object();
             private bool _map_changed;
 
+            private bool _global_recording;
+            private bool _global_playing;
+
             private OtherButtonMacroSettings[] _macro_settings;
             private readonly object _macro_settings_lock = new object();
 
@@ -8258,6 +8262,12 @@ namespace Thetis
                 _ig = ig;
                 _dragging_index = -1;
                 _last_draged_to = -1;
+
+                _console.ARP.RecordingChanged += onRecordingChanged;
+                _console.ARP.PlayingChanged += onPlayingChanged;
+
+                _global_recording = _console.ARP.IsRecording;
+                _global_playing = _console.ARP.IsPlaying;
 
                 _process_in_update_buttons = new Dictionary<OtherButtonId, int>();
 
@@ -8296,8 +8306,75 @@ namespace Thetis
             public override bool Dragable { get { return true; } set { } }
             public override void Removing()
             {
+                _console.ARP.RecordingChanged -= onRecordingChanged;
+                _console.ARP.PlayingChanged -= onPlayingChanged;
+
                 MeterManager.ContainerVisibleHandlers -= OnContainerVisible;
                 MeterManager.CatStateHandlers -= OnCatState;
+            }
+            private void onPlayingChanged(bool playing, string id, string filename, bool isWdsp)
+            {
+                _global_playing = playing; // global state
+
+                (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                bit = (bit_group * 32) + bit;
+
+                SetEnabled(0, bit, !playing);
+
+                (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                bit = (bit_group * 32) + bit;
+
+                SetEnabled(0, bit, !playing);
+
+                setupButtons();
+            }
+            private void onRecordingChanged(bool recording, string id, string filename)
+            {
+                _global_recording = recording; // global state
+
+                if (id.StartsWith("waverecord"))
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+                else if (id.StartsWith("quick"))
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+                else
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+
+                setupButtons();
             }
             private void OnContainerVisible(string id, bool visible)
             {
@@ -8384,7 +8461,19 @@ namespace Thetis
             }
 
             // these map to the OtherButtonId enum
-            public override bool Power { get => base.Power; set => updateOn(OtherButtonId.POWER, value); }
+            public override bool Power 
+            {
+                get
+                {
+                    return base.Power;
+                }
+                set 
+                {
+                    updateOn(OtherButtonId.POWER, value);
+
+                    setupButtons(); // needed for the record/play states
+                }
+            }
             public override bool RX2Enabled { get => base.RX2Enabled; set => updateOn(OtherButtonId.RX_2, value); }
             public override bool MON { get => base.MON; set => updateOn(OtherButtonId.MON, value); }
             public override bool Tune { get => base.Tune; set => updateOn(OtherButtonId.TUN, value); }
@@ -8394,7 +8483,7 @@ namespace Thetis
             public override bool Puresignal { get => base.Puresignal; set => updateOn(OtherButtonId.PS_A, value); }
             public override bool QuickPlay { get => base.QuickPlay; set => updateOn(OtherButtonId.PLAY, value); }
             public override bool QuickRecord { get => base.QuickRecord; set => updateOn(OtherButtonId.REC, value); }
-            //public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
+            public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
             public override bool ANF { get => base.ANF; set => updateOn(OtherButtonId.ANF, value); }
             public override bool SNB { get => base.SNB; set => updateOn(OtherButtonId.SNB, value); }
             public override bool TNFActive { get => base.TNFActive; set => updateOn(OtherButtonId.MNF, value); }
@@ -8950,6 +9039,12 @@ namespace Thetis
                             button_enabled = _owningmeter.CWXShown;
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
                             break;
+                        case OtherButtonId.WAVE_RECORD:
+                        case OtherButtonId.REC:
+                        case OtherButtonId.PLAY:
+                            button_enabled = GetEnabled(0, i) && _owningmeter.Power;
+                            sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
+                            break;
                         default:
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
                             break;
@@ -9301,7 +9396,7 @@ namespace Thetis
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.DoOtherButtonAction(_owningmeter.RX, id, e.Button);
+                        _console.DoOtherButtonAction(_owningmeter.RX, id, e.Button, false, GetOn(1, index));
                     }));
                 }
             }

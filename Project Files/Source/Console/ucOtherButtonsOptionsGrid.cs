@@ -660,7 +660,7 @@ namespace Thetis
             (OtherButtonId.VOX_M1,         5, 6, "VOX-", "", "", "Decrease vox level"),
             (OtherButtonId.LEVELER,        5, 7, "Leveler", "", "", "Leveler on/off"),
             (OtherButtonId.PHASE_ROT,      5, 8, "PhaRot", "", "", "Phase rotator on/off"),
-            (OtherButtonId.WAVE_RECORD,    5, 9, "Record", "stop", "record", "Wave record"),
+            (OtherButtonId.WAVE_RECORD,    5, 9, "Wav Record", "stop", "record", "Wave record"),
 
             (OtherButtonId.INFO_TEXT,     -1, -1, "AGC", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),

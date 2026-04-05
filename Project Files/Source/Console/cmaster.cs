@@ -1130,7 +1130,7 @@ namespace Thetis
             SendpInboundTCITxAudio(TCITxAudioInDel);
             //
 
-            EnsureTCIStreamThreads();
+            ensureTCIStreamThreads();
             WaveThing.initWaves();
             Scope.initScope();
         }
@@ -1162,7 +1162,7 @@ namespace Thetis
             }
         }
 
-        private static void EnsureTCIStreamThreads()
+        private static void ensureTCIStreamThreads()
         {
             m_runTCIStreamThreads = true;
 
@@ -1192,7 +1192,7 @@ namespace Thetis
                 try
                 {
                     if (TCIServer != null)
-                        ServiceTCIRxStreams();
+                        serviceTCIRxStreams();
                 }
                 catch { }
 
@@ -1200,7 +1200,7 @@ namespace Thetis
             }
         }
 
-        private static void ServiceTCIRxStreams()
+        private static void serviceTCIRxStreams()
         {
             TCPIPtciServer tciServer = TCIServer;
             if (tciServer == null)
@@ -1237,7 +1237,7 @@ namespace Thetis
             {
                 try
                 {
-                    ServiceTCITxProtocol();
+                    serviceTCITxProtocol();
                 }
                 catch { }
 
@@ -1245,7 +1245,7 @@ namespace Thetis
             }
         }
 
-        private static void ServiceTCITxProtocol()
+        private static void serviceTCITxProtocol()
         {
             TCPIPtciServer tciServer = TCIServer;
             if (tciServer == null || !tciServer.UsesActiveTCITxAudio() || !Audio.MOX)

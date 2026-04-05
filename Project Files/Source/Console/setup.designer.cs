@@ -4455,6 +4455,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
+            this.btnRecording_openWaverecordFolder = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -31861,6 +31862,7 @@
             // tpAudioRecording
             // 
             this.tpAudioRecording.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAudioRecording.Controls.Add(this.btnRecording_openWaverecordFolder);
             this.tpAudioRecording.Controls.Add(this.groupBoxTS66);
             this.tpAudioRecording.Controls.Add(this.groupBoxTS64);
             this.tpAudioRecording.Controls.Add(this.groupBoxTS63);
@@ -32650,7 +32652,7 @@
             // btnRecording_openRecordingsFolder
             // 
             this.btnRecording_openRecordingsFolder.Image = null;
-            this.btnRecording_openRecordingsFolder.Location = new System.Drawing.Point(599, 334);
+            this.btnRecording_openRecordingsFolder.Location = new System.Drawing.Point(599, 336);
             this.btnRecording_openRecordingsFolder.Name = "btnRecording_openRecordingsFolder";
             this.btnRecording_openRecordingsFolder.Selectable = true;
             this.btnRecording_openRecordingsFolder.Size = new System.Drawing.Size(100, 45);
@@ -32749,7 +32751,7 @@
             // btnRecording_openQuickFolder
             // 
             this.btnRecording_openQuickFolder.Image = null;
-            this.btnRecording_openQuickFolder.Location = new System.Drawing.Point(599, 283);
+            this.btnRecording_openQuickFolder.Location = new System.Drawing.Point(599, 234);
             this.btnRecording_openQuickFolder.Name = "btnRecording_openQuickFolder";
             this.btnRecording_openQuickFolder.Selectable = true;
             this.btnRecording_openQuickFolder.Size = new System.Drawing.Size(100, 45);
@@ -58242,6 +58244,8 @@
             // chkEmulateExpertSDR3Protocol
             // 
             this.chkEmulateExpertSDR3Protocol.AutoSize = true;
+            this.chkEmulateExpertSDR3Protocol.Checked = true;
+            this.chkEmulateExpertSDR3Protocol.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEmulateExpertSDR3Protocol.Image = null;
             this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 199);
             this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
@@ -70553,6 +70557,19 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
+            // btnRecording_openWaverecordFolder
+            // 
+            this.btnRecording_openWaverecordFolder.Image = null;
+            this.btnRecording_openWaverecordFolder.Location = new System.Drawing.Point(599, 285);
+            this.btnRecording_openWaverecordFolder.Name = "btnRecording_openWaverecordFolder";
+            this.btnRecording_openWaverecordFolder.Selectable = true;
+            this.btnRecording_openWaverecordFolder.Size = new System.Drawing.Size(100, 45);
+            this.btnRecording_openWaverecordFolder.TabIndex = 9;
+            this.btnRecording_openWaverecordFolder.Text = "Open Wave Record Filder";
+            this.toolTip1.SetToolTip(this.btnRecording_openWaverecordFolder, "Opens up the folder used bu the OtherButton Wave Record button");
+            this.btnRecording_openWaverecordFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_openWaverecordFolder.Click += new System.EventHandler(this.btnRecording_openWaverecordFolder_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -76402,5 +76419,6 @@
         private RadioButtonTS radWaterfall_timelab_none;
         private CheckBoxTS chkTCI_spot_flags;
         private ColorButton clrbtnWaterfall_time_label_colour;
+        private ButtonTS btnRecording_openWaverecordFolder;
     }
 }

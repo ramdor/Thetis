@@ -160,6 +160,7 @@ namespace Thetis
         private const int PcAudioWasapiOutputIdBase = 200000;
 
         private const int RecordSpaceCheckMs = 2000;
+        private const int WaveThingStopWaitMs = 2000;
 
         private readonly object _sync = new object();
 
@@ -1580,6 +1581,7 @@ namespace Thetis
             stopRecordSpaceTimer();
             string recordId = null;
             string filename = null;
+            WaveFileWriter writer = null;
 
             lock (_sync)
             {
@@ -1593,7 +1595,7 @@ namespace Thetis
 
                     if (_active_record_wfw_id >= 0)
                     {
-                        WaveFileWriter writer = WaveThing.wave_file_writer[_active_record_wfw_id];
+                        writer = WaveThing.wave_file_writer[_active_record_wfw_id];
                         if (writer != null)
                         {
                             writer.Stop();
@@ -1621,6 +1623,18 @@ namespace Thetis
                     setRecordingState(false);
                     clearActiveRecordLocked();
                 }
+            }
+
+            if (writer != null)
+            {
+                try
+                {
+                    if (writer.WaitForStop(WaveThingStopWaitMs))
+                    {
+                        completeRecordStateIfCurrent(recordId, filename);
+                    }
+                }
+                catch { }
             }
 
             storeRestoreSettings(false, false);
@@ -2039,6 +2053,7 @@ namespace Thetis
             bool wdsp = false;
             string playId = null;
             string filename = null;
+            WaveFileReader1 reader = null;
 
             lock (_sync)
             {
@@ -2052,7 +2067,7 @@ namespace Thetis
                         _console.SetWavePlayback(_active_playback_wfw_id, false);
                         Audio.WavePlayback = false;
 
-                        WaveFileReader1 reader = WaveThing.wave_file_reader[_active_playback_wfw_id];
+                        reader = WaveThing.wave_file_reader[_active_playback_wfw_id];
                         if (reader != null)
                         {
                             reader.Stop();
@@ -2070,6 +2085,11 @@ namespace Thetis
                     error = ex.Message;
                     try { cleanupPcPlayback(); } catch { }
                 }
+            }
+
+            if (reader != null)
+            {
+                try { reader.WaitForStop(WaveThingStopWaitMs); } catch { }
             }
 
             if (wdsp) storeRestoreSettings(false, true);
@@ -2468,9 +2488,6 @@ namespace Thetis
         {
             Action a = delegate
             {
-                stopRecordSpaceTimer();
-                storeRestoreSettings(false, false);
-
                 if (recordSucceeded && details != null)
                 {
                     details.UtcTime = ensureUtc(details.UtcTime);
@@ -2549,12 +2566,7 @@ namespace Thetis
                     raiseRecordError(unique_id, wav, failureMessage);
                 }
 
-                setRecordingState(false);
-
-                lock (_sync)
-                {
-                    clearActiveRecordLocked();
-                }
+                completeRecordStateIfCurrent(unique_id, wav);
             };
 
             if (_sync_context != null)
@@ -2750,6 +2762,50 @@ namespace Thetis
             _active_record_sample_rate = 0;
             _active_record_failed = false;
             _active_record_failure_message = null;
+        }
+
+        private bool isActiveRecordMatchLocked(string unique_id, string wav)
+        {
+            return string.Equals(_active_record_id ?? string.Empty, unique_id ?? string.Empty, StringComparison.Ordinal) &&
+                string.Equals(_active_record_filename, wav, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void completeRecordStateIfCurrent(string unique_id, string wav)
+        {
+            bool raise = false;
+            string record_id = null;
+            string filename = null;
+
+            lock (_sync)
+            {
+                if (!isActiveRecordMatchLocked(unique_id, wav)) return;
+
+                raise = _is_recording;
+                record_id = _active_record_id;
+                filename = _active_record_filename;
+                _is_recording = false;
+                clearActiveRecordLocked();
+            }
+
+            stopRecordSpaceTimer();
+            storeRestoreSettings(false, false);
+
+            if (raise)
+            {
+                Action<bool, string, string> h = RecordingChanged;
+                if (h != null)
+                {
+                    Delegate[] list = h.GetInvocationList();
+                    for (int i = 0; i < list.Length; i++)
+                    {
+                        try
+                        {
+                            ((Action<bool, string, string>)list[i])(false, record_id, filename);
+                        }
+                        catch { }
+                    }
+                }
+            }
         }
 
         private void setRecordingState(bool recording)
@@ -3094,7 +3150,8 @@ namespace Thetis
 
         private int _id;
         private BinaryWriter _writer;
-        private bool _record;
+        private volatile bool _record;
+        private readonly Thread _thread;
         private short _channels;
         private short _format_tag;
         private short _bit_depth;
@@ -3209,11 +3266,11 @@ namespace Thetis
 
             _writer = new BinaryWriter(File.Open(file, FileMode.Create));
 
-            Thread t = new Thread(new ThreadStart(ProcessRecordBuffers));
-            t.Name = "Wave File Write Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
-            t.Start();
+            _thread = new Thread(new ThreadStart(ProcessRecordBuffers));
+            _thread.Name = "Wave File Write Thread";
+            _thread.IsBackground = true;
+            _thread.Priority = ThreadPriority.Normal;
+            _thread.Start();
         }
 
         public float RecordGain
@@ -3309,6 +3366,14 @@ namespace Thetis
         public void Stop()
         {
             _record = false;
+        }
+
+        public bool WaitForStop(int timeout_ms)
+        {
+            if (_thread == null) return true;
+            if (Thread.CurrentThread == _thread) return true;
+
+            return _thread.Join(timeout_ms);
         }
 
         private void WriteBuffer(ref BinaryWriter w, ref int count)
@@ -3516,7 +3581,8 @@ namespace Thetis
         private int channels;
         private int bitdepth;
 
-        private bool playback;
+        private volatile bool playback;
+        private readonly Thread _thread;
 
         private RingBufferFloat rb_l;
         private RingBufferFloat rb_r;
@@ -3664,11 +3730,11 @@ namespace Thetis
                 ReadBuffer(ref reader);
             } while (rb_l.WriteSpace() > OUT_BLOCK && !eof);
 
-            Thread t = new Thread(new ThreadStart(ProcessBuffers));
-            t.Name = "Wave File Read Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
-            t.Start();
+            _thread = new Thread(new ThreadStart(ProcessBuffers));
+            _thread.Name = "Wave File Read Thread";
+            _thread.IsBackground = true;
+            _thread.Priority = ThreadPriority.Normal;
+            _thread.Start();
         }
 
         private static float[] buildCosineFade(int frames)
@@ -3698,6 +3764,14 @@ namespace Thetis
         public void Stop()
         {
             playback = false;
+        }
+
+        public bool WaitForStop(int timeout_ms)
+        {
+            if (_thread == null) return true;
+            if (Thread.CurrentThread == _thread) return true;
+
+            return _thread.Join(timeout_ms);
         }
 
         private void ProcessBuffers()

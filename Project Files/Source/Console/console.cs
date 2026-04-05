@@ -10941,6 +10941,7 @@ namespace Thetis
             get { return _rx1_step_att_enabled; }
             set
             {
+                bool oldEnabled = _rx1_step_att_enabled;
                 _rx1_step_att_enabled = value;
                 if (_rx1_step_att_enabled)
                 {
@@ -10963,6 +10964,8 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX1DisplayOffsets();
+
+                if (oldEnabled != _rx1_step_att_enabled) StepAttEnabledChangedHandlers?.Invoke(1, oldEnabled, _rx1_step_att_enabled);
 
                 setATTGeneralSetting(1);
             }
@@ -11094,6 +11097,7 @@ namespace Thetis
             get { return _rx2_step_att_enabled; }
             set
             {
+                bool oldEnabled = _rx2_step_att_enabled;
                 _rx2_step_att_enabled = value;
                 if (_rx2_preamp_present)
                 {
@@ -11117,6 +11121,8 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX2DisplayOffsets();
+
+                if (oldEnabled != _rx2_step_att_enabled) StepAttEnabledChangedHandlers?.Invoke(2, oldEnabled, _rx2_step_att_enabled);
 
                 setATTGeneralSetting(2);
             }
@@ -44860,6 +44866,7 @@ namespace Thetis
 
         public delegate void AttenuatorDataChanged(int rx, int oldAtt, int newAtt);
         public delegate void PreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode);
+        public delegate void StepAttEnabledChanged(int rx, bool oldEnabled, bool newEnabled);
 
         public delegate void FilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift);
         public delegate void SplitChanged(int rx, bool oldSplit, bool newSplit);
@@ -45021,6 +45028,7 @@ namespace Thetis
 
         public AttenuatorDataChanged AttenuatorDataChangedHandlers;
         public PreampModeChanged PreampModeChangedHandlers;
+        public StepAttEnabledChanged StepAttEnabledChangedHandlers;
 
         public FilterEdgesChanged FilterEdgesChangedHandlers;
         public SplitChanged SplitChangedHandlers;
@@ -51255,7 +51263,7 @@ namespace Thetis
         {
             get { return _busy_doing_otherbutton_action; }
         }
-        public void DoOtherButtonAction(int rx, OtherButtonId id, MouseButtons button, bool force = false)
+        public void DoOtherButtonAction(int rx, OtherButtonId id, MouseButtons button, bool force = false, bool current_state = false)
         {
             if (_busy_doing_otherbutton_action && !force) return;
             _busy_doing_otherbutton_action = true;
@@ -51301,7 +51309,14 @@ namespace Thetis
                         }
                     }
                     break;
-                //case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
+                case OtherButtonId.WAVE_RECORD:
+                    {
+                        if (!ckQuickPlay.Checked && !ckQuickRec.Checked)
+                        { 
+                            waveRecord(rx, current_state);
+                        }
+                    }
+                    break;
                 case OtherButtonId.NR: incrementNR(rx); break;
                 case OtherButtonId.ANF: SetANF(rx, !GetANF(rx)); break;
                 case OtherButtonId.NB:
@@ -51647,6 +51662,10 @@ namespace Thetis
                     break;
                 case OtherButtonId.WAVE_RECORD:
                     //DoOtherButtonAction(rx, OtherButtonId.FORM_WAVE, MouseButtons.Left, true);
+                    if (!IsSetupFormNull)
+                    {
+                        SetupForm.OpenWaveRecordFolder();
+                    }
                     break;
                 case OtherButtonId.DITHER:
                 case OtherButtonId.RANDOM:
@@ -51919,7 +51938,11 @@ namespace Thetis
                 case OtherButtonId.PS_A: return PSA;
                 case OtherButtonId.REC: return QuickRec;
                 case OtherButtonId.PLAY: return QuickPlay;
-                //case OtherButtonId.WAVE_RECORD: return WaveRecord;
+                case OtherButtonId.WAVE_RECORD:
+                    {
+                        if(rx < 1 || rx > 2) return false;
+                        return _wave_recording[rx - 1];
+                    }
                 case OtherButtonId.NR: return GetSelectedNR(rx) != 0;
                 case OtherButtonId.ANF: return GetANF(rx);
                 case OtherButtonId.NB: return GetSelectedNB(rx) != 0;
@@ -52133,24 +52156,6 @@ namespace Thetis
                 }
             }
             return ret;
-        }
-        public bool WaveRecord
-        {
-            get
-            {
-                //if (WaveForm == null || WaveForm.IsDisposed)
-                //    WaveForm = new WaveControl(this);
-
-                //return WaveForm.Recording;
-                return false;
-            }
-            set
-            {
-                //if (WaveForm == null || WaveForm.IsDisposed)
-                //    WaveForm = new WaveControl(this);
-
-                //WaveForm.Recording = value;
-            }
         }
         public int GetSelectedNB(int rx)
         {
@@ -52917,7 +52922,7 @@ namespace Thetis
                 switch(pamode)
                 {
                     case PreampMode.HPSDR_OFF:
-                        return 0;
+                        return 20;
                     case PreampMode.HPSDR_ON:
                         return 0;
                     case PreampMode.HPSDR_MINUS10:
@@ -53600,6 +53605,12 @@ namespace Thetis
             setPlayRecordStatusBar();
         }
 
+        private bool[] _wave_recording = new bool[2] { false, false }; // [rx1, rx2]
+        public bool WaveRecording(int rx)
+        {
+            if(rx < 1 || rx > 2) return false;
+            return _wave_recording[rx - 1];
+        }
         private void arp_RecordingChanged(bool recording, string id, string filename)
         {
             if (InvokeRequired)
@@ -53634,6 +53645,22 @@ namespace Thetis
                 ckQuickPlay.Enabled = !recording;
                 ckQuickRec.Enabled = !recording;
             }
+
+            if (id == "waverecord_1") //rx1
+            {
+                bool old = _wave_recording[0];
+                _wave_recording[0] = recording;
+
+                WaveRecordChangedHandlers?.Invoke(1, old, recording);
+            }
+            else if (id == "waverecord_2") //rx2
+            {
+                bool old = _wave_recording[1];
+                _wave_recording[1] = recording;
+
+                WaveRecordChangedHandlers?.Invoke(2, old, recording);
+            }
+
             setPlayRecordStatusBar();
         }
         private void setPlayRecordStatusBar()
@@ -53652,6 +53679,83 @@ namespace Thetis
             {
                 toolStripStatusLabel_play_record.Visible = false;
             }
+        }
+
+        private void waveRecord(int rx, bool recording)
+        {
+            // just do a record to a folder, stop anything running, then record
+            ARP.StopRecord(out _);
+            ARP.StopPlayback(out _);
+
+            if (recording) return; // exit if being called from metermanaer when its button is on (ie recording)
+
+            double freq;
+            DSPMode mode;
+            Band band;
+            int wfw_id;
+            //double cf;
+
+            switch (rx)
+            {
+                case 2:
+                    wfw_id = 1;
+                    freq = VFOBFreq;
+                    mode = RX2DSPMode;
+                    band = RX2Band;
+                    //cf = CentreRX2Frequency;
+                    break;
+                case 1:
+                default:
+                    wfw_id = 0;
+                    freq = VFOAFreq;
+                    mode = RX1DSPMode;
+                    band = RX1Band;
+                    //cf = CentreFrequency;
+                    break;
+            }
+
+            RecordingDetails details = new RecordingDetails()
+            {
+                Band = BandStackManager.BandToString(band),
+                Frequency = freq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+                Mode = mode.ToString(),
+                UtcTime = DateTime.UtcNow,
+                //DDCFrequency = cf.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+            };
+
+            int bitdepth;
+            switch (ARP.BitDepthMode)
+            {
+                case AudioBitDepthMode.Pcm8:
+                    bitdepth = 8;
+                    break;
+                case AudioBitDepthMode.Pcm16:
+                    bitdepth = 16;
+                    break;
+                case AudioBitDepthMode.Pcm24:
+                    bitdepth = 24;
+                    break;
+                case AudioBitDepthMode.Pcm32:
+                case AudioBitDepthMode.IeeeFloat32:
+                    bitdepth = 32;
+                    break;
+                default:
+                    bitdepth = 0;
+                    break;
+            }
+            int rate = ARP.SampleRate;
+
+            string datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            string file = $"{details.Mode}_{details.Frequency}MHz_[{bitdepth.ToString()}bits_{rate.ToString()}Hz]_{datetime}.wav";
+
+            string invalid = new string(Path.GetInvalidFileNameChars());
+            foreach (char c in invalid)
+            {
+                file = file.Replace(c, '_');
+            }
+
+            string full_file_path = Path.Combine(ARP.AudioFolder, "waverecord", file);
+            string filename = ARP.RecordToFileFromWDSP("waverecord_" + rx.ToString(), full_file_path, wfw_id, out string error, true, details);
         }
 
         // add a button to obtain this string, it is used by Database merge

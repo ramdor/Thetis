@@ -3014,8 +3014,8 @@ namespace Thetis
             {
                 if (isTXProfileSettingDifferent<int>(dr, "FilterLow", (int)udTXFilterLow.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "FilterHigh", (int)udTXFilterHigh.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<string>(dr, "RXParaEQData", console.EQForm.ParaEQRXData, out sReportOut)) sReport += "RX EQ changed\n";
-                if (isTXProfileSettingDifferent<string>(dr, "TXParaEQData", console.EQForm.ParaEQTXData, out sReportOut)) sReport += "TX EQ changed\n";
+                if (isTXProfileSettingDifferent<string>(dr, "RXParaEQData", console.EQForm.ParaEQRXData, out sReportOut)) sReport += "RX ParaEQ changed" + Environment.NewLine; ;
+                if (isTXProfileSettingDifferent<string>(dr, "TXParaEQData", console.EQForm.ParaEQTXData, out sReportOut)) sReport += "TX ParaEQ changed" + Environment.NewLine; ;
                 if (isTXProfileSettingDifferent<int>(dr, "TXEQNumBands", console.EQForm.NumBands, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "TXEQEnabled", console.EQForm.TXEQEnabled, out sReportOut)) sReport += sReportOut;
                 int[] eq = console.EQForm.TXEQ;
@@ -36232,6 +36232,32 @@ namespace Thetis
                     txtRecording_customFolder.Text = dlg.SelectedPath;
                 }
             }
+        }
+        public void OpenWaveRecordFolder()
+        {
+            string fullPath = Path.Combine(console.ARP.AudioFolder, "waverecord");
+            try
+            {
+                //if not there make it
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
+        }
+        private void btnRecording_openWaverecordFolder_Click(object sender, EventArgs e)
+        {
+            OpenWaveRecordFolder();
         }
 
         private void btnRecording_openQuickFolder_Click(object sender, EventArgs e)
