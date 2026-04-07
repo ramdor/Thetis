@@ -1916,6 +1916,7 @@
             this.comboASIODevicesAvailable = new System.Windows.Forms.ComboBoxTS();
             this.labelTS282 = new System.Windows.Forms.LabelTS();
             this.tpAudioRecording = new System.Windows.Forms.TabPage();
+            this.btnRecording_openWaverecordFolder = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS66 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS649 = new System.Windows.Forms.LabelTS();
             this.nudRecording_txGain = new System.Windows.Forms.NumericUpDownTS();
@@ -4084,6 +4085,21 @@
             this.txtRecording_4char = new System.Windows.Forms.TextBoxTS();
             this.btnRecording_load_wav_to_slot = new System.Windows.Forms.ButtonTS();
             this.btnRecording_export_wav_from_slot = new System.Windows.Forms.ButtonTS();
+            this.clrbtnWaveRecord_scroll_hover = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_scroll_thumb = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_scroll_track = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_delete = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_stop = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_play = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_button_hover = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_button_border = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_button_fill = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_text = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_row = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_border = new Thetis.ColorButton();
+            this.clrbtnWaveRecord_back = new Thetis.ColorButton();
+            this.nudWaveRecord_radius = new System.Windows.Forms.NumericUpDownTS();
+            this.nudWaveRecord_vertical_ratio = new System.Windows.Forms.NumericUpDownTS();
             this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -4092,6 +4108,24 @@
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.tcMMsettings = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.grpWaveRecordItem = new System.Windows.Forms.GroupBoxTS();
+            this.lblWaveRecordScrollHover = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordScrollThumb = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordScrollTrack = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordDelete = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordStop = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordPlay = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonHover = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonBorder = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonFill = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordText = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordRow = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordBorder = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordBack = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordRadius = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordHeightRatio = new System.Windows.Forms.LabelTS();
+            this.chkWaveRecord_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWaveRecord_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.grpHistoryItem = new System.Windows.Forms.GroupBoxTS();
             this.labelTS281 = new System.Windows.Forms.LabelTS();
             this.labelTS280 = new System.Windows.Forms.LabelTS();
@@ -4455,7 +4489,8 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
-            this.btnRecording_openWaverecordFolder = new System.Windows.Forms.ButtonTS();
+            this.tbTCISpotBackPanel_alpha = new System.Windows.Forms.TrackBarTS();
+            this.labelTS662 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5485,9 +5520,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_slot_settings)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWaveRecord_radius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWaveRecord_vertical_ratio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).BeginInit();
             this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.grpWaveRecordItem.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
             this.groupBoxTS46.SuspendLayout();
             this.groupBoxTS45.SuspendLayout();
@@ -5563,6 +5601,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -31878,6 +31917,19 @@
             this.tpAudioRecording.TabIndex = 6;
             this.tpAudioRecording.Text = "Recording";
             // 
+            // btnRecording_openWaverecordFolder
+            // 
+            this.btnRecording_openWaverecordFolder.Image = null;
+            this.btnRecording_openWaverecordFolder.Location = new System.Drawing.Point(599, 285);
+            this.btnRecording_openWaverecordFolder.Name = "btnRecording_openWaverecordFolder";
+            this.btnRecording_openWaverecordFolder.Selectable = true;
+            this.btnRecording_openWaverecordFolder.Size = new System.Drawing.Size(100, 45);
+            this.btnRecording_openWaverecordFolder.TabIndex = 9;
+            this.btnRecording_openWaverecordFolder.Text = "Open Wave Record Filder";
+            this.toolTip1.SetToolTip(this.btnRecording_openWaverecordFolder, "Opens up the folder used bu the OtherButton Wave Record button");
+            this.btnRecording_openWaverecordFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_openWaverecordFolder.Click += new System.EventHandler(this.btnRecording_openWaverecordFolder_Click);
+            // 
             // groupBoxTS66
             // 
             this.groupBoxTS66.Controls.Add(this.labelTS649);
@@ -57978,6 +58030,8 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.tbTCISpotBackPanel_alpha);
+            this.grpTCIServer.Controls.Add(this.labelTS662);
             this.grpTCIServer.Controls.Add(this.chkTCI_spot_flags);
             this.grpTCIServer.Controls.Add(this.panelTS15);
             this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
@@ -58025,7 +58079,7 @@
             this.chkTCI_spot_flags.Checked = true;
             this.chkTCI_spot_flags.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTCI_spot_flags.Image = null;
-            this.chkTCI_spot_flags.Location = new System.Drawing.Point(316, 222);
+            this.chkTCI_spot_flags.Location = new System.Drawing.Point(316, 206);
             this.chkTCI_spot_flags.Name = "chkTCI_spot_flags";
             this.chkTCI_spot_flags.Size = new System.Drawing.Size(51, 17);
             this.chkTCI_spot_flags.TabIndex = 116;
@@ -58091,9 +58145,9 @@
             this.panelTS13.Controls.Add(this.labelTS644);
             this.panelTS13.Controls.Add(this.radTCI_spot_force_cwl);
             this.panelTS13.Controls.Add(this.radTCI_spot_force_cwu);
-            this.panelTS13.Location = new System.Drawing.Point(22, 312);
+            this.panelTS13.Location = new System.Drawing.Point(22, 316);
             this.panelTS13.Name = "panelTS13";
-            this.panelTS13.Size = new System.Drawing.Size(271, 43);
+            this.panelTS13.Size = new System.Drawing.Size(271, 40);
             this.panelTS13.TabIndex = 112;
             // 
             // radTCI_spot_force_default
@@ -58155,7 +58209,7 @@
             // 
             this.chkOverrideSpotFlashColour.AutoSize = true;
             this.chkOverrideSpotFlashColour.Image = null;
-            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(308, 267);
+            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(308, 251);
             this.chkOverrideSpotFlashColour.Name = "chkOverrideSpotFlashColour";
             this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(15, 14);
             this.chkOverrideSpotFlashColour.TabIndex = 112;
@@ -58168,7 +58222,7 @@
             this.clrbtnSpotFlashColour.Automatic = "Automatic";
             this.clrbtnSpotFlashColour.Color = System.Drawing.Color.Yellow;
             this.clrbtnSpotFlashColour.Image = null;
-            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(329, 262);
+            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(329, 246);
             this.clrbtnSpotFlashColour.MoreColors = "More Colors...";
             this.clrbtnSpotFlashColour.Name = "clrbtnSpotFlashColour";
             this.clrbtnSpotFlashColour.Selectable = true;
@@ -58181,7 +58235,7 @@
             // 
             this.chkFlashNewTCISpots.AutoSize = true;
             this.chkFlashNewTCISpots.Image = null;
-            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(221, 266);
+            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(221, 250);
             this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
             this.chkFlashNewTCISpots.Size = new System.Drawing.Size(74, 17);
             this.chkFlashNewTCISpots.TabIndex = 103;
@@ -58193,7 +58247,7 @@
             // btnClearTCISpotsSWL
             // 
             this.btnClearTCISpotsSWL.Image = null;
-            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(254, 222);
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(254, 206);
             this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
             this.btnClearTCISpotsSWL.Selectable = true;
             this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(56, 39);
@@ -58207,7 +58261,7 @@
             this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
             this.chkForgetRX2VfoBVFOinfo.Enabled = false;
             this.chkForgetRX2VfoBVFOinfo.Image = null;
-            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 131);
+            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 121);
             this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";
             this.chkForgetRX2VfoBVFOinfo.Size = new System.Drawing.Size(110, 17);
             this.chkForgetRX2VfoBVFOinfo.TabIndex = 101;
@@ -58220,7 +58274,7 @@
             // 
             this.chkCWbecomesCWUabove10mhz.AutoSize = true;
             this.chkCWbecomesCWUabove10mhz.Image = null;
-            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
+            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 162);
             this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
             this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
             this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
@@ -58232,7 +58286,7 @@
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 222);
+            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 206);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
             this.btnClearTCISpots.Size = new System.Drawing.Size(68, 39);
@@ -58247,7 +58301,7 @@
             this.chkEmulateExpertSDR3Protocol.Checked = true;
             this.chkEmulateExpertSDR3Protocol.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEmulateExpertSDR3Protocol.Image = null;
-            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 199);
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 183);
             this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
             this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
             this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
@@ -58260,7 +58314,7 @@
             // 
             this.chkEmulateSunSDR2Pro.AutoSize = true;
             this.chkEmulateSunSDR2Pro.Image = null;
-            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(199, 199);
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(199, 183);
             this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
             this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
             this.chkEmulateSunSDR2Pro.TabIndex = 71;
@@ -58286,7 +58340,7 @@
             // 
             this.chkCWLUbecomesCW.AutoSize = true;
             this.chkCWLUbecomesCW.Image = null;
-            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 154);
+            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 142);
             this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
             this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
             this.chkCWLUbecomesCW.TabIndex = 68;
@@ -58300,7 +58354,7 @@
             this.clrbtnOwnCallApearance.Automatic = "Automatic";
             this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
             this.clrbtnOwnCallApearance.Image = null;
-            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 286);
+            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 290);
             this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
             this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
             this.clrbtnOwnCallApearance.Selectable = true;
@@ -58311,7 +58365,7 @@
             // 
             // txtOwnCallsign
             // 
-            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 287);
+            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 291);
             this.txtOwnCallsign.Name = "txtOwnCallsign";
             this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
             this.txtOwnCallsign.TabIndex = 28;
@@ -58322,7 +58376,7 @@
             // 
             this.chkSpotOwnCallAppearance.AutoSize = true;
             this.chkSpotOwnCallAppearance.Image = null;
-            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 289);
+            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 293);
             this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
             this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
             this.chkSpotOwnCallAppearance.TabIndex = 27;
@@ -58335,7 +58389,7 @@
             // 
             this.chkShowTCISpots.AutoSize = true;
             this.chkShowTCISpots.Image = null;
-            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 222);
+            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 206);
             this.chkShowTCISpots.Name = "chkShowTCISpots";
             this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
             this.chkShowTCISpots.TabIndex = 26;
@@ -58348,7 +58402,7 @@
             // 
             this.labelTS615.AutoSize = true;
             this.labelTS615.Image = null;
-            this.labelTS615.Location = new System.Drawing.Point(183, 266);
+            this.labelTS615.Location = new System.Drawing.Point(183, 250);
             this.labelTS615.Name = "labelTS615";
             this.labelTS615.Size = new System.Drawing.Size(28, 13);
             this.labelTS615.TabIndex = 25;
@@ -58361,7 +58415,7 @@
             0,
             0,
             0});
-            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 264);
+            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 248);
             this.udTCISpotLifetime.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -58390,7 +58444,7 @@
             0,
             0,
             0});
-            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 241);
+            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 225);
             this.udMaxTCISpots.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -58416,7 +58470,7 @@
             // 
             this.labelTS614.AutoSize = true;
             this.labelTS614.Image = null;
-            this.labelTS614.Location = new System.Drawing.Point(37, 266);
+            this.labelTS614.Location = new System.Drawing.Point(37, 250);
             this.labelTS614.Name = "labelTS614";
             this.labelTS614.Size = new System.Drawing.Size(74, 13);
             this.labelTS614.TabIndex = 22;
@@ -58426,7 +58480,7 @@
             // 
             this.labelTS613.AutoSize = true;
             this.labelTS613.Image = null;
-            this.labelTS613.Location = new System.Drawing.Point(37, 243);
+            this.labelTS613.Location = new System.Drawing.Point(37, 227);
             this.labelTS613.Name = "labelTS613";
             this.labelTS613.Size = new System.Drawing.Size(63, 13);
             this.labelTS613.TabIndex = 21;
@@ -58436,7 +58490,7 @@
             // 
             this.chkTCIsendInitialStateOnConnect.AutoSize = true;
             this.chkTCIsendInitialStateOnConnect.Image = null;
-            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 85);
+            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 79);
             this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
             this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
             this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
@@ -58449,7 +58503,7 @@
             // 
             this.chkUseRX1vfoaForRX2vfoa.AutoSize = true;
             this.chkUseRX1vfoaForRX2vfoa.Image = null;
-            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 108);
+            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 100);
             this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
             this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
             this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
@@ -58462,7 +58516,7 @@
             // 
             this.chkCopyRX2VFObToVFOa.AutoSize = true;
             this.chkCopyRX2VFObToVFOa.Image = null;
-            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 131);
+            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 121);
             this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
             this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
             this.chkCopyRX2VFObToVFOa.TabIndex = 18;
@@ -65468,6 +65522,263 @@
             this.btnRecording_export_wav_from_slot.UseVisualStyleBackColor = true;
             this.btnRecording_export_wav_from_slot.Click += new System.EventHandler(this.btnRecording_export_wav_from_slot_Click);
             // 
+            // clrbtnWaveRecord_scroll_hover
+            // 
+            this.clrbtnWaveRecord_scroll_hover.Automatic = "Automatic";
+            this.clrbtnWaveRecord_scroll_hover.Color = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.clrbtnWaveRecord_scroll_hover.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_scroll_hover.Image = null;
+            this.clrbtnWaveRecord_scroll_hover.Location = new System.Drawing.Point(118, 216);
+            this.clrbtnWaveRecord_scroll_hover.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_scroll_hover.Name = "clrbtnWaveRecord_scroll_hover";
+            this.clrbtnWaveRecord_scroll_hover.Selectable = true;
+            this.clrbtnWaveRecord_scroll_hover.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_scroll_hover.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_scroll_hover, "Scrollbar thumb hover colour");
+            this.clrbtnWaveRecord_scroll_hover.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_scroll_thumb
+            // 
+            this.clrbtnWaveRecord_scroll_thumb.Automatic = "Automatic";
+            this.clrbtnWaveRecord_scroll_thumb.Color = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(118)))), ((int)(((byte)(118)))));
+            this.clrbtnWaveRecord_scroll_thumb.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_scroll_thumb.Image = null;
+            this.clrbtnWaveRecord_scroll_thumb.Location = new System.Drawing.Point(272, 192);
+            this.clrbtnWaveRecord_scroll_thumb.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_scroll_thumb.Name = "clrbtnWaveRecord_scroll_thumb";
+            this.clrbtnWaveRecord_scroll_thumb.Selectable = true;
+            this.clrbtnWaveRecord_scroll_thumb.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_scroll_thumb.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_scroll_thumb, "Scrollbar thumb colour");
+            this.clrbtnWaveRecord_scroll_thumb.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_scroll_track
+            // 
+            this.clrbtnWaveRecord_scroll_track.Automatic = "Automatic";
+            this.clrbtnWaveRecord_scroll_track.Color = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(36)))), ((int)(((byte)(36)))));
+            this.clrbtnWaveRecord_scroll_track.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_scroll_track.Image = null;
+            this.clrbtnWaveRecord_scroll_track.Location = new System.Drawing.Point(118, 192);
+            this.clrbtnWaveRecord_scroll_track.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_scroll_track.Name = "clrbtnWaveRecord_scroll_track";
+            this.clrbtnWaveRecord_scroll_track.Selectable = true;
+            this.clrbtnWaveRecord_scroll_track.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_scroll_track.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_scroll_track, "Scrollbar track colour");
+            this.clrbtnWaveRecord_scroll_track.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_delete
+            // 
+            this.clrbtnWaveRecord_delete.Automatic = "Automatic";
+            this.clrbtnWaveRecord_delete.Color = System.Drawing.Color.Orange;
+            this.clrbtnWaveRecord_delete.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_delete.Image = null;
+            this.clrbtnWaveRecord_delete.Location = new System.Drawing.Point(272, 168);
+            this.clrbtnWaveRecord_delete.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_delete.Name = "clrbtnWaveRecord_delete";
+            this.clrbtnWaveRecord_delete.Selectable = true;
+            this.clrbtnWaveRecord_delete.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_delete.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_delete, "Trash icon colour");
+            this.clrbtnWaveRecord_delete.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_stop
+            // 
+            this.clrbtnWaveRecord_stop.Automatic = "Automatic";
+            this.clrbtnWaveRecord_stop.Color = System.Drawing.Color.Olive;
+            this.clrbtnWaveRecord_stop.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_stop.Image = null;
+            this.clrbtnWaveRecord_stop.Location = new System.Drawing.Point(118, 168);
+            this.clrbtnWaveRecord_stop.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_stop.Name = "clrbtnWaveRecord_stop";
+            this.clrbtnWaveRecord_stop.Selectable = true;
+            this.clrbtnWaveRecord_stop.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_stop.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_stop, "Stop icon colour");
+            this.clrbtnWaveRecord_stop.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_play
+            // 
+            this.clrbtnWaveRecord_play.Automatic = "Automatic";
+            this.clrbtnWaveRecord_play.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnWaveRecord_play.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_play.Image = null;
+            this.clrbtnWaveRecord_play.Location = new System.Drawing.Point(272, 144);
+            this.clrbtnWaveRecord_play.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_play.Name = "clrbtnWaveRecord_play";
+            this.clrbtnWaveRecord_play.Selectable = true;
+            this.clrbtnWaveRecord_play.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_play.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_play, "Play icon colour");
+            this.clrbtnWaveRecord_play.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_button_hover
+            // 
+            this.clrbtnWaveRecord_button_hover.Automatic = "Automatic";
+            this.clrbtnWaveRecord_button_hover.Color = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.clrbtnWaveRecord_button_hover.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_button_hover.Image = null;
+            this.clrbtnWaveRecord_button_hover.Location = new System.Drawing.Point(118, 144);
+            this.clrbtnWaveRecord_button_hover.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_button_hover.Name = "clrbtnWaveRecord_button_hover";
+            this.clrbtnWaveRecord_button_hover.Selectable = true;
+            this.clrbtnWaveRecord_button_hover.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_button_hover.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_button_hover, "Button hover fill colour");
+            this.clrbtnWaveRecord_button_hover.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_button_border
+            // 
+            this.clrbtnWaveRecord_button_border.Automatic = "Automatic";
+            this.clrbtnWaveRecord_button_border.Color = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(86)))), ((int)(((byte)(86)))));
+            this.clrbtnWaveRecord_button_border.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_button_border.Image = null;
+            this.clrbtnWaveRecord_button_border.Location = new System.Drawing.Point(272, 120);
+            this.clrbtnWaveRecord_button_border.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_button_border.Name = "clrbtnWaveRecord_button_border";
+            this.clrbtnWaveRecord_button_border.Selectable = true;
+            this.clrbtnWaveRecord_button_border.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_button_border.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_button_border, "Button border colour");
+            this.clrbtnWaveRecord_button_border.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_button_fill
+            // 
+            this.clrbtnWaveRecord_button_fill.Automatic = "Automatic";
+            this.clrbtnWaveRecord_button_fill.Color = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.clrbtnWaveRecord_button_fill.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_button_fill.Image = null;
+            this.clrbtnWaveRecord_button_fill.Location = new System.Drawing.Point(118, 120);
+            this.clrbtnWaveRecord_button_fill.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_button_fill.Name = "clrbtnWaveRecord_button_fill";
+            this.clrbtnWaveRecord_button_fill.Selectable = true;
+            this.clrbtnWaveRecord_button_fill.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_button_fill.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_button_fill, "Button background colour");
+            this.clrbtnWaveRecord_button_fill.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_text
+            // 
+            this.clrbtnWaveRecord_text.Automatic = "Automatic";
+            this.clrbtnWaveRecord_text.Color = System.Drawing.Color.White;
+            this.clrbtnWaveRecord_text.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_text.Image = null;
+            this.clrbtnWaveRecord_text.Location = new System.Drawing.Point(272, 96);
+            this.clrbtnWaveRecord_text.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_text.Name = "clrbtnWaveRecord_text";
+            this.clrbtnWaveRecord_text.Selectable = true;
+            this.clrbtnWaveRecord_text.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_text.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_text, "Recording name colour");
+            this.clrbtnWaveRecord_text.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_row
+            // 
+            this.clrbtnWaveRecord_row.Automatic = "Automatic";
+            this.clrbtnWaveRecord_row.Color = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.clrbtnWaveRecord_row.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_row.Image = null;
+            this.clrbtnWaveRecord_row.Location = new System.Drawing.Point(118, 96);
+            this.clrbtnWaveRecord_row.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_row.Name = "clrbtnWaveRecord_row";
+            this.clrbtnWaveRecord_row.Selectable = true;
+            this.clrbtnWaveRecord_row.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_row.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_row, "Row background colour");
+            this.clrbtnWaveRecord_row.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_border
+            // 
+            this.clrbtnWaveRecord_border.Automatic = "Automatic";
+            this.clrbtnWaveRecord_border.Color = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            this.clrbtnWaveRecord_border.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_border.Image = null;
+            this.clrbtnWaveRecord_border.Location = new System.Drawing.Point(272, 72);
+            this.clrbtnWaveRecord_border.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_border.Name = "clrbtnWaveRecord_border";
+            this.clrbtnWaveRecord_border.Selectable = true;
+            this.clrbtnWaveRecord_border.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_border.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_border, "Row border colour");
+            this.clrbtnWaveRecord_border.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // clrbtnWaveRecord_back
+            // 
+            this.clrbtnWaveRecord_back.Automatic = "Automatic";
+            this.clrbtnWaveRecord_back.Color = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
+            this.clrbtnWaveRecord_back.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnWaveRecord_back.Image = null;
+            this.clrbtnWaveRecord_back.Location = new System.Drawing.Point(118, 72);
+            this.clrbtnWaveRecord_back.MoreColors = "More Colors...";
+            this.clrbtnWaveRecord_back.Name = "clrbtnWaveRecord_back";
+            this.clrbtnWaveRecord_back.Selectable = true;
+            this.clrbtnWaveRecord_back.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaveRecord_back.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.clrbtnWaveRecord_back, "Panel background colour");
+            this.clrbtnWaveRecord_back.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // nudWaveRecord_radius
+            // 
+            this.nudWaveRecord_radius.DecimalPlaces = 2;
+            this.nudWaveRecord_radius.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudWaveRecord_radius.Location = new System.Drawing.Point(118, 38);
+            this.nudWaveRecord_radius.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudWaveRecord_radius.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudWaveRecord_radius.Name = "nudWaveRecord_radius";
+            this.nudWaveRecord_radius.Size = new System.Drawing.Size(56, 20);
+            this.nudWaveRecord_radius.TabIndex = 31;
+            this.nudWaveRecord_radius.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudWaveRecord_radius, "Corner radius for row panels and buttons");
+            this.nudWaveRecord_radius.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            131072});
+            this.nudWaveRecord_radius.ValueChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // nudWaveRecord_vertical_ratio
+            // 
+            this.nudWaveRecord_vertical_ratio.DecimalPlaces = 3;
+            this.nudWaveRecord_vertical_ratio.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudWaveRecord_vertical_ratio.Location = new System.Drawing.Point(118, 16);
+            this.nudWaveRecord_vertical_ratio.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudWaveRecord_vertical_ratio.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            131072});
+            this.nudWaveRecord_vertical_ratio.Name = "nudWaveRecord_vertical_ratio";
+            this.nudWaveRecord_vertical_ratio.Size = new System.Drawing.Size(56, 20);
+            this.nudWaveRecord_vertical_ratio.TabIndex = 0;
+            this.nudWaveRecord_vertical_ratio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudWaveRecord_vertical_ratio, "Height compared to width");
+            this.nudWaveRecord_vertical_ratio.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            131072});
+            this.nudWaveRecord_vertical_ratio.ValueChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
             // picButtonBoxInfo
             // 
             this.picButtonBoxInfo.Image = ((System.Drawing.Image)(resources.GetObject("picButtonBoxInfo.Image")));
@@ -65530,6 +65841,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.grpWaveRecordItem);
             this.tabPage1.Controls.Add(this.grpHistoryItem);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -65538,6 +65850,222 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "history";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // grpWaveRecordItem
+            // 
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollHover);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollThumb);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollTrack);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordDelete);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordStop);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordPlay);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonHover);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonBorder);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonFill);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordText);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRow);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBorder);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBack);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRadius);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordHeightRatio);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_hover);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_thumb);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_track);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_delete);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_stop);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_play);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_hover);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_border);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_fill);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_text);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_row);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_border);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_back);
+            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_tx);
+            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_rx);
+            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_radius);
+            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_vertical_ratio);
+            this.grpWaveRecordItem.Location = new System.Drawing.Point(349, 14);
+            this.grpWaveRecordItem.Name = "grpWaveRecordItem";
+            this.grpWaveRecordItem.Size = new System.Drawing.Size(323, 344);
+            this.grpWaveRecordItem.TabIndex = 111;
+            this.grpWaveRecordItem.TabStop = false;
+            this.grpWaveRecordItem.Text = "WaveList Player";
+            this.grpWaveRecordItem.Visible = false;
+            // 
+            // lblWaveRecordScrollHover
+            // 
+            this.lblWaveRecordScrollHover.Image = null;
+            this.lblWaveRecordScrollHover.Location = new System.Drawing.Point(10, 220);
+            this.lblWaveRecordScrollHover.Name = "lblWaveRecordScrollHover";
+            this.lblWaveRecordScrollHover.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordScrollHover.TabIndex = 29;
+            this.lblWaveRecordScrollHover.Text = "Scroll Hover:";
+            this.lblWaveRecordScrollHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordScrollThumb
+            // 
+            this.lblWaveRecordScrollThumb.Image = null;
+            this.lblWaveRecordScrollThumb.Location = new System.Drawing.Point(164, 196);
+            this.lblWaveRecordScrollThumb.Name = "lblWaveRecordScrollThumb";
+            this.lblWaveRecordScrollThumb.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordScrollThumb.TabIndex = 28;
+            this.lblWaveRecordScrollThumb.Text = "Scroll Thumb:";
+            this.lblWaveRecordScrollThumb.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordScrollTrack
+            // 
+            this.lblWaveRecordScrollTrack.Image = null;
+            this.lblWaveRecordScrollTrack.Location = new System.Drawing.Point(10, 196);
+            this.lblWaveRecordScrollTrack.Name = "lblWaveRecordScrollTrack";
+            this.lblWaveRecordScrollTrack.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordScrollTrack.TabIndex = 27;
+            this.lblWaveRecordScrollTrack.Text = "Scroll Track:";
+            this.lblWaveRecordScrollTrack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordDelete
+            // 
+            this.lblWaveRecordDelete.Image = null;
+            this.lblWaveRecordDelete.Location = new System.Drawing.Point(164, 172);
+            this.lblWaveRecordDelete.Name = "lblWaveRecordDelete";
+            this.lblWaveRecordDelete.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordDelete.TabIndex = 26;
+            this.lblWaveRecordDelete.Text = "Trash Icon:";
+            this.lblWaveRecordDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordStop
+            // 
+            this.lblWaveRecordStop.Image = null;
+            this.lblWaveRecordStop.Location = new System.Drawing.Point(10, 172);
+            this.lblWaveRecordStop.Name = "lblWaveRecordStop";
+            this.lblWaveRecordStop.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordStop.TabIndex = 25;
+            this.lblWaveRecordStop.Text = "Stop Icon:";
+            this.lblWaveRecordStop.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordPlay
+            // 
+            this.lblWaveRecordPlay.Image = null;
+            this.lblWaveRecordPlay.Location = new System.Drawing.Point(164, 148);
+            this.lblWaveRecordPlay.Name = "lblWaveRecordPlay";
+            this.lblWaveRecordPlay.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordPlay.TabIndex = 24;
+            this.lblWaveRecordPlay.Text = "Play Icon:";
+            this.lblWaveRecordPlay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonHover
+            // 
+            this.lblWaveRecordButtonHover.Image = null;
+            this.lblWaveRecordButtonHover.Location = new System.Drawing.Point(10, 148);
+            this.lblWaveRecordButtonHover.Name = "lblWaveRecordButtonHover";
+            this.lblWaveRecordButtonHover.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordButtonHover.TabIndex = 23;
+            this.lblWaveRecordButtonHover.Text = "Button Hover:";
+            this.lblWaveRecordButtonHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonBorder
+            // 
+            this.lblWaveRecordButtonBorder.Image = null;
+            this.lblWaveRecordButtonBorder.Location = new System.Drawing.Point(164, 124);
+            this.lblWaveRecordButtonBorder.Name = "lblWaveRecordButtonBorder";
+            this.lblWaveRecordButtonBorder.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordButtonBorder.TabIndex = 22;
+            this.lblWaveRecordButtonBorder.Text = "Button Border:";
+            this.lblWaveRecordButtonBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonFill
+            // 
+            this.lblWaveRecordButtonFill.Image = null;
+            this.lblWaveRecordButtonFill.Location = new System.Drawing.Point(10, 124);
+            this.lblWaveRecordButtonFill.Name = "lblWaveRecordButtonFill";
+            this.lblWaveRecordButtonFill.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordButtonFill.TabIndex = 21;
+            this.lblWaveRecordButtonFill.Text = "Button Fill:";
+            this.lblWaveRecordButtonFill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordText
+            // 
+            this.lblWaveRecordText.Image = null;
+            this.lblWaveRecordText.Location = new System.Drawing.Point(164, 100);
+            this.lblWaveRecordText.Name = "lblWaveRecordText";
+            this.lblWaveRecordText.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordText.TabIndex = 20;
+            this.lblWaveRecordText.Text = "Text:";
+            this.lblWaveRecordText.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordRow
+            // 
+            this.lblWaveRecordRow.Image = null;
+            this.lblWaveRecordRow.Location = new System.Drawing.Point(10, 100);
+            this.lblWaveRecordRow.Name = "lblWaveRecordRow";
+            this.lblWaveRecordRow.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordRow.TabIndex = 19;
+            this.lblWaveRecordRow.Text = "Row:";
+            this.lblWaveRecordRow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordBorder
+            // 
+            this.lblWaveRecordBorder.Image = null;
+            this.lblWaveRecordBorder.Location = new System.Drawing.Point(164, 76);
+            this.lblWaveRecordBorder.Name = "lblWaveRecordBorder";
+            this.lblWaveRecordBorder.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordBorder.TabIndex = 18;
+            this.lblWaveRecordBorder.Text = "Row Border:";
+            this.lblWaveRecordBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordBack
+            // 
+            this.lblWaveRecordBack.Image = null;
+            this.lblWaveRecordBack.Location = new System.Drawing.Point(10, 76);
+            this.lblWaveRecordBack.Name = "lblWaveRecordBack";
+            this.lblWaveRecordBack.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordBack.TabIndex = 17;
+            this.lblWaveRecordBack.Text = "Background:";
+            this.lblWaveRecordBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordRadius
+            // 
+            this.lblWaveRecordRadius.Image = null;
+            this.lblWaveRecordRadius.Location = new System.Drawing.Point(57, 40);
+            this.lblWaveRecordRadius.Name = "lblWaveRecordRadius";
+            this.lblWaveRecordRadius.Size = new System.Drawing.Size(56, 16);
+            this.lblWaveRecordRadius.TabIndex = 30;
+            this.lblWaveRecordRadius.Text = "Radius:";
+            this.lblWaveRecordRadius.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordHeightRatio
+            // 
+            this.lblWaveRecordHeightRatio.Image = null;
+            this.lblWaveRecordHeightRatio.Location = new System.Drawing.Point(33, 18);
+            this.lblWaveRecordHeightRatio.Name = "lblWaveRecordHeightRatio";
+            this.lblWaveRecordHeightRatio.Size = new System.Drawing.Size(80, 16);
+            this.lblWaveRecordHeightRatio.TabIndex = 16;
+            this.lblWaveRecordHeightRatio.Text = "Height Ratio:";
+            this.lblWaveRecordHeightRatio.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkWaveRecord_fade_tx
+            // 
+            this.chkWaveRecord_fade_tx.AutoSize = true;
+            this.chkWaveRecord_fade_tx.Image = null;
+            this.chkWaveRecord_fade_tx.Location = new System.Drawing.Point(205, 39);
+            this.chkWaveRecord_fade_tx.Name = "chkWaveRecord_fade_tx";
+            this.chkWaveRecord_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkWaveRecord_fade_tx.TabIndex = 2;
+            this.chkWaveRecord_fade_tx.Text = "Fade on TX";
+            this.chkWaveRecord_fade_tx.UseVisualStyleBackColor = true;
+            this.chkWaveRecord_fade_tx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // chkWaveRecord_fade_rx
+            // 
+            this.chkWaveRecord_fade_rx.AutoSize = true;
+            this.chkWaveRecord_fade_rx.Image = null;
+            this.chkWaveRecord_fade_rx.Location = new System.Drawing.Point(205, 18);
+            this.chkWaveRecord_fade_rx.Name = "chkWaveRecord_fade_rx";
+            this.chkWaveRecord_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkWaveRecord_fade_rx.TabIndex = 1;
+            this.chkWaveRecord_fade_rx.Text = "Fade on RX";
+            this.chkWaveRecord_fade_rx.UseVisualStyleBackColor = true;
+            this.chkWaveRecord_fade_rx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
             // 
             // grpHistoryItem
             // 
@@ -70557,18 +71085,28 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
-            // btnRecording_openWaverecordFolder
+            // tbTCISpotBackPanel_alpha
             // 
-            this.btnRecording_openWaverecordFolder.Image = null;
-            this.btnRecording_openWaverecordFolder.Location = new System.Drawing.Point(599, 285);
-            this.btnRecording_openWaverecordFolder.Name = "btnRecording_openWaverecordFolder";
-            this.btnRecording_openWaverecordFolder.Selectable = true;
-            this.btnRecording_openWaverecordFolder.Size = new System.Drawing.Size(100, 45);
-            this.btnRecording_openWaverecordFolder.TabIndex = 9;
-            this.btnRecording_openWaverecordFolder.Text = "Open Wave Record Filder";
-            this.toolTip1.SetToolTip(this.btnRecording_openWaverecordFolder, "Opens up the folder used bu the OtherButton Wave Record button");
-            this.btnRecording_openWaverecordFolder.UseVisualStyleBackColor = true;
-            this.btnRecording_openWaverecordFolder.Click += new System.EventHandler(this.btnRecording_openWaverecordFolder_Click);
+            this.tbTCISpotBackPanel_alpha.AutoSize = false;
+            this.tbTCISpotBackPanel_alpha.Location = new System.Drawing.Point(166, 270);
+            this.tbTCISpotBackPanel_alpha.Maximum = 255;
+            this.tbTCISpotBackPanel_alpha.Name = "tbTCISpotBackPanel_alpha";
+            this.tbTCISpotBackPanel_alpha.Size = new System.Drawing.Size(66, 18);
+            this.tbTCISpotBackPanel_alpha.TabIndex = 117;
+            this.tbTCISpotBackPanel_alpha.TickFrequency = 64;
+            this.toolTip1.SetToolTip(this.tbTCISpotBackPanel_alpha, "The alpha for the back panel of a spot");
+            this.tbTCISpotBackPanel_alpha.Value = 255;
+            this.tbTCISpotBackPanel_alpha.Scroll += new System.EventHandler(this.tbTCISpotBackPanel_alpha_Scroll);
+            // 
+            // labelTS662
+            // 
+            this.labelTS662.AutoSize = true;
+            this.labelTS662.Image = null;
+            this.labelTS662.Location = new System.Drawing.Point(40, 273);
+            this.labelTS662.Name = "labelTS662";
+            this.labelTS662.Size = new System.Drawing.Size(120, 13);
+            this.labelTS662.TabIndex = 117;
+            this.labelTS662.Text = "Spot back panel alpha :";
             // 
             // Setup
             // 
@@ -71859,9 +72397,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_slot_settings)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWaveRecord_radius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWaveRecord_vertical_ratio)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).EndInit();
             this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.grpWaveRecordItem.ResumeLayout(false);
+            this.grpWaveRecordItem.PerformLayout();
             this.grpHistoryItem.ResumeLayout(false);
             this.grpHistoryItem.PerformLayout();
             this.groupBoxTS46.ResumeLayout(false);
@@ -71961,6 +72503,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -75772,6 +76315,39 @@
         private LabelTS labelTS251;
         private ColorButton clrbtnMMVfoDisplayFrequency_small;
         private ButtonTS btnVFOCopyColourFromMainNumbers;
+        private GroupBoxTS grpWaveRecordItem;
+        private LabelTS lblWaveRecordScrollHover;
+        private LabelTS lblWaveRecordScrollThumb;
+        private LabelTS lblWaveRecordScrollTrack;
+        private LabelTS lblWaveRecordDelete;
+        private LabelTS lblWaveRecordStop;
+        private LabelTS lblWaveRecordPlay;
+        private LabelTS lblWaveRecordButtonHover;
+        private LabelTS lblWaveRecordButtonBorder;
+        private LabelTS lblWaveRecordButtonFill;
+        private LabelTS lblWaveRecordText;
+        private LabelTS lblWaveRecordRow;
+        private LabelTS lblWaveRecordBorder;
+        private LabelTS lblWaveRecordBack;
+        private LabelTS lblWaveRecordHeightRatio;
+        private LabelTS lblWaveRecordRadius;
+        private ColorButton clrbtnWaveRecord_scroll_hover;
+        private ColorButton clrbtnWaveRecord_scroll_thumb;
+        private ColorButton clrbtnWaveRecord_scroll_track;
+        private ColorButton clrbtnWaveRecord_delete;
+        private ColorButton clrbtnWaveRecord_stop;
+        private ColorButton clrbtnWaveRecord_play;
+        private ColorButton clrbtnWaveRecord_button_hover;
+        private ColorButton clrbtnWaveRecord_button_border;
+        private ColorButton clrbtnWaveRecord_button_fill;
+        private ColorButton clrbtnWaveRecord_text;
+        private ColorButton clrbtnWaveRecord_row;
+        private ColorButton clrbtnWaveRecord_border;
+        private ColorButton clrbtnWaveRecord_back;
+        private CheckBoxTS chkWaveRecord_fade_tx;
+        private CheckBoxTS chkWaveRecord_fade_rx;
+        private NumericUpDownTS nudWaveRecord_radius;
+        private NumericUpDownTS nudWaveRecord_vertical_ratio;
         private GroupBoxTS grpHistoryItem;
         private NumericUpDownTS nudHistory_vertical_ratio;
         private LabelTS labelTS253;
@@ -76420,5 +76996,7 @@
         private CheckBoxTS chkTCI_spot_flags;
         private ColorButton clrbtnWaterfall_time_label_colour;
         private ButtonTS btnRecording_openWaverecordFolder;
+        private TrackBarTS tbTCISpotBackPanel_alpha;
+        private LabelTS labelTS662;
     }
 }

@@ -1769,6 +1769,7 @@ namespace Thetis
             addToIgnore(ref ignoreList, grpMeterItemVfoDisplaySettings);
             addToIgnore(ref ignoreList, grpMeterItemRotator);
             addToIgnore(ref ignoreList, grpMeterItemSettings);
+            if (grpWaveRecordItem != null) addToIgnore(ref ignoreList, grpWaveRecordItem);
 
             addToIgnore(ref ignoreList, grpGainByBandPA);
 
@@ -24959,6 +24960,26 @@ namespace Thetis
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
+            else if (mt == MeterType.WAVE_RECORD)
+            {
+                igs.SetSetting<float>("waverecord_vertical_ratio", (float)nudWaveRecord_vertical_ratio.Value);
+                igs.SetSetting<float>("waverecord_radius", (float)nudWaveRecord_radius.Value);
+                igs.SetSetting<System.Drawing.Color>("waverecord_back_colour", clrbtnWaveRecord_back.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_row_colour", clrbtnWaveRecord_row.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_row_border_colour", clrbtnWaveRecord_border.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_text_colour", clrbtnWaveRecord_text.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_fill_colour", clrbtnWaveRecord_button_fill.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_border_colour", clrbtnWaveRecord_button_border.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_hover_colour", clrbtnWaveRecord_button_hover.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_play_colour", clrbtnWaveRecord_play.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_stop_colour", clrbtnWaveRecord_stop.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_delete_colour", clrbtnWaveRecord_delete.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", clrbtnWaveRecord_scroll_track.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", clrbtnWaveRecord_scroll_thumb.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", clrbtnWaveRecord_scroll_hover.Color);
+                igs.FadeOnRx = chkWaveRecord_fade_rx.Checked;
+                igs.FadeOnTx = chkWaveRecord_fade_tx.Checked;
+            }
             else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
                      mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
                      mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
@@ -25494,7 +25515,7 @@ namespace Thetis
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
                 mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY &&
-                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS && mt != MeterType.VOICE_RECORD_PLAY_BUTTONS
+                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS && mt != MeterType.WAVE_RECORD && mt != MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -25602,6 +25623,27 @@ namespace Thetis
 
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
+            }
+            else if (mt == MeterType.WAVE_RECORD)
+            {
+                nudWaveRecord_vertical_ratio.Value = (decimal)igs.GetSetting<float>("waverecord_vertical_ratio", true, 0.10f, 2f, 0.60f);
+                nudWaveRecord_radius.Value = (decimal)igs.GetSetting<float>("waverecord_radius", true, 0f, 2f, 0.20f);
+                clrbtnWaveRecord_back.Color = igs.GetSetting<System.Drawing.Color>("waverecord_back_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(16, 16, 16));
+                clrbtnWaveRecord_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_border_colour", false, Color.Empty, Color.Empty,
+                    igs.GetSetting<System.Drawing.Color>("waverecord_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(70, 70, 70)));
+                clrbtnWaveRecord_row.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(28, 28, 28));
+                clrbtnWaveRecord_text.Color = igs.GetSetting<System.Drawing.Color>("waverecord_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnWaveRecord_button_fill.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(40, 40, 40));
+                clrbtnWaveRecord_button_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(86, 86, 86));
+                clrbtnWaveRecord_button_hover.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(90, 90, 90));
+                clrbtnWaveRecord_play.Color = igs.GetSetting<System.Drawing.Color>("waverecord_play_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnWaveRecord_stop.Color = igs.GetSetting<System.Drawing.Color>("waverecord_stop_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Olive);
+                clrbtnWaveRecord_delete.Color = igs.GetSetting<System.Drawing.Color>("waverecord_delete_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
+                clrbtnWaveRecord_scroll_track.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(36, 36, 36));
+                clrbtnWaveRecord_scroll_thumb.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(118, 118, 118));
+                clrbtnWaveRecord_scroll_hover.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(160, 160, 160));
+                chkWaveRecord_fade_rx.Checked = igs.FadeOnRx;
+                chkWaveRecord_fade_tx.Checked = igs.FadeOnTx;
             }
             else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
                      mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
@@ -26523,6 +26565,10 @@ namespace Thetis
         {
             updateMeterType();
         }
+        private void waveRecordSettingControlChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
         private void moveButtonBoxSettings()
         {
             //move the buttonbox settings
@@ -26538,6 +26584,7 @@ namespace Thetis
             setupMMSettingsGroupBoxes(MeterType.LED, false);
             setupMMSettingsGroupBoxes(MeterType.DIAL_DISPLAY, false);
             setupMMSettingsGroupBoxes(MeterType.WEB_IMAGE, false);
+            setupMMSettingsGroupBoxes(MeterType.WAVE_RECORD, false);
             setupMMSettingsGroupBoxes(MeterType.OTHER_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.VOICE_RECORD_PLAY_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.TUNESTEP_BUTTONS, false);
@@ -26569,6 +26616,7 @@ namespace Thetis
                 grpHistoryItem.Visible = false;
                 grpMeterItemFilterDisplay.Visible = false;
                 grpDialDisplay.Visible = false;
+                if (grpWaveRecordItem != null) grpWaveRecordItem.Visible = false;
             }
 
             switch (mt)
@@ -26628,6 +26676,15 @@ namespace Thetis
                     comboWebImage_BsdWorld.SelectedIndex = 0;
                     comboWebImage_nasa.SelectedIndex = 0;
                     comboWebImage_noaa.SelectedIndex = 0;
+                    break;
+                case MeterType.WAVE_RECORD:
+                    if (grpWaveRecordItem != null)
+                    {
+                        grpWaveRecordItem.Parent = grpMultiMeterHolder;
+                        grpWaveRecordItem.Location = loc;
+                        grpWaveRecordItem.Visible = true;
+                        grpWaveRecordItem.BringToFront();
+                    }
                     break;
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS:
                 case MeterType.OTHER_BUTTONS:
@@ -26892,6 +26949,10 @@ namespace Thetis
                         _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), false, false, false, true));
                     }
                 }
+                else if (mt == MeterType.WAVE_RECORD)
+                {
+                    _itemGroupSettings.SetSetting<string[]>("waverecord_filepaths", currentSettings.GetSetting<string[]>("waverecord_filepaths", false, null, null, null));
+                }
                 else if (mt == MeterType.OTHER_BUTTONS)
                 {
                     // prevent overwrite of the following, copy from current settings
@@ -26949,6 +27010,7 @@ namespace Thetis
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK ||
                 mt == MeterType.FILTER_DISPLAY || mt == MeterType.CUSTOM_METER_BAR ||
+                mt == MeterType.WAVE_RECORD ||
                 mt == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
@@ -26960,6 +27022,7 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK ||
                 _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR ||
+                _itemGroupSettingsMeterType == MeterType.WAVE_RECORD ||
                 _itemGroupSettingsMeterType == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
@@ -37241,6 +37304,11 @@ namespace Thetis
         private void clrbtnWaterfall_time_label_colour_Changed(object sender, EventArgs e)
         {
             Display.WaterfallTimeColour = clrbtnWaterfall_time_label_colour.Color;
+        }
+
+        private void tbTCISpotBackPanel_alpha_Scroll(object sender, EventArgs e)
+        {
+            Display.TCIBackPanelAlpha = tbTCISpotBackPanel_alpha.Value;
         }
     }
 

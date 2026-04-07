@@ -2507,10 +2507,6 @@ namespace Thetis
             CalibrationChanged(0);
             CalibrationChanged(1);
 
-            //lock
-            //TODO rx channel enable
-            //rit/xit
-
             sendRITEnable(0, console.ThreadSafeTCIAccessor.RITOn);
             sendRITEnable(1, console.ThreadSafeTCIAccessor.RITOn);
             sendXITEnable(0, console.ThreadSafeTCIAccessor.XITOn);
@@ -2531,6 +2527,7 @@ namespace Thetis
             sendSqlLevel(1, console.ThreadSafeTCIAccessor.GetSql(2));
             sendDiglOffset(console.ThreadSafeTCIAccessor.DIGLClickTuneOffset);
             sendDiguOffset(console.ThreadSafeTCIAccessor.DIGUClickTuneOffset);
+
             if (m_server != null)
             {
                 sendCwMacrosSpeed(m_server.GetCwMacrosSpeed());
@@ -2548,6 +2545,13 @@ namespace Thetis
             sendRxChannelEnable(0, 1, console.ThreadSafeTCIAccessor.GetSubRX(1));
             sendRxChannelEnable(1, 0, bRX2Enabled);
 			sendRxChannelEnable(1, 1, false); // no sub rx on rx2
+
+            //sendDrivePower()
+            //sendTunePower()
+            handleDrive(new string[] { "0" });
+            handleDrive(new string[] { "1" });
+            handleTuneDrive(new string[] { "0" });
+            handleTuneDrive(new string[] { "1" });
 
             sendMOX(0, console.ThreadSafeTCIAccessor.MOX && !(console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
             sendMOX(1, console.ThreadSafeTCIAccessor.MOX && (console.ThreadSafeTCIAccessor.VFOBTX && bRX2Enabled));
@@ -4108,13 +4112,41 @@ namespace Thetis
 				bOK = int.TryParse(args[1], out int pwr);
 				if (bOK)
 				{
-					console.ThreadSafeTCIAccessor.TunePWR = pwr;
+					switch (console.ThreadSafeTCIAccessor.TuneDrivePowerOrigin)
+					{
+						case DrivePowerSource.DRIVE_SLIDER:
+							console.ThreadSafeTCIAccessor.PWR = pwr;
+							break;
+						case DrivePowerSource.TUNE_SLIDER:
+					        console.ThreadSafeTCIAccessor.TunePWR = pwr;
+							break;
+					}
 				}
 			}
 			else if (bOK && args.Length == 1)
 			{
 				//read
-				sendTunePower(rx, console.ThreadSafeTCIAccessor.TunePWRConstrained);
+				int pwr = 0;
+				switch (console.ThreadSafeTCIAccessor.TuneDrivePowerOrigin)
+				{
+					case DrivePowerSource.DRIVE_SLIDER:
+						if (console.SendLimitedPowerLevels)
+							pwr = console.ThreadSafeTCIAccessor.PWRConstrained;
+						else
+							pwr = console.ThreadSafeTCIAccessor.PWR;
+						break;
+					case DrivePowerSource.TUNE_SLIDER:
+						if (console.SendLimitedPowerLevels)
+							pwr = console.ThreadSafeTCIAccessor.TunePWRConstrained;
+						else
+							pwr = console.ThreadSafeTCIAccessor.TunePWR;
+						break;
+					case DrivePowerSource.FIXED:
+						pwr = console.ThreadSafeTCIAccessor.TunePower;
+						break;
+				}
+
+				sendTunePower(rx, pwr);
 			}
 		}
         private void handleMute(string[] args, bool hasArgs = true)

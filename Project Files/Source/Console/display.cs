@@ -11497,23 +11497,23 @@ namespace Thetis
                     spot.BoundingBoxInPixels[rxIndex].Height = height;
 
                     if (spot.Highlight[rxIndex])
-                        {
-                            spotColour = getDXBrushForColour(spot.colour, 255);
+                    {
+                        spotColour = getDXBrushForColour(spot.colour, 255);
 
-                            drawLineDX2D(spotColour, x, yTop, x, textY, 3);
-                            drawFillElipseDX2D(spotColour, x, yTop, 6, 6);
-                        }
-                        else
-                        {
-                            spotColour = getDXBrushForColour(spot.colour, 192);
-
-                            drawLineDX2D(spotColour, x, yTop, x, textY, 1);
-                            drawFillElipseDX2D(spotColour, x, yTop, 4, 4);
-                        }
-
-                    spot.Visible[rxIndex] = true;
+                        drawLineDX2D(spotColour, x, yTop, x, textY, 3);
+                        drawFillElipseDX2D(spotColour, x, yTop, 6, 6);
                     }
                     else
+                    {
+                        spotColour = getDXBrushForColour(spot.colour, 192);
+
+                        drawLineDX2D(spotColour, x, yTop, x, textY, 1);
+                        drawFillElipseDX2D(spotColour, x, yTop, 4, 4);
+                    }
+
+                    spot.Visible[rxIndex] = true;
+                }
+                else
                 {
                     spot.Visible[rxIndex] = false;
                 }
@@ -11542,7 +11542,7 @@ namespace Thetis
                 if (!spot.Visible[rxIndex]) continue;
 
                 sDisplayString = spot.cached_display_text ?? getCallsignString(spot);
-                spotColour = getDXBrushForColour(spot.colour, 255);
+                spotColour = getDXBrushForColour(spot.colour, _spot_backpanel_alpha);
                 textBrush = spot.use_text_colour ? getDXBrushForColour(spot.text_colour, 255) : (spot.colour_luminance <= 128 ? whiteBrush : blackBrush);
 
                 if (spot.Highlight[rxIndex])
@@ -12183,6 +12183,16 @@ namespace Thetis
                 _spot_cache_dirty = true;
             }
         }
+        private static int _spot_backpanel_alpha = 255;
+        public static int TCIBackPanelAlpha
+        {
+            get { return _spot_backpanel_alpha; }
+            set
+            {
+                _spot_backpanel_alpha = value;
+                _spot_cache_dirty = true;
+            }
+        }        
         private sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
         {
             internal static readonly ReferenceEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();

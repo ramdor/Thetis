@@ -16,6 +16,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] otherbutton wave record now supported. Extra folder called 'waverecord' will store these. Right click to open folder or via Setup->Audio->Recording. Similar to the [Record] button from the WaveForm of old
 - [change] TCI emulate ExpertElectroncsSDR3 selected as default for a new db/install. JTDX will now send TCI audio into Thetis with this option enabled
 - [fix] TCI server websocket text frames are now encoded utf-8. Fixes issues where certain characters in TX profiles would cause TCI clients to throw errors
+- [fix] EQ and CFC legacy mode is now stored/recovered from a TX profile. It will require another database update. Follow the on screen instructions when you install this version
+- [fix] tuner power via TCI now follows the tuner power mode, drive/own slider/fixed
+- [fix] tri drive and tune_drive messages are sent on client connect
 
 ## v2.10.3.13 - Change Log
 - [add] audio stream over TCI support added
