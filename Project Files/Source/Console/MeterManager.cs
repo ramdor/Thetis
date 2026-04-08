@@ -38435,57 +38435,71 @@ namespace Thetis
                         }
                         else
                         {
-                        clsWaveRecord.WaveRecordJsonDataDisplay jsonData = entry.JsonData;
-                        if (jsonData != null && jsonData.HasData)
-                        {
-                            FontStyle boldStyle = wave.FontStyle | FontStyle.Bold;
-                            string jsonLeftLine = string.Join(" | ", new string[] { jsonData.Frequency, jsonData.Mode, jsonData.Band }.Where(s => !string.IsNullOrWhiteSpace(s)));
-                            string jsonRightLine = jsonData.Duration;
-                            string jsonMiddleLine = string.Join(" | ", new string[] { jsonData.Audio, jsonData.Utc }.Where(s => !string.IsNullOrWhiteSpace(s)));
-                            bool hasHeaderLine = !string.IsNullOrWhiteSpace(jsonLeftLine);
-                            bool hasDurationLine = !string.IsNullOrWhiteSpace(jsonRightLine);
-                            bool hasMiddleLine = !string.IsNullOrWhiteSpace(jsonMiddleLine);
-
-                            if (hasHeaderLine || hasDurationLine || hasMiddleLine)
+                            clsWaveRecord.WaveRecordJsonDataDisplay jsonData = entry.JsonData;
+                            if (jsonData != null && jsonData.HasData)
                             {
-                                float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
-                                float topLineHeight = rowRect.Height * 0.28f;
-                                float middleLineY = rowRect.Top + (rowRect.Height * 0.35f);
-                                float middleLineHeight = rowRect.Height * 0.24f;
-                                float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
-                                float fileLineHeight = rowRect.Height * 0.20f;
-                                float durationWidth = textWidth * 0.24f;
-                                float headerGap = rowRect.Width * 0.010f;
-                                float headerWidth = Math.Max(0f, textWidth - durationWidth - headerGap);
+                                FontStyle boldStyle = wave.FontStyle | FontStyle.Bold;
+                                string jsonLeftLine = string.Join(" | ", new string[] { jsonData.Frequency, jsonData.Mode, jsonData.Band }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                                string jsonRightLine = jsonData.Duration;
+                                string jsonMiddleLine = string.Join(" | ", new string[] { jsonData.Audio, jsonData.Utc }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                                bool hasHeaderLine = !string.IsNullOrWhiteSpace(jsonLeftLine);
+                                bool hasDurationLine = !string.IsNullOrWhiteSpace(jsonRightLine);
+                                bool hasMiddleLine = !string.IsNullOrWhiteSpace(jsonMiddleLine);
+                                string topLineFallback = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                if (string.IsNullOrWhiteSpace(topLineFallback)) topLineFallback = entry.DisplayName;
+                                string topLineText = hasHeaderLine ? jsonLeftLine : topLineFallback;
 
-                                if (hasHeaderLine)
+                                if (hasHeaderLine || hasDurationLine || hasMiddleLine)
                                 {
-                                    plotText(jsonLeftLine, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, boldStyle, false, false, headerWidth, false, topLineHeight);
-                                }
+                                    float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                    float topLineHeight = rowRect.Height * 0.28f;
+                                    float middleLineY = rowRect.Top + (rowRect.Height * 0.35f);
+                                    float middleLineHeight = rowRect.Height * 0.24f;
+                                    float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                                    float fileLineHeight = rowRect.Height * 0.20f;
+                                    float durationWidth = textWidth * 0.24f;
+                                    float headerGap = rowRect.Width * 0.010f;
+                                    float headerWidth = Math.Max(0f, textWidth - durationWidth - headerGap);
+                                    float topLineWidth = hasDurationLine ? headerWidth : textWidth;
 
-                                if (hasDurationLine)
+                                    if (!string.IsNullOrWhiteSpace(topLineText))
+                                    {
+                                        plotText(topLineText, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, hasHeaderLine ? boldStyle : wave.FontStyle, false, false, topLineWidth, false, topLineHeight);
+                                    }
+
+                                    if (hasDurationLine)
+                                    {
+                                        plotText(jsonRightLine, textLeft + textWidth, topLineY, rect.Width, wave.FontSize * 1.22f, textColour, nFade, wave.FontFamily, boldStyle, true, false, durationWidth, false, topLineHeight);
+                                    }
+
+                                    if (hasMiddleLine)
+                                    {
+                                        plotText(jsonMiddleLine, textLeft, middleLineY, rect.Width, wave.FontSize * 1.14f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, middleLineHeight);
+                                    }
+
+                                    plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
+                                }
+                                else
                                 {
-                                    plotText(jsonRightLine, textLeft + textWidth, topLineY, rect.Width, wave.FontSize * 1.22f, textColour, nFade, wave.FontFamily, boldStyle, true, false, durationWidth, false, topLineHeight);
+                                    float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                    float topLineHeight = rowRect.Height * 0.28f;
+                                    float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                                    float fileLineHeight = rowRect.Height * 0.20f;
+                                    string topLineFallbackNoHeader = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                    if (string.IsNullOrWhiteSpace(topLineFallbackNoHeader)) topLineFallbackNoHeader = entry.DisplayName;
+                                    plotText(topLineFallbackNoHeader, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, topLineHeight);
+                                    plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
                                 }
-
-                                if (hasMiddleLine)
-                                {
-                                    plotText(jsonMiddleLine, textLeft, middleLineY, rect.Width, wave.FontSize * 1.14f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, middleLineHeight);
-                                }
-
-                                plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
                             }
                             else
                             {
-                                    float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
-                                    float fileLineHeight = rowRect.Height * 0.20f;
-                                    plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
-                            }
-                        }
-                        else
-                        {
+                                float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                float topLineHeight = rowRect.Height * 0.28f;
                                 float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
                                 float fileLineHeight = rowRect.Height * 0.20f;
+                                string topLineFallbackNoJson = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                if (string.IsNullOrWhiteSpace(topLineFallbackNoJson)) topLineFallbackNoJson = entry.DisplayName;
+                                plotText(topLineFallbackNoJson, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, topLineHeight);
                                 plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
                             }
                         }
