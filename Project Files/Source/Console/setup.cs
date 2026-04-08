@@ -24962,6 +24962,8 @@ namespace Thetis
             }
             else if (mt == MeterType.WAVE_RECORD)
             {
+                if (_reset_waverecord_order_map) igs.SetSetting<short[]>("waverecord_order_map", null);
+
                 igs.SetSetting<float>("waverecord_vertical_ratio", (float)nudWaveRecord_vertical_ratio.Value);
                 igs.SetSetting<float>("waverecord_radius", (float)nudWaveRecord_radius.Value);
                 igs.SetSetting<System.Drawing.Color>("waverecord_back_colour", clrbtnWaveRecord_back.Color);
@@ -25629,8 +25631,7 @@ namespace Thetis
                 nudWaveRecord_vertical_ratio.Value = (decimal)igs.GetSetting<float>("waverecord_vertical_ratio", true, 0.10f, 2f, 0.60f);
                 nudWaveRecord_radius.Value = (decimal)igs.GetSetting<float>("waverecord_radius", true, 0f, 2f, 0.20f);
                 clrbtnWaveRecord_back.Color = igs.GetSetting<System.Drawing.Color>("waverecord_back_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(16, 16, 16));
-                clrbtnWaveRecord_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_border_colour", false, Color.Empty, Color.Empty,
-                    igs.GetSetting<System.Drawing.Color>("waverecord_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(70, 70, 70)));
+                clrbtnWaveRecord_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_border_colour", false, Color.Empty, Color.Empty, igs.GetSetting<System.Drawing.Color>("waverecord_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(70, 70, 70)));
                 clrbtnWaveRecord_row.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(28, 28, 28));
                 clrbtnWaveRecord_text.Color = igs.GetSetting<System.Drawing.Color>("waverecord_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnWaveRecord_button_fill.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(40, 40, 40));
@@ -26616,7 +26617,7 @@ namespace Thetis
                 grpHistoryItem.Visible = false;
                 grpMeterItemFilterDisplay.Visible = false;
                 grpDialDisplay.Visible = false;
-                if (grpWaveRecordItem != null) grpWaveRecordItem.Visible = false;
+                grpWaveRecordItem.Visible = false;
             }
 
             switch (mt)
@@ -26678,13 +26679,10 @@ namespace Thetis
                     comboWebImage_noaa.SelectedIndex = 0;
                     break;
                 case MeterType.WAVE_RECORD:
-                    if (grpWaveRecordItem != null)
-                    {
-                        grpWaveRecordItem.Parent = grpMultiMeterHolder;
-                        grpWaveRecordItem.Location = loc;
-                        grpWaveRecordItem.Visible = true;
-                        grpWaveRecordItem.BringToFront();
-                    }
+                    grpWaveRecordItem.Parent = grpMultiMeterHolder;
+                    grpWaveRecordItem.Location = loc;
+                    grpWaveRecordItem.Visible = true;
+                    grpWaveRecordItem.BringToFront();
                     break;
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS:
                 case MeterType.OTHER_BUTTONS:
@@ -26952,6 +26950,7 @@ namespace Thetis
                 else if (mt == MeterType.WAVE_RECORD)
                 {
                     _itemGroupSettings.SetSetting<string[]>("waverecord_filepaths", currentSettings.GetSetting<string[]>("waverecord_filepaths", false, null, null, null));
+                    _itemGroupSettings.SetSetting<short[]>("waverecord_order_map", currentSettings.GetSetting<short[]>("waverecord_order_map", false, null, null, null));
                 }
                 else if (mt == MeterType.OTHER_BUTTONS)
                 {
@@ -34987,11 +34986,18 @@ namespace Thetis
         }
 
         private bool _reset_button_map_layout = false;
+        private bool _reset_waverecord_order_map = false;
         private void btnOtherButtons_reset_layout_Click(object sender, EventArgs e)
         {
             _reset_button_map_layout = true;
             updateMeterType();
             _reset_button_map_layout = false;
+        }
+        private void btnWaveRecord_reset_layout_Click(object sender, EventArgs e)
+        {
+            _reset_waverecord_order_map = true;
+            updateMeterType();
+            _reset_waverecord_order_map = false;
         }
 
         private void btnContainer_save_Click(object sender, EventArgs e)

@@ -11653,6 +11653,7 @@ namespace Thetis
             private readonly object _state_lock = new object();
 
             private string[] _file_paths;
+            private short[] _order_map;
             private WaveRecordEntry[] _entries;
 
             private List<WaveRecordHitRegion> _hit_regions;
@@ -11668,6 +11669,8 @@ namespace Thetis
             private float _scroll_drag_start_offset_px;
             private WaveRecordHitType _mouse_down_hit_type;
             private string _mouse_down_path;
+            private int _dragging_index;
+            private int _last_dragged_to;
 
             private bool _global_playing;
             private bool _global_recording;
@@ -11702,6 +11705,7 @@ namespace Thetis
                 UpdateInterval = 50;
 
                 _file_paths = Array.Empty<string>();
+                _order_map = null;
                 _entries = Array.Empty<WaveRecordEntry>();
                 _hit_regions = new List<WaveRecordHitRegion>();
 
@@ -11717,6 +11721,8 @@ namespace Thetis
                 _scroll_drag_start_offset_px = 0f;
                 _mouse_down_hit_type = WaveRecordHitType.NONE;
                 _mouse_down_path = null;
+                _dragging_index = -1;
+                _last_dragged_to = -1;
 
                 _console.ARP.PlayingChanged += onPlayingChanged;
                 _console.ARP.RecordingChanged += onRecordingChanged;
@@ -11766,6 +11772,8 @@ namespace Thetis
                     _max_scroll_px = 0f;
                     _scroll_offset_px = 0f;
                     _scroll_dragging = false;
+                    _dragging_index = -1;
+                    _last_dragged_to = -1;
                     _mouse_down_hit_type = WaveRecordHitType.NONE;
                     _mouse_down_path = null;
                 }
@@ -11931,7 +11939,36 @@ namespace Thetis
                     lock (_state_lock)
                     {
                         changed = !pathArraysEqual(_file_paths, paths);
-                        if (changed) _file_paths = paths;
+                        if (changed)
+                        {
+                            _file_paths = paths;
+                            _order_map = sanitiseOrderMap(_order_map, _file_paths.Length);
+                        }
+                    }
+
+                    if (changed) RefreshEntries();
+                }
+            }
+
+            public short[] OrderMap
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _order_map == null ? null : _order_map.ToArray();
+                    }
+                }
+                set
+                {
+                    short[] map;
+                    bool changed;
+
+                    lock (_state_lock)
+                    {
+                        map = sanitiseOrderMap(value, (_file_paths ?? Array.Empty<string>()).Length);
+                        changed = !shortArraysEqual(_order_map, map);
+                        if (changed) _order_map = map;
                     }
 
                     if (changed) RefreshEntries();
@@ -12004,6 +12041,35 @@ namespace Thetis
                 }
             }
 
+            public int DraggingIndex
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _dragging_index;
+                    }
+                }
+                set
+                {
+                    lock (_state_lock)
+                    {
+                        _dragging_index = value;
+                    }
+                }
+            }
+
+            public int DragTargetIndex
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _last_dragged_to;
+                    }
+                }
+            }
+
             public bool CanAcceptFiles(string[] filePaths)
             {
                 return sanitiseStoredPaths(filePaths).Length > 0;
@@ -12028,7 +12094,11 @@ namespace Thetis
                         changed = true;
                     }
 
-                    if (changed) _file_paths = merged.ToArray();
+                    if (changed)
+                    {
+                        _file_paths = merged.ToArray();
+                        _order_map = sanitiseOrderMap(_order_map, _file_paths.Length);
+                    }
                 }
 
                 if (changed) RefreshEntries();
@@ -12066,6 +12136,7 @@ namespace Thetis
 
             public void UpdateDragFromMouse()
             {
+                updateReorderDrag();
                 updateScrollDrag();
             }
 
@@ -12120,12 +12191,29 @@ namespace Thetis
                 if (FadeOnRx && !_owningmeter.MOX) return;
                 if (FadeOnTx && _owningmeter.MOX) return;
 
-                WaveRecordHitRegion hit = HitTest(new PointF(e.X, e.Y));
+                PointF mousePoint = new PointF(e.X, e.Y);
+                WaveRecordHitRegion hit = HitTest(mousePoint);
 
                 lock (_state_lock)
                 {
+                    _last_dragged_to = -1;
                     _mouse_down_hit_type = hit != null ? hit.HitType : WaveRecordHitType.NONE;
                     _mouse_down_path = hit != null ? hit.FilePath : null;
+
+                    if (e.Button == MouseButtons.Left && Common.AltlKeyDown)
+                    {
+                        int rowIndex = rowIndexFromPointLocked(mousePoint, true);
+                        if (rowIndex != -1)
+                        {
+                            _dragging_index = rowIndex;
+                            _last_dragged_to = rowIndex;
+                            _mouse_down_hit_type = WaveRecordHitType.NONE;
+                            _mouse_down_path = null;
+                            return;
+                        }
+                    }
+
+                    _dragging_index = -1;
 
                     if (hit == null) return;
 
@@ -12153,16 +12241,31 @@ namespace Thetis
                 WaveRecordHitType mouseDownType;
                 string mouseDownPath;
                 bool wasDragging;
+                int draggingIndex;
+                int lastDraggedTo;
 
                 lock (_state_lock)
                 {
                     mouseDownType = _mouse_down_hit_type;
                     mouseDownPath = _mouse_down_path;
                     wasDragging = _scroll_dragging;
+                    draggingIndex = _dragging_index;
+                    lastDraggedTo = _last_dragged_to;
 
                     _mouse_down_hit_type = WaveRecordHitType.NONE;
                     _mouse_down_path = null;
                     _scroll_dragging = false;
+                    _dragging_index = -1;
+                    _last_dragged_to = -1;
+                }
+
+                if (draggingIndex != -1)
+                {
+                    if (lastDraggedTo != -1 && draggingIndex != lastDraggedTo)
+                    {
+                        moveEntry(draggingIndex, lastDraggedTo, Common.ShiftKeyDown);
+                    }
+                    return;
                 }
 
                 if (wasDragging) return;
@@ -12184,26 +12287,55 @@ namespace Thetis
                 if (Interlocked.CompareExchange(ref _disposed, 0, 0) != 0) return;
 
                 string[] paths;
-                    lock (_state_lock)
-                    {
+                short[] orderMap;
+                lock (_state_lock)
+                {
                     paths = (_file_paths ?? Array.Empty<string>()).ToArray();
+                    orderMap = sanitiseOrderMap(_order_map, paths.Length);
+                    if (!shortArraysEqual(_order_map, orderMap))
+                    {
+                        _order_map = orderMap;
                     }
+                }
 
                 List<WaveRecordEntry> entries = new List<WaveRecordEntry>(paths.Length);
-                for (int i = 0; i < paths.Length; i++)
-                        {
-                    string path = paths[i];
-                    if (string.IsNullOrWhiteSpace(path)) continue;
+                if (orderMap != null)
+                {
+                    for (int i = 0; i < orderMap.Length; i++)
+                    {
+                        int index = orderMap[i];
+                        if (index < 0 || index >= paths.Length) continue;
 
-                    bool exists = File.Exists(path);
-                            entries.Add(new WaveRecordEntry()
-                            {
-                                FilePath = path,
-                        DisplayName = Path.GetFileName(path) ?? path,
-                        FileExists = exists,
-                        JsonData = exists ? buildJsonDataDisplay(path) : null
-                            });
-                        }
+                        string path = paths[index];
+                        if (string.IsNullOrWhiteSpace(path)) continue;
+
+                        bool exists = File.Exists(path);
+                        entries.Add(new WaveRecordEntry()
+                        {
+                            FilePath = path,
+                            DisplayName = Path.GetFileName(path) ?? path,
+                            FileExists = exists,
+                            JsonData = exists ? buildJsonDataDisplay(path) : null
+                        });
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < paths.Length; i++)
+                    {
+                        string path = paths[i];
+                        if (string.IsNullOrWhiteSpace(path)) continue;
+
+                        bool exists = File.Exists(path);
+                        entries.Add(new WaveRecordEntry()
+                        {
+                            FilePath = path,
+                            DisplayName = Path.GetFileName(path) ?? path,
+                            FileExists = exists,
+                            JsonData = exists ? buildJsonDataDisplay(path) : null
+                        });
+                    }
+                }
 
                 lock (_state_lock)
                 {
@@ -12331,6 +12463,87 @@ namespace Thetis
                 return true;
             }
 
+            private static bool shortArraysEqual(short[] left, short[] right)
+            {
+                if (ReferenceEquals(left, right)) return true;
+
+                left = left ?? Array.Empty<short>();
+                right = right ?? Array.Empty<short>();
+
+                if (left.Length != right.Length) return false;
+                for (int i = 0; i < left.Length; i++)
+                {
+                    if (left[i] != right[i]) return false;
+                }
+
+                return true;
+            }
+
+            private static short[] sanitiseOrderMap(IEnumerable<short> rawOrderMap, int itemCount)
+            {
+                if (itemCount <= 1 || rawOrderMap == null) return null;
+
+                List<short> order = new List<short>(itemCount);
+                bool[] used = new bool[itemCount];
+
+                foreach (short raw in rawOrderMap)
+                {
+                    int index = raw;
+                    if (index < 0 || index >= itemCount) continue;
+                    if (used[index]) continue;
+
+                    used[index] = true;
+                    order.Add((short)index);
+                }
+
+                for (int i = 0; i < itemCount; i++)
+                {
+                    if (!used[i]) order.Add((short)i);
+                }
+
+                bool natural = order.Count == itemCount;
+                if (natural)
+                {
+                    for (int i = 0; i < order.Count; i++)
+                    {
+                        if (order[i] != i)
+                        {
+                            natural = false;
+                            break;
+                        }
+                    }
+                }
+
+                return natural ? null : order.ToArray();
+            }
+
+            private static short[] removeFromOrderMap(short[] orderMap, int removedIndex, int oldCount)
+            {
+                if (removedIndex < 0 || removedIndex >= oldCount) return sanitiseOrderMap(orderMap, Math.Max(0, oldCount - 1));
+
+                List<short> order = new List<short>(oldCount);
+                short[] effective = sanitiseOrderMap(orderMap, oldCount);
+                if (effective == null)
+                {
+                    for (int i = 0; i < oldCount; i++)
+                    {
+                        order.Add((short)i);
+                    }
+                }
+                else
+                {
+                    order.AddRange(effective);
+                }
+
+                order.RemoveAll(index => index == removedIndex);
+                for (int i = 0; i < order.Count; i++)
+                {
+                    if (order[i] > removedIndex) order[i]--;
+                }
+
+                return sanitiseOrderMap(order, oldCount - 1);
+            }
+
             private void handleHit(WaveRecordHitRegion hit)
             {
                 if (hit == null) return;
@@ -12427,10 +12640,65 @@ namespace Thetis
                     {
                     if (_file_paths != null && _file_paths.Length > 0)
                     {
-                        string[] remaining = _file_paths.Where(path => !waveRecordPathsEqual(path, filePath)).ToArray();
-                        changed = remaining.Length != _file_paths.Length;
-                        if (changed) _file_paths = remaining;
+                        int removeIndex = Array.FindIndex(_file_paths, path => waveRecordPathsEqual(path, filePath));
+                        if (removeIndex != -1)
+                        {
+                            string[] remaining = _file_paths.Where(path => !waveRecordPathsEqual(path, filePath)).ToArray();
+                            changed = remaining.Length != _file_paths.Length;
+                            if (changed)
+                            {
+                                _file_paths = remaining;
+                                _order_map = removeFromOrderMap(_order_map, removeIndex, _file_paths.Length + 1);
+                            }
+                        }
+                    }
                 }
+
+                if (changed) RefreshEntries();
+            }
+
+            private void moveEntry(int fromDisplayIndex, int toDisplayIndex, bool swapOnly)
+            {
+                bool changed = false;
+
+                lock (_state_lock)
+                {
+                    int count = _file_paths == null ? 0 : _file_paths.Length;
+                    if (count < 2) return;
+                    if (fromDisplayIndex < 0 || fromDisplayIndex >= count) return;
+                    if (toDisplayIndex < 0 || toDisplayIndex >= count) return;
+                    if (fromDisplayIndex == toDisplayIndex) return;
+
+                    List<short> order = new List<short>();
+                    short[] effective = sanitiseOrderMap(_order_map, count);
+                    if (effective == null)
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            order.Add((short)i);
+                        }
+                     }
+                    else
+                    {
+                        order.AddRange(effective);
+                    }
+
+                    if (swapOnly)
+                    {
+                        short tmp = order[toDisplayIndex];
+                        order[toDisplayIndex] = order[fromDisplayIndex];
+                        order[fromDisplayIndex] = tmp;
+                    }
+                    else
+                    {
+                        short moving = order[fromDisplayIndex];
+                        order.RemoveAt(fromDisplayIndex);
+                        order.Insert(toDisplayIndex, moving);
+                    }
+
+                    short[] newOrder = sanitiseOrderMap(order, count);
+                    changed = !shortArraysEqual(_order_map, newOrder);
+                    if (changed) _order_map = newOrder;
                 }
 
                 if (changed) RefreshEntries();
@@ -12444,6 +12712,26 @@ namespace Thetis
 
                     _scroll_offset_px += delta;
                     clampScrollLocked();
+                }
+            }
+
+            private void updateReorderDrag()
+            {
+                lock (_state_lock)
+                {
+                    if (_dragging_index == -1)
+                    {
+                        _last_dragged_to = -1;
+                        return;
+                    }
+
+                    if (!MouseButtonDown)
+                    {
+                        _last_dragged_to = -1;
+                        return;
+                    }
+
+                    _last_dragged_to = rowIndexFromPointLocked(MouseMovePoint, true);
                 }
             }
 
@@ -12479,6 +12767,24 @@ namespace Thetis
 
                 _scroll_offset_px = (targetTop / trackTravel) * _max_scroll_px;
                 clampScrollLocked();
+            }
+
+            private int rowIndexFromPointLocked(PointF point, bool clampToValid)
+            {
+                int count = _entries == null ? 0 : _entries.Length;
+                if (count < 1) return -1;
+                if (_content_rect.Width <= 0f || _content_rect.Height <= 0f) return -1;
+                if (!_content_rect.Contains(point.X, point.Y)) return -1;
+                if (_row_pitch_px <= 0f) return -1;
+
+                float localY = point.Y - _content_rect.Top + _scroll_offset_px;
+                if (localY < 0f) return clampToValid ? 0 : -1;
+
+                int index = (int)(localY / _row_pitch_px);
+                if (index < 0) return clampToValid ? 0 : -1;
+                if (index >= count) return clampToValid ? count - 1 : -1;
+
+                return index;
             }
 
             private void clampScrollLocked()
@@ -26710,6 +27016,7 @@ namespace Thetis
                                             wr.ScrollbarThumbColour = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ScrollbarThumbColour);
                                             wr.ScrollbarThumbHoverColour = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ScrollbarThumbHoverColour);
                                             wr.FilePaths = igs.GetSetting<string[]>("waverecord_filepaths", false, null, null, wr.FilePaths);
+                                            wr.OrderMap = igs.GetSetting<short[]>("waverecord_order_map", false, null, null, wr.OrderMap);
 
                                             float verticalRatio = igs.GetSetting<float>("waverecord_vertical_ratio", true, 0.10f, 2f, wr.Size.Height <= 0f ? 0.60f : wr.Size.Height);
                                             wr.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
@@ -28134,6 +28441,7 @@ namespace Thetis
                                             igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", wr.ScrollbarThumbColour);
                                             igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", wr.ScrollbarThumbHoverColour);
                                             igs.SetSetting<string[]>("waverecord_filepaths", wr.FilePaths);
+                                            igs.SetSetting<short[]>("waverecord_order_map", wr.OrderMap);
                                             igs.FadeOnRx = wr.FadeOnRx;
                                             igs.FadeOnTx = wr.FadeOnTx;
                                         }
@@ -38325,6 +38633,7 @@ namespace Thetis
                 System.Drawing.Color scrollbarThumbColour = wave.ScrollbarThumbColour;
                 System.Drawing.Color scrollbarThumbHoverColour = wave.ScrollbarThumbHoverColour;
 
+                RoundedRectangle dragging_rr = new RoundedRectangle();
                 RoundedRectangle rr = new RoundedRectangle();
                 rr.Rect = new SharpDX.RectangleF(x, y, w, h);
                 rr.RadiusX = 0f;
@@ -38343,6 +38652,8 @@ namespace Thetis
                 string activePlayFilename = wave.ActivePlayFilename;
                 bool globalRecording = wave.GlobalRecording;
                 bool globalPlaying = wave.GlobalPlaying;
+                int draggingIndex = wave.DraggingIndex;
+                int dragTargetIndex = wave.DragTargetIndex;
                 PointF mouse = wave.MouseEntered ? wave.MouseMovePoint : new PointF(float.MinValue, float.MinValue);
 
                 float totalContentHeight = entries.Length > 0 ? (entries.Length * rowPitch) - rowGap : rowHeight;
@@ -38399,7 +38710,8 @@ namespace Thetis
                         if (rowRect.Width <= 0f || rowRect.Height <= 0f) continue;
 
                         bool isPlaying = samePath(activePlayFilename, entry.FilePath) && globalPlaying;
-                        System.Drawing.Color actualRowColour = rowColour;
+                        bool highlightMoveTarget = draggingIndex != -1 && dragTargetIndex != -1 && i == dragTargetIndex && i != draggingIndex;
+                        System.Drawing.Color actualRowColour = highlightMoveTarget ? buttonHover : rowColour;
                         float rowCornerRadius = Math.Max(0f, Math.Min(rowRect.Height * 0.45f, rowRect.Height * wave.Radius));
 
                         rr.Rect = rowRect;
@@ -38407,6 +38719,13 @@ namespace Thetis
                         rr.RadiusY = rr.RadiusX;
                         fillRoundedRectangle(rr, getDXBrushForColour(actualRowColour, nFade));
                         drawRoundedRectangle(rr, getDXBrushForColour(rowBorderColour, nFade), rowBorderStroke);
+
+                        if (i == draggingIndex)
+                        {
+                            dragging_rr.Rect = new RawRectangleF(rr.Rect.Left, rr.Rect.Top, rr.Rect.Right, rr.Rect.Bottom);
+                            dragging_rr.RadiusX = rr.RadiusX;
+                            dragging_rr.RadiusY = rr.RadiusY;
+                        }
 
                         float innerPadX = rowRect.Width * 0.016f;
                         float buttonSize = rowRect.Height * 0.36f;
@@ -38583,6 +38902,20 @@ namespace Thetis
                         FilePath = null,
                         Rect = scrollThumbRect
                     });
+                }
+
+                if (draggingIndex != -1)
+                {
+                    float rw = dragging_rr.Rect.Right - dragging_rr.Rect.Left;
+                    float rh = dragging_rr.Rect.Bottom - dragging_rr.Rect.Top;
+                    float draggingBorderStroke = Math.Max(1f, rowHeight * 0.035f);
+                    dragging_rr.Rect.Left = wave.MouseMovePoint.X - (rw / 2f);
+                    dragging_rr.Rect.Top = wave.MouseMovePoint.Y - (rh / 2f);
+                    dragging_rr.Rect.Right = dragging_rr.Rect.Left + rw;
+                    dragging_rr.Rect.Bottom = dragging_rr.Rect.Top + rh;
+
+                    System.Drawing.Color c = (dragTargetIndex != -1 && dragTargetIndex != draggingIndex) ? System.Drawing.Color.LimeGreen : System.Drawing.Color.DarkRed;
+                    drawRoundedRectangle(dragging_rr, getDXBrushForColour(c, 255), draggingBorderStroke);
                 }
 
                 wave.SetRenderLayout(contentRect, scrollTrackRect, scrollThumbRect, rowPitch, maxScroll, showScrollbar, hitRegions);

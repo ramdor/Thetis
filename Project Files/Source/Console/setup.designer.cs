@@ -3621,6 +3621,8 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.tbTCISpotBackPanel_alpha = new System.Windows.Forms.TrackBarTS();
+            this.labelTS662 = new System.Windows.Forms.LabelTS();
             this.chkTCI_spot_flags = new System.Windows.Forms.CheckBoxTS();
             this.panelTS15 = new System.Windows.Forms.PanelTS();
             this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
@@ -4098,6 +4100,7 @@
             this.clrbtnWaveRecord_row = new Thetis.ColorButton();
             this.clrbtnWaveRecord_border = new Thetis.ColorButton();
             this.clrbtnWaveRecord_back = new Thetis.ColorButton();
+            this.btnWaveRecord_reset_layout = new System.Windows.Forms.ButtonTS();
             this.nudWaveRecord_radius = new System.Windows.Forms.NumericUpDownTS();
             this.nudWaveRecord_vertical_ratio = new System.Windows.Forms.NumericUpDownTS();
             this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
@@ -4489,8 +4492,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
-            this.tbTCISpotBackPanel_alpha = new System.Windows.Forms.TrackBarTS();
-            this.labelTS662 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5395,6 +5396,7 @@
             this.grpCatControlBox.SuspendLayout();
             this.tpTCITCPIPN1MM.SuspendLayout();
             this.grpTCIServer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).BeginInit();
             this.panelTS13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).BeginInit();
@@ -5601,7 +5603,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -58073,6 +58074,29 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // tbTCISpotBackPanel_alpha
+            // 
+            this.tbTCISpotBackPanel_alpha.AutoSize = false;
+            this.tbTCISpotBackPanel_alpha.Location = new System.Drawing.Point(166, 270);
+            this.tbTCISpotBackPanel_alpha.Maximum = 255;
+            this.tbTCISpotBackPanel_alpha.Name = "tbTCISpotBackPanel_alpha";
+            this.tbTCISpotBackPanel_alpha.Size = new System.Drawing.Size(66, 18);
+            this.tbTCISpotBackPanel_alpha.TabIndex = 117;
+            this.tbTCISpotBackPanel_alpha.TickFrequency = 64;
+            this.toolTip1.SetToolTip(this.tbTCISpotBackPanel_alpha, "The alpha for the back panel of a spot");
+            this.tbTCISpotBackPanel_alpha.Value = 255;
+            this.tbTCISpotBackPanel_alpha.Scroll += new System.EventHandler(this.tbTCISpotBackPanel_alpha_Scroll);
+            // 
+            // labelTS662
+            // 
+            this.labelTS662.AutoSize = true;
+            this.labelTS662.Image = null;
+            this.labelTS662.Location = new System.Drawing.Point(40, 273);
+            this.labelTS662.Name = "labelTS662";
+            this.labelTS662.Size = new System.Drawing.Size(120, 13);
+            this.labelTS662.TabIndex = 117;
+            this.labelTS662.Text = "Spot back panel alpha :";
+            // 
             // chkTCI_spot_flags
             // 
             this.chkTCI_spot_flags.AutoSize = true;
@@ -65717,6 +65741,19 @@
             this.toolTip1.SetToolTip(this.clrbtnWaveRecord_back, "Panel background colour");
             this.clrbtnWaveRecord_back.Changed += new System.EventHandler(this.waveRecordSettingControlChanged);
             // 
+            // btnWaveRecord_reset_layout
+            // 
+            this.btnWaveRecord_reset_layout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnWaveRecord_reset_layout.Image = global::Thetis.Properties.Resources.grid;
+            this.btnWaveRecord_reset_layout.Location = new System.Drawing.Point(280, 229);
+            this.btnWaveRecord_reset_layout.Name = "btnWaveRecord_reset_layout";
+            this.btnWaveRecord_reset_layout.Selectable = true;
+            this.btnWaveRecord_reset_layout.Size = new System.Drawing.Size(32, 32);
+            this.btnWaveRecord_reset_layout.TabIndex = 32;
+            this.toolTip1.SetToolTip(this.btnWaveRecord_reset_layout, "Reset order");
+            this.btnWaveRecord_reset_layout.UseVisualStyleBackColor = true;
+            this.btnWaveRecord_reset_layout.Click += new System.EventHandler(this.btnWaveRecord_reset_layout_Click);
+            // 
             // nudWaveRecord_radius
             // 
             this.nudWaveRecord_radius.DecimalPlaces = 2;
@@ -65868,6 +65905,7 @@
             this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBack);
             this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRadius);
             this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordHeightRatio);
+            this.grpWaveRecordItem.Controls.Add(this.btnWaveRecord_reset_layout);
             this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_hover);
             this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_thumb);
             this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_track);
@@ -71085,29 +71123,6 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
-            // tbTCISpotBackPanel_alpha
-            // 
-            this.tbTCISpotBackPanel_alpha.AutoSize = false;
-            this.tbTCISpotBackPanel_alpha.Location = new System.Drawing.Point(166, 270);
-            this.tbTCISpotBackPanel_alpha.Maximum = 255;
-            this.tbTCISpotBackPanel_alpha.Name = "tbTCISpotBackPanel_alpha";
-            this.tbTCISpotBackPanel_alpha.Size = new System.Drawing.Size(66, 18);
-            this.tbTCISpotBackPanel_alpha.TabIndex = 117;
-            this.tbTCISpotBackPanel_alpha.TickFrequency = 64;
-            this.toolTip1.SetToolTip(this.tbTCISpotBackPanel_alpha, "The alpha for the back panel of a spot");
-            this.tbTCISpotBackPanel_alpha.Value = 255;
-            this.tbTCISpotBackPanel_alpha.Scroll += new System.EventHandler(this.tbTCISpotBackPanel_alpha_Scroll);
-            // 
-            // labelTS662
-            // 
-            this.labelTS662.AutoSize = true;
-            this.labelTS662.Image = null;
-            this.labelTS662.Location = new System.Drawing.Point(40, 273);
-            this.labelTS662.Name = "labelTS662";
-            this.labelTS662.Size = new System.Drawing.Size(120, 13);
-            this.labelTS662.TabIndex = 117;
-            this.labelTS662.Text = "Spot back panel alpha :";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -72251,6 +72266,7 @@
             this.tpTCITCPIPN1MM.ResumeLayout(false);
             this.grpTCIServer.ResumeLayout(false);
             this.grpTCIServer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).EndInit();
             this.panelTS13.ResumeLayout(false);
             this.panelTS13.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).EndInit();
@@ -72503,7 +72519,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -76344,6 +76359,7 @@
         private ColorButton clrbtnWaveRecord_row;
         private ColorButton clrbtnWaveRecord_border;
         private ColorButton clrbtnWaveRecord_back;
+        private ButtonTS btnWaveRecord_reset_layout;
         private CheckBoxTS chkWaveRecord_fade_tx;
         private CheckBoxTS chkWaveRecord_fade_rx;
         private NumericUpDownTS nudWaveRecord_radius;
