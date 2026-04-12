@@ -1286,6 +1286,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
             hKeyPath = HKEY_LOCAL_MACHINE;
             status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
         }
+
         for( int i=0; i < driverCount; ++i )
         {
             PA_DEBUG(("ASIO names[%d]:%s\n",i,names[i]));
@@ -1302,6 +1303,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
                 || strncmp(names[i],"Premiere",8)                      == 0   //"Premiere Elements Windows Sound 1.0"
                 || strncmp(names[i],"Adobe",5)                         == 0   //"Adobe Default Windows Sound 1.5"
                 || strcmp (names[i], szData)                           == 0   //driver that cmASIO is using, if there is one //[2.10.3.11]MW0LGE portaudio W4WMT
+                || strcmp (names[i], "ASIO Avid Driver")               == 0   //black list the Avid Pro Tools at it was causing issues (https://discord.com/channels/1271453528656969789/1491198252593315940) //[2.10.3.11]MW0LGE portaudio
                )
             {
                 PA_DEBUG(("BLACKLISTED!!!\n"));

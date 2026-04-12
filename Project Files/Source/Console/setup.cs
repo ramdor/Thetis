@@ -2922,17 +2922,58 @@ namespace Thetis
             set { if (comboTXProfileName != null) comboTXProfileName.Text = value; }
         }
 
+        //public void GetTxProfiles()
+        //{
+        //    comboTXProfileName.BeginUpdate
+        //    if (DB.ds == null) return;
+
+        //    comboTXProfileName.Items.Clear();
+        //    foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
+        //    {
+        //        if (dr.RowState != DataRowState.Deleted)
+        //        {
+        //            string profile_name = (string)dr["Name"];
+        //            if (!comboTXProfileName.Items.Contains(profile_name))
+        //                comboTXProfileName.Items.Add(profile_name);
+        //        }
+        //    }
+        //}
         public void GetTxProfiles()
         {
-            comboTXProfileName.Items.Clear();
-            foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
+            DataSet data_set = DB.ds;
+            if (data_set == null) return;
+            if (comboTXProfileName == null) return;
+            if (!data_set.Tables.Contains("TXProfile")) return;
+
+            DataTable tx_profile_table = data_set.Tables["TXProfile"];
+            if (tx_profile_table == null) return;
+            if (!tx_profile_table.Columns.Contains("Name")) return;
+
+            comboTXProfileName.BeginUpdate();
+            try
             {
-                if (dr.RowState != DataRowState.Deleted)
+                comboTXProfileName.Items.Clear();
+
+                HashSet<string> profile_names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (DataRow dr in tx_profile_table.Rows)
                 {
-                    string profile_name = (string)dr["Name"];
-                    if (!comboTXProfileName.Items.Contains(profile_name))
+                    if (dr == null) continue;
+                    if (dr.RowState == DataRowState.Deleted) continue;
+                    if (dr.IsNull("Name")) continue;
+
+                    string profile_name = Convert.ToString(dr["Name"]);
+                    if (string.IsNullOrWhiteSpace(profile_name)) continue;
+
+                    profile_name = profile_name.Trim();
+
+                    if (profile_names.Add(profile_name))
                         comboTXProfileName.Items.Add(profile_name);
                 }
+            }
+            finally
+            {
+                comboTXProfileName.EndUpdate();
             }
         }
 
