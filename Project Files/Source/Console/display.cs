@@ -5911,38 +5911,26 @@ namespace Thetis
             bAlreadyCalculated = true;
         }
 
+        //
         #region Waterfall_Time_Overlay
         private static void resetWaterfallTimeOverlay(int rx)
         {
-            int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
+            int i = rx - 1;
+            if (i < 0 || i >= _waterfallRowUtcTicks.Length) return;
 
-            long[] rowUtcTicks = _waterfallRowUtcTicks[rxIndex];
-            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
-            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
-            if (rowUtcTicks.Length > 0)
-            {
-                Array.Clear(rowUtcTicks, 0, rowUtcTicks.Length);
-            }
-            if (rowLabelUtcTicks.Length > 0)
-            {
-                Array.Clear(rowLabelUtcTicks, 0, rowLabelUtcTicks.Length);
-            }
-            if (rowLabelIntervalMs.Length > 0)
-            {
-                Array.Clear(rowLabelIntervalMs, 0, rowLabelIntervalMs.Length);
-            }
-
-            _waterfallRowTimeCounts[rxIndex] = 0;
-            _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
-            _waterfallLineIntervalMs[rxIndex] = 0;
-            _waterfallLastAdvanceFrameStart[rxIndex] = double.NaN;
+            _waterfallRowUtcTicks[i] = new long[_waterfallRowUtcTicks[i].Length];
+            _waterfallRowLabelUtcTicks[i] = new long[_waterfallRowLabelUtcTicks[i].Length];
+            _waterfallRowLabelIntervalMs[i] = new long[_waterfallRowLabelIntervalMs[i].Length];
+            _waterfallRowTimeCounts[i] = 0;
+            _waterfallRowsSinceLastLabel[i] = int.MaxValue;
+            _waterfallLineIntervalMs[i] = 0;
+            _waterfallLastAdvanceFrameStart[i] = double.NaN;
         }
 
         private static void resizeWaterfallTimeOverlay(int rx, int waterHeight, int preservedRows)
         {
-            int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length) return;
+            int i = rx - 1;
+            if (i < 0 || i >= _waterfallRowUtcTicks.Length) return;
 
             if (waterHeight <= 0 || preservedRows <= 0)
             {
@@ -5950,143 +5938,82 @@ namespace Thetis
                 return;
             }
 
-            long[] oldRowUtcTicks = _waterfallRowUtcTicks[rxIndex];
-            long[] oldRowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
-            long[] oldRowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
-            int oldRowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], oldRowUtcTicks.Length);
-            int copyRows = Math.Min(Math.Min(preservedRows, waterHeight), oldRowCount);
+            int copyRows = Math.Min(Math.Min(preservedRows, waterHeight), Math.Min(_waterfallRowTimeCounts[i], _waterfallRowUtcTicks[i].Length));
 
-            long[] newRowUtcTicks = new long[waterHeight];
-            long[] newRowLabelUtcTicks = new long[waterHeight];
-            long[] newRowLabelIntervalMs = new long[waterHeight];
+            long[] newUtcTicks = new long[waterHeight];
+            long[] newLabelUtcTicks = new long[waterHeight];
+            long[] newLabelIntervalMs = new long[waterHeight];
 
             if (copyRows > 0)
             {
-                Array.Copy(oldRowUtcTicks, newRowUtcTicks, copyRows);
-                Array.Copy(oldRowLabelUtcTicks, newRowLabelUtcTicks, copyRows);
-                Array.Copy(oldRowLabelIntervalMs, newRowLabelIntervalMs, copyRows);
+                Array.Copy(_waterfallRowUtcTicks[i], newUtcTicks, copyRows);
+                Array.Copy(_waterfallRowLabelUtcTicks[i], newLabelUtcTicks, copyRows);
+                Array.Copy(_waterfallRowLabelIntervalMs[i], newLabelIntervalMs, copyRows);
             }
 
-            _waterfallRowUtcTicks[rxIndex] = newRowUtcTicks;
-            _waterfallRowLabelUtcTicks[rxIndex] = newRowLabelUtcTicks;
-            _waterfallRowLabelIntervalMs[rxIndex] = newRowLabelIntervalMs;
-            _waterfallRowTimeCounts[rxIndex] = copyRows;
-            _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
+            _waterfallRowUtcTicks[i] = newUtcTicks;
+            _waterfallRowLabelUtcTicks[i] = newLabelUtcTicks;
+            _waterfallRowLabelIntervalMs[i] = newLabelIntervalMs;
+            _waterfallRowTimeCounts[i] = copyRows;
+            _waterfallRowsSinceLastLabel[i] = int.MaxValue;
 
-            for (int i = 0; i < copyRows; i++)
+            for (int r = 0; r < copyRows; r++)
             {
-                if (newRowLabelUtcTicks[i] != 0)
+                if (newLabelUtcTicks[r] != 0)
                 {
-                    _waterfallRowsSinceLastLabel[rxIndex] = i;
+                    _waterfallRowsSinceLastLabel[i] = r;
                     break;
                 }
             }
         }
 
-        private static int getWaterfallUpdatePeriodForRx(int rx)
-        {
-            return Math.Max(1, rx == 2 ? rx2_waterfall_update_period : waterfall_update_period);
-        }
-
         private static double getWaterfallLineIntervalMs(int rx)
         {
-            int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallLineIntervalMs.Length) return 1000.0;
+            int i = rx - 1;
+            if (i < 0 || i >= _waterfallLineIntervalMs.Length) return 1000.0;
 
             int fps = Math.Max(1, m_nFps);
-            double computedIntervalMs = (1000.0 * getWaterfallUpdatePeriodForRx(rx)) / fps;
-            double lineIntervalMs = _waterfallLineIntervalMs[rxIndex];
-            if (lineIntervalMs <= 0) return computedIntervalMs;
+            int period = Math.Max(1, rx == 2 ? rx2_waterfall_update_period : waterfall_update_period);
+            double computedMs = (1000.0 * period) / fps;
+            double lineMs = _waterfallLineIntervalMs[i];
 
-            if (Math.Abs(lineIntervalMs - computedIntervalMs) > computedIntervalMs * 0.35)
-            {
-                return computedIntervalMs;
-            }
-
-            return lineIntervalMs;
-        }
-
-        private static float getWaterfallMinimumLabelSpacingRows()
-        {
-            const float textPaddingY = 2f;
-            SizeF sampleLabelSize = measureStringDX2D("00:00:00", fontDX2d_font9);
-            float labelPanelHeight = sampleLabelSize.Height + (textPaddingY * 2f);
-            return labelPanelHeight * 2f;
-        }
-
-        private static void ensureWaterfallRowBuffers(
-            int rxIndex,
-            int waterHeight,
-            out long[] rowUtcTicks,
-            out long[] rowLabelUtcTicks,
-            out long[] rowLabelIntervalMs)
-        {
-            if (waterHeight <= 0)
-            {
-                rowUtcTicks = new long[0];
-                rowLabelUtcTicks = new long[0];
-                rowLabelIntervalMs = new long[0];
-                return;
-            }
-
-            bool resetState = _waterfallRowUtcTicks[rxIndex].Length != waterHeight ||
-                              _waterfallRowLabelUtcTicks[rxIndex].Length != waterHeight ||
-                              _waterfallRowLabelIntervalMs[rxIndex].Length != waterHeight;
-
-            if (resetState)
-            {
-                _waterfallRowUtcTicks[rxIndex] = new long[waterHeight];
-                _waterfallRowLabelUtcTicks[rxIndex] = new long[waterHeight];
-                _waterfallRowLabelIntervalMs[rxIndex] = new long[waterHeight];
-                _waterfallRowTimeCounts[rxIndex] = 0;
-                _waterfallRowsSinceLastLabel[rxIndex] = int.MaxValue;
-            }
-
-            rowUtcTicks = _waterfallRowUtcTicks[rxIndex];
-            rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
-            rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
-        }
-
-        private static long getWaterfallDisplayTicks(long utcTicks)
-        {
-            if (m_eWaterfallTime == WaterfallTimeMode.LOCAL)
-            {
-                return new DateTime(utcTicks, DateTimeKind.Utc).ToLocalTime().Ticks;
-            }
-
-            return utcTicks;
+            return lineMs > 0 && Math.Abs(lineMs - computedMs) <= computedMs * 0.35 ? lineMs : computedMs;
         }
 
         private static void recordWaterfallAdvance(int rx, int waterHeight)
         {
-            int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowUtcTicks.Length || waterHeight <= 0) return;
+            int i = rx - 1;
+            if (i < 0 || i >= _waterfallRowUtcTicks.Length || waterHeight <= 0) return;
 
             double frameStart = m_dElapsedFrameStart;
-            double lastAdvance = _waterfallLastAdvanceFrameStart[rxIndex];
+            double lastAdvance = _waterfallLastAdvanceFrameStart[i];
             if (!double.IsNaN(lastAdvance))
             {
                 double deltaMs = frameStart - lastAdvance;
                 if (deltaMs > 0 && deltaMs < 60000)
                 {
-                    if (_waterfallLineIntervalMs[rxIndex] <= 0)
-                    {
-                        _waterfallLineIntervalMs[rxIndex] = deltaMs;
-                    }
-                    else
-                    {
-                        _waterfallLineIntervalMs[rxIndex] = (_waterfallLineIntervalMs[rxIndex] * 0.85) + (deltaMs * 0.15);
-                    }
+                    _waterfallLineIntervalMs[i] = _waterfallLineIntervalMs[i] <= 0
+                        ? deltaMs
+                        : (_waterfallLineIntervalMs[i] * 0.85) + (deltaMs * 0.15);
                 }
             }
+            _waterfallLastAdvanceFrameStart[i] = frameStart;
 
-            _waterfallLastAdvanceFrameStart[rxIndex] = frameStart;
+            if (_waterfallRowUtcTicks[i].Length != waterHeight)
+            {
+                _waterfallRowUtcTicks[i] = new long[waterHeight];
+                _waterfallRowLabelUtcTicks[i] = new long[waterHeight];
+                _waterfallRowLabelIntervalMs[i] = new long[waterHeight];
+                _waterfallRowTimeCounts[i] = 0;
+                _waterfallRowsSinceLastLabel[i] = int.MaxValue;
+            }
 
-            long[] rowUtcTicks;
-            long[] rowLabelUtcTicks;
-            long[] rowLabelIntervalMs;
-            ensureWaterfallRowBuffers(rxIndex, waterHeight, out rowUtcTicks, out rowLabelUtcTicks, out rowLabelIntervalMs);
-            int rowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], waterHeight);
+            long[] rowUtcTicks = _waterfallRowUtcTicks[i];
+            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[i];
+            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[i];
+
+            // Shift rows down
+            int rowCount = Math.Min(_waterfallRowTimeCounts[i], waterHeight);
             int shiftedRows = Math.Min(rowCount, waterHeight - 1);
             if (shiftedRows > 0)
             {
@@ -6099,122 +6026,60 @@ namespace Thetis
             rowUtcTicks[0] = currentUtcTicks;
             rowLabelUtcTicks[0] = 0;
             rowLabelIntervalMs[0] = 0;
-            _waterfallRowTimeCounts[rxIndex] = Math.Min(waterHeight, rowCount + 1);
+            _waterfallRowTimeCounts[i] = Math.Min(waterHeight, rowCount + 1);
 
-            if (_waterfallRowsSinceLastLabel[rxIndex] < int.MaxValue) _waterfallRowsSinceLastLabel[rxIndex]++;
+            if (_waterfallRowsSinceLastLabel[i] < int.MaxValue) _waterfallRowsSinceLastLabel[i]++;
 
-            if (_waterfallRowTimeCounts[rxIndex] > 1)
+            if (_waterfallRowTimeCounts[i] <= 1) return;
+
+            SizeF sampleSize = measureStringDX2D("00:00:00", fontDX2d_font9, cacheStringLength: true);
+            float minLabelSpacingRows = (sampleSize.Height + 4f) * 2f; // 4f = textPaddingY*2
+
+            long labelIntervalMs = chooseWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
+            long labelIntervalTicks = labelIntervalMs * TimeSpan.TicksPerMillisecond;
+
+            long prevDisplayTicks = toDisplayTicks(rowUtcTicks[1]);
+            long currentDisplayTicks = toDisplayTicks(currentUtcTicks);
+            long boundaryDisplayTicks = currentDisplayTicks - (currentDisplayTicks % labelIntervalTicks);
+
+            if (currentDisplayTicks > prevDisplayTicks
+                && boundaryDisplayTicks > prevDisplayTicks
+                && _waterfallRowsSinceLastLabel[i] >= (int)Math.Ceiling(minLabelSpacingRows))
             {
-                float minLabelSpacingRows = getWaterfallMinimumLabelSpacingRows();
-                long labelIntervalMs = chooseWaterfallLabelIntervalMs(getWaterfallLineIntervalMs(rx), minLabelSpacingRows);
-                long labelIntervalTicks = labelIntervalMs * TimeSpan.TicksPerMillisecond;
-                long previousDisplayTicks = getWaterfallDisplayTicks(rowUtcTicks[1]);
-                long currentDisplayTicks = getWaterfallDisplayTicks(currentUtcTicks);
-                long boundaryDisplayTicks = currentDisplayTicks - (currentDisplayTicks % labelIntervalTicks);
-
-                if (currentDisplayTicks > previousDisplayTicks && boundaryDisplayTicks > previousDisplayTicks && _waterfallRowsSinceLastLabel[rxIndex] >= (int)Math.Ceiling(minLabelSpacingRows))
-                {
-                    rowLabelUtcTicks[0] = currentUtcTicks - (currentDisplayTicks - boundaryDisplayTicks);
-                    rowLabelIntervalMs[0] = labelIntervalMs;
-                    _waterfallRowsSinceLastLabel[rxIndex] = 0;
-                }
+                rowLabelUtcTicks[0] = currentUtcTicks - (currentDisplayTicks - boundaryDisplayTicks);
+                rowLabelIntervalMs[0] = labelIntervalMs;
+                _waterfallRowsSinceLastLabel[i] = 0;
             }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static long toDisplayTicks(long utcTicks)
+        {
+            return m_eWaterfallTime == WaterfallTimeMode.LOCAL
+                ? new DateTime(utcTicks, DateTimeKind.Utc).ToLocalTime().Ticks
+                : utcTicks;
         }
 
         private static long chooseWaterfallLabelIntervalMs(double msPerLine, double minLabelSpacing)
         {
             double safeMsPerLine = Math.Max(1.0, msPerLine);
-            double rowsAtFiveSeconds = 5000.0 / safeMsPerLine;
-            double rowsAtOneSecond = 1000.0 / safeMsPerLine;
-            double minRowsForOneSecond = Math.Max(WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND, minLabelSpacing * 1.5);
+            double rowsAt5s = 5000.0 / safeMsPerLine;
+            double rowsAt1s = 1000.0 / safeMsPerLine;
+            double minFor1s = Math.Max(WATERFALL_TIME_LABEL_MIN_ROWS_FOR_ONE_SECOND, minLabelSpacing * 1.5);
 
-            if (rowsAtFiveSeconds > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS && rowsAtOneSecond >= minRowsForOneSecond)
+            if (rowsAt5s > WATERFALL_TIME_LABEL_MAX_ROWS_FOR_FIVE_SECONDS && rowsAt1s >= minFor1s)
                 return _waterfallTimeLabelIntervalsMs[0];
 
-            if (rowsAtFiveSeconds >= WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS)
+            if (rowsAt5s >= WATERFALL_TIME_LABEL_MIN_ROWS_FOR_FIVE_SECONDS)
                 return 5000;
 
-            long bestIntervalMs = _waterfallTimeLabelIntervalsMs[1];
+            long best = _waterfallTimeLabelIntervalsMs[1];
             double bestDelta = double.MaxValue;
             for (int i = 1; i < _waterfallTimeLabelIntervalsMs.Length; i++)
             {
-                long candidateIntervalMs = _waterfallTimeLabelIntervalsMs[i];
-                double candidateRows = candidateIntervalMs / safeMsPerLine;
-                double delta = Math.Abs(candidateRows - WATERFALL_TIME_LABEL_TARGET_ROWS);
-                if (delta < bestDelta)
-                {
-                    bestDelta = delta;
-                    bestIntervalMs = candidateIntervalMs;
-                }
+                double delta = Math.Abs(_waterfallTimeLabelIntervalsMs[i] / safeMsPerLine - WATERFALL_TIME_LABEL_TARGET_ROWS);
+                if (delta < bestDelta) { bestDelta = delta; best = _waterfallTimeLabelIntervalsMs[i]; }
             }
-
-            return bestIntervalMs;
-        }
-
-        private static void drawWaterfallTimeLabel(
-            SharpDX.Direct2D1.Brush timeBrush,
-            SharpDX.Direct2D1.Brush panelBrush,
-            SharpDX.Direct2D1.Brush panelBorderBrush,
-            int W,
-            float waterfallTop,
-            float waterfallBottom,
-            float labelY,
-            long displayTicks,
-            long labelIntervalMs,
-            float tickLength,
-            float edgePadding,
-            float textPaddingX,
-            float textPaddingY)
-        {
-            DateTime displayTime = new DateTime(displayTicks, DateTimeKind.Unspecified);
-            string label = labelIntervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
-            SizeF labelSize = measureStringDX2D(label, fontDX2d_font9);
-            float rectWidth = labelSize.Width + (textPaddingX * 2f);
-            float rectHeight = labelSize.Height + (textPaddingY * 2f);
-            float rectY = labelY - (rectHeight / 2f);
-            if (rectY < waterfallTop || rectY + rectHeight > waterfallBottom)
-                return;
-
-            const float cornerRadius = 4f;
-            float rectX;
-            float textX;
-            float tickStartX;
-            float tickEndX;
-
-            if (m_eShowWaterfallTime == WaterfallTimePosition.LEFT)
-            {
-                tickStartX = edgePadding;
-                tickEndX = edgePadding + tickLength;
-                rectX = tickEndX + 4f;
-                textX = rectX + textPaddingX;
-            }
-            else
-            {
-                tickStartX = W - edgePadding - 1f;
-                tickEndX = tickStartX - tickLength;
-                rectX = tickEndX - 4f - rectWidth;
-                textX = rectX + textPaddingX;
-            }
-
-            if (rectX < edgePadding)
-            {
-                rectX = edgePadding;
-                textX = rectX + textPaddingX;
-            }
-            else if (rectX + rectWidth > W - edgePadding)
-            {
-                rectX = W - edgePadding - rectWidth;
-                textX = rectX + textPaddingX;
-            }
-
-            drawLineDX2D(timeBrush, tickStartX, labelY, tickEndX, labelY, 1.5f);
-            RoundedRectangle rr = new RoundedRectangle();
-            rr.RadiusX = cornerRadius;
-            rr.RadiusY = cornerRadius;
-            rr.Rect = new RectangleF(rectX, rectY, rectWidth, rectHeight);
-            _d2dRenderTarget.FillRoundedRectangle(rr, panelBrush);
-            _d2dRenderTarget.DrawRoundedRectangle(rr, panelBorderBrush);
-            drawStringDX2D(label, fontDX2d_font9, timeBrush, textX, rectY + textPaddingY);
+            return best;
         }
 
         private static void drawWaterfallTimeOverlay(int nVerticalShift, int W, int H, int rx)
@@ -6224,16 +6089,17 @@ namespace Thetis
             int waterHeight = H - 20;
             if (waterHeight <= 8) return;
 
-            int rxIndex = rx - 1;
-            if (rxIndex < 0 || rxIndex >= _waterfallRowLabelUtcTicks.Length) return;
+            int i = rx - 1;
+            if (i < 0 || i >= _waterfallRowLabelUtcTicks.Length) return;
 
-            int rowCount = Math.Min(_waterfallRowTimeCounts[rxIndex], waterHeight);
+            int rowCount = Math.Min(_waterfallRowTimeCounts[i], waterHeight);
             if (rowCount == 0) return;
 
             const float tickLength = 10f;
             const float edgePadding = 2f;
             const float textPaddingX = 4f;
             const float textPaddingY = 2f;
+            const float cornerRadius = 4f;
 
             float waterfallTop = nVerticalShift + 20f;
             float waterfallBottom = waterfallTop + waterHeight;
@@ -6242,22 +6108,57 @@ namespace Thetis
             SharpDX.Direct2D1.Brush panelBrush = getDXBrushForColour(Color.Black, 144);
             SharpDX.Direct2D1.Brush panelBorderBrush = getDXBrushForColour(m_cWaterfallTimeColour, 96);
 
-            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[rxIndex];
-            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[rxIndex];
+            long[] rowLabelUtcTicks = _waterfallRowLabelUtcTicks[i];
+            long[] rowLabelIntervalMs = _waterfallRowLabelIntervalMs[i];
+
             for (int row = 0; row < rowCount; row++)
             {
                 long labelUtcTicks = rowLabelUtcTicks[row];
                 if (labelUtcTicks == 0) continue;
 
-                long labelIntervalMs = rowLabelIntervalMs[row];
-                if (labelIntervalMs <= 0) labelIntervalMs = 5000;
-
+                long intervalMs = rowLabelIntervalMs[row] > 0 ? rowLabelIntervalMs[row] : 5000;
                 float labelY = waterfallTop + row;
-                long displayTicks = getWaterfallDisplayTicks(labelUtcTicks);
-                drawWaterfallTimeLabel(timeBrush, panelBrush, panelBorderBrush, W, waterfallTop, waterfallBottom, labelY, displayTicks, labelIntervalMs, tickLength, edgePadding, textPaddingX, textPaddingY);
+
+                DateTime displayTime = new DateTime(toDisplayTicks(labelUtcTicks), DateTimeKind.Unspecified);
+                string label = intervalMs >= 60000 ? displayTime.ToString("HH:mm") : displayTime.ToString("HH:mm:ss");
+                SizeF labelSize = measureStringDX2D(label, fontDX2d_font9, cacheStringLength: intervalMs < 60000);
+
+                float rectWidth = labelSize.Width + (textPaddingX * 2f);
+                float rectHeight = labelSize.Height + (textPaddingY * 2f);
+                float rectY = labelY - (rectHeight / 2f);
+                if (rectY < waterfallTop || rectY + rectHeight > waterfallBottom) continue;
+
+                float tickStartX, tickEndX, rectX;
+                if (m_eShowWaterfallTime == WaterfallTimePosition.LEFT)
+                {
+                    tickStartX = edgePadding;
+                    tickEndX = edgePadding + tickLength;
+                    rectX = tickEndX + 4f;
+                }
+                else
+                {
+                    tickStartX = W - edgePadding - 1f;
+                    tickEndX = tickStartX - tickLength;
+                    rectX = tickEndX - 4f - rectWidth;
+                }
+
+                rectX = Math.Max(edgePadding, Math.Min(rectX, W - edgePadding - rectWidth));
+                float textX = rectX + textPaddingX;
+
+                drawLineDX2D(timeBrush, tickStartX, labelY, tickEndX, labelY, 1.5f);
+
+                RoundedRectangle rr = new RoundedRectangle
+                {
+                    RadiusX = cornerRadius,
+                    RadiusY = cornerRadius,
+                    Rect = new RectangleF(rectX, rectY, rectWidth, rectHeight)
+                };
+                _d2dRenderTarget.FillRoundedRectangle(rr, panelBrush);
+                _d2dRenderTarget.DrawRoundedRectangle(rr, panelBorderBrush);
+                drawStringDX2D(label, fontDX2d_font9, timeBrush, textX, rectY + textPaddingY);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetPendingWaterfallPixelRef(int rx, double pixel_ref)
         {
             int index = rx == 2 ? 1 : 0;
@@ -6274,62 +6175,47 @@ namespace Thetis
             _waterfallBitmapShiftRemainderPixels[index] = 0.0;
             _waterfallBitmapWidths[index] = 0;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static double getWaterfallSpanHz(int rx)
         {
             return rx == 2 ? RX2DisplayHigh - RX2DisplayLow : RXDisplayHigh - RXDisplayLow;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool isWaterfallNoiseFloorCompensationEnabled(int rx)
         {
-            if (rx == 1)
-                return m_bWaterfallUseNFForACGRX1;
-
-            if (rx == 2)
-                return m_bWaterfallUseNFForACGRX2;
-
-            return false;
+            return rx == 1 ? m_bWaterfallUseNFForACGRX1
+                 : rx == 2 ? m_bWaterfallUseNFForACGRX2
+                 : false;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool useWaterfallNoiseFloorCompensation(int rx)
         {
-            if (!isWaterfallNoiseFloorCompensationEnabled(rx))
-                return false;
-
-            if (rx == 1)
-                return !m_bFastAttackNoiseFloorRX1 &&  m_bNoiseFloorGoodRX1;
-
-            if (rx == 2)
-                return !m_bFastAttackNoiseFloorRX2 &&  m_bNoiseFloorGoodRX2;
-
-            return false;
+            if (!isWaterfallNoiseFloorCompensationEnabled(rx)) return false;
+            return rx == 1 ? !m_bFastAttackNoiseFloorRX1 && m_bNoiseFloorGoodRX1
+                 : rx == 2 ? !m_bFastAttackNoiseFloorRX2 && m_bNoiseFloorGoodRX2
+                 : false;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float getWaterfallNoiseFloorCompensationTarget(int rx)
         {
-            if (rx == 1)
-                return m_fLerpAverageRX1 - m_fWaterfallAGCOffsetRX1;
-
-            if (rx == 2)
-                return m_fLerpAverageRX2 - m_fWaterfallAGCOffsetRX2;
-
-            return WATERFALL_AGC_RESTART_FLOOR_DBM;
+            return rx == 1 ? m_fLerpAverageRX1 - m_fWaterfallAGCOffsetRX1
+                 : rx == 2 ? m_fLerpAverageRX2 - m_fWaterfallAGCOffsetRX2
+                 : WATERFALL_AGC_RESTART_FLOOR_DBM;
         }
 
         private static int prepareWaterfallBitmapShift(int rx, int width, double centerMHz, out bool clearBitmap)
         {
             int index = rx == 2 ? 1 : 0;
             double spanHz = getWaterfallSpanHz(rx);
-            bool spanChanged = spanHz > 0.0 &&
-                               !double.IsNaN(_waterfallBitmapSpanHz[index]) &&
-                               Math.Abs(_waterfallBitmapSpanHz[index] - spanHz) > 0.5;
 
-            clearBitmap = _waterfallBitmapWidths[index] > 0 && (_waterfallBitmapWidths[index] != width);
+            bool spanChanged = spanHz > 0.0
+                && !double.IsNaN(_waterfallBitmapSpanHz[index])
+                && Math.Abs(_waterfallBitmapSpanHz[index] - spanHz) > 0.5;
+
+            clearBitmap = _waterfallBitmapWidths[index] > 0 && _waterfallBitmapWidths[index] != width;
 
             if (clearBitmap || spanChanged)
-            {
                 _waterfallBitmapShiftRemainderPixels[index] = 0.0;
-            }
 
             _waterfallBitmapWidths[index] = width;
             _waterfallBitmapSpanHz[index] = spanHz;
@@ -6337,7 +6223,6 @@ namespace Thetis
             if (width <= 0 || spanHz <= 0.0 || double.IsNaN(centerMHz) || centerMHz <= 0.0)
             {
                 if (clearBitmap) _waterfallBitmapCenterMHz[index] = double.NaN;
-
                 return 0;
             }
 
@@ -6350,8 +6235,6 @@ namespace Thetis
 
             if (spanChanged)
             {
-                // preserve the existing bitmap through span/FFT-size changes instead of
-                // clearing it. Re-anchor future shifts to the new mapping
                 _waterfallBitmapCenterMHz[index] = centerMHz;
                 return 0;
             }
@@ -6364,19 +6247,18 @@ namespace Thetis
                 return 0;
             }
 
-            double shiftPixels = _waterfallBitmapShiftRemainderPixels[index] - (((centerMHz - _waterfallBitmapCenterMHz[index]) * 1e6) / hzPerPixel);
+            double shiftPixels = _waterfallBitmapShiftRemainderPixels[index]
+                - (((centerMHz - _waterfallBitmapCenterMHz[index]) * 1e6) / hzPerPixel);
             int wholeShift = shiftPixels >= 0.0 ? (int)Math.Floor(shiftPixels) : (int)Math.Ceiling(shiftPixels);
 
             _waterfallBitmapCenterMHz[index] = centerMHz;
             _waterfallBitmapShiftRemainderPixels[index] = shiftPixels - wholeShift;
-
             return wholeShift;
         }
 
         private static void clearWaterfallBitmapRegion(SharpDX.Direct2D1.Bitmap bitmap, int x, int y, int width, int height)
         {
-            if (bitmap == null || bitmap.IsDisposed || width <= 0 || height <= 0)
-                return;
+            if (bitmap == null || bitmap.IsDisposed || width <= 0 || height <= 0) return;
 
             const int pixelSize = 4;
             int stride = width * pixelSize;
@@ -6386,10 +6268,9 @@ namespace Thetis
             try
             {
                 Array.Clear(clearBuffer, 0, bytesNeeded);
-                for (int i = 3; i < bytesNeeded; i += pixelSize)
-                {
-                    clearBuffer[i] = 255;
-                }
+                for (int j = 3; j < bytesNeeded; j += pixelSize)
+                    clearBuffer[j] = 255;
+
                 bitmap.CopyFromMemory(clearBuffer, stride, new SharpDX.Rectangle(x, y, width, height));
             }
             finally
@@ -6406,6 +6287,7 @@ namespace Thetis
             resetWaterfallTimeOverlay(2);
         }
         #endregion
+        //
 
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
@@ -7742,8 +7624,7 @@ namespace Thetis
                             clearWaterfallBitmapRegion(waterfallBitmap, 0, shiftedRowTop, W, preservedBitmapHeight);
                         }
 
-                        if (addRow)
-                        recordWaterfallAdvance(rx, H - 20);
+                        if (addRow) recordWaterfallAdvance(rx, H - 20);
                     }
 
                     Utilities.Dispose(ref topPixels);

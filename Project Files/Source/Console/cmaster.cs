@@ -373,6 +373,7 @@ namespace Thetis
             set         
             {
                 mox = value;
+                m_cachedTxInputRate = 0;
                 if (mox)
                 {
                     LoadRouterControlBit((void *)0, 0, 2, 1);
@@ -467,10 +468,12 @@ namespace Thetis
         private static readonly Queue<TCIIQBlock> m_tciIQQueue = new Queue<TCIIQBlock>();
         private static readonly Queue<TCIAudioBlock> m_tciAudioQueue = new Queue<TCIAudioBlock>();
         private static Thread m_tciRxThread;
+        private static readonly AutoResetEvent m_tciRxStreamEvent = new AutoResetEvent(false);
         private static readonly object m_objTCITxStateLock = new object();
         private static readonly object m_objTCITxResamplerLock = new object();
         private static readonly Queue<float[]> m_tciTxSampleQueue = new Queue<float[]>();
         private static Thread m_tciTxThread;
+        private static readonly AutoResetEvent m_tciTxStreamEvent = new AutoResetEvent(false);
         private static int m_tciTxSampleQueueOffset = 0;
         private static int m_tciTxQueuedSamples = 0;
         private static int m_tciTxChronoOutstanding = 0;
@@ -1144,24 +1147,13 @@ namespace Thetis
         unsafe private static TCIStreamSamples TCIRxAudioOutDel = OnTCIRxAudioOutSamples;
         unsafe private static TCITxInput TCITxAudioInDel = OnTCITxAudioInSamples;
 
-        private static TCPIPtciServer _tciServer = null;
-        private static readonly object _tciServer_lock = new object();
+        private static int m_cachedTxInputRate = 0;
+
+        private static volatile TCPIPtciServer _tciServer = null;
         public static TCPIPtciServer TCIServer
         {
-            get
-            {
-                lock (_tciServer_lock)
-                {
-                    return _tciServer;
-                }
-            }
-            set
-            {
-                lock (_tciServer_lock)
-                {
-                    _tciServer = value;
-                }
-            }
+            get { return _tciServer; }
+            set { _tciServer = value; }
         }
 
         private static void ensureTCIStreamThreads()
@@ -1186,7 +1178,16 @@ namespace Thetis
                 m_tciTxThread.Start();
             }
         }
-
+        public static void StopTCIStreamThreads()
+        {
+            m_runTCIStreamThreads = false;
+            m_tciRxStreamEvent.Set();
+            m_tciTxStreamEvent.Set();
+            m_tciRxThread?.Join(500);
+            m_tciTxThread?.Join(500);
+            m_tciRxThread = null;
+            m_tciTxThread = null;
+        }
         private static void TCIRxThreadProc()
         {
             while (m_runTCIStreamThreads)
@@ -1198,10 +1199,13 @@ namespace Thetis
                 }
                 catch { }
 
-                Thread.Sleep(5);
+                if (!m_runTCIStreamThreads)
+                    break;
+
+                m_tciRxStreamEvent.WaitOne(1000);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void serviceTCIRxStreams()
         {
             TCPIPtciServer tciServer = TCIServer;
@@ -1243,10 +1247,13 @@ namespace Thetis
                 }
                 catch { }
 
-                Thread.Sleep(2);
+                if (!m_runTCIStreamThreads)
+                    break;
+
+                m_tciTxStreamEvent.WaitOne(1000);
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void serviceTCITxProtocol()
         {
             TCPIPtciServer tciServer = TCIServer;
@@ -1257,9 +1264,10 @@ namespace Thetis
             }
 
             int receiver = Audio.RX2Enabled && Audio.VFOBTX ? 1 : 0;
-            int targetRate = GetInputRate(1, 0);
-            if (targetRate <= 0)
-                targetRate = 48000;
+
+            if (m_cachedTxInputRate <= 0)
+                m_cachedTxInputRate = GetInputRate(1, 0);
+            int targetRate = m_cachedTxInputRate > 0 ? m_cachedTxInputRate : 48000;
 
             bool resetForStateChange = false;
             lock (m_objTCITxStateLock)
@@ -1354,17 +1362,6 @@ namespace Thetis
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void resetTCITxState()
         {
-            lock (m_objTCITxStateLock)
-            {
-                m_tciTxSampleQueue.Clear();
-                m_tciTxSampleQueueOffset = 0;
-                m_tciTxQueuedSamples = 0;
-                m_tciTxChronoOutstanding = 0;
-                m_tciTxChronoReceiver = 0;
-                m_tciTxLastChronoTick = 0;
-                m_tciTxInputRate = 0;
-            }
-
             lock (m_objTCITxResamplerLock)
             {
                 m_tciTxResamplerInputRate = 0;
@@ -1375,7 +1372,18 @@ namespace Thetis
                     m_tciTxResampler = null;
                 }
             }
+            lock (m_objTCITxStateLock)
+            {
+                m_tciTxSampleQueue.Clear();
+                m_tciTxSampleQueueOffset = 0;
+                m_tciTxQueuedSamples = 0;
+                m_tciTxChronoOutstanding = 0;
+                m_tciTxChronoReceiver = 0;
+                m_tciTxLastChronoTick = 0;
+                m_tciTxInputRate = 0;
+            }
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void queueTCITxAudio(TCIQueuedTxAudio queuedAudio, int targetRate, TCITxStereoInputMode stereoInputMode)
         {
@@ -1441,7 +1449,10 @@ namespace Thetis
                     if (m_tciTxResampler != null)
                         WDSP.destroy_resampleFV(m_tciTxResampler);
 
-                    m_tciTxResampler = WDSP.create_resampleFV(inputRate, targetRate);
+                    void* resampler = WDSP.create_resampleFV(inputRate, targetRate);
+                    if (resampler == null)
+                        return Array.Empty<float>();
+                    m_tciTxResampler = resampler;
                     m_tciTxResamplerInputRate = inputRate;
                     m_tciTxResamplerOutputRate = targetRate;
                 }
@@ -1528,8 +1539,17 @@ namespace Thetis
                     m_tciIQResamplerOutputRates[receiver] != targetRate)
                 {
                     destroyTCIIQResampler(receiver);
-                    m_tciIQResamplerI[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
-                    m_tciIQResamplerQ[receiver] = WDSP.create_resampleFV(inputRate, targetRate);
+
+                    void* resamplerI = WDSP.create_resampleFV(inputRate, targetRate);
+                    void* resamplerQ = WDSP.create_resampleFV(inputRate, targetRate);
+                    if (resamplerI == null || resamplerQ == null)
+                    {
+                        if (resamplerI != null) WDSP.destroy_resampleFV(resamplerI);
+                        if (resamplerQ != null) WDSP.destroy_resampleFV(resamplerQ);
+                        return Array.Empty<float>();
+                    }
+                    m_tciIQResamplerI[receiver] = resamplerI;
+                    m_tciIQResamplerQ[receiver] = resamplerQ;
                     m_tciIQResamplerInputRates[receiver] = inputRate;
                     m_tciIQResamplerOutputRates[receiver] = targetRate;
                 }
@@ -1662,22 +1682,30 @@ namespace Thetis
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void enqueueTCIIQ(TCIIQBlock block)
         {
+            TCIIQBlock overflow = null;
             lock (m_objTCIStreamQueueLock)
             {
-                while (m_tciIQQueue.Count >= 32)
-                    returnTCIIQBlock(m_tciIQQueue.Dequeue());
+                if (m_tciIQQueue.Count >= 32)
+                    overflow = m_tciIQQueue.Dequeue();
                 m_tciIQQueue.Enqueue(block);
             }
+            if (overflow != null)
+                returnTCIIQBlock(overflow);
+            m_tciRxStreamEvent.Set();
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void enqueueTCIAudio(TCIAudioBlock block)
         {
+            TCIAudioBlock overflow = null;
             lock (m_objTCIStreamQueueLock)
             {
-                while (m_tciAudioQueue.Count >= 128)
-                    returnTCIAudioBlock(m_tciAudioQueue.Dequeue());
+                if (m_tciAudioQueue.Count >= 128)
+                    overflow = m_tciAudioQueue.Dequeue();
                 m_tciAudioQueue.Enqueue(block);
             }
+            if (overflow != null)
+                returnTCIAudioBlock(overflow);
+            m_tciRxStreamEvent.Set();
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool tryDequeueTCIIQ(out TCIIQBlock block)
@@ -1792,7 +1820,7 @@ namespace Thetis
 
                     copied += toCopy;
                     m_tciTxSampleQueueOffset += toCopy;
-                    m_tciTxQueuedSamples -= toCopy;
+                    m_tciTxQueuedSamples = Math.Max(0, m_tciTxQueuedSamples - toCopy);
 
                     if (m_tciTxSampleQueueOffset >= block.Length)
                     {
@@ -1807,6 +1835,7 @@ namespace Thetis
                     data[2 * i + 1] = 0.0;
                 }
             }
+            m_tciTxStreamEvent.Set();
         }
         #endregion
 

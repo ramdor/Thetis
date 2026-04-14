@@ -5924,7 +5924,7 @@ namespace Thetis
                     lock (m_objStreamLock)
                     {
                         rateChanged = m_audioSampleRate != sampleRate;
-                    m_audioSampleRate = sampleRate;
+                        m_audioSampleRate = sampleRate;
 
                         if (!m_audioStreamSamplesExplicitlySet)
                         {
@@ -6109,11 +6109,11 @@ namespace Thetis
             if (args.Length != 1) return;
             lock (m_objStreamLock)
             {
-            if (int.TryParse(args[0], out int channels))
-            {
-                if (channels == 1 || channels == 2)
-                    m_audioStreamChannels = channels;
-            }
+                if (int.TryParse(args[0], out int channels))
+                {
+                    if (channels == 1 || channels == 2)
+                        m_audioStreamChannels = channels;
+                }
 
                 m_seenModernTxAudioNegotiation = true;
             }
@@ -6130,7 +6130,7 @@ namespace Thetis
                 {
                     lock (m_objStreamLock)
                     {
-                    m_audioStreamSamples = samples;
+                        m_audioStreamSamples = samples;
                         m_audioStreamSamplesExplicitlySet = true;
                         m_seenModernTxAudioNegotiation = true;
                         audioStreamSamples = m_audioStreamSamples;
@@ -6142,7 +6142,7 @@ namespace Thetis
                     {
                         audioStreamSamples = m_audioStreamSamples;
                     }
-            }
+                }
             }
             else
             {
@@ -6159,10 +6159,10 @@ namespace Thetis
             if (args.Length != 1) return;
             lock (m_objStreamLock)
             {
-            if (int.TryParse(args[0], out int buffering))
-            {
-                if (buffering >= 50 && buffering <= 500)
-                    m_txStreamAudioBufferingMs = buffering;
+                if (int.TryParse(args[0], out int buffering))
+                {
+                    if (buffering >= 50 && buffering <= 500)
+                       m_txStreamAudioBufferingMs = buffering;
                 }
 
                 m_seenModernTxAudioNegotiation = true;

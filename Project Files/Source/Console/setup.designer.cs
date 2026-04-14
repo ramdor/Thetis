@@ -27532,7 +27532,6 @@
             // tpVAC
             // 
             this.tpVAC.Controls.Add(this.chkMICVOXAllowBypass);
-            this.tpVAC.Controls.Add(this.chkVAC1WillMute);
             this.tpVAC.Controls.Add(this.chkVAC1GrapherAuto);
             this.tpVAC.Controls.Add(this.udVAC1GrapherSwing);
             this.tpVAC.Controls.Add(this.ucVAC1VARGrapherIn);
@@ -27572,11 +27571,11 @@
             // 
             this.chkVAC1WillMute.AutoSize = true;
             this.chkVAC1WillMute.Image = null;
-            this.chkVAC1WillMute.Location = new System.Drawing.Point(249, 249);
+            this.chkVAC1WillMute.Location = new System.Drawing.Point(31, 99);
             this.chkVAC1WillMute.Name = "chkVAC1WillMute";
-            this.chkVAC1WillMute.Size = new System.Drawing.Size(117, 17);
+            this.chkVAC1WillMute.Size = new System.Drawing.Size(210, 17);
             this.chkVAC1WillMute.TabIndex = 89;
-            this.chkVAC1WillMute.Text = "Mute will mute VAC";
+            this.chkVAC1WillMute.Text = "Mute will mute VAC 1 + TCI Receiver 1";
             this.chkVAC1WillMute.UseVisualStyleBackColor = true;
             this.chkVAC1WillMute.CheckedChanged += new System.EventHandler(this.chkVAC1WillMute_CheckedChanged);
             // 
@@ -28802,7 +28801,6 @@
             // tpVAC2
             // 
             this.tpVAC2.BackColor = System.Drawing.SystemColors.Control;
-            this.tpVAC2.Controls.Add(this.chkVAC2WillMute);
             this.tpVAC2.Controls.Add(this.chkVAC2GrapherAuto);
             this.tpVAC2.Controls.Add(this.udVAC2GrapherSwing);
             this.tpVAC2.Controls.Add(this.ucVAC2VARGrapherIn);
@@ -28830,11 +28828,11 @@
             // 
             this.chkVAC2WillMute.AutoSize = true;
             this.chkVAC2WillMute.Image = null;
-            this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 244);
+            this.chkVAC2WillMute.Location = new System.Drawing.Point(31, 122);
             this.chkVAC2WillMute.Name = "chkVAC2WillMute";
-            this.chkVAC2WillMute.Size = new System.Drawing.Size(117, 17);
+            this.chkVAC2WillMute.Size = new System.Drawing.Size(210, 17);
             this.chkVAC2WillMute.TabIndex = 96;
-            this.chkVAC2WillMute.Text = "Mute will mute VAC";
+            this.chkVAC2WillMute.Text = "Mute will mute VAC 2 + TCI Receiver 2";
             this.chkVAC2WillMute.UseVisualStyleBackColor = true;
             this.chkVAC2WillMute.CheckedChanged += new System.EventHandler(this.chkVAC2WillMute_CheckedChanged);
             // 
@@ -30035,8 +30033,10 @@
             // tpAudioOptions
             // 
             this.tpAudioOptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAudioOptions.Controls.Add(this.chkVAC2WillMute);
             this.tpAudioOptions.Controls.Add(this.groupBoxTS29);
             this.tpAudioOptions.Controls.Add(this.chkDisableRearSpeakerJacksAudioAmplifier);
+            this.tpAudioOptions.Controls.Add(this.chkVAC1WillMute);
             this.tpAudioOptions.Controls.Add(this.chkNoFadeOverUnderWarning);
             this.tpAudioOptions.Controls.Add(this.chkAFSlidersMute);
             this.tpAudioOptions.Location = new System.Drawing.Point(4, 22);
@@ -30053,7 +30053,7 @@
             this.groupBoxTS29.Controls.Add(this.chkLinkRX0AF);
             this.groupBoxTS29.Controls.Add(this.chkLinkToRX2AF);
             this.groupBoxTS29.Controls.Add(this.chkLinkRX1AF);
-            this.groupBoxTS29.Location = new System.Drawing.Point(8, 134);
+            this.groupBoxTS29.Location = new System.Drawing.Point(6, 163);
             this.groupBoxTS29.Name = "groupBoxTS29";
             this.groupBoxTS29.Size = new System.Drawing.Size(200, 167);
             this.groupBoxTS29.TabIndex = 6;
