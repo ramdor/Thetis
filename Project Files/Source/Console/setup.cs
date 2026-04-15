@@ -2922,22 +2922,6 @@ namespace Thetis
             set { if (comboTXProfileName != null) comboTXProfileName.Text = value; }
         }
 
-        //public void GetTxProfiles()
-        //{
-        //    comboTXProfileName.BeginUpdate
-        //    if (DB.ds == null) return;
-
-        //    comboTXProfileName.Items.Clear();
-        //    foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
-        //    {
-        //        if (dr.RowState != DataRowState.Deleted)
-        //        {
-        //            string profile_name = (string)dr["Name"];
-        //            if (!comboTXProfileName.Items.Contains(profile_name))
-        //                comboTXProfileName.Items.Add(profile_name);
-        //        }
-        //    }
-        //}
         public void GetTxProfiles()
         {
             DataSet data_set = DB.ds;

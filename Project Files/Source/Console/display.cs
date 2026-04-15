@@ -11475,6 +11475,7 @@ namespace Thetis
 
                 if (!string.IsNullOrEmpty(highLightedSpot.spotter)) bubble_text += "\nSpotter: " + highLightedSpot.spotter;
                 if (highLightedSpot.heading >= 0) bubble_text += "\nHeading: " + highLightedSpot.heading.ToString();
+                if (highLightedSpot.distance >= 0) bubble_text += "\nDistance: " + highLightedSpot.distance.ToString();
                 if (!string.IsNullOrEmpty(highLightedSpot.continent)) bubble_text += "\nContinent: " + highLightedSpot.continent;
                 if (!string.IsNullOrEmpty(highLightedSpot.country)) bubble_text += "\nCountry: " + highLightedSpot.country;
                 // age
