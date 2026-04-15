@@ -14,6 +14,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
         rx_step_att_ex  (use +ve attenuation values to attenuate)
 	rx_preamp_att_ex   (use -ve preamp values to attenuate)
 - [add] added rx_nb_enable_ex TCI command to be able to select NB 1 or 2, eg. rx_nb_enable_ex:0,true,1;   will enable NB1 for rx1
+- [add] added TCI commands vfo_sync_ex, vfo_swap_ex, fm_deviation_ex, agc_auto_ex
 - [add] otherbutton wave record now supported. Extra folder called 'waverecord' will store these. Right click to open folder or via Setup->Audio->Recording. Similar to the [Record] button from the WaveForm of old
 - [add] WaveList record item so that wav files can be dragged to a list and played on demand. No repeat via this method
 - [change] TCI emulate ExpertElectroncsSDR3 selected as default for a new db/install. JTDX/WSJT-X will now send TCI audio into Thetis with this option enabled. Turn it on if you are not getting any TX TCI audio

@@ -1127,10 +1127,25 @@ namespace Thetis
             if (m_disconnected) return;
             sendCTUN(rx - 1, enabled);
         }
+        public void VFOSyncChanged(bool enabled)
+        {
+            if (m_disconnected) return;
+            sendVFOSyncEx(enabled);
+        }
+        public void FMDeviationChanged(int rx, int deviationHz)
+        {
+            if (m_disconnected) return;
+            sendFMDeviationEx(rx - 1, deviationHz);
+        }
         public void AGCModeChanged(int rx, AGCMode mode)
         {
             if (m_disconnected) return;
             sendAgcMode(rx - 1, mode);
+        }
+        public void AGCAutoChanged(int rx, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendAgcAutoEx(rx - 1, enabled);
         }
         public void TXProfileChanged(string profile)
         {
@@ -2221,6 +2236,21 @@ namespace Thetis
             string s = "rx_step_att_enabled_ex:" + rx.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";";
             sendTextFrame(s);
         }
+        private void sendVFOSyncEx(bool enabled)
+        {
+            string s = "vfo_sync_ex:" + enabled.ToString().ToLowerInvariant() + ";";
+            sendTextFrame(s);
+        }
+        private void sendFMDeviationEx(int rx, int deviationHz)
+        {
+            string s = "fm_deviation_ex:" + rx.ToString() + "," + deviationHz.ToString(CultureInfo.InvariantCulture) + ";";
+            sendTextFrame(s);
+        }
+        private void sendAgcAutoEx(int rx, bool enabled)
+        {
+            string s = "agc_auto_ex:" + rx.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";";
+            sendTextFrame(s);
+        }
         private string agcModeToTciMode(AGCMode mode)
         {
             switch (mode)
@@ -2495,6 +2525,7 @@ namespace Thetis
             sendRxBalance(0, 1, 40.0 - (consoleThreadSafe.GetBal(1, true) * 0.8));
             sendRxBalance(1, 0, 40.0 - (consoleThreadSafe.GetBal(2, false) * 0.8));
             sendRxBalance(1, 1, 40.0 - (consoleThreadSafe.GetBal(2, true) * 0.8));
+            sendVFOSyncEx(consoleThreadSafe.VFOSync);
             sendRxStepAttEnabledEx(0, consoleThreadSafe.RX1StepAttEnabled);
             sendRxStepAttEnabledEx(1, consoleThreadSafe.RX2StepAttEnabled);
             sendRxStepAttEx(0, consoleThreadSafe.RX1AttenuatorData);
@@ -2505,6 +2536,10 @@ namespace Thetis
             sendAgcMode(1, consoleThreadSafe.GetAGCMode(2));
             sendAgcGain(0, consoleThreadSafe.GetAgcT(1));
             sendAgcGain(1, consoleThreadSafe.GetAgcT(2));
+            sendAgcAutoEx(0, consoleThreadSafe.GetAGCAuto(1));
+            sendAgcAutoEx(1, consoleThreadSafe.GetAGCAuto(2));
+            sendFMDeviationEx(0, consoleThreadSafe.FMDeviation_Hz);
+            sendFMDeviationEx(1, consoleThreadSafe.FMDeviation_Hz);
 
             sendCTUN(0, consoleThreadSafe.GetCTUN(1));
             sendCTUN(1, consoleThreadSafe.GetCTUN(2));
@@ -4854,6 +4889,57 @@ namespace Thetis
                 consoleThreadSafe.SetATT(rx + 1, Math.Abs(attenuation), Thetis.Console.SetAttMode.PREAMP_MODE);
             }
         }
+        private void handleVfoSyncEx(string[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                sendVFOSyncEx(consoleThreadSafe.VFOSync);
+                return;
+            }
+
+            if (args.Length != 1) return;
+            if (!bool.TryParse(args[0], out bool enabled)) return;
+
+            consoleThreadSafe.VFOSync = enabled;
+        }
+        private void handleVfoSwapEx()
+        {
+            consoleThreadSafe.VFOSwap();
+        }
+        private void handleFMDeviationEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendFMDeviationEx(rx, consoleThreadSafe.FMDeviation_Hz);
+            }
+            else
+            {
+                if (!int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int deviationHz)) return;
+                if (deviationHz != 2500 && deviationHz != 5000) return;
+
+                consoleThreadSafe.FMDeviation_Hz = deviationHz;
+            }
+        }
+        private void handleAgcAutoEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendAgcAutoEx(rx, consoleThreadSafe.GetAGCAuto(rx + 1));
+            }
+            else
+            {
+                if (!bool.TryParse(args[1], out bool enabled)) return;
+                consoleThreadSafe.SetAGCAuto(rx + 1, enabled);
+            }
+        }
         private void handleAgcMode(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -5320,6 +5406,15 @@ namespace Thetis
                     case "rx_preamp_att_ex":
                         handleRxPreampAttEx(args);
                         break;
+                    case "vfo_sync_ex":
+                        handleVfoSyncEx(args);
+                        break;
+                    case "fm_deviation_ex":
+                        handleFMDeviationEx(args);
+                        break;
+                    case "agc_auto_ex":
+                        handleAgcAutoEx(args);
+                        break;
                     case "agc_mode":
                         handleAgcMode(args);
                         break;
@@ -5355,6 +5450,12 @@ namespace Thetis
                         break;
                     case "mute":
                         handleMute(null, false);
+                        break;
+                    case "vfo_sync_ex":
+                        handleVfoSyncEx(null);
+                        break;
+                    case "vfo_swap_ex":
+                        handleVfoSwapEx();
                         break;
                     case "volume":
                         handleVolume(null, false);
@@ -6545,6 +6646,7 @@ namespace Thetis
                     console.StepAttEnabledChangedHandlers += OnStepAttEnabledChanged;
                     console.AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;
                     console.PreampModeChangedHandlers += OnPreampModeChanged;
+                    console.FMDeviationChangedHandlers += OnFMDeviationChanged;
                     console.AGCGainChangedHandlers += OnAGCGainChanged;
                     console.RITChangedHandlers += OnRITChanged;
                     console.XITChangedHandlers += OnXITChanged;
@@ -6557,6 +6659,8 @@ namespace Thetis
                     console.ANFChangedHandlers += OnAnfChanged;
                     console.BINChangedHandlers += OnBinChanged;
                     console.AGCModeChangedHandlers += OnAGCModeChanged;
+                    console.AGCAutoModeChangedHandlers += OnAGCAutoModeChanged;
+                    console.VFOSyncChangedHandlers += OnVFOSyncChanged;
                     console.VfoALockChangedHandlers += OnVfoALockChanged;
                     console.VfoBLockChangedHandlers += OnVfoBLockChanged;
                     console.SQLChangedHandlers += OnSqlChanged;
@@ -6654,6 +6758,7 @@ namespace Thetis
                     console.StepAttEnabledChangedHandlers -= OnStepAttEnabledChanged;
                     console.AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
                     console.PreampModeChangedHandlers -= OnPreampModeChanged;
+                    console.FMDeviationChangedHandlers -= OnFMDeviationChanged;
                     console.AGCGainChangedHandlers -= OnAGCGainChanged;
                     console.RITChangedHandlers -= OnRITChanged;
                     console.XITChangedHandlers -= OnXITChanged;
@@ -6666,6 +6771,8 @@ namespace Thetis
                     console.ANFChangedHandlers -= OnAnfChanged;
                     console.BINChangedHandlers -= OnBinChanged;
                     console.AGCModeChangedHandlers -= OnAGCModeChanged;
+                    console.AGCAutoModeChangedHandlers -= OnAGCAutoModeChanged;
+                    console.VFOSyncChangedHandlers -= OnVFOSyncChanged;
                     console.VfoALockChangedHandlers -= OnVfoALockChanged;
                     console.VfoBLockChangedHandlers -= OnVfoBLockChanged;
                     console.SQLChangedHandlers -= OnSqlChanged;
@@ -7372,6 +7479,32 @@ namespace Thetis
                 }
             }
         }
+        private void OnAGCAutoModeChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.AGCAutoChanged(rx, new_state);
+                }
+            }
+        }
+        private void OnVFOSyncChanged(int rx, bool old_state, bool new_state)
+        {
+            if (rx != 1) return;
+
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.VFOSyncChanged(new_state);
+                }
+            }
+        }
         private void OnVfoALockChanged(int rx, bool old_state, bool new_state)
         {
             lock (m_objLocker)
@@ -7612,6 +7745,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.RxPreampAttChanged(rx, newMode);
+                }
+            }
+        }
+        private void OnFMDeviationChanged(int rx, int oldValue, int newValue)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.FMDeviationChanged(rx, newValue);
                 }
             }
         }

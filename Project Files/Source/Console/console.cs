@@ -20902,22 +20902,31 @@ namespace Thetis
             }
         }
 
-        private int fm_deviation_hz = 5000;
+        private int _fm_deviation_hz = 5000;
+        private bool m_bUpdatingFMDeviation = false;
         public int FMDeviation_Hz
         {
-            get { return fm_deviation_hz; }
+            get { return _fm_deviation_hz; }
             set
             {
-                fm_deviation_hz = value;
-                if (fm_deviation_hz == 5000)
+                int oldDeviationHz = _fm_deviation_hz;
+
+                _fm_deviation_hz = value;
+                if (_fm_deviation_hz == 5000)
                 {
                     radFMDeviation2kHz.Checked = false;
                     radFMDeviation5kHz.Checked = true;
                 }
-                else if (fm_deviation_hz == 2500)
+                else if (_fm_deviation_hz == 2500)
                 {
                     radFMDeviation5kHz.Checked = false;
                     radFMDeviation2kHz.Checked = true;
+                }
+
+                if (oldDeviationHz != _fm_deviation_hz)
+                {
+                    FMDeviationChangedHandlers?.Invoke(1, oldDeviationHz, _fm_deviation_hz);
+                    FMDeviationChangedHandlers?.Invoke(2, oldDeviationHz, _fm_deviation_hz);
                 }
             }
         }
@@ -40345,6 +40354,9 @@ namespace Thetis
         {
             if (radFMDeviation2kHz.Checked)
             {
+                int oldDeviationHz = _fm_deviation_hz;
+
+                _fm_deviation_hz = 2500;
                 radio.GetDSPTX(0).TXFMDeviation = 2500;
                 radio.GetDSPRX(0, 0).RXFMDeviation = 2500;
                 radio.GetDSPRX(1, 0).RXFMDeviation = 2500;
@@ -40364,6 +40376,12 @@ namespace Thetis
                     int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
                     SetTXFilters(DSPMode.FM, -halfBw, halfBw, force);
                 }
+
+                if (!m_bUpdatingFMDeviation && oldDeviationHz != _fm_deviation_hz)
+                {
+                    FMDeviationChangedHandlers?.Invoke(1, oldDeviationHz, _fm_deviation_hz);
+                    FMDeviationChangedHandlers?.Invoke(2, oldDeviationHz, _fm_deviation_hz);
+                }
             }
         }
         private void radFMDeviation5kHz_CheckedChanged(object sender, EventArgs e)
@@ -40374,6 +40392,9 @@ namespace Thetis
         {
             if (radFMDeviation5kHz.Checked)
             {
+                int oldDeviationHz = _fm_deviation_hz;
+
+                _fm_deviation_hz = 5000;
                 radio.GetDSPTX(0).TXFMDeviation = 5000;
                 radio.GetDSPRX(0, 0).RXFMDeviation = 5000;
                 radio.GetDSPRX(1, 0).RXFMDeviation = 5000;
@@ -40392,6 +40413,12 @@ namespace Thetis
                 {
                     int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
                     SetTXFilters(DSPMode.FM, -halfBw, halfBw, force);
+                }
+
+                if (!m_bUpdatingFMDeviation && oldDeviationHz != _fm_deviation_hz)
+                {
+                    FMDeviationChangedHandlers?.Invoke(1, oldDeviationHz, _fm_deviation_hz);
+                    FMDeviationChangedHandlers?.Invoke(2, oldDeviationHz, _fm_deviation_hz);
                 }
             }
         }
@@ -45009,6 +45036,8 @@ namespace Thetis
         public delegate void CWKeyerSpeedChanged(int old_speed, int new_speed);
         public delegate void CWXShown(bool shown);
 
+        public delegate void FMDeviationChanged(int rx, int oldDeviationHz, int newDeviationHz);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45028,7 +45057,7 @@ namespace Thetis
 
         public AttenuatorDataChanged AttenuatorDataChangedHandlers;
         public PreampModeChanged PreampModeChangedHandlers;
-        public StepAttEnabledChanged StepAttEnabledChangedHandlers;
+        public StepAttEnabledChanged StepAttEnabledChangedHandlers;        
 
         public FilterEdgesChanged FilterEdgesChangedHandlers;
         public SplitChanged SplitChangedHandlers;
@@ -45169,6 +45198,8 @@ namespace Thetis
         public CWXRemoteCharacterStarted CWXRemoteCharacterStartedHandlers;
         public CWKeyerSpeedChanged CWKeyerSpeedChangedHandlers;
         public CWXShown CWXShownHandlers;
+
+        public FMDeviationChanged FMDeviationChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

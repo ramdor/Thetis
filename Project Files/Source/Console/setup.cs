@@ -9602,9 +9602,8 @@ namespace Thetis
             string name = InputBox.Show("Save Profile", "Please enter a profile name:",
                 _current_profile);
 
-            // no more , in profile names, because it will make the tci tx profile messages look like they have multiple parts
-            // existing ones will cause issues no doubt, but just not worth the effort to reparse the database
-            name = name.Replace(",", "_");
+            // prevent these chars as they will cause issues for TCI messages that include tx profiles
+            name = name.Replace(',', '_').Replace(':', '_').Replace(';', '_');
 
             if (string.IsNullOrEmpty(name))
             {
