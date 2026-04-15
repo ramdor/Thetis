@@ -6556,7 +6556,11 @@ namespace Thetis
         public bool AlwaysStreamIQ
         {
             get { return m_bAlwaysStreamIQ; }
-            set { m_bAlwaysStreamIQ = value; RefreshStreamRunState(); }
+            set 
+            { 
+                m_bAlwaysStreamIQ = value; 
+                RefreshStreamRunState(); 
+            }
         }
         public TCITxStereoInputMode TXStereoInputMode
         {
@@ -6593,13 +6597,17 @@ namespace Thetis
 				else
 				{
 					m_bSendInitialStateOnConnect = true;
+
 					m_bCopyRX2VFObToVFOa = false;
 					_replace_if_copy_RX2VFObToVFOa = false;
 					m_bUseRX1VFOaForRX2VFOa = false;
+
 					m_bCWLUbecomesCW = false;
 					m_bCWbecomesCWUabove10mhz = false;
+
 					m_bEmulateSunSDR2Pro = false;
 					m_bEmulateExpertSDR3Protocol = false;
+
 					_spot_force = TCICWSpotForce.DEFAULT;
 
                     m_bIQSwap = true;
