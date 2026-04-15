@@ -1637,7 +1637,6 @@
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
             this.chkMICVOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
-            this.chkVAC1WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1GrapherAuto = new System.Windows.Forms.CheckBoxTS();
             this.udVAC1GrapherSwing = new System.Windows.Forms.NumericUpDownTS();
             this.ucVAC1VARGrapherIn = new Thetis.ucVARGrapher();
@@ -1723,7 +1722,6 @@
             this.comboAudioDriver2 = new System.Windows.Forms.ComboBoxTS();
             this.chkAudioEnableVAC = new System.Windows.Forms.CheckBoxTS();
             this.tpVAC2 = new System.Windows.Forms.TabPage();
-            this.chkVAC2WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC2GrapherAuto = new System.Windows.Forms.CheckBoxTS();
             this.udVAC2GrapherSwing = new System.Windows.Forms.NumericUpDownTS();
             this.ucVAC2VARGrapherIn = new Thetis.ucVARGrapher();
@@ -1807,6 +1805,7 @@
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
+            this.chkVAC2WillMute = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
             this.chkLinkIfCtrlHeld = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkMaster = new System.Windows.Forms.CheckBoxTS();
@@ -1814,6 +1813,7 @@
             this.chkLinkToRX2AF = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkRX1AF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRearSpeakerJacksAudioAmplifier = new System.Windows.Forms.CheckBoxTS();
+            this.chkVAC1WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkNoFadeOverUnderWarning = new System.Windows.Forms.CheckBoxTS();
             this.chkAFSlidersMute = new System.Windows.Forms.CheckBoxTS();
             this.tpAdvancedAudio = new System.Windows.Forms.TabPage();
@@ -4111,24 +4111,6 @@
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.tcMMsettings = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.grpWaveRecordItem = new System.Windows.Forms.GroupBoxTS();
-            this.lblWaveRecordScrollHover = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordScrollThumb = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordScrollTrack = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordDelete = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordStop = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordPlay = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordButtonHover = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordButtonBorder = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordButtonFill = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordText = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordRow = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordBorder = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordBack = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordRadius = new System.Windows.Forms.LabelTS();
-            this.lblWaveRecordHeightRatio = new System.Windows.Forms.LabelTS();
-            this.chkWaveRecord_fade_tx = new System.Windows.Forms.CheckBoxTS();
-            this.chkWaveRecord_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.grpHistoryItem = new System.Windows.Forms.GroupBoxTS();
             this.labelTS281 = new System.Windows.Forms.LabelTS();
             this.labelTS280 = new System.Windows.Forms.LabelTS();
@@ -4443,6 +4425,24 @@
             this.nudMeterItem_custom_min = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS428 = new System.Windows.Forms.LabelTS();
             this.tabPage15 = new System.Windows.Forms.TabPage();
+            this.grpWaveRecordItem = new System.Windows.Forms.GroupBoxTS();
+            this.lblWaveRecordScrollHover = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordScrollThumb = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordScrollTrack = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordDelete = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordStop = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordPlay = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonHover = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonBorder = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordButtonFill = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordText = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordRow = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordBorder = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordBack = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordRadius = new System.Windows.Forms.LabelTS();
+            this.lblWaveRecordHeightRatio = new System.Windows.Forms.LabelTS();
+            this.chkWaveRecord_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWaveRecord_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
             this.labelTS198 = new System.Windows.Forms.LabelTS();
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
@@ -5527,7 +5527,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).BeginInit();
             this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.grpWaveRecordItem.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
             this.groupBoxTS46.SuspendLayout();
             this.groupBoxTS45.SuspendLayout();
@@ -5569,6 +5568,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_high)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_max)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_min)).BeginInit();
+            this.tabPage15.SuspendLayout();
+            this.grpWaveRecordItem.SuspendLayout();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -27567,18 +27568,6 @@
             this.chkMICVOXAllowBypass.UseVisualStyleBackColor = true;
             this.chkMICVOXAllowBypass.CheckedChanged += new System.EventHandler(this.chkMICVOXAllowBypass_CheckedChanged);
             // 
-            // chkVAC1WillMute
-            // 
-            this.chkVAC1WillMute.AutoSize = true;
-            this.chkVAC1WillMute.Image = null;
-            this.chkVAC1WillMute.Location = new System.Drawing.Point(31, 99);
-            this.chkVAC1WillMute.Name = "chkVAC1WillMute";
-            this.chkVAC1WillMute.Size = new System.Drawing.Size(210, 17);
-            this.chkVAC1WillMute.TabIndex = 89;
-            this.chkVAC1WillMute.Text = "Mute will mute VAC 1 + TCI Receiver 1";
-            this.chkVAC1WillMute.UseVisualStyleBackColor = true;
-            this.chkVAC1WillMute.CheckedChanged += new System.EventHandler(this.chkVAC1WillMute_CheckedChanged);
-            // 
             // chkVAC1GrapherAuto
             // 
             this.chkVAC1GrapherAuto.AutoSize = true;
@@ -28824,18 +28813,6 @@
             this.tpVAC2.TabIndex = 2;
             this.tpVAC2.Text = "VAC 2";
             // 
-            // chkVAC2WillMute
-            // 
-            this.chkVAC2WillMute.AutoSize = true;
-            this.chkVAC2WillMute.Image = null;
-            this.chkVAC2WillMute.Location = new System.Drawing.Point(31, 122);
-            this.chkVAC2WillMute.Name = "chkVAC2WillMute";
-            this.chkVAC2WillMute.Size = new System.Drawing.Size(210, 17);
-            this.chkVAC2WillMute.TabIndex = 96;
-            this.chkVAC2WillMute.Text = "Mute will mute VAC 2 + TCI Receiver 2";
-            this.chkVAC2WillMute.UseVisualStyleBackColor = true;
-            this.chkVAC2WillMute.CheckedChanged += new System.EventHandler(this.chkVAC2WillMute_CheckedChanged);
-            // 
             // chkVAC2GrapherAuto
             // 
             this.chkVAC2GrapherAuto.AutoSize = true;
@@ -30046,6 +30023,18 @@
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
             // 
+            // chkVAC2WillMute
+            // 
+            this.chkVAC2WillMute.AutoSize = true;
+            this.chkVAC2WillMute.Image = null;
+            this.chkVAC2WillMute.Location = new System.Drawing.Point(31, 122);
+            this.chkVAC2WillMute.Name = "chkVAC2WillMute";
+            this.chkVAC2WillMute.Size = new System.Drawing.Size(210, 17);
+            this.chkVAC2WillMute.TabIndex = 96;
+            this.chkVAC2WillMute.Text = "Mute will mute VAC 2 + TCI Receiver 2";
+            this.chkVAC2WillMute.UseVisualStyleBackColor = true;
+            this.chkVAC2WillMute.CheckedChanged += new System.EventHandler(this.chkVAC2WillMute_CheckedChanged);
+            // 
             // groupBoxTS29
             // 
             this.groupBoxTS29.Controls.Add(this.chkLinkIfCtrlHeld);
@@ -30133,6 +30122,18 @@
             this.toolTip1.SetToolTip(this.chkDisableRearSpeakerJacksAudioAmplifier, "Disable the internal audio amplifer. This is only available on 7000/8000\'s");
             this.chkDisableRearSpeakerJacksAudioAmplifier.UseVisualStyleBackColor = true;
             this.chkDisableRearSpeakerJacksAudioAmplifier.CheckedChanged += new System.EventHandler(this.chkDisableRearSpeakerJacksAudioAmplifier_CheckedChanged);
+            // 
+            // chkVAC1WillMute
+            // 
+            this.chkVAC1WillMute.AutoSize = true;
+            this.chkVAC1WillMute.Image = null;
+            this.chkVAC1WillMute.Location = new System.Drawing.Point(31, 99);
+            this.chkVAC1WillMute.Name = "chkVAC1WillMute";
+            this.chkVAC1WillMute.Size = new System.Drawing.Size(210, 17);
+            this.chkVAC1WillMute.TabIndex = 89;
+            this.chkVAC1WillMute.Text = "Mute will mute VAC 1 + TCI Receiver 1";
+            this.chkVAC1WillMute.UseVisualStyleBackColor = true;
+            this.chkVAC1WillMute.CheckedChanged += new System.EventHandler(this.chkVAC1WillMute_CheckedChanged);
             // 
             // chkNoFadeOverUnderWarning
             // 
@@ -31926,7 +31927,7 @@
             this.btnRecording_openWaverecordFolder.Selectable = true;
             this.btnRecording_openWaverecordFolder.Size = new System.Drawing.Size(100, 45);
             this.btnRecording_openWaverecordFolder.TabIndex = 9;
-            this.btnRecording_openWaverecordFolder.Text = "Open Wave Record Filder";
+            this.btnRecording_openWaverecordFolder.Text = "Open Wave Record Folder";
             this.toolTip1.SetToolTip(this.btnRecording_openWaverecordFolder, "Opens up the folder used bu the OtherButton Wave Record button");
             this.btnRecording_openWaverecordFolder.UseVisualStyleBackColor = true;
             this.btnRecording_openWaverecordFolder.Click += new System.EventHandler(this.btnRecording_openWaverecordFolder_Click);
@@ -59011,6 +59012,7 @@
             this.radTCITXchannel_both.Text = "Both";
             this.toolTip1.SetToolTip(this.radTCITXchannel_both, "Use both channels of the inbound TCI audio stream (default)");
             this.radTCITXchannel_both.UseVisualStyleBackColor = true;
+            this.radTCITXchannel_both.CheckedChanged += new System.EventHandler(this.radTCITXchannel_CheckedChanged);
             // 
             // radTCITXchannel_R
             // 
@@ -59023,6 +59025,7 @@
             this.radTCITXchannel_R.Text = "R";
             this.toolTip1.SetToolTip(this.radTCITXchannel_R, "Use the right channel of the inbound TCI audio stream");
             this.radTCITXchannel_R.UseVisualStyleBackColor = true;
+            this.radTCITXchannel_R.CheckedChanged += new System.EventHandler(this.radTCITXchannel_CheckedChanged);
             // 
             // radTCITXchannel_L
             // 
@@ -65878,7 +65881,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.grpWaveRecordItem);
             this.tabPage1.Controls.Add(this.grpHistoryItem);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -65887,223 +65889,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "history";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // grpWaveRecordItem
-            // 
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollHover);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollThumb);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollTrack);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordDelete);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordStop);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordPlay);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonHover);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonBorder);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonFill);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordText);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRow);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBorder);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBack);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRadius);
-            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordHeightRatio);
-            this.grpWaveRecordItem.Controls.Add(this.btnWaveRecord_reset_layout);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_hover);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_thumb);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_track);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_delete);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_stop);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_play);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_hover);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_border);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_fill);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_text);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_row);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_border);
-            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_back);
-            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_tx);
-            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_rx);
-            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_radius);
-            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_vertical_ratio);
-            this.grpWaveRecordItem.Location = new System.Drawing.Point(349, 14);
-            this.grpWaveRecordItem.Name = "grpWaveRecordItem";
-            this.grpWaveRecordItem.Size = new System.Drawing.Size(323, 344);
-            this.grpWaveRecordItem.TabIndex = 111;
-            this.grpWaveRecordItem.TabStop = false;
-            this.grpWaveRecordItem.Text = "WaveList Player";
-            this.grpWaveRecordItem.Visible = false;
-            // 
-            // lblWaveRecordScrollHover
-            // 
-            this.lblWaveRecordScrollHover.Image = null;
-            this.lblWaveRecordScrollHover.Location = new System.Drawing.Point(10, 220);
-            this.lblWaveRecordScrollHover.Name = "lblWaveRecordScrollHover";
-            this.lblWaveRecordScrollHover.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordScrollHover.TabIndex = 29;
-            this.lblWaveRecordScrollHover.Text = "Scroll Hover:";
-            this.lblWaveRecordScrollHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordScrollThumb
-            // 
-            this.lblWaveRecordScrollThumb.Image = null;
-            this.lblWaveRecordScrollThumb.Location = new System.Drawing.Point(164, 196);
-            this.lblWaveRecordScrollThumb.Name = "lblWaveRecordScrollThumb";
-            this.lblWaveRecordScrollThumb.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordScrollThumb.TabIndex = 28;
-            this.lblWaveRecordScrollThumb.Text = "Scroll Thumb:";
-            this.lblWaveRecordScrollThumb.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordScrollTrack
-            // 
-            this.lblWaveRecordScrollTrack.Image = null;
-            this.lblWaveRecordScrollTrack.Location = new System.Drawing.Point(10, 196);
-            this.lblWaveRecordScrollTrack.Name = "lblWaveRecordScrollTrack";
-            this.lblWaveRecordScrollTrack.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordScrollTrack.TabIndex = 27;
-            this.lblWaveRecordScrollTrack.Text = "Scroll Track:";
-            this.lblWaveRecordScrollTrack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordDelete
-            // 
-            this.lblWaveRecordDelete.Image = null;
-            this.lblWaveRecordDelete.Location = new System.Drawing.Point(164, 172);
-            this.lblWaveRecordDelete.Name = "lblWaveRecordDelete";
-            this.lblWaveRecordDelete.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordDelete.TabIndex = 26;
-            this.lblWaveRecordDelete.Text = "Trash Icon:";
-            this.lblWaveRecordDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordStop
-            // 
-            this.lblWaveRecordStop.Image = null;
-            this.lblWaveRecordStop.Location = new System.Drawing.Point(10, 172);
-            this.lblWaveRecordStop.Name = "lblWaveRecordStop";
-            this.lblWaveRecordStop.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordStop.TabIndex = 25;
-            this.lblWaveRecordStop.Text = "Stop Icon:";
-            this.lblWaveRecordStop.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordPlay
-            // 
-            this.lblWaveRecordPlay.Image = null;
-            this.lblWaveRecordPlay.Location = new System.Drawing.Point(164, 148);
-            this.lblWaveRecordPlay.Name = "lblWaveRecordPlay";
-            this.lblWaveRecordPlay.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordPlay.TabIndex = 24;
-            this.lblWaveRecordPlay.Text = "Play Icon:";
-            this.lblWaveRecordPlay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordButtonHover
-            // 
-            this.lblWaveRecordButtonHover.Image = null;
-            this.lblWaveRecordButtonHover.Location = new System.Drawing.Point(10, 148);
-            this.lblWaveRecordButtonHover.Name = "lblWaveRecordButtonHover";
-            this.lblWaveRecordButtonHover.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordButtonHover.TabIndex = 23;
-            this.lblWaveRecordButtonHover.Text = "Button Hover:";
-            this.lblWaveRecordButtonHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordButtonBorder
-            // 
-            this.lblWaveRecordButtonBorder.Image = null;
-            this.lblWaveRecordButtonBorder.Location = new System.Drawing.Point(164, 124);
-            this.lblWaveRecordButtonBorder.Name = "lblWaveRecordButtonBorder";
-            this.lblWaveRecordButtonBorder.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordButtonBorder.TabIndex = 22;
-            this.lblWaveRecordButtonBorder.Text = "Button Border:";
-            this.lblWaveRecordButtonBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordButtonFill
-            // 
-            this.lblWaveRecordButtonFill.Image = null;
-            this.lblWaveRecordButtonFill.Location = new System.Drawing.Point(10, 124);
-            this.lblWaveRecordButtonFill.Name = "lblWaveRecordButtonFill";
-            this.lblWaveRecordButtonFill.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordButtonFill.TabIndex = 21;
-            this.lblWaveRecordButtonFill.Text = "Button Fill:";
-            this.lblWaveRecordButtonFill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordText
-            // 
-            this.lblWaveRecordText.Image = null;
-            this.lblWaveRecordText.Location = new System.Drawing.Point(164, 100);
-            this.lblWaveRecordText.Name = "lblWaveRecordText";
-            this.lblWaveRecordText.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordText.TabIndex = 20;
-            this.lblWaveRecordText.Text = "Text:";
-            this.lblWaveRecordText.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordRow
-            // 
-            this.lblWaveRecordRow.Image = null;
-            this.lblWaveRecordRow.Location = new System.Drawing.Point(10, 100);
-            this.lblWaveRecordRow.Name = "lblWaveRecordRow";
-            this.lblWaveRecordRow.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordRow.TabIndex = 19;
-            this.lblWaveRecordRow.Text = "Row:";
-            this.lblWaveRecordRow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordBorder
-            // 
-            this.lblWaveRecordBorder.Image = null;
-            this.lblWaveRecordBorder.Location = new System.Drawing.Point(164, 76);
-            this.lblWaveRecordBorder.Name = "lblWaveRecordBorder";
-            this.lblWaveRecordBorder.Size = new System.Drawing.Size(102, 16);
-            this.lblWaveRecordBorder.TabIndex = 18;
-            this.lblWaveRecordBorder.Text = "Row Border:";
-            this.lblWaveRecordBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordBack
-            // 
-            this.lblWaveRecordBack.Image = null;
-            this.lblWaveRecordBack.Location = new System.Drawing.Point(10, 76);
-            this.lblWaveRecordBack.Name = "lblWaveRecordBack";
-            this.lblWaveRecordBack.Size = new System.Drawing.Size(104, 16);
-            this.lblWaveRecordBack.TabIndex = 17;
-            this.lblWaveRecordBack.Text = "Background:";
-            this.lblWaveRecordBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordRadius
-            // 
-            this.lblWaveRecordRadius.Image = null;
-            this.lblWaveRecordRadius.Location = new System.Drawing.Point(57, 40);
-            this.lblWaveRecordRadius.Name = "lblWaveRecordRadius";
-            this.lblWaveRecordRadius.Size = new System.Drawing.Size(56, 16);
-            this.lblWaveRecordRadius.TabIndex = 30;
-            this.lblWaveRecordRadius.Text = "Radius:";
-            this.lblWaveRecordRadius.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblWaveRecordHeightRatio
-            // 
-            this.lblWaveRecordHeightRatio.Image = null;
-            this.lblWaveRecordHeightRatio.Location = new System.Drawing.Point(33, 18);
-            this.lblWaveRecordHeightRatio.Name = "lblWaveRecordHeightRatio";
-            this.lblWaveRecordHeightRatio.Size = new System.Drawing.Size(80, 16);
-            this.lblWaveRecordHeightRatio.TabIndex = 16;
-            this.lblWaveRecordHeightRatio.Text = "Height Ratio:";
-            this.lblWaveRecordHeightRatio.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // chkWaveRecord_fade_tx
-            // 
-            this.chkWaveRecord_fade_tx.AutoSize = true;
-            this.chkWaveRecord_fade_tx.Image = null;
-            this.chkWaveRecord_fade_tx.Location = new System.Drawing.Point(205, 39);
-            this.chkWaveRecord_fade_tx.Name = "chkWaveRecord_fade_tx";
-            this.chkWaveRecord_fade_tx.Size = new System.Drawing.Size(82, 17);
-            this.chkWaveRecord_fade_tx.TabIndex = 2;
-            this.chkWaveRecord_fade_tx.Text = "Fade on TX";
-            this.chkWaveRecord_fade_tx.UseVisualStyleBackColor = true;
-            this.chkWaveRecord_fade_tx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
-            // 
-            // chkWaveRecord_fade_rx
-            // 
-            this.chkWaveRecord_fade_rx.AutoSize = true;
-            this.chkWaveRecord_fade_rx.Image = null;
-            this.chkWaveRecord_fade_rx.Location = new System.Drawing.Point(205, 18);
-            this.chkWaveRecord_fade_rx.Name = "chkWaveRecord_fade_rx";
-            this.chkWaveRecord_fade_rx.Size = new System.Drawing.Size(83, 17);
-            this.chkWaveRecord_fade_rx.TabIndex = 1;
-            this.chkWaveRecord_fade_rx.Text = "Fade on RX";
-            this.chkWaveRecord_fade_rx.UseVisualStyleBackColor = true;
-            this.chkWaveRecord_fade_rx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
             // 
             // grpHistoryItem
             // 
@@ -70036,12 +69821,230 @@
             // 
             // tabPage15
             // 
+            this.tabPage15.Controls.Add(this.grpWaveRecordItem);
             this.tabPage15.Location = new System.Drawing.Point(4, 22);
             this.tabPage15.Name = "tabPage15";
             this.tabPage15.Size = new System.Drawing.Size(726, 463);
             this.tabPage15.TabIndex = 13;
-            this.tabPage15.Text = "blank";
+            this.tabPage15.Text = "wavelistplayer";
             this.tabPage15.UseVisualStyleBackColor = true;
+            // 
+            // grpWaveRecordItem
+            // 
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollHover);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollThumb);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordScrollTrack);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordDelete);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordStop);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordPlay);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonHover);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonBorder);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordButtonFill);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordText);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRow);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBorder);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordBack);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordRadius);
+            this.grpWaveRecordItem.Controls.Add(this.lblWaveRecordHeightRatio);
+            this.grpWaveRecordItem.Controls.Add(this.btnWaveRecord_reset_layout);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_hover);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_thumb);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_scroll_track);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_delete);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_stop);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_play);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_hover);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_border);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_button_fill);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_text);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_row);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_border);
+            this.grpWaveRecordItem.Controls.Add(this.clrbtnWaveRecord_back);
+            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_tx);
+            this.grpWaveRecordItem.Controls.Add(this.chkWaveRecord_fade_rx);
+            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_radius);
+            this.grpWaveRecordItem.Controls.Add(this.nudWaveRecord_vertical_ratio);
+            this.grpWaveRecordItem.Location = new System.Drawing.Point(26, 24);
+            this.grpWaveRecordItem.Name = "grpWaveRecordItem";
+            this.grpWaveRecordItem.Size = new System.Drawing.Size(323, 344);
+            this.grpWaveRecordItem.TabIndex = 111;
+            this.grpWaveRecordItem.TabStop = false;
+            this.grpWaveRecordItem.Text = "WaveList Player";
+            this.grpWaveRecordItem.Visible = false;
+            // 
+            // lblWaveRecordScrollHover
+            // 
+            this.lblWaveRecordScrollHover.Image = null;
+            this.lblWaveRecordScrollHover.Location = new System.Drawing.Point(10, 220);
+            this.lblWaveRecordScrollHover.Name = "lblWaveRecordScrollHover";
+            this.lblWaveRecordScrollHover.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordScrollHover.TabIndex = 29;
+            this.lblWaveRecordScrollHover.Text = "Scroll Hover:";
+            this.lblWaveRecordScrollHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordScrollThumb
+            // 
+            this.lblWaveRecordScrollThumb.Image = null;
+            this.lblWaveRecordScrollThumb.Location = new System.Drawing.Point(164, 196);
+            this.lblWaveRecordScrollThumb.Name = "lblWaveRecordScrollThumb";
+            this.lblWaveRecordScrollThumb.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordScrollThumb.TabIndex = 28;
+            this.lblWaveRecordScrollThumb.Text = "Scroll Thumb:";
+            this.lblWaveRecordScrollThumb.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordScrollTrack
+            // 
+            this.lblWaveRecordScrollTrack.Image = null;
+            this.lblWaveRecordScrollTrack.Location = new System.Drawing.Point(10, 196);
+            this.lblWaveRecordScrollTrack.Name = "lblWaveRecordScrollTrack";
+            this.lblWaveRecordScrollTrack.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordScrollTrack.TabIndex = 27;
+            this.lblWaveRecordScrollTrack.Text = "Scroll Track:";
+            this.lblWaveRecordScrollTrack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordDelete
+            // 
+            this.lblWaveRecordDelete.Image = null;
+            this.lblWaveRecordDelete.Location = new System.Drawing.Point(164, 172);
+            this.lblWaveRecordDelete.Name = "lblWaveRecordDelete";
+            this.lblWaveRecordDelete.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordDelete.TabIndex = 26;
+            this.lblWaveRecordDelete.Text = "Trash Icon:";
+            this.lblWaveRecordDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordStop
+            // 
+            this.lblWaveRecordStop.Image = null;
+            this.lblWaveRecordStop.Location = new System.Drawing.Point(10, 172);
+            this.lblWaveRecordStop.Name = "lblWaveRecordStop";
+            this.lblWaveRecordStop.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordStop.TabIndex = 25;
+            this.lblWaveRecordStop.Text = "Stop Icon:";
+            this.lblWaveRecordStop.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordPlay
+            // 
+            this.lblWaveRecordPlay.Image = null;
+            this.lblWaveRecordPlay.Location = new System.Drawing.Point(164, 148);
+            this.lblWaveRecordPlay.Name = "lblWaveRecordPlay";
+            this.lblWaveRecordPlay.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordPlay.TabIndex = 24;
+            this.lblWaveRecordPlay.Text = "Play Icon:";
+            this.lblWaveRecordPlay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonHover
+            // 
+            this.lblWaveRecordButtonHover.Image = null;
+            this.lblWaveRecordButtonHover.Location = new System.Drawing.Point(10, 148);
+            this.lblWaveRecordButtonHover.Name = "lblWaveRecordButtonHover";
+            this.lblWaveRecordButtonHover.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordButtonHover.TabIndex = 23;
+            this.lblWaveRecordButtonHover.Text = "Button Hover:";
+            this.lblWaveRecordButtonHover.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonBorder
+            // 
+            this.lblWaveRecordButtonBorder.Image = null;
+            this.lblWaveRecordButtonBorder.Location = new System.Drawing.Point(164, 124);
+            this.lblWaveRecordButtonBorder.Name = "lblWaveRecordButtonBorder";
+            this.lblWaveRecordButtonBorder.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordButtonBorder.TabIndex = 22;
+            this.lblWaveRecordButtonBorder.Text = "Button Border:";
+            this.lblWaveRecordButtonBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordButtonFill
+            // 
+            this.lblWaveRecordButtonFill.Image = null;
+            this.lblWaveRecordButtonFill.Location = new System.Drawing.Point(10, 124);
+            this.lblWaveRecordButtonFill.Name = "lblWaveRecordButtonFill";
+            this.lblWaveRecordButtonFill.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordButtonFill.TabIndex = 21;
+            this.lblWaveRecordButtonFill.Text = "Button Fill:";
+            this.lblWaveRecordButtonFill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordText
+            // 
+            this.lblWaveRecordText.Image = null;
+            this.lblWaveRecordText.Location = new System.Drawing.Point(164, 100);
+            this.lblWaveRecordText.Name = "lblWaveRecordText";
+            this.lblWaveRecordText.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordText.TabIndex = 20;
+            this.lblWaveRecordText.Text = "Text:";
+            this.lblWaveRecordText.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordRow
+            // 
+            this.lblWaveRecordRow.Image = null;
+            this.lblWaveRecordRow.Location = new System.Drawing.Point(10, 100);
+            this.lblWaveRecordRow.Name = "lblWaveRecordRow";
+            this.lblWaveRecordRow.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordRow.TabIndex = 19;
+            this.lblWaveRecordRow.Text = "Row:";
+            this.lblWaveRecordRow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordBorder
+            // 
+            this.lblWaveRecordBorder.Image = null;
+            this.lblWaveRecordBorder.Location = new System.Drawing.Point(164, 76);
+            this.lblWaveRecordBorder.Name = "lblWaveRecordBorder";
+            this.lblWaveRecordBorder.Size = new System.Drawing.Size(102, 16);
+            this.lblWaveRecordBorder.TabIndex = 18;
+            this.lblWaveRecordBorder.Text = "Row Border:";
+            this.lblWaveRecordBorder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordBack
+            // 
+            this.lblWaveRecordBack.Image = null;
+            this.lblWaveRecordBack.Location = new System.Drawing.Point(10, 76);
+            this.lblWaveRecordBack.Name = "lblWaveRecordBack";
+            this.lblWaveRecordBack.Size = new System.Drawing.Size(104, 16);
+            this.lblWaveRecordBack.TabIndex = 17;
+            this.lblWaveRecordBack.Text = "Background:";
+            this.lblWaveRecordBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordRadius
+            // 
+            this.lblWaveRecordRadius.Image = null;
+            this.lblWaveRecordRadius.Location = new System.Drawing.Point(57, 40);
+            this.lblWaveRecordRadius.Name = "lblWaveRecordRadius";
+            this.lblWaveRecordRadius.Size = new System.Drawing.Size(56, 16);
+            this.lblWaveRecordRadius.TabIndex = 30;
+            this.lblWaveRecordRadius.Text = "Radius:";
+            this.lblWaveRecordRadius.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblWaveRecordHeightRatio
+            // 
+            this.lblWaveRecordHeightRatio.Image = null;
+            this.lblWaveRecordHeightRatio.Location = new System.Drawing.Point(33, 18);
+            this.lblWaveRecordHeightRatio.Name = "lblWaveRecordHeightRatio";
+            this.lblWaveRecordHeightRatio.Size = new System.Drawing.Size(80, 16);
+            this.lblWaveRecordHeightRatio.TabIndex = 16;
+            this.lblWaveRecordHeightRatio.Text = "Height Ratio:";
+            this.lblWaveRecordHeightRatio.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkWaveRecord_fade_tx
+            // 
+            this.chkWaveRecord_fade_tx.AutoSize = true;
+            this.chkWaveRecord_fade_tx.Image = null;
+            this.chkWaveRecord_fade_tx.Location = new System.Drawing.Point(205, 39);
+            this.chkWaveRecord_fade_tx.Name = "chkWaveRecord_fade_tx";
+            this.chkWaveRecord_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkWaveRecord_fade_tx.TabIndex = 2;
+            this.chkWaveRecord_fade_tx.Text = "Fade on TX";
+            this.chkWaveRecord_fade_tx.UseVisualStyleBackColor = true;
+            this.chkWaveRecord_fade_tx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
+            // 
+            // chkWaveRecord_fade_rx
+            // 
+            this.chkWaveRecord_fade_rx.AutoSize = true;
+            this.chkWaveRecord_fade_rx.Image = null;
+            this.chkWaveRecord_fade_rx.Location = new System.Drawing.Point(205, 18);
+            this.chkWaveRecord_fade_rx.Name = "chkWaveRecord_fade_rx";
+            this.chkWaveRecord_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkWaveRecord_fade_rx.TabIndex = 1;
+            this.chkWaveRecord_fade_rx.Text = "Fade on RX";
+            this.chkWaveRecord_fade_rx.UseVisualStyleBackColor = true;
+            this.chkWaveRecord_fade_rx.CheckedChanged += new System.EventHandler(this.waveRecordSettingControlChanged);
             // 
             // tmrLedValid
             // 
@@ -72418,8 +72421,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).EndInit();
             this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.grpWaveRecordItem.ResumeLayout(false);
-            this.grpWaveRecordItem.PerformLayout();
             this.grpHistoryItem.ResumeLayout(false);
             this.grpHistoryItem.PerformLayout();
             this.groupBoxTS46.ResumeLayout(false);
@@ -72482,6 +72483,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_high)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_max)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItem_custom_min)).EndInit();
+            this.tabPage15.ResumeLayout(false);
+            this.grpWaveRecordItem.ResumeLayout(false);
+            this.grpWaveRecordItem.PerformLayout();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();

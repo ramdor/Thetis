@@ -35451,6 +35451,32 @@ namespace Thetis
         {
             get { return chkTCIsendInitialStateOnConnect.Checked; }
         }
+        public bool TCISwapIQ
+        {
+            get { return chkTCISwapIQ.Checked; }
+        }
+        public bool TCIAlwaysStreamIQ
+        {
+            get { return chkTCIAlwaysStreamIQ.Checked; }
+        }
+        public TCITxStereoInputMode TCITXInputChannel
+        {
+            get
+            {
+                if (radTCITXchannel_L.Checked)
+                {
+                    return TCITxStereoInputMode.Left;
+                }
+                else if (radTCITXchannel_R.Checked)
+                {
+                    return TCITxStereoInputMode.Right;
+                }
+                else
+                {
+                    return TCITxStereoInputMode.Both;
+                }
+            }
+        }
 
         private void comboAPF_type_SelectedIndexChanged(object sender, EventArgs e)
         {

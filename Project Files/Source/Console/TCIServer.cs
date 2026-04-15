@@ -276,7 +276,7 @@ mw0lge@grange-lane.co.uk
 //vfo: 1,0,14027329;
 //vfo: 1,1,14027329;
 //tx_frequency: 7070468;
-//tx_frequency_thetis: 7070468,b40m,false,false;
+//tx_frequency_thetis: 7070468,b40m,false,false;    /// THIS HAS CHANGED TO tx_frequency_ex as of 2.10.3.14
 //modulation: 0,DIGU;
 //modulation: 1,CWU;
 //rx_filter_band: 0,0,3000;
@@ -1110,13 +1110,6 @@ namespace Thetis
 			sendMute(consoleThreadSafe.MUT || (consoleThreadSafe.RX2Enabled && consoleThreadSafe.MUT2));
 			sendMuteRX(rx - 1, newState);
         }
-        public void NrChanged(int rx, int newNR)
-        {
-            if (m_disconnected) return;
-            bool enabled = newNR > 0;
-            sendNrEnable(rx - 1, enabled, false, newNR);
-            sendNrEnable(rx - 1, enabled, true, newNR);
-        }
         public void AnfChanged(int rx, bool newState)
         {
             if (m_disconnected) return;
@@ -1199,7 +1192,7 @@ namespace Thetis
             if (m_disconnected) return;
 
             int attenuation = preampModeToAttenuation(preamp_mode);
-            sendRxPreampAttEx(rx - 1, attenuation);
+            sendRxPreampAttEx(rx - 1, -attenuation);
         }
         public void RxStepAttEnabledChanged(int rx, bool enabled)
         {
@@ -1260,10 +1253,19 @@ namespace Thetis
             if (m_disconnected) return;
             sendCallsignSend(callsign);
         }
-        public void NbChanged(int rx, int newNb)
+        public void NBChanged(int rx, int newNB)
         {
             if (m_disconnected) return;
-            sendRxNbEnable(rx - 1, newNb == 1);
+            bool enabled = newNB > 0;
+            sendNBEnable(rx - 1, enabled, false, newNB);
+            sendNBEnable(rx - 1, enabled, true, newNB);
+        }
+        public void NRChanged(int rx, int newNR)
+        {
+            if (m_disconnected) return;
+            bool enabled = newNR > 0;
+            sendNREnable(rx - 1, enabled, false, newNR);
+            sendNREnable(rx - 1, enabled, true, newNR);
         }
         public void BinChanged(int rx, bool newState)
         {
@@ -1646,7 +1648,7 @@ namespace Thetis
                         return command + ":" + args[0];
                     break;
                 case "tx_frequency":
-                case "tx_frequency_thetis":
+                case "tx_frequency_ex":
                 case "volume":
                     return command;
             }
@@ -1916,11 +1918,6 @@ namespace Thetis
         private void sendXITOffset(int rx, int offset)
         {
             string s = "xit_offset:" + rx.ToString() + "," + offset.ToString() + ";";
-            sendTextFrame(s);
-        }
-        private void sendRxNbEnable(int rx, bool enabled)
-        {
-            string s = "rx_nb_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
         private void sendRxBinEnable(int rx, bool enabled)
@@ -2216,7 +2213,7 @@ namespace Thetis
         }
         private void sendRxPreampAttEx(int rx, int attenuation)
         {
-            string s = "rx_preamp_att_ex:" + rx.ToString() + "," + Math.Abs(attenuation).ToString(CultureInfo.InvariantCulture) + ";";
+            string s = "rx_preamp_att_ex:" + rx.ToString() + "," + attenuation.ToString(CultureInfo.InvariantCulture) + ";";
             sendTextFrame(s);
         }
         private void sendRxStepAttEnabledEx(int rx, bool enabled)
@@ -2284,12 +2281,12 @@ namespace Thetis
             sendTextFrame(s.ToLower());
 
             // bespoke TCI command for anan to make life easier determining active TX frequency
-            // format is : tx_frequency_thetis:3700000,b80m,false,false;
+            // format is : tx_frequency_ex:3700000,b80m,false,false;
             // arg1 freq (long)
             // arg2 band b80m, b40m etc
             // arg3 rx2 enabled  true/false
             // arg4 tx on vfoB  true/false
-            s = $"tx_frequency_thetis:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
+            s = $"tx_frequency_ex:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
             sendTextFrame(s.ToLower());
         }
         private void sendTunePower(int rx, int drive)
@@ -2415,7 +2412,7 @@ namespace Thetis
                 case PreampMode.SA_MINUS10:
                     return 10;
                 case PreampMode.SA_MINUS20:
-                    return 20;
+                    return -20;
                 case PreampMode.SA_MINUS30:
                     return 30;
                 default:
@@ -2454,14 +2451,25 @@ namespace Thetis
             sendRXEnable(0, !consoleThreadSafe.MOX);
 			sendRXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
 
-            int rx1nr = consoleThreadSafe.GetSelectedNR(1);
-            int rx2nr = consoleThreadSafe.GetSelectedNR(2);
-            sendNrEnable(0, rx1nr > 0, false, rx1nr);
-            sendNrEnable(1, rx2nr > 0, false, rx2nr);
-            sendNrEnable(0, rx1nr > 0, true, rx1nr);
-            sendNrEnable(1, rx2nr > 0, true, rx2nr);
-            sendRxNbEnable(0, consoleThreadSafe.GetSelectedNB(1) == 1);
-            sendRxNbEnable(1, consoleThreadSafe.GetSelectedNB(2) == 1);
+            //NR
+            for (int rx = 1; rx <= 2; rx++)
+            {
+                int nr = consoleThreadSafe.GetSelectedNR(rx);
+                int zeroBaseRx = rx - 1;
+
+                sendNREnable(zeroBaseRx, nr > 0, false, nr);
+                sendNREnable(zeroBaseRx, nr > 0, true, nr);
+            }
+            //NB
+            for (int rx = 1; rx <= 2; rx++)
+            {
+                int nb = consoleThreadSafe.GetSelectedNB(rx);
+                int zeroBaseRx = rx - 1;
+
+                sendNBEnable(zeroBaseRx, nb > 0, false, nb);
+                sendNBEnable(zeroBaseRx, nb > 0, true, nb);
+            }
+
             sendRxBinEnable(0, consoleThreadSafe.GetBin(1));
             sendRxBinEnable(1, consoleThreadSafe.GetBin(2));
 
@@ -2491,8 +2499,8 @@ namespace Thetis
             sendRxStepAttEnabledEx(1, consoleThreadSafe.RX2StepAttEnabled);
             sendRxStepAttEx(0, consoleThreadSafe.RX1AttenuatorData);
             sendRxStepAttEx(1, consoleThreadSafe.RX2AttenuatorData);
-            sendRxPreampAttEx(0, preampModeToAttenuation(consoleThreadSafe.RX1PreampMode));
-            sendRxPreampAttEx(1, preampModeToAttenuation(consoleThreadSafe.RX2PreampMode));
+            sendRxPreampAttEx(0, -preampModeToAttenuation(consoleThreadSafe.RX1PreampMode));
+            sendRxPreampAttEx(1, -preampModeToAttenuation(consoleThreadSafe.RX2PreampMode));
             sendAgcMode(0, consoleThreadSafe.GetAGCMode(1));
             sendAgcMode(1, consoleThreadSafe.GetAGCMode(2));
             sendAgcGain(0, consoleThreadSafe.GetAgcT(1));
@@ -3262,22 +3270,7 @@ namespace Thetis
                 sendXITOffset(rx, consoleThreadSafe.XITValue);
             }
         }
-        private void handleRxNbEnable(string[] args)
-        {
-            if (args == null || args.Length < 1 || args.Length > 2) return;
-            if (!int.TryParse(args[0], out int rx)) return;
-            if (rx < 0 || rx > 1) return;
 
-            if (args.Length == 1)
-            {
-                sendRxNbEnable(rx, consoleThreadSafe.GetSelectedNB(rx + 1) == 1);
-            }
-            else
-            {
-                if (!bool.TryParse(args[1], out bool enabled)) return;
-                consoleThreadSafe.SetSelectedNB(rx + 1, enabled ? 1 : 0);
-            }
-        }
         private void handleRxBinEnable(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -4570,7 +4563,7 @@ namespace Thetis
 			setTxSensorsEnabled(enabled, intervalMs, enabled);
 		}
         //
-        private void sendNrEnable(int rx, bool enabled, bool is_extended, int nr)
+        private void sendNREnable(int rx, bool enabled, bool is_extended, int nr)
         {
             string s;
             if(is_extended)
@@ -4580,13 +4573,17 @@ namespace Thetis
 
             sendTextFrame(s);
         }
-        private void sendAnfEnable(int rx, bool enabled)
+        private void sendNBEnable(int rx, bool enabled, bool is_extended, int nb)
         {
-            string s = "rx_anf_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+            string s;
+            if (is_extended)
+                s = "rx_nb_enable_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + "," + nb.ToString() + ";";
+            else
+                s = "rx_nb_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
 
             sendTextFrame(s);
         }
-        private void handleNrEnable(string[] args, bool is_extended)
+        private void handleNREnable(string[] args, bool is_extended)
         {
             if (args == null || args.Length < 1 || is_extended && args.Length < 3) return;
             if (!int.TryParse(args[0], out int rx)) return;
@@ -4599,15 +4596,15 @@ namespace Thetis
                 //get
                 nr = consoleThreadSafe.GetSelectedNR(rx + 1);
                 enable = nr > 0;
-                sendNrEnable(rx, enable, false, nr);
-                sendNrEnable(rx, enable, true, nr);
+                sendNREnable(rx, enable, false, nr);
+                sendNREnable(rx, enable, true, nr);
             }
             else
             {
                 //set
                 if (!bool.TryParse(args[1], out enable)) return;
                 if (is_extended && !int.TryParse(args[2], out nr)) return;
-                if (nr < 1 || nr > 4) return;
+                if (nr < 0 || nr > 4) return;
 
                 if (enable)
                 {
@@ -4616,8 +4613,47 @@ namespace Thetis
                 else
                 {
                     consoleThreadSafe.SelectNR(rx + 1, false, 0);
-                }                
+                }
             }
+        }
+        private void handleRxNBEnable(string[] args, bool is_extended)
+        {
+            if (args == null || args.Length < 1 || is_extended && args.Length < 3) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            int nb = 1;
+            bool enable = false;
+            if (args.Length == 1)
+            {
+                //get
+                nb = consoleThreadSafe.GetSelectedNB(rx + 1);
+                enable = nb > 0;
+                sendNBEnable(rx, enable, false, nb);
+                sendNBEnable(rx, enable, true, nb);
+            }
+            else
+            {
+                //set
+                if (!bool.TryParse(args[1], out enable)) return;
+                if (is_extended && !int.TryParse(args[2], out nb)) return;
+                if (nb < 0 || nb > 2) return;
+
+                if (enable)
+                {
+                    consoleThreadSafe.SetSelectedNB(rx + 1, is_extended ? nb : 1);
+                }
+                else
+                {
+                    consoleThreadSafe.SetSelectedNB(rx + 1, 0);
+                }
+            }
+        }
+        private void sendAnfEnable(int rx, bool enabled)
+        {
+            string s = "rx_anf_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+
+            sendTextFrame(s);
         }
         private void handleAnfEnable(string[] args)
         {
@@ -4792,7 +4828,7 @@ namespace Thetis
             else
             {
                 if (!int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int attenuation)) return;
-                if (attenuation < 0) return;
+                if (attenuation < 0) return; // attenuation is always a +ve value, -ve attenuation would be gain !
 
                 if (rx == 0)
                     consoleThreadSafe.RX1AttenuatorData = attenuation;
@@ -4809,13 +4845,13 @@ namespace Thetis
             if (args.Length == 1)
             {
                 PreampMode mode = rx == 0 ? consoleThreadSafe.RX1PreampMode : consoleThreadSafe.RX2PreampMode;
-                sendRxPreampAttEx(rx, preampModeToAttenuation(mode));
+                sendRxPreampAttEx(rx, -preampModeToAttenuation(mode));
             }
             else
             {
                 if (!int.TryParse(args[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int attenuation)) return;
-                if (attenuation < 0) return;
-                consoleThreadSafe.SetATT(rx + 1, attenuation, Thetis.Console.SetAttMode.PREAMP_MODE);
+                if (attenuation > 0) return;
+                consoleThreadSafe.SetATT(rx + 1, Math.Abs(attenuation), Thetis.Console.SetAttMode.PREAMP_MODE);
             }
         }
         private void handleAgcMode(string[] args)
@@ -5110,9 +5146,6 @@ namespace Thetis
                     case "xit_offset":
                         handleXITOffsetMessage(args);
                         break;
-                    case "rx_nb_enable":
-                        handleRxNbEnable(args);
-                        break;
                     case "rx_bin_enable":
                         handleRxBinEnable(args);
                         break;
@@ -5258,10 +5291,16 @@ namespace Thetis
                         handleTxSensorsEnable(args);
                         break;
                     case "rx_nr_enable":
-                        handleNrEnable(args, false);
+                        handleNREnable(args, false);
                         break;
                     case "rx_nr_enable_ex":
-                        handleNrEnable(args, true);
+                        handleNREnable(args, true);
+                        break;
+                    case "rx_nb_enable":
+                        handleRxNBEnable(args, false);
+                        break;
+                    case "rx_nb_enable_ex":
+                        handleRxNBEnable(args, true);
                         break;
                     case "rx_anf_enable":
                         handleAnfEnable(args);
@@ -6445,6 +6484,10 @@ namespace Thetis
 					m_bEmulateExpertSDR3Protocol = c.SetupForm.EmulateExpertSDR3Protocol;
 
 					_spot_force = c.SetupForm.CWSpotForce;
+
+                    m_bIQSwap = c.SetupForm.TCISwapIQ;
+                    m_bAlwaysStreamIQ = c.SetupForm.TCIAlwaysStreamIQ;
+                    m_txStereoInputMode = c.SetupForm.TCITXInputChannel;
                 }
 				else
 				{
@@ -6457,6 +6500,10 @@ namespace Thetis
 					m_bEmulateSunSDR2Pro = false;
 					m_bEmulateExpertSDR3Protocol = false;
 					_spot_force = TCICWSpotForce.DEFAULT;
+
+                    m_bIQSwap = true;
+                    m_bAlwaysStreamIQ = false;
+                    m_txStereoInputMode = TCITxStereoInputMode.Both;
                 }
 
 				_console = c;
@@ -7273,7 +7320,7 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    socketListener.NrChanged(rx, new_nr);
+                    socketListener.NRChanged(rx, new_nr);
                 }
             }
         }
@@ -7285,7 +7332,7 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    socketListener.NbChanged(rx, new_nb);
+                    socketListener.NBChanged(rx, new_nb);
                 }
             }
         }
