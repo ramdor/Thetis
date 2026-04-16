@@ -5065,6 +5065,36 @@ namespace Thetis
 
             CalibrationChanged(rx);
         }
+
+        private void handleRunCatCommand(string msg)
+        {
+            Debug.Print(msg);
+            int col_pos = msg.IndexOf(':');
+            if (col_pos == -1 || col_pos == msg.Length - 1) return;
+
+            string cat_com = msg.Substring(col_pos + 1);
+            if (string.IsNullOrWhiteSpace(cat_com)) return;
+
+            // single cat command
+            try
+            {
+                // ; will be stripped by parser calling us, lets add it
+                cat_com += ";";
+
+                string ret = consoleThreadSafe.ThreadSafeCatParse(cat_com);
+                if (!string.IsNullOrEmpty(ret))
+                {
+                    ret.Replace(";", "");
+                    string response = $"run_cat_ex:{cat_com},{ret}";
+                    if(response.Right(1) != ";") response += ";";
+                    sendTextFrame(response);
+                }
+            }
+            catch
+            {
+                sendTextFrame($"run_cat_ex:{cat_com},?;");
+            }
+        }
         //
 
         private List<string> splitTextCommands(string msg)
@@ -5429,6 +5459,10 @@ namespace Thetis
                         break;
                     case "calibration_ex":
                         handleCalibration(args); // bespoke thetis cmd to get calibration data
+                        break;
+                    case "run_cat_ex":
+                        // this is special, we send whole of msg and handle it there
+                        handleRunCatCommand(msg);
                         break;
 
                 }
