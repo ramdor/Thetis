@@ -1492,6 +1492,11 @@ namespace Thetis
 			if (m_disconnected) return;
 			sendFilterBand(rx-1, low, high);
         }
+        public void TXFilterBandChanged(int low, int high)
+        {
+            if (m_disconnected) return;
+            sendTXFilterBandEx(low, high);
+        }
 		public void PowerChange(bool oldPower, bool newPower)
         {
 			if (m_disconnected) return;
@@ -1662,6 +1667,7 @@ namespace Thetis
                     if (args.Length >= 1)
                         return command + ":" + args[0];
                     break;
+                case "tx_filter_band_ex":
                 case "tx_frequency":
                 case "tx_frequency_ex":
                 case "volume":
@@ -2413,6 +2419,33 @@ namespace Thetis
 			string s = "rx_filter_band:" + rx.ToString() + "," + low.ToString() + "," + high.ToString() + ";";
 			sendTextFrame(s);
 		}
+        private void normalizeTXFilterBandForSet(ref int low, ref int high)
+        {
+            low = Math.Max(0, low);
+            high = Math.Max(0, high);
+
+            if (low > high)
+            {
+                int tmp = low;
+                low = high;
+                high = tmp;
+            }
+
+            if (high < low + 100)
+                high = low + 100;
+        }
+        private void normalizeTXFilterBandForSend(ref int low, ref int high)
+        {
+            low = Math.Abs(low);
+            high = Math.Abs(high);
+            normalizeTXFilterBandForSet(ref low, ref high);
+        }
+        private void sendTXFilterBandEx(int low, int high)
+        {
+            normalizeTXFilterBandForSend(ref low, ref high);
+            string s = "tx_filter_band_ex:" + low.ToString() + "," + high.ToString() + ";";
+            sendTextFrame(s);
+        }
 		private void sendStartStop(bool bPower)
         {
 			if (bPower)
@@ -2477,6 +2510,7 @@ namespace Thetis
 
             sendFilterBand(0, consoleThreadSafe.RX1FilterLow, consoleThreadSafe.RX1FilterHigh);
             sendFilterBand(1, consoleThreadSafe.RX2FilterLow, consoleThreadSafe.RX2FilterHigh);
+            sendTXFilterBandEx(consoleThreadSafe.TXFilterLow, consoleThreadSafe.TXFilterHigh);
 
             sendRXEnable(0, !consoleThreadSafe.MOX);
 			sendRXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
@@ -4539,6 +4573,25 @@ namespace Thetis
 				}
             }
         }
+        private void handleTXFilterBandEx(string[] args)
+        {
+            if (m_server == null) return;
+            if (args != null && args.Length != 0 && args.Length != 2) return;
+
+            if (args == null || args.Length == 0)
+            {
+                sendTXFilterBandEx(consoleThreadSafe.TXFilterLow, consoleThreadSafe.TXFilterHigh);
+                return;
+            }
+
+            if (!int.TryParse(args[0], out int low)) return;
+            if (!int.TryParse(args[1], out int high)) return;
+
+            normalizeTXFilterBandForSet(ref low, ref high);
+
+            if (consoleThreadSafe.TXFilterLow != low) consoleThreadSafe.TXFilterLow = low;
+            if (consoleThreadSafe.TXFilterHigh != high) consoleThreadSafe.TXFilterHigh = high;
+        }
         private void handleRXEnable(string[] args)
         {
 			int rx = 0;
@@ -5397,6 +5450,9 @@ namespace Thetis
                     case "rx_filter_band":
                         handleRxFilterBand(args);
                         break;
+                    case "tx_filter_band_ex":
+                        handleTXFilterBandEx(args);
+                        break;
                     case "rx_channel_enable":
                         handleRxChannelEnable(args);
                         break;
@@ -5478,6 +5534,9 @@ namespace Thetis
                         break;
                     case "stop":
                         handleStop();
+                        break;
+                    case "tx_filter_band_ex":
+                        handleTXFilterBandEx(null);
                         break;
                     case "set_in_focus":
                         handleSetInFocus();
@@ -6672,6 +6731,7 @@ namespace Thetis
 					console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
 					console.FilterChangedHandlers += OnFilterChanged;
 					console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
+                    console.TXFiltersChangedHandlers += OnTXFiltersChanged;
 					console.PowerChangeHanders += OnPowerChangeHander;
 					console.SplitChangedHandlers += OnSplitChanged;
 					console.TuneChangedHandlers += OnTuneChanged;
@@ -6784,6 +6844,7 @@ namespace Thetis
 					console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
 					console.FilterChangedHandlers -= OnFilterChanged;
 					console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
+                    console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
 					console.PowerChangeHanders -= OnPowerChangeHander;
 					console.SplitChangedHandlers -= OnSplitChanged;
 					console.TuneChangedHandlers -= OnTuneChanged;
@@ -7351,6 +7412,18 @@ namespace Thetis
 				}
 			}
 		}
+        public void OnTXFiltersChanged(int low, int high)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.TXFilterBandChanged(low, high);
+                }
+            }
+        }
 		public void OnPowerChangeHander(bool oldPower, bool newPower)
 		{
 			lock (m_objLocker)

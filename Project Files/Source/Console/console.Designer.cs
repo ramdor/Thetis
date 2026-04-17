@@ -906,10 +906,10 @@
             this.toolStripStatusLabelAndromedaMulti = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Fill = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_PAstatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_N1MM = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatus_PAspacer = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_play_record = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatus_RecordPlay_spacer = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_N1MM = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_TCI = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_CatTCPip = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_CatSerial = new System.Windows.Forms.ToolStripStatusLabel();
@@ -5348,14 +5348,6 @@
             this.toolStripStatusLabel_PAstatus.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripStatusLabel_PAstatus.MouseUp += new System.Windows.Forms.MouseEventHandler(this.toolStripStatusLabel_PAstatus_MouseUp);
             // 
-            // toolStripStatusLabel_N1MM
-            // 
-            resources.ApplyResources(this.toolStripStatusLabel_N1MM, "toolStripStatusLabel_N1MM");
-            this.toolStripStatusLabel_N1MM.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripStatusLabel_N1MM.Image = global::Thetis.Properties.Resources.n1mm;
-            this.toolStripStatusLabel_N1MM.Name = "toolStripStatusLabel_N1MM";
-            this.toolStripStatusLabel_N1MM.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            // 
             // toolStripStatus_PAspacer
             // 
             resources.ApplyResources(this.toolStripStatus_PAspacer, "toolStripStatus_PAspacer");
@@ -5371,6 +5363,14 @@
             // 
             resources.ApplyResources(this.toolStripStatus_RecordPlay_spacer, "toolStripStatus_RecordPlay_spacer");
             this.toolStripStatus_RecordPlay_spacer.Name = "toolStripStatus_RecordPlay_spacer";
+            // 
+            // toolStripStatusLabel_N1MM
+            // 
+            resources.ApplyResources(this.toolStripStatusLabel_N1MM, "toolStripStatusLabel_N1MM");
+            this.toolStripStatusLabel_N1MM.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_N1MM.Image = global::Thetis.Properties.Resources.n1mm;
+            this.toolStripStatusLabel_N1MM.Name = "toolStripStatusLabel_N1MM";
+            this.toolStripStatusLabel_N1MM.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             // 
             // toolStripStatusLabel_TCI
             // 
