@@ -8564,6 +8564,7 @@
             "ANAN-200D",
             "ANAN-7000DLE",
             "ANAN-8000DLE",
+            "ANAN-G1",
             "ANAN-G2",
             "ANAN-G2-1K",
             "ANVELINA-PRO3",

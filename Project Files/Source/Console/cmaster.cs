@@ -592,6 +592,7 @@ namespace Thetis
                                     LoadRouterAll((void*)0, 0, 1, 2, 8, pstreams, pfunction, pcallid);
                                 break;
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN_G1: //N1GP G1 added
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                                 int[] FOUR_DDC_Function = new int[48]
@@ -681,6 +682,7 @@ namespace Thetis
                                     LoadRouterAll((void*)0, 0, 1, /*1*/2, 8, pstreams, pfunction, pcallid); //MW0LGE_21d DUP on top panadaptor (Warren provided info)
                                 break;
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN_G1: //N1GP G1 added
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                                 int[] FOUR_DDC_Function = new int[24]
@@ -802,6 +804,7 @@ namespace Thetis
                                 break;
 
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN_G1: //N1GP G1 added
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                             case HPSDRModel.ANAN10E:
@@ -879,6 +882,7 @@ namespace Thetis
                                 break;
 
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN_G1: //N1GP G1 added
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                             case HPSDRModel.ANAN10E:

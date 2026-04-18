@@ -127,6 +127,7 @@ namespace Thetis
         ANVELINAPRO3,
         HERMESLITE,     //MI0BOT
         REDPITAYA,      //DH1KLM
+        ANAN_G1,        //N1GP G1 added
         LAST
     }
 
@@ -396,6 +397,7 @@ namespace Thetis
         HermesLite = 6,     // MI0BOT
         Saturn = 10,        // ANAN-G2: added G8NJJ
         SaturnMKII = 11,    // ANAN-G2: MKII board?
+        HermesIII = 20,     // ANAN-G1
         Unknown = 999,      // MW0LGE
     }
 
