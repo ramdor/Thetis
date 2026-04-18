@@ -24,6 +24,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	run_cat_ex:PS1;  // will turn the power on
         run_cat_ex:PS0;  // will turn the power off
 	Note, one cat command at a time, one ; to terminate the TCI message
+- [add] ApacheLabs ANAN-G1 model added
 - [change] TCI emulate ExpertElectroncsSDR3 selected as default for a new db/install. JTDX/WSJT-X will now send TCI audio into Thetis with this option enabled. Turn it on if you are not getting any TX TCI audio
 - [change] ASIO Avid Driver (AVID Pro Tools) will be black listed by portaudio as it was causing issues, see here https://discord.com/channels/1271453528656969789/1491198252593315940 . As a result it will not be able to be used by Thetis
 - [change] portaudio updated to commit 375345a - Apr 10, 2026
