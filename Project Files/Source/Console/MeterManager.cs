@@ -226,6 +226,7 @@ namespace Thetis
         DIAL_DISPLAY,
         CUSTOM_METER_BAR,
         OTHER_BUTTONS,
+        WAVE_RECORD,
         VOICE_RECORD_PLAY_BUTTONS,
         ACG_MAX_MAG,
         LAST
@@ -2192,6 +2193,7 @@ namespace Thetis
                 case MeterType.DIAL_DISPLAY: return 2;
                 case MeterType.CUSTOM_METER_BAR: return 2;
                 case MeterType.OTHER_BUTTONS: return 2;
+                case MeterType.WAVE_RECORD: return 2;
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS: return 2;
 
                 case MeterType.ACG_MAX_MAG: return 0;
@@ -2249,6 +2251,7 @@ namespace Thetis
                 case MeterType.CUSTOM_METER_BAR: return "Custom Meter Bar";
                 case MeterType.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
                 case MeterType.OTHER_BUTTONS: return "Other Buttons";
+                case MeterType.WAVE_RECORD: return "WaveList Player";
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS: return "Voice Record/Play";
                 case MeterType.ACG_MAX_MAG: return "Max ADC Magnitude";
             }
@@ -2417,6 +2420,27 @@ namespace Thetis
             }
         }
 
+        private static string normaliseWaveRecordPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return null;
+
+            try
+            {
+                return Path.GetFullPath(path.Trim());
+            }
+            catch
+            {
+                return path.Trim();
+            }
+        }
+
+        private static bool waveRecordPathsEqual(string left, string right)
+        {
+            if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right)) return false;
+
+            return string.Equals(normaliseWaveRecordPath(left), normaliseWaveRecordPath(right), StringComparison.OrdinalIgnoreCase);
+        }
+
         //images, used by dxrenderer
         private static void loadImages(bool init = false)
         {
@@ -2500,6 +2524,7 @@ namespace Thetis
             resource_bitmaps.Add("lock", Properties.Resources.Lock_64);
             resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
             resource_bitmaps.Add("refresh", Properties.Resources.refresh_64);
+            resource_bitmaps.Add("trash", Properties.Resources.trash_black);
             // otherbuttons icons
             resource_bitmaps.Add("stop", Properties.Resources.ob_square);
             resource_bitmaps.Add("play", Properties.Resources.ob_play);
@@ -3314,7 +3339,6 @@ namespace Thetis
             _image_fetcher.Version = c.ProductVersion;
 
             _adaptor = adaptor;
-
             _rx1VHForAbove = _console.VFOAFreq >= _s9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _s9Frequency;
             _currentHPSDRmodel = HardwareSpecific.Model;
@@ -5037,6 +5061,7 @@ namespace Thetis
             m.Puresignal = _console.PSA;
             m.QuickPlay = _console.QuickPlay;
             m.QuickRecord = _console.QuickRec;
+            m.WaveRecord = _console.WaveRecording(m.RX);
 
             m.Vac1 = _console.VACEnabled;
             m.Vac2 = _console.VAC2Enabled;
@@ -6634,6 +6659,7 @@ namespace Thetis
                 FILTER_DISPLAY,
                 DIAL_DISPLAY,
                 OTHER_BUTTONS,
+                WAVE_RECORD,
                 VOICE_RECORD_PLAY_BUTTONS
             }
 
@@ -8243,6 +8269,9 @@ namespace Thetis
             private readonly object _map_copy_lock = new object();
             private bool _map_changed;
 
+            private bool _global_recording;
+            private bool _global_playing;
+
             private OtherButtonMacroSettings[] _macro_settings;
             private readonly object _macro_settings_lock = new object();
 
@@ -8258,6 +8287,12 @@ namespace Thetis
                 _ig = ig;
                 _dragging_index = -1;
                 _last_draged_to = -1;
+
+                _console.ARP.RecordingChanged += onRecordingChanged;
+                _console.ARP.PlayingChanged += onPlayingChanged;
+
+                _global_recording = _console.ARP.IsRecording;
+                _global_playing = _console.ARP.IsPlaying;
 
                 _process_in_update_buttons = new Dictionary<OtherButtonId, int>();
 
@@ -8296,8 +8331,75 @@ namespace Thetis
             public override bool Dragable { get { return true; } set { } }
             public override void Removing()
             {
+                _console.ARP.RecordingChanged -= onRecordingChanged;
+                _console.ARP.PlayingChanged -= onPlayingChanged;
+
                 MeterManager.ContainerVisibleHandlers -= OnContainerVisible;
                 MeterManager.CatStateHandlers -= OnCatState;
+            }
+            private void onPlayingChanged(bool playing, string id, string filename, bool isWdsp)
+            {
+                _global_playing = playing; // global state
+
+                (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                bit = (bit_group * 32) + bit;
+
+                SetEnabled(0, bit, !playing);
+
+                (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                bit = (bit_group * 32) + bit;
+
+                SetEnabled(0, bit, !playing);
+
+                setupButtons();
+            }
+            private void onRecordingChanged(bool recording, string id, string filename)
+            {
+                _global_recording = recording; // global state
+
+                if (id.StartsWith("waverecord"))
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+                else if (id.StartsWith("quick"))
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+                else
+                {
+                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.WAVE_RECORD);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.REC);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+
+                    (bit_group, bit) = OtherButtonIdHelpers.BitFromID(OtherButtonId.PLAY);
+                    bit = (bit_group * 32) + bit;
+
+                    SetEnabled(0, bit, !recording);
+                }
+
+                setupButtons();
             }
             private void OnContainerVisible(string id, bool visible)
             {
@@ -8384,7 +8486,19 @@ namespace Thetis
             }
 
             // these map to the OtherButtonId enum
-            public override bool Power { get => base.Power; set => updateOn(OtherButtonId.POWER, value); }
+            public override bool Power 
+            {
+                get
+                {
+                    return base.Power;
+                }
+                set 
+                {
+                    updateOn(OtherButtonId.POWER, value);
+
+                    setupButtons(); // needed for the record/play states
+                }
+            }
             public override bool RX2Enabled { get => base.RX2Enabled; set => updateOn(OtherButtonId.RX_2, value); }
             public override bool MON { get => base.MON; set => updateOn(OtherButtonId.MON, value); }
             public override bool Tune { get => base.Tune; set => updateOn(OtherButtonId.TUN, value); }
@@ -8394,7 +8508,7 @@ namespace Thetis
             public override bool Puresignal { get => base.Puresignal; set => updateOn(OtherButtonId.PS_A, value); }
             public override bool QuickPlay { get => base.QuickPlay; set => updateOn(OtherButtonId.PLAY, value); }
             public override bool QuickRecord { get => base.QuickRecord; set => updateOn(OtherButtonId.REC, value); }
-            //public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
+            public override bool WaveRecord { get => base.WaveRecord; set => updateOn(OtherButtonId.WAVE_RECORD, value); }
             public override bool ANF { get => base.ANF; set => updateOn(OtherButtonId.ANF, value); }
             public override bool SNB { get => base.SNB; set => updateOn(OtherButtonId.SNB, value); }
             public override bool TNFActive { get => base.TNFActive; set => updateOn(OtherButtonId.MNF, value); }
@@ -8950,6 +9064,12 @@ namespace Thetis
                             button_enabled = _owningmeter.CWXShown;
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
                             break;
+                        case OtherButtonId.WAVE_RECORD:
+                        case OtherButtonId.REC:
+                        case OtherButtonId.PLAY:
+                            button_enabled = GetEnabled(0, i) && _owningmeter.Power;
+                            sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
+                            break;
                         default:
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
                             break;
@@ -9301,7 +9421,7 @@ namespace Thetis
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.DoOtherButtonAction(_owningmeter.RX, id, e.Button);
+                        _console.DoOtherButtonAction(_owningmeter.RX, id, e.Button, false, GetOn(1, index));
                     }));
                 }
             }
@@ -11477,6 +11597,1206 @@ namespace Thetis
                     base.HeightRatio = value;
                     setupButtons();
                 }
+            }
+        }
+        internal class clsWaveRecord : clsMeterItem
+        {
+            internal enum WaveRecordHitType
+            {
+                NONE = 0,
+                PLAY,
+                STOP,
+                DELETE,
+                SCROLL_TRACK,
+                SCROLL_THUMB
+            }
+
+            internal sealed class WaveRecordEntry
+            {
+                public string FilePath { get; set; }
+                public string DisplayName { get; set; }
+                public WaveRecordJsonDataDisplay JsonData { get; set; }
+                public bool FileExists { get; set; }
+            }
+
+            internal sealed class WaveRecordJsonDataDisplay
+            {
+                public string Frequency { get; set; }
+                public string Mode { get; set; }
+                public string Band { get; set; }
+                public string Duration { get; set; }
+                public string Audio { get; set; }
+                public string Utc { get; set; }
+
+                public bool HasData
+                {
+                    get
+                    {
+                        return !string.IsNullOrWhiteSpace(Frequency) ||
+                            !string.IsNullOrWhiteSpace(Mode) ||
+                            !string.IsNullOrWhiteSpace(Band) ||
+                            !string.IsNullOrWhiteSpace(Duration) ||
+                            !string.IsNullOrWhiteSpace(Audio) ||
+                            !string.IsNullOrWhiteSpace(Utc);
+                    }
+                }
+            }
+
+            internal sealed class WaveRecordHitRegion
+            {
+                public WaveRecordHitType HitType { get; set; }
+                public string FilePath { get; set; }
+                public SharpDX.RectangleF Rect { get; set; }
+            }
+
+            private readonly clsMeter _owningmeter;
+            private readonly object _state_lock = new object();
+
+            private string[] _file_paths;
+            private short[] _order_map;
+            private WaveRecordEntry[] _entries;
+
+            private List<WaveRecordHitRegion> _hit_regions;
+            private SharpDX.RectangleF _content_rect;
+            private SharpDX.RectangleF _scroll_track_rect;
+            private SharpDX.RectangleF _scroll_thumb_rect;
+            private float _row_pitch_px;
+            private float _max_scroll_px;
+            private float _scroll_offset_px;
+            private bool _show_scrollbar;
+            private bool _scroll_dragging;
+            private float _scroll_drag_start_mouse_y;
+            private float _scroll_drag_start_offset_px;
+            private WaveRecordHitType _mouse_down_hit_type;
+            private string _mouse_down_path;
+            private int _dragging_index;
+            private int _last_dragged_to;
+
+            private bool _global_playing;
+            private bool _global_recording;
+            private string _active_play_filename;
+            private string _active_record_filename;
+
+            private string _font_family;
+            private FontStyle _font_style;
+            private float _font_size;
+            private float _radius;
+            private System.Drawing.Color _back_colour;
+            private System.Drawing.Color _row_colour;
+            private System.Drawing.Color _row_border_colour;
+            private System.Drawing.Color _text_colour;
+            private System.Drawing.Color _button_fill_colour;
+            private System.Drawing.Color _button_border_colour;
+            private System.Drawing.Color _button_hover_colour;
+            private System.Drawing.Color _play_icon_colour;
+            private System.Drawing.Color _stop_icon_colour;
+            private System.Drawing.Color _delete_icon_colour;
+            private System.Drawing.Color _scrollbar_track_colour;
+            private System.Drawing.Color _scrollbar_thumb_colour;
+            private System.Drawing.Color _scrollbar_thumb_hover_colour;
+
+            private int _disposed;
+
+            public clsWaveRecord(clsMeter owningmeter, clsItemGroup ig)
+            {
+                _owningmeter = owningmeter;
+
+                ItemType = MeterItemType.WAVE_RECORD;
+                UpdateInterval = 50;
+
+                _file_paths = Array.Empty<string>();
+                _order_map = null;
+                _entries = Array.Empty<WaveRecordEntry>();
+                _hit_regions = new List<WaveRecordHitRegion>();
+
+                _content_rect = new SharpDX.RectangleF();
+                _scroll_track_rect = new SharpDX.RectangleF();
+                _scroll_thumb_rect = new SharpDX.RectangleF();
+                _row_pitch_px = 0f;
+                _max_scroll_px = 0f;
+                _scroll_offset_px = 0f;
+                _show_scrollbar = false;
+                _scroll_dragging = false;
+                _scroll_drag_start_mouse_y = 0f;
+                _scroll_drag_start_offset_px = 0f;
+                _mouse_down_hit_type = WaveRecordHitType.NONE;
+                _mouse_down_path = null;
+                _dragging_index = -1;
+                _last_dragged_to = -1;
+
+                _console.ARP.PlayingChanged += onPlayingChanged;
+                _console.ARP.RecordingChanged += onRecordingChanged;
+
+                _global_playing = _console.ARP.IsPlaying;
+                _global_recording = _console.ARP.IsRecording;
+                _active_play_filename = null;
+                _active_record_filename = null;
+
+                _font_family = "Trebuchet MS";
+                _font_style = FontStyle.Regular;
+                _font_size = 18f;
+                _radius = 0.20f;
+                _back_colour = System.Drawing.Color.FromArgb(16, 16, 16);
+                _row_colour = System.Drawing.Color.FromArgb(28, 28, 28);
+                _row_border_colour = System.Drawing.Color.FromArgb(70, 70, 70);
+                _text_colour = System.Drawing.Color.White;
+                _button_fill_colour = System.Drawing.Color.FromArgb(40, 40, 40);
+                _button_border_colour = System.Drawing.Color.FromArgb(86, 86, 86);
+                _button_hover_colour = System.Drawing.Color.FromArgb(90, 90, 90);
+                _play_icon_colour = System.Drawing.Color.LimeGreen;
+                _stop_icon_colour = System.Drawing.Color.Olive;
+                _delete_icon_colour = System.Drawing.Color.Orange;
+                _scrollbar_track_colour = System.Drawing.Color.FromArgb(36, 36, 36);
+                _scrollbar_thumb_colour = System.Drawing.Color.FromArgb(118, 118, 118);
+                _scrollbar_thumb_hover_colour = System.Drawing.Color.FromArgb(160, 160, 160);
+            }
+
+            public override void Initialise()
+            {
+                RefreshEntries();
+            }
+
+            public override void Removing()
+            {
+                if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
+
+                _console.ARP.PlayingChanged -= onPlayingChanged;
+                _console.ARP.RecordingChanged -= onRecordingChanged;
+
+                lock (_state_lock)
+                {
+                    _file_paths = Array.Empty<string>();
+                    _hit_regions.Clear();
+                    _entries = Array.Empty<WaveRecordEntry>();
+                    _show_scrollbar = false;
+                    _max_scroll_px = 0f;
+                    _scroll_offset_px = 0f;
+                    _scroll_dragging = false;
+                    _dragging_index = -1;
+                    _last_dragged_to = -1;
+                    _mouse_down_hit_type = WaveRecordHitType.NONE;
+                    _mouse_down_path = null;
+                }
+            }
+
+            private void onPlayingChanged(bool playing, string id, string filename, bool isWdsp)
+            {
+                string previousPath;
+                bool refreshEntries;
+
+                lock (_state_lock)
+                {
+                    previousPath = _active_play_filename;
+                    _global_playing = playing;
+                    _active_play_filename = playing ? normaliseWaveRecordPath(filename) : null;
+                    refreshEntries = !playing && containsFilePathLocked(previousPath);
+                }
+
+                if (refreshEntries) RefreshEntries();
+            }
+
+            private void onRecordingChanged(bool recording, string id, string filename)
+            {
+                string previousPath;
+                bool refreshEntries;
+                bool waveRecordRecording = !string.IsNullOrWhiteSpace(id) && id.StartsWith("waverecord", StringComparison.OrdinalIgnoreCase);
+
+                lock (_state_lock)
+                {
+                    previousPath = _active_record_filename;
+                    _global_recording = recording;
+                    _active_record_filename = recording ? normaliseWaveRecordPath(filename) : null;
+                    refreshEntries = waveRecordRecording && !recording && containsFilePathLocked(previousPath);
+                }
+
+                if (refreshEntries) RefreshEntries();
+            }
+
+            public string FontFamily
+            {
+                get { return _font_family; }
+            }
+
+            public FontStyle FontStyle
+            {
+                get { return _font_style; }
+            }
+
+            public float FontSize
+            {
+                get { return _font_size; }
+            }
+
+            public float Radius
+            {
+                get { return _radius; }
+                set { _radius = value; }
+            }
+
+            public System.Drawing.Color BackColour
+            {
+                get { return _back_colour; }
+                set { _back_colour = value; }
+            }
+
+            public System.Drawing.Color RowColour
+            {
+                get { return _row_colour; }
+                set { _row_colour = value; }
+            }
+
+            public System.Drawing.Color RowBorderColour
+            {
+                get { return _row_border_colour; }
+                set { _row_border_colour = value; }
+            }
+
+            public System.Drawing.Color TextColour
+            {
+                get { return _text_colour; }
+                set { _text_colour = value; }
+            }
+
+            public System.Drawing.Color ButtonFillColour
+            {
+                get { return _button_fill_colour; }
+                set { _button_fill_colour = value; }
+            }
+
+            public System.Drawing.Color ButtonBorderColour
+            {
+                get { return _button_border_colour; }
+                set { _button_border_colour = value; }
+            }
+
+            public System.Drawing.Color ButtonHoverColour
+            {
+                get { return _button_hover_colour; }
+                set { _button_hover_colour = value; }
+            }
+
+            public System.Drawing.Color PlayIconColour
+            {
+                get { return _play_icon_colour; }
+                set { _play_icon_colour = value; }
+            }
+
+            public System.Drawing.Color StopIconColour
+            {
+                get { return _stop_icon_colour; }
+                set { _stop_icon_colour = value; }
+            }
+
+            public System.Drawing.Color DeleteIconColour
+            {
+                get { return _delete_icon_colour; }
+                set { _delete_icon_colour = value; }
+            }
+
+            public System.Drawing.Color ScrollbarTrackColour
+            {
+                get { return _scrollbar_track_colour; }
+                set { _scrollbar_track_colour = value; }
+            }
+
+            public System.Drawing.Color ScrollbarThumbColour
+            {
+                get { return _scrollbar_thumb_colour; }
+                set { _scrollbar_thumb_colour = value; }
+            }
+
+            public System.Drawing.Color ScrollbarThumbHoverColour
+            {
+                get { return _scrollbar_thumb_hover_colour; }
+                set { _scrollbar_thumb_hover_colour = value; }
+            }
+
+            public WaveRecordEntry[] EntriesSnapshot
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _entries ?? Array.Empty<WaveRecordEntry>();
+                    }
+                }
+            }
+
+            public string[] FilePaths
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return (_file_paths ?? Array.Empty<string>()).ToArray();
+                    }
+                }
+                set
+                {
+                    string[] paths = sanitiseStoredPaths(value);
+                    bool changed;
+
+                    lock (_state_lock)
+                    {
+                        changed = !pathArraysEqual(_file_paths, paths);
+                        if (changed)
+                        {
+                            _file_paths = paths;
+                            _order_map = sanitiseOrderMap(_order_map, _file_paths.Length);
+                        }
+                    }
+
+                    if (changed) RefreshEntries();
+                }
+            }
+
+            public short[] OrderMap
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _order_map == null ? null : _order_map.ToArray();
+                    }
+                }
+                set
+                {
+                    short[] map;
+                    bool changed;
+
+                    lock (_state_lock)
+                    {
+                        map = sanitiseOrderMap(value, (_file_paths ?? Array.Empty<string>()).Length);
+                        changed = !shortArraysEqual(_order_map, map);
+                        if (changed) _order_map = map;
+                    }
+
+                    if (changed) RefreshEntries();
+                }
+            }
+
+            public float ScrollOffset
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _scroll_offset_px;
+                    }
+                }
+            }
+
+            public bool ShowScrollbar
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _show_scrollbar;
+                    }
+                }
+            }
+
+            public bool ScrollDragging
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _scroll_dragging;
+                    }
+                }
+            }
+
+            public bool GlobalRecording
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _global_recording;
+                    }
+                }
+            }
+
+            public bool GlobalPlaying
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _global_playing;
+                    }
+                }
+            }
+
+            public string ActivePlayFilename
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _active_play_filename;
+                    }
+                }
+            }
+
+            public int DraggingIndex
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _dragging_index;
+                    }
+                }
+                set
+                {
+                    lock (_state_lock)
+                    {
+                        _dragging_index = value;
+                    }
+                }
+            }
+
+            public int DragTargetIndex
+            {
+                get
+                {
+                    lock (_state_lock)
+                    {
+                        return _last_dragged_to;
+                    }
+                }
+            }
+
+            public bool CanAcceptFiles(string[] filePaths)
+            {
+                return sanitiseStoredPaths(filePaths).Length > 0;
+            }
+
+            public void AddFiles(string[] filePaths)
+            {
+                string[] newPaths = sanitiseStoredPaths(filePaths);
+                if (newPaths.Length < 1) return;
+
+                bool changed = false;
+                lock (_state_lock)
+                {
+                    List<string> merged = (_file_paths ?? Array.Empty<string>()).ToList();
+
+                    for (int i = 0; i < newPaths.Length; i++)
+                    {
+                        string newPath = newPaths[i];
+                        if (merged.Any(existing => waveRecordPathsEqual(existing, newPath))) continue;
+
+                        merged.Add(newPath);
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        _file_paths = merged.ToArray();
+                        _order_map = sanitiseOrderMap(_order_map, _file_paths.Length);
+                    }
+                }
+
+                if (changed) RefreshEntries();
+            }
+
+            public bool IsPlaying(string filePath)
+            {
+                lock (_state_lock)
+                {
+                    return _global_playing && waveRecordPathsEqual(_active_play_filename, filePath);
+                }
+            }
+
+            public void SetRenderLayout(
+                SharpDX.RectangleF contentRect,
+                SharpDX.RectangleF scrollTrackRect,
+                SharpDX.RectangleF scrollThumbRect,
+                float rowPitch,
+                float maxScroll,
+                bool showScrollbar,
+                List<WaveRecordHitRegion> hitRegions)
+            {
+                lock (_state_lock)
+                {
+                    _content_rect = contentRect;
+                    _scroll_track_rect = scrollTrackRect;
+                    _scroll_thumb_rect = scrollThumbRect;
+                    _row_pitch_px = rowPitch;
+                    _max_scroll_px = Math.Max(0f, maxScroll);
+                    _show_scrollbar = showScrollbar;
+                    _hit_regions = hitRegions ?? new List<WaveRecordHitRegion>();
+                    clampScrollLocked();
+                }
+            }
+
+            public void UpdateDragFromMouse()
+            {
+                updateReorderDrag();
+                updateScrollDrag();
+            }
+
+            public WaveRecordHitRegion HitTest(PointF point)
+            {
+                lock (_state_lock)
+                {
+                    for (int i = _hit_regions.Count - 1; i >= 0; i--)
+                    {
+                        WaveRecordHitRegion hit = _hit_regions[i];
+                        if (hit.Rect.Contains(point.X, point.Y)) return hit;
+                    }
+                }
+
+                return null;
+            }
+
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                updateScrollDrag();
+            }
+
+            public override void MouseWheel(int number_of_moves)
+            {
+                if (!MouseEntered) return;
+
+                float rowPitch;
+                float contentHeight;
+                bool showScrollbar;
+                lock (_state_lock)
+                {
+                    rowPitch = _row_pitch_px;
+                    contentHeight = _content_rect.Height;
+                    showScrollbar = _show_scrollbar;
+                }
+
+                if (!showScrollbar) return;
+
+                float step = rowPitch * 0.60f;
+                if (contentHeight > 0f)
+                {
+                    step = Math.Min(step, contentHeight * 0.20f);
+                }
+                step = Math.Max(8f, step);
+
+                float delta = -number_of_moves * step;
+                adjustScroll(delta);
+            }
+
+            public override void MouseDown(MouseEventArgs e)
+            {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                PointF mousePoint = new PointF(e.X, e.Y);
+                WaveRecordHitRegion hit = HitTest(mousePoint);
+
+                lock (_state_lock)
+                {
+                    _last_dragged_to = -1;
+                    _mouse_down_hit_type = hit != null ? hit.HitType : WaveRecordHitType.NONE;
+                    _mouse_down_path = hit != null ? hit.FilePath : null;
+
+                    if (e.Button == MouseButtons.Left && Common.AltlKeyDown)
+                    {
+                        int rowIndex = rowIndexFromPointLocked(mousePoint, true);
+                        if (rowIndex != -1)
+                        {
+                            _dragging_index = rowIndex;
+                            _last_dragged_to = rowIndex;
+                            _mouse_down_hit_type = WaveRecordHitType.NONE;
+                            _mouse_down_path = null;
+                            return;
+                        }
+                    }
+
+                    _dragging_index = -1;
+
+                    if (hit == null) return;
+
+                    if (hit.HitType == WaveRecordHitType.SCROLL_THUMB)
+                    {
+                        _scroll_dragging = true;
+                        _scroll_drag_start_mouse_y = e.Y;
+                        _scroll_drag_start_offset_px = _scroll_offset_px;
+                    }
+                    else if (hit.HitType == WaveRecordHitType.SCROLL_TRACK)
+                    {
+                        scrollTrackToLocked(e.Y);
+                        _scroll_dragging = true;
+                        _scroll_drag_start_mouse_y = e.Y;
+                        _scroll_drag_start_offset_px = _scroll_offset_px;
+                    }
+                }
+            }
+
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                WaveRecordHitType mouseDownType;
+                string mouseDownPath;
+                bool wasDragging;
+                int draggingIndex;
+                int lastDraggedTo;
+
+                lock (_state_lock)
+                {
+                    mouseDownType = _mouse_down_hit_type;
+                    mouseDownPath = _mouse_down_path;
+                    wasDragging = _scroll_dragging;
+                    draggingIndex = _dragging_index;
+                    lastDraggedTo = _last_dragged_to;
+
+                    _mouse_down_hit_type = WaveRecordHitType.NONE;
+                    _mouse_down_path = null;
+                    _scroll_dragging = false;
+                    _dragging_index = -1;
+                    _last_dragged_to = -1;
+                }
+
+                if (draggingIndex != -1)
+                {
+                    if (lastDraggedTo != -1 && draggingIndex != lastDraggedTo)
+                    {
+                        moveEntry(draggingIndex, lastDraggedTo, Common.ShiftKeyDown);
+                    }
+                    return;
+                }
+
+                if (wasDragging) return;
+                if (_console == null || _console.IsDisposed || _console.Disposing) return;
+
+                WaveRecordHitRegion hit = HitTest(new PointF(e.X, e.Y));
+                if (hit == null) return;
+                if (hit.HitType != mouseDownType) return;
+                if (!waveRecordPathsEqual(hit.FilePath, mouseDownPath)) return;
+
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    handleHit(hit);
+                }));
+            }
+
+            public void RefreshEntries()
+            {
+                if (Interlocked.CompareExchange(ref _disposed, 0, 0) != 0) return;
+
+                string[] paths;
+                short[] orderMap;
+                lock (_state_lock)
+                {
+                    paths = (_file_paths ?? Array.Empty<string>()).ToArray();
+                    orderMap = sanitiseOrderMap(_order_map, paths.Length);
+                    if (!shortArraysEqual(_order_map, orderMap))
+                    {
+                        _order_map = orderMap;
+                    }
+                }
+
+                List<WaveRecordEntry> entries = new List<WaveRecordEntry>(paths.Length);
+                if (orderMap != null)
+                {
+                    for (int i = 0; i < orderMap.Length; i++)
+                    {
+                        int index = orderMap[i];
+                        if (index < 0 || index >= paths.Length) continue;
+
+                        string path = paths[index];
+                        if (string.IsNullOrWhiteSpace(path)) continue;
+
+                        bool exists = File.Exists(path);
+                        entries.Add(new WaveRecordEntry()
+                        {
+                            FilePath = path,
+                            DisplayName = Path.GetFileName(path) ?? path,
+                            FileExists = exists,
+                            JsonData = exists ? buildJsonDataDisplay(path) : null
+                        });
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < paths.Length; i++)
+                    {
+                        string path = paths[i];
+                        if (string.IsNullOrWhiteSpace(path)) continue;
+
+                        bool exists = File.Exists(path);
+                        entries.Add(new WaveRecordEntry()
+                        {
+                            FilePath = path,
+                            DisplayName = Path.GetFileName(path) ?? path,
+                            FileExists = exists,
+                            JsonData = exists ? buildJsonDataDisplay(path) : null
+                        });
+                    }
+                }
+
+                lock (_state_lock)
+                {
+                    _entries = entries.ToArray();
+                    clampScrollLocked();
+                }
+            }
+
+            private WaveRecordJsonDataDisplay buildJsonDataDisplay(string wavPath)
+            {
+                try
+                {
+                    bool wavExists = _console.ARP.GetJSONDetailsFromFile(wavPath, out clsAudioRecordPlayback.RecordingJsonModel jsonData);
+                    if (!wavExists || jsonData == null) return null;
+
+                    WaveRecordJsonDataDisplay display = new WaveRecordJsonDataDisplay();
+                    display.Frequency = sanitiseJsonDataValue(jsonData.frequency, true);
+                    display.Mode = sanitiseJsonDataValue(jsonData.mode, false);
+                    display.Band = sanitiseJsonDataValue(jsonData.band, false);
+                    display.Duration = formatJsonDataDuration(jsonData.play_duration_seconds);
+                    display.Audio = formatJsonDataAudio(jsonData.bit_depth, jsonData.sample_rate, jsonData.channels);
+                    display.Utc = formatJsonDataUtc(jsonData.utc_time);
+
+                    return display.HasData ? display : null;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            private static string sanitiseJsonDataValue(string value, bool frequency)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return null;
+
+                string trimmed = value.Trim();
+                if (trimmed.Length < 1) return null;
+                if (!frequency) return trimmed;
+                if (trimmed.IndexOf("hz", StringComparison.OrdinalIgnoreCase) >= 0) return trimmed;
+
+                if (double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out double mhz))
+                {
+                    return mhz.ToString("0.000000", CultureInfo.InvariantCulture) + " MHz";
+                }
+
+                if (double.TryParse(trimmed, NumberStyles.Float, CultureInfo.CurrentCulture, out mhz))
+                {
+                    return mhz.ToString("0.000000", CultureInfo.InvariantCulture) + " MHz";
+                }
+
+                return trimmed;
+            }
+
+            private static string formatJsonDataDuration(double? durationSeconds)
+            {
+                if (!durationSeconds.HasValue || durationSeconds.Value <= 0) return null;
+
+                TimeSpan duration = TimeSpan.FromSeconds(durationSeconds.Value);
+                if (duration.TotalHours >= 1d) return duration.ToString(@"h\:mm\:ss");
+                return duration.ToString(@"m\:ss");
+            }
+
+            private static string formatJsonDataAudio(short bitDepth, int sampleRate, short channels)
+            {
+                List<string> parts = new List<string>(3);
+
+                if (bitDepth > 0) parts.Add(bitDepth.ToString(CultureInfo.InvariantCulture) + "-bit");
+                if (sampleRate > 0) parts.Add(sampleRate.ToString(CultureInfo.InvariantCulture) + " Hz");
+                if (channels > 0) parts.Add(channels.ToString(CultureInfo.InvariantCulture) + "ch");
+
+                return parts.Count < 1 ? null : string.Join(" | ", parts);
+            }
+
+            private static string formatJsonDataUtc(string value)
+            {
+                string trimmed = sanitiseJsonDataValue(value, false);
+                if (string.IsNullOrWhiteSpace(trimmed)) return null;
+
+                if (DateTime.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime utc))
+                {
+                    utc = DateTime.SpecifyKind(utc, DateTimeKind.Utc);
+                    return utc.ToString("yyyy-MM-dd HH:mm'Z'", CultureInfo.InvariantCulture);
+                }
+
+                return trimmed;
+            }
+
+            private bool containsFilePathLocked(string filePath)
+            {
+                if (string.IsNullOrWhiteSpace(filePath) || _file_paths == null || _file_paths.Length < 1) return false;
+                return _file_paths.Any(path => waveRecordPathsEqual(path, filePath));
+            }
+
+            private static string[] sanitiseStoredPaths(IEnumerable<string> filePaths)
+            {
+                if (filePaths == null) return Array.Empty<string>();
+
+                List<string> paths = new List<string>();
+                HashSet<string> unique = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (string rawPath in filePaths)
+                {
+                    string path = normaliseWaveRecordPath(rawPath);
+                    if (string.IsNullOrWhiteSpace(path)) continue;
+                    if (!string.Equals(Path.GetExtension(path) ?? "", ".wav", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!unique.Add(path)) continue;
+
+                    paths.Add(path);
+                }
+
+                return paths.ToArray();
+            }
+
+            private static bool pathArraysEqual(string[] left, string[] right)
+            {
+                left = left ?? Array.Empty<string>();
+                right = right ?? Array.Empty<string>();
+
+                if (left.Length != right.Length) return false;
+                for (int i = 0; i < left.Length; i++)
+                {
+                    if (!waveRecordPathsEqual(left[i], right[i])) return false;
+                }
+
+                return true;
+            }
+
+            private static bool shortArraysEqual(short[] left, short[] right)
+            {
+                if (ReferenceEquals(left, right)) return true;
+
+                left = left ?? Array.Empty<short>();
+                right = right ?? Array.Empty<short>();
+
+                if (left.Length != right.Length) return false;
+                for (int i = 0; i < left.Length; i++)
+                {
+                    if (left[i] != right[i]) return false;
+                }
+
+                return true;
+            }
+
+            private static short[] sanitiseOrderMap(IEnumerable<short> rawOrderMap, int itemCount)
+            {
+                if (itemCount <= 1 || rawOrderMap == null) return null;
+
+                List<short> order = new List<short>(itemCount);
+                bool[] used = new bool[itemCount];
+
+                foreach (short raw in rawOrderMap)
+                {
+                    int index = raw;
+                    if (index < 0 || index >= itemCount) continue;
+                    if (used[index]) continue;
+
+                    used[index] = true;
+                    order.Add((short)index);
+                }
+
+                for (int i = 0; i < itemCount; i++)
+                {
+                    if (!used[i]) order.Add((short)i);
+                }
+
+                bool natural = order.Count == itemCount;
+                if (natural)
+                {
+                    for (int i = 0; i < order.Count; i++)
+                    {
+                        if (order[i] != i)
+                        {
+                            natural = false;
+                            break;
+                        }
+                    }
+                }
+
+                return natural ? null : order.ToArray();
+            }
+
+            private static short[] removeFromOrderMap(short[] orderMap, int removedIndex, int oldCount)
+            {
+                if (removedIndex < 0 || removedIndex >= oldCount) return sanitiseOrderMap(orderMap, Math.Max(0, oldCount - 1));
+
+                List<short> order = new List<short>(oldCount);
+                short[] effective = sanitiseOrderMap(orderMap, oldCount);
+                if (effective == null)
+                {
+                    for (int i = 0; i < oldCount; i++)
+                    {
+                        order.Add((short)i);
+                    }
+                }
+                else
+                {
+                    order.AddRange(effective);
+                }
+
+                order.RemoveAll(index => index == removedIndex);
+                for (int i = 0; i < order.Count; i++)
+                {
+                    if (order[i] > removedIndex) order[i]--;
+                }
+
+                return sanitiseOrderMap(order, oldCount - 1);
+            }
+
+            private void handleHit(WaveRecordHitRegion hit)
+            {
+                if (hit == null) return;
+                if (Interlocked.CompareExchange(ref _disposed, 0, 0) != 0) return;
+
+                switch (hit.HitType)
+                {
+                    case WaveRecordHitType.PLAY:
+                        handlePlay(hit.FilePath);
+                        break;
+                    case WaveRecordHitType.STOP:
+                        _console.ARP.StopPlayback(out _);
+                        break;
+                    case WaveRecordHitType.DELETE:
+                        handleDelete(hit.FilePath);
+                        break;
+                }
+            }
+
+            private void handlePlay(string filePath)
+            {
+                if (string.IsNullOrWhiteSpace(filePath)) return;
+                if (!_owningmeter.Power) return;
+
+                bool isRecording;
+                bool isPlaying;
+                string activePlay;
+                lock (_state_lock)
+                {
+                    isRecording = _global_recording;
+                    isPlaying = _global_playing;
+                    activePlay = _active_play_filename;
+                }
+
+                if (isRecording) return;
+
+                if (!File.Exists(filePath))
+                {
+                    RefreshEntries();
+                    return;
+                }
+
+                if (isPlaying && waveRecordPathsEqual(activePlay, filePath))
+                {
+                    _console.ARP.StopPlayback(out _);
+                    return;
+                }
+
+                if (_console.ARP.IsPlaying)
+                {
+                    _console.ARP.StopPlayback(out _);
+                }
+
+                if (!_console.ARP.CanBePlayed(filePath))
+                {
+                    RefreshEntries();
+                    return;
+                }
+
+                int wfw_id = _owningmeter.RX == 1 ? 0 : 1;
+                bool ok = _console.ARP.PlayFileViaWDSP("wavelistplayer_" + _owningmeter.RX.ToString(CultureInfo.InvariantCulture), filePath, wfw_id, out string error);
+                if (!ok || error != null)
+                {
+                    RefreshEntries();
+                }
+            }
+
+            private void handleDelete(string filePath)
+            {
+                if (string.IsNullOrWhiteSpace(filePath)) return;
+
+                string displayName = Path.GetFileName(filePath);
+                if (string.IsNullOrWhiteSpace(displayName)) displayName = filePath;
+
+                DialogResult deleteResult = MessageBox.Show("Remove WaveList Player item \"" + displayName + "\" from the list?", "WaveList Player",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                if (deleteResult != DialogResult.Yes) return;
+
+                bool isPlaying;
+                string activePlay;
+                lock (_state_lock)
+                {
+                    isPlaying = _global_playing;
+                    activePlay = _active_play_filename;
+                }
+
+                if (isPlaying && waveRecordPathsEqual(activePlay, filePath))
+                {
+                    _console.ARP.StopPlayback(out _);
+                }
+
+                bool changed = false;
+                    lock (_state_lock)
+                    {
+                    if (_file_paths != null && _file_paths.Length > 0)
+                    {
+                        int removeIndex = Array.FindIndex(_file_paths, path => waveRecordPathsEqual(path, filePath));
+                        if (removeIndex != -1)
+                        {
+                            string[] remaining = _file_paths.Where(path => !waveRecordPathsEqual(path, filePath)).ToArray();
+                            changed = remaining.Length != _file_paths.Length;
+                            if (changed)
+                            {
+                                _file_paths = remaining;
+                                _order_map = removeFromOrderMap(_order_map, removeIndex, _file_paths.Length + 1);
+                            }
+                        }
+                    }
+                }
+
+                if (changed) RefreshEntries();
+            }
+
+            private void moveEntry(int fromDisplayIndex, int toDisplayIndex, bool swapOnly)
+            {
+                bool changed = false;
+
+                lock (_state_lock)
+                {
+                    int count = _file_paths == null ? 0 : _file_paths.Length;
+                    if (count < 2) return;
+                    if (fromDisplayIndex < 0 || fromDisplayIndex >= count) return;
+                    if (toDisplayIndex < 0 || toDisplayIndex >= count) return;
+                    if (fromDisplayIndex == toDisplayIndex) return;
+
+                    List<short> order = new List<short>();
+                    short[] effective = sanitiseOrderMap(_order_map, count);
+                    if (effective == null)
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            order.Add((short)i);
+                        }
+                     }
+                    else
+                    {
+                        order.AddRange(effective);
+                    }
+
+                    if (swapOnly)
+                    {
+                        short tmp = order[toDisplayIndex];
+                        order[toDisplayIndex] = order[fromDisplayIndex];
+                        order[fromDisplayIndex] = tmp;
+                    }
+                    else
+                    {
+                        short moving = order[fromDisplayIndex];
+                        order.RemoveAt(fromDisplayIndex);
+                        order.Insert(toDisplayIndex, moving);
+                    }
+
+                    short[] newOrder = sanitiseOrderMap(order, count);
+                    changed = !shortArraysEqual(_order_map, newOrder);
+                    if (changed) _order_map = newOrder;
+                }
+
+                if (changed) RefreshEntries();
+            }
+
+            private void adjustScroll(float delta)
+            {
+                lock (_state_lock)
+                {
+                    if (!_show_scrollbar || _max_scroll_px <= 0f) return;
+
+                    _scroll_offset_px += delta;
+                    clampScrollLocked();
+                }
+            }
+
+            private void updateReorderDrag()
+            {
+                lock (_state_lock)
+                {
+                    if (_dragging_index == -1)
+                    {
+                        _last_dragged_to = -1;
+                        return;
+                    }
+
+                    if (!MouseButtonDown)
+                    {
+                        _last_dragged_to = -1;
+                        return;
+                    }
+
+                    _last_dragged_to = rowIndexFromPointLocked(MouseMovePoint, true);
+                }
+            }
+
+            private void updateScrollDrag()
+            {
+                lock (_state_lock)
+                {
+                    if (!_scroll_dragging || !MouseButtonDown || !_show_scrollbar || _max_scroll_px <= 0f) return;
+
+                    float trackHeight = _scroll_track_rect.Bottom - _scroll_track_rect.Top;
+                    float thumbHeight = _scroll_thumb_rect.Bottom - _scroll_thumb_rect.Top;
+                    float trackTravel = trackHeight - thumbHeight;
+                    if (trackTravel <= 0f) return;
+
+                    float delta = MouseMovePoint.Y - _scroll_drag_start_mouse_y;
+                    _scroll_offset_px = _scroll_drag_start_offset_px + (delta / trackTravel) * _max_scroll_px;
+                    clampScrollLocked();
+                }
+            }
+
+            private void scrollTrackToLocked(float mouseY)
+            {
+                if (!_show_scrollbar || _max_scroll_px <= 0f) return;
+
+                float trackHeight = _scroll_track_rect.Bottom - _scroll_track_rect.Top;
+                float thumbHeight = _scroll_thumb_rect.Bottom - _scroll_thumb_rect.Top;
+                float trackTravel = trackHeight - thumbHeight;
+                if (trackTravel <= 0f) return;
+
+                float targetTop = mouseY - _scroll_track_rect.Top - (thumbHeight / 2f);
+                if (targetTop < 0f) targetTop = 0f;
+                if (targetTop > trackTravel) targetTop = trackTravel;
+
+                _scroll_offset_px = (targetTop / trackTravel) * _max_scroll_px;
+                clampScrollLocked();
+            }
+
+            private int rowIndexFromPointLocked(PointF point, bool clampToValid)
+            {
+                int count = _entries == null ? 0 : _entries.Length;
+                if (count < 1) return -1;
+                if (_content_rect.Width <= 0f || _content_rect.Height <= 0f) return -1;
+                if (!_content_rect.Contains(point.X, point.Y)) return -1;
+                if (_row_pitch_px <= 0f) return -1;
+
+                float localY = point.Y - _content_rect.Top + _scroll_offset_px;
+                if (localY < 0f) return clampToValid ? 0 : -1;
+
+                int index = (int)(localY / _row_pitch_px);
+                if (index < 0) return clampToValid ? 0 : -1;
+                if (index >= count) return clampToValid ? count - 1 : -1;
+
+                return index;
+            }
+
+            private void clampScrollLocked()
+            {
+                if (_max_scroll_px <= 0f)
+                {
+                    _scroll_offset_px = 0f;
+                    return;
+                }
+
+                if (_scroll_offset_px < 0f) _scroll_offset_px = 0f;
+                if (_scroll_offset_px > _max_scroll_px) _scroll_offset_px = _max_scroll_px;
             }
         }
         internal class clsBandButtonBox : clsButtonBox
@@ -21355,6 +22675,7 @@ namespace Thetis
                     case MeterType.CUSTOM_METER_BAR: ret = variable_index == 0 ? "Primary" : "Secondary"; break;
                     case MeterType.SIGNAL_MAX_BIN: ret = Reading.SIGNAL_MAX_BIN.ToString(); break;
                     case MeterType.OTHER_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.WAVE_RECORD: ret = Reading.NONE.ToString(); break;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.ACG_MAX_MAG: ret = Reading.ADC_MAX_MAG.ToString(); break;
                 }
@@ -21409,6 +22730,7 @@ namespace Thetis
                     case MeterType.CUSTOM_METER_BAR: return 2;
                     case MeterType.SIGNAL_MAX_BIN: return 1;
                     case MeterType.OTHER_BUTTONS: return 0;
+                    case MeterType.WAVE_RECORD: return 0;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: return 0;
 
                     case MeterType.ACG_MAX_MAG: return 1;
@@ -21468,6 +22790,7 @@ namespace Thetis
                     case MeterType.CUSTOM_METER_BAR: AddCustomBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SIGNAL_MAX_BIN: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.OTHER_BUTTONS: AddOtherButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.WAVE_RECORD: AddWaveRecord(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VOICE_RECORD_PLAY_BUTTONS: AddVoiceRecordPlay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ACG_MAX_MAG: AddADCMaxMag(nDelay, 0, out bBottom, restoreIg); break;
                 }
@@ -24194,6 +25517,35 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddWaveRecord(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsWaveRecord wr = new clsWaveRecord(this, ig);
+                wr.ParentID = ig.ID;
+
+                wr.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                wr.Size = new SizeF(1f - _fPadX * 2f, 0.60f);
+                wr.ZOrder = 1;
+                addMeterItem(wr);
+                wr.RefreshEntries();
+
+                fBottom = wr.TopLeft.Y + wr.Size.Height;
+
+                ig.TopLeft = wr.TopLeft;
+                ig.Size = new SizeF(wr.Size.Width, fBottom);
+                ig.MeterType = MeterType.WAVE_RECORD;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return wr.ID;
+            }
             public string AddFilterButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -25636,6 +26988,57 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.WAVE_RECORD:
+                                    {
+                                        bRebuild = true;
+                                        float padding = 0f;
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.WAVE_RECORD))
+                                        {
+                                            clsWaveRecord wr = me.Value as clsWaveRecord;
+                                            if (wr == null) continue;
+
+                                            wr.FadeOnRx = igs.FadeOnRx;
+                                            wr.FadeOnTx = igs.FadeOnTx;
+                                            wr.Radius = igs.GetSetting<float>("waverecord_radius", true, 0f, 2f, wr.Radius);
+                                            wr.BackColour = igs.GetSetting<System.Drawing.Color>("waverecord_back_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.BackColour);
+                                            wr.RowColour = igs.GetSetting<System.Drawing.Color>("waverecord_row_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.RowColour);
+                                            wr.RowBorderColour = igs.GetSetting<System.Drawing.Color>("waverecord_row_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty,
+                                                igs.GetSetting<System.Drawing.Color>("waverecord_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.RowBorderColour));
+                                            wr.TextColour = igs.GetSetting<System.Drawing.Color>("waverecord_text_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.TextColour);
+                                            wr.ButtonFillColour = igs.GetSetting<System.Drawing.Color>("waverecord_button_fill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ButtonFillColour);
+                                            wr.ButtonBorderColour = igs.GetSetting<System.Drawing.Color>("waverecord_button_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ButtonBorderColour);
+                                            wr.ButtonHoverColour = igs.GetSetting<System.Drawing.Color>("waverecord_button_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ButtonHoverColour);
+                                            wr.PlayIconColour = igs.GetSetting<System.Drawing.Color>("waverecord_play_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.PlayIconColour);
+                                            wr.StopIconColour = igs.GetSetting<System.Drawing.Color>("waverecord_stop_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.StopIconColour);
+                                            wr.DeleteIconColour = igs.GetSetting<System.Drawing.Color>("waverecord_delete_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.DeleteIconColour);
+                                            wr.ScrollbarTrackColour = igs.GetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ScrollbarTrackColour);
+                                            wr.ScrollbarThumbColour = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ScrollbarThumbColour);
+                                            wr.ScrollbarThumbHoverColour = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, wr.ScrollbarThumbHoverColour);
+                                            wr.FilePaths = igs.GetSetting<string[]>("waverecord_filepaths", false, null, null, wr.FilePaths);
+                                            wr.OrderMap = igs.GetSetting<short[]>("waverecord_order_map", false, null, null, wr.OrderMap);
+
+                                            float verticalRatio = igs.GetSetting<float>("waverecord_vertical_ratio", true, 0.10f, 2f, wr.Size.Height <= 0f ? 0.60f : wr.Size.Height);
+                                            wr.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            wr.Size = new SizeF(ig.Size.Width, verticalRatio);
+
+                                            padding += wr.Size.Height;
+                                        }
+
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue;
+
+                                            fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            fc.Size = new SizeF(ig.Size.Width, padding);
+                                            fc.FadeOnRx = igs.FadeOnRx;
+                                            fc.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.OTHER_BUTTONS:
                                 case MeterType.TUNESTEP_BUTTONS:
                                 case MeterType.ANTENNA_BUTTONS:
@@ -27014,6 +28417,45 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.WAVE_RECORD:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.WAVE_RECORD))
+                                        {
+                                            clsWaveRecord wr = me.Value as clsWaveRecord;
+                                            if (wr == null) continue;
+
+                                            igs.SetSetting<float>("waverecord_vertical_ratio", wr.Size.Height);
+                                            igs.SetSetting<float>("waverecord_radius", wr.Radius);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_back_colour", wr.BackColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_row_colour", wr.RowColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_row_border_colour", wr.RowBorderColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_text_colour", wr.TextColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_button_fill_colour", wr.ButtonFillColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_button_border_colour", wr.ButtonBorderColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_button_hover_colour", wr.ButtonHoverColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_play_colour", wr.PlayIconColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_stop_colour", wr.StopIconColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_delete_colour", wr.DeleteIconColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", wr.ScrollbarTrackColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", wr.ScrollbarThumbColour);
+                                            igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", wr.ScrollbarThumbHoverColour);
+                                            igs.SetSetting<string[]>("waverecord_filepaths", wr.FilePaths);
+                                            igs.SetSetting<short[]>("waverecord_order_map", wr.OrderMap);
+                                            igs.FadeOnRx = wr.FadeOnRx;
+                                            igs.FadeOnTx = wr.FadeOnTx;
+                                        }
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue;
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.OTHER_BUTTONS:
                                 case MeterType.TUNESTEP_BUTTONS:
                                 case MeterType.ANTENNA_BUTTONS:
@@ -28268,6 +29710,7 @@ namespace Thetis
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.OTHER_BUTTONS ||
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY ||
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.WAVE_RECORD ||
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS
                                                                                          ))
                     {
@@ -29992,11 +31435,15 @@ namespace Thetis
                 //_fLastTime = _objFrameStartTimer.ElapsedMsec;
                 //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
 
+                _displayTarget.AllowDrop = true;
                 _displayTarget.Resize += target_Resize;
                 _displayTarget.MouseUp += OnMouseUp;
                 _displayTarget.MouseDown += OnMouseDown;
                 _displayTarget.MouseWheel += OnMouseWheel;
                 _displayTarget.MouseMove += OnMouseMove;
+                _displayTarget.DragEnter += OnDragEnter;
+                _displayTarget.DragOver += OnDragOver;
+                _displayTarget.DragDrop += OnDragDrop;
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
@@ -30434,6 +31881,9 @@ namespace Thetis
                     _displayTarget.MouseDown -= OnMouseDown;
                     _displayTarget.MouseWheel -= OnMouseWheel;
                     _displayTarget.MouseMove -= OnMouseMove;
+                    _displayTarget.DragEnter -= OnDragEnter;
+                    _displayTarget.DragOver -= OnDragOver;
+                    _displayTarget.DragDrop -= OnDragDrop;
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
                     _displayTarget.MouseCaptureChanged -= OnMouseCaptureChanged;
@@ -31334,6 +32784,87 @@ namespace Thetis
                 }
             }
 
+            private void OnDragEnter(object sender, DragEventArgs e)
+            {
+                if (Common.IsAdministrator())
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
+
+                string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
+                clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
+                e.Effect = waveRecord != null && waveRecord.CanAcceptFiles(filePaths) ? DragDropEffects.Copy : DragDropEffects.None;
+            }
+
+            private void OnDragOver(object sender, DragEventArgs e)
+            {
+                if (Common.IsAdministrator())
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
+
+                string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
+                clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
+                e.Effect = waveRecord != null && waveRecord.CanAcceptFiles(filePaths) ? DragDropEffects.Copy : DragDropEffects.None;
+            }
+
+            private void OnDragDrop(object sender, DragEventArgs e)
+            {
+                if (Common.IsAdministrator()) return;
+
+                string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
+                clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
+                if (waveRecord == null || !waveRecord.CanAcceptFiles(filePaths)) return;
+
+                waveRecord.AddFiles(filePaths);
+            }
+
+            private clsWaveRecord tryGetWaveRecordDropTarget(object sender, System.Drawing.Point screenPoint)
+            {
+                lock (_metersLock)
+                {
+                    Panel pb = sender as Panel;
+                    if (pb == null || pb.Tag == null) return null;
+
+                    string sId = pb.Tag.ToString();
+                    if (string.IsNullOrWhiteSpace(sId) || !_meters.ContainsKey(sId)) return null;
+
+                    clsMeter m = _meters[sId];
+                    System.Drawing.Point clientPoint = pb.PointToClient(screenPoint);
+
+                    lock (m._meterItemsLock)
+                    {
+                        if (m.SortedMeterItemsForZOrder == null) return null;
+
+                        float tw = targetWidth - 1f;
+                        float rw = m.XRatio;
+                        float rh = m.YRatio;
+                        SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                        for (int i = m.SortedMeterItemsForZOrder.Count - 1; i >= 0; i--)
+                        {
+                            clsMeterItem mi = m.SortedMeterItemsForZOrder[i];
+                            if (mi.ItemType != clsMeterItem.MeterItemType.WAVE_RECORD) continue;
+
+                            float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                            float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                            float w = rect.Width * (mi.Size.Width / m.XRatio);
+                            float h = rect.Height * (mi.Size.Height / m.YRatio);
+                            SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                            if (clickRect.Contains(new SharpDX.Point(clientPoint.X, clientPoint.Y)))
+                            {
+                                return mi as clsWaveRecord;
+                            }
+                        }
+                    }
+                }
+
+                return null;
+            }
+
             //            
             private int drawMeters(out int height)
             {
@@ -31453,6 +32984,9 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS:
                                         renderButtonBox(rect, mi, m);
                                         break;                                    
+                                    case clsMeterItem.MeterItemType.WAVE_RECORD:
+                                        renderWaveRecord(rect, mi, m);
+                                        break;
                                     case clsMeterItem.MeterItemType.FADE_COVER:
                                         renderFadeCover(rect, mi, m);
                                         break;
@@ -37073,6 +38607,404 @@ namespace Thetis
                 byte B = (byte)(dim ? colour.B * amount : colour.B);
 
                 return System.Drawing.Color.FromArgb(R, G, B);
+            }
+            private void renderWaveRecord(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsWaveRecord wave = mi as clsWaveRecord;
+                if (wave == null) return;
+
+                wave.UpdateDragFromMouse();
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                if (w <= 4f || h <= 4f)
+                {
+                    wave.SetRenderLayout(new SharpDX.RectangleF(), new SharpDX.RectangleF(), new SharpDX.RectangleF(), 0f, 0f, false, null);
+                    return;
+                }
+
+                const int nFade = 255;
+                float panelPadding = w * 0.004f;
+                float rowGap = w * 0.006f;
+                float rowHeight = w * 0.155f;
+                float rowPitch = rowHeight + rowGap;
+
+                System.Drawing.Color panelColour = wave.BackColour;
+                System.Drawing.Color rowColour = wave.RowColour;
+                System.Drawing.Color rowBorderColour = wave.RowBorderColour;
+                System.Drawing.Color textColour = wave.TextColour;
+                System.Drawing.Color buttonFill = wave.ButtonFillColour;
+                System.Drawing.Color buttonBorder = wave.ButtonBorderColour;
+                System.Drawing.Color buttonHover = wave.ButtonHoverColour;
+                System.Drawing.Color playColour = wave.PlayIconColour;
+                System.Drawing.Color stopColour = wave.StopIconColour;
+                System.Drawing.Color deleteColour = wave.DeleteIconColour;
+                System.Drawing.Color disabledColour = System.Drawing.Color.FromArgb(110, 110, 110);
+                System.Drawing.Color scrollbarTrackColour = wave.ScrollbarTrackColour;
+                System.Drawing.Color scrollbarThumbColour = wave.ScrollbarThumbColour;
+                System.Drawing.Color scrollbarThumbHoverColour = wave.ScrollbarThumbHoverColour;
+                bool adminMode = Common.IsAdministrator();
+
+                RoundedRectangle dragging_rr = new RoundedRectangle();
+                RoundedRectangle rr = new RoundedRectangle();
+                rr.Rect = new SharpDX.RectangleF(x, y, w, h);
+                rr.RadiusX = 0f;
+                rr.RadiusY = 0f;
+                fillRoundedRectangle(rr, getDXBrushForColour(panelColour, nFade));
+
+                SharpDX.RectangleF contentRect = new SharpDX.RectangleF(x + panelPadding, y + panelPadding, w - panelPadding * 2f, h - panelPadding * 2f);
+                if (contentRect.Width <= 6f || contentRect.Height <= 6f)
+                {
+                    wave.SetRenderLayout(new SharpDX.RectangleF(), new SharpDX.RectangleF(), new SharpDX.RectangleF(), rowPitch, 0f, false, null);
+                    return;
+                }
+
+                if (adminMode)
+                {
+                    _renderTarget.PushAxisAlignedClip(contentRect, AntialiasMode.Aliased);
+                    float emptyHeight = contentRect.Height * 0.10f;
+                    plotText("This list can not be used whilst Thetis", contentRect.Left + (contentRect.Width / 2f), contentRect.Top + (contentRect.Height * 0.42f), rect.Width, wave.FontSize * 0.80f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, true, contentRect.Width * 0.80f, false, emptyHeight);
+                    plotText("   is being run in Administrator mode  ", contentRect.Left + (contentRect.Width / 2f), contentRect.Top + (contentRect.Height * 0.52f), rect.Width, wave.FontSize * 0.80f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, true, contentRect.Width * 0.80f, false, emptyHeight);
+                    _renderTarget.PopAxisAlignedClip();
+                    wave.SetRenderLayout(contentRect, new SharpDX.RectangleF(), new SharpDX.RectangleF(), rowPitch, 0f, false, new List<clsWaveRecord.WaveRecordHitRegion>());
+                    return;
+                }
+
+                clsWaveRecord.WaveRecordEntry[] entries = wave.EntriesSnapshot;
+
+                string activePlayFilename = wave.ActivePlayFilename;
+                bool globalRecording = wave.GlobalRecording;
+                bool globalPlaying = wave.GlobalPlaying;
+                int draggingIndex = wave.DraggingIndex;
+                int dragTargetIndex = wave.DragTargetIndex;
+                PointF mouse = wave.MouseEntered ? wave.MouseMovePoint : new PointF(float.MinValue, float.MinValue);
+
+                float totalContentHeight = entries.Length > 0 ? (entries.Length * rowPitch) - rowGap : rowHeight;
+                bool showScrollbar = totalContentHeight > contentRect.Height + 0.5f;
+
+                SharpDX.RectangleF scrollTrackRect = new SharpDX.RectangleF();
+                SharpDX.RectangleF scrollThumbRect = new SharpDX.RectangleF();
+                float scrollbarWidth = 0f;
+                if (showScrollbar)
+                {
+                    scrollbarWidth = w * 0.03f;
+                    contentRect.Width -= scrollbarWidth + (panelPadding * 0.35f);
+                    scrollTrackRect = new SharpDX.RectangleF(contentRect.Right + (panelPadding * 0.35f), contentRect.Top, scrollbarWidth, contentRect.Height);
+                }
+
+                if (contentRect.Width <= 6f || contentRect.Height <= 6f)
+                {
+                    wave.SetRenderLayout(contentRect, scrollTrackRect, scrollThumbRect, rowPitch, 0f, false, null);
+                    return;
+                }
+
+                float maxScroll = Math.Max(0f, totalContentHeight - contentRect.Height);
+                float scrollOffset = wave.ScrollOffset;
+                if (scrollOffset < 0f) scrollOffset = 0f;
+                if (scrollOffset > maxScroll) scrollOffset = maxScroll;
+
+                List<clsWaveRecord.WaveRecordHitRegion> hitRegions = new List<clsWaveRecord.WaveRecordHitRegion>();
+
+                _renderTarget.PushAxisAlignedClip(contentRect, AntialiasMode.Aliased);
+
+                if (entries.Length < 1)
+                {
+                    float emptyHeight = contentRect.Height * 0.10f;
+                    plotText("Drop WAV files here", contentRect.Left + (contentRect.Width / 2f), contentRect.Top + (contentRect.Height * 0.45f), rect.Width, wave.FontSize * 0.80f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, true, contentRect.Width * 0.55f, false, emptyHeight);
+                }
+                else
+                {
+                    int startIndex = Math.Max(0, (int)(scrollOffset / rowPitch));
+                    float firstRowTop = contentRect.Top - (scrollOffset - (startIndex * rowPitch));
+
+                    for (int i = startIndex; i < entries.Length; i++)
+                    {
+                        clsWaveRecord.WaveRecordEntry entry = entries[i];
+                        float rowTop = firstRowTop + ((i - startIndex) * rowPitch);
+                        float rowBottom = rowTop + rowHeight;
+
+                        if (rowTop >= contentRect.Bottom) break;
+                        if (rowBottom <= contentRect.Top) continue;
+
+                        float rowBorderStroke = Math.Max(1f, rowHeight * 0.035f);
+                        float rowInsetX = Math.Max(contentRect.Width * 0.0005f, rowBorderStroke * 0.70f);
+                        float rowInsetY = Math.Max(rowHeight * 0.020f, rowBorderStroke * 0.70f);
+                        SharpDX.RectangleF rowRect = new SharpDX.RectangleF(contentRect.Left + rowInsetX, rowTop + rowInsetY, Math.Max(0f, contentRect.Width - rowInsetX * 2f), Math.Max(0f, rowHeight - rowInsetY * 2f));
+                        if (rowRect.Width <= 0f || rowRect.Height <= 0f) continue;
+
+                        bool isPlaying = samePath(activePlayFilename, entry.FilePath) && globalPlaying;
+                        bool highlightMoveTarget = draggingIndex != -1 && dragTargetIndex != -1 && i == dragTargetIndex && i != draggingIndex;
+                        System.Drawing.Color actualRowColour = highlightMoveTarget ? buttonHover : rowColour;
+                        float rowCornerRadius = Math.Max(0f, Math.Min(rowRect.Height * 0.45f, rowRect.Height * wave.Radius));
+
+                        rr.Rect = rowRect;
+                        rr.RadiusX = rowCornerRadius;
+                        rr.RadiusY = rr.RadiusX;
+                        fillRoundedRectangle(rr, getDXBrushForColour(actualRowColour, nFade));
+                        drawRoundedRectangle(rr, getDXBrushForColour(rowBorderColour, nFade), rowBorderStroke);
+
+                        if (i == draggingIndex)
+                        {
+                            dragging_rr.Rect = new RawRectangleF(rr.Rect.Left, rr.Rect.Top, rr.Rect.Right, rr.Rect.Bottom);
+                            dragging_rr.RadiusX = rr.RadiusX;
+                            dragging_rr.RadiusY = rr.RadiusY;
+                        }
+
+                        float innerPadX = rowRect.Width * 0.016f;
+                        float buttonSize = rowRect.Height * 0.36f;
+                        float buttonGap = rowRect.Width * 0.014f;
+                        float deleteX = rowRect.Right - innerPadX - buttonSize;
+                        float actionX = deleteX - buttonGap - buttonSize;
+                        float buttonY = rowRect.Top + (rowRect.Height * 0.17f);
+
+                        SharpDX.RectangleF deleteRect = new SharpDX.RectangleF(deleteX, buttonY, buttonSize, buttonSize);
+                        SharpDX.RectangleF actionRect = new SharpDX.RectangleF(actionX, buttonY, buttonSize, buttonSize);
+
+                        float textLeft = rowRect.Left + innerPadX;
+                        float textWidth = Math.Max(0f, actionRect.Left - buttonGap - textLeft);
+                        float fileTextWidth = Math.Max(0f, rowRect.Right - innerPadX - textLeft);
+                        float buttonCornerRadius = Math.Max(0f, Math.Min(buttonSize * 0.45f, buttonSize * wave.Radius));
+
+                        if (!entry.FileExists)
+                        {
+                            float topLineY = rowRect.Top + (rowRect.Height * 0.08f);
+                            float topLineHeight = rowRect.Height * 0.24f;
+                            float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                            float fileLineHeight = rowRect.Height * 0.20f;
+
+                            plotText("File no longer available", textLeft, topLineY, rect.Width, wave.FontSize * 1.10f, textColour, nFade, wave.FontFamily, wave.FontStyle | FontStyle.Bold, false, false, textWidth, false, topLineHeight);
+                            plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
+                        }
+                        else
+                        {
+                            clsWaveRecord.WaveRecordJsonDataDisplay jsonData = entry.JsonData;
+                            if (jsonData != null && jsonData.HasData)
+                            {
+                                FontStyle boldStyle = wave.FontStyle | FontStyle.Bold;
+                                string jsonLeftLine = string.Join(" | ", new string[] { jsonData.Frequency, jsonData.Mode, jsonData.Band }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                                string jsonRightLine = jsonData.Duration;
+                                string jsonMiddleLine = string.Join(" | ", new string[] { jsonData.Audio, jsonData.Utc }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                                bool hasHeaderLine = !string.IsNullOrWhiteSpace(jsonLeftLine);
+                                bool hasDurationLine = !string.IsNullOrWhiteSpace(jsonRightLine);
+                                bool hasMiddleLine = !string.IsNullOrWhiteSpace(jsonMiddleLine);
+                                string topLineFallback = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                if (string.IsNullOrWhiteSpace(topLineFallback)) topLineFallback = entry.DisplayName;
+                                string topLineText = hasHeaderLine ? jsonLeftLine : topLineFallback;
+
+                                if (hasHeaderLine || hasDurationLine || hasMiddleLine)
+                                {
+                                    float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                    float topLineHeight = rowRect.Height * 0.28f;
+                                    float middleLineY = rowRect.Top + (rowRect.Height * 0.35f);
+                                    float middleLineHeight = rowRect.Height * 0.24f;
+                                    float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                                    float fileLineHeight = rowRect.Height * 0.20f;
+                                    float durationWidth = textWidth * 0.24f;
+                                    float headerGap = rowRect.Width * 0.010f;
+                                    float headerWidth = Math.Max(0f, textWidth - durationWidth - headerGap);
+                                    float topLineWidth = hasDurationLine ? headerWidth : textWidth;
+
+                                    if (!string.IsNullOrWhiteSpace(topLineText))
+                                    {
+                                        plotText(topLineText, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, hasHeaderLine ? boldStyle : wave.FontStyle, false, false, topLineWidth, false, topLineHeight);
+                                    }
+
+                                    if (hasDurationLine)
+                                    {
+                                        plotText(jsonRightLine, textLeft + textWidth, topLineY, rect.Width, wave.FontSize * 1.22f, textColour, nFade, wave.FontFamily, boldStyle, true, false, durationWidth, false, topLineHeight);
+                                    }
+
+                                    if (hasMiddleLine)
+                                    {
+                                        plotText(jsonMiddleLine, textLeft, middleLineY, rect.Width, wave.FontSize * 1.14f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, middleLineHeight);
+                                    }
+
+                                    plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
+                                }
+                                else
+                                {
+                                    float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                    float topLineHeight = rowRect.Height * 0.28f;
+                                    float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                                    float fileLineHeight = rowRect.Height * 0.20f;
+                                    string topLineFallbackNoHeader = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                    if (string.IsNullOrWhiteSpace(topLineFallbackNoHeader)) topLineFallbackNoHeader = entry.DisplayName;
+                                    plotText(topLineFallbackNoHeader, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, topLineHeight);
+                                    plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
+                                }
+                            }
+                            else
+                            {
+                                float topLineY = rowRect.Top + (rowRect.Height * 0.05f);
+                                float topLineHeight = rowRect.Height * 0.28f;
+                                float fileLineY = rowRect.Top + (rowRect.Height * 0.66f);
+                                float fileLineHeight = rowRect.Height * 0.20f;
+                                string topLineFallbackNoJson = Path.GetFileNameWithoutExtension(entry.DisplayName);
+                                if (string.IsNullOrWhiteSpace(topLineFallbackNoJson)) topLineFallbackNoJson = entry.DisplayName;
+                                plotText(topLineFallbackNoJson, textLeft, topLineY, rect.Width, wave.FontSize * 1.18f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, textWidth, false, topLineHeight);
+                                plotText(entry.DisplayName, textLeft, fileLineY, rect.Width, wave.FontSize, textColour, nFade, wave.FontFamily, wave.FontStyle, false, false, fileTextWidth, false, fileLineHeight);
+                            }
+                        }
+
+                        bool canPlay = entry.FileExists && !isPlaying && !globalRecording && m.Power;
+                        bool canStop = isPlaying;
+                        bool canDelete = true;
+
+                        System.Drawing.Color actionIconColour = isPlaying ? stopColour : playColour;
+                        if ((!isPlaying && !canPlay) || (isPlaying && !canStop)) actionIconColour = disabledColour;
+                        System.Drawing.Color deleteIconColour = canDelete ? deleteColour : disabledColour;
+
+                        bool hoverAction = actionRect.Contains(mouse.X, mouse.Y);
+                        bool hoverDelete = deleteRect.Contains(mouse.X, mouse.Y);
+
+                        drawWaveRecordButton(actionRect, hoverAction, buttonFill, buttonBorder, buttonHover, nFade, buttonCornerRadius);
+                        drawWaveRecordButton(deleteRect, hoverDelete, buttonFill, buttonBorder, buttonHover, nFade, buttonCornerRadius);
+
+                        drawWaveRecordIcon(isPlaying ? "stop" : "play", actionRect, actionIconColour, nFade);
+                        drawWaveRecordIcon("trash", deleteRect, deleteIconColour, nFade);
+
+                        if (canPlay || canStop)
+                        {
+                            SharpDX.RectangleF clippedActionRect = clipRect(actionRect, contentRect);
+                            if (!rectEmpty(clippedActionRect))
+                            {
+                                hitRegions.Add(new clsWaveRecord.WaveRecordHitRegion()
+                                {
+                                    HitType = isPlaying ? clsWaveRecord.WaveRecordHitType.STOP : clsWaveRecord.WaveRecordHitType.PLAY,
+                                    FilePath = entry.FilePath,
+                                    Rect = clippedActionRect
+                                });
+                            }
+                        }
+
+                        if (canDelete)
+                        {
+                            SharpDX.RectangleF clippedDeleteRect = clipRect(deleteRect, contentRect);
+                            if (!rectEmpty(clippedDeleteRect))
+                            {
+                                hitRegions.Add(new clsWaveRecord.WaveRecordHitRegion()
+                                {
+                                    HitType = clsWaveRecord.WaveRecordHitType.DELETE,
+                                    FilePath = entry.FilePath,
+                                    Rect = clippedDeleteRect
+                                });
+                            }
+                        }
+                    }
+                }
+
+                _renderTarget.PopAxisAlignedClip();
+                if (showScrollbar)
+                {
+                    float thumbHeight = Math.Max(24f, (contentRect.Height / Math.Max(totalContentHeight, 1f)) * scrollTrackRect.Height);
+                    float trackTravel = Math.Max(0f, scrollTrackRect.Height - thumbHeight);
+                    float thumbTop = scrollTrackRect.Top + (maxScroll <= 0f ? 0f : (scrollOffset / maxScroll) * trackTravel);
+                    scrollThumbRect = new SharpDX.RectangleF(scrollTrackRect.Left, thumbTop, scrollTrackRect.Width, thumbHeight);
+
+                    rr.Rect = scrollTrackRect;
+                    rr.RadiusX = Math.Max(3f, scrollTrackRect.Width * 0.45f);
+                    rr.RadiusY = rr.RadiusX;
+                    fillRoundedRectangle(rr, getDXBrushForColour(scrollbarTrackColour, nFade));
+
+                    bool hoverThumb = scrollThumbRect.Contains(mouse.X, mouse.Y) || wave.ScrollDragging;
+                    rr.Rect = scrollThumbRect;
+                    rr.RadiusX = Math.Max(3f, scrollThumbRect.Width * 0.45f);
+                    rr.RadiusY = rr.RadiusX;
+                    fillRoundedRectangle(rr, getDXBrushForColour(hoverThumb ? scrollbarThumbHoverColour : scrollbarThumbColour, nFade));
+
+                    hitRegions.Add(new clsWaveRecord.WaveRecordHitRegion()
+                    {
+                        HitType = clsWaveRecord.WaveRecordHitType.SCROLL_TRACK,
+                        FilePath = null,
+                        Rect = scrollTrackRect
+                    });
+                    hitRegions.Add(new clsWaveRecord.WaveRecordHitRegion()
+                    {
+                        HitType = clsWaveRecord.WaveRecordHitType.SCROLL_THUMB,
+                        FilePath = null,
+                        Rect = scrollThumbRect
+                    });
+                }
+
+                if (draggingIndex != -1)
+                {
+                    float rw = dragging_rr.Rect.Right - dragging_rr.Rect.Left;
+                    float rh = dragging_rr.Rect.Bottom - dragging_rr.Rect.Top;
+                    float draggingBorderStroke = Math.Max(1f, rowHeight * 0.035f);
+                    dragging_rr.Rect.Left = wave.MouseMovePoint.X - (rw / 2f);
+                    dragging_rr.Rect.Top = wave.MouseMovePoint.Y - (rh / 2f);
+                    dragging_rr.Rect.Right = dragging_rr.Rect.Left + rw;
+                    dragging_rr.Rect.Bottom = dragging_rr.Rect.Top + rh;
+
+                    System.Drawing.Color c = (dragTargetIndex != -1 && dragTargetIndex != draggingIndex) ? System.Drawing.Color.LimeGreen : System.Drawing.Color.DarkRed;
+                    drawRoundedRectangle(dragging_rr, getDXBrushForColour(c, 255), draggingBorderStroke);
+                }
+
+                wave.SetRenderLayout(contentRect, scrollTrackRect, scrollThumbRect, rowPitch, maxScroll, showScrollbar, hitRegions);
+            }
+            private void drawWaveRecordButton(SharpDX.RectangleF buttonRect, bool hovered, System.Drawing.Color fillColour, System.Drawing.Color borderColour, System.Drawing.Color hoverColour, int fade, float cornerRadius)
+            {
+                RoundedRectangle rr = new RoundedRectangle();
+                rr.Rect = buttonRect;
+                rr.RadiusX = Math.Max(0f, Math.Min(buttonRect.Height * 0.45f, cornerRadius));
+                rr.RadiusY = rr.RadiusX;
+
+                fillRoundedRectangle(rr, getDXBrushForColour(fillColour, fade));
+                if (hovered)
+                {
+                    fillRoundedRectangle(rr, getDXBrushForColour(hoverColour, Math.Min(255, fade)));
+                }
+                drawRoundedRectangle(rr, getDXBrushForColour(borderColour, fade), Math.Max(1f, buttonRect.Width * 0.08f));
+            }
+            private void drawWaveRecordIcon(string icon, SharpDX.RectangleF buttonRect, System.Drawing.Color iconColour, int fade)
+            {
+                convertImageToDX(icon);
+                if (!_images.ContainsKey(icon)) return;
+
+                SharpDX.Direct2D1.Bitmap b = _images[icon];
+                float iconSize = Math.Min(buttonRect.Width, buttonRect.Height) * 0.58f;
+                SharpDX.RectangleF iconRect = new SharpDX.RectangleF(
+                    buttonRect.Left + ((buttonRect.Width - iconSize) / 2f),
+                    buttonRect.Top + ((buttonRect.Height - iconSize) / 2f),
+                    iconSize,
+                    iconSize);
+
+                Matrix3x2 originalTransform = _renderTarget.Transform;
+                AntialiasMode originalAM = _renderTarget.AntialiasMode;
+
+                try
+                {
+                    _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                    _renderTarget.Transform = Matrix3x2.Identity;
+                    _renderTarget.FillOpacityMask(b, getDXBrushForColour(iconColour, fade), OpacityMaskContent.Graphics, iconRect, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                }
+                finally
+                {
+                    _renderTarget.AntialiasMode = originalAM;
+                    _renderTarget.Transform = originalTransform;
+                }
+            }
+            private SharpDX.RectangleF clipRect(SharpDX.RectangleF value, SharpDX.RectangleF clip)
+            {
+                float left = Math.Max(value.Left, clip.Left);
+                float top = Math.Max(value.Top, clip.Top);
+                float right = Math.Min(value.Right, clip.Right);
+                float bottom = Math.Min(value.Bottom, clip.Bottom);
+
+                if (right <= left || bottom <= top) return new SharpDX.RectangleF();
+                return new SharpDX.RectangleF(left, top, right - left, bottom - top);
+            }
+            private bool rectEmpty(SharpDX.RectangleF value)
+            {
+                return value.Width <= 0f || value.Height <= 0f;
+            }
+            private bool samePath(string left, string right)
+            {
+                if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right)) return false;
+                return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
             }
             private void renderButtonBox(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

@@ -210,6 +210,22 @@ namespace Thetis
             chkLegacyEQ_CheckedChanged(this, EventArgs.Empty);
         }
 
+        public bool UsingLegacyEQ
+        {
+            get
+            {
+                return chkLegacyEQ != null ? chkLegacyEQ.Checked : false;
+            }
+            set 
+            { 
+                if(chkLegacyEQ == null) return;
+                chkLegacyEQ.CheckedChanged -= chkLegacyEQ_CheckedChanged;
+                chkLegacyEQ.Checked = value;
+                chkLegacyEQ_CheckedChanged(this, EventArgs.Empty);
+                chkLegacyEQ.CheckedChanged += chkLegacyEQ_CheckedChanged;
+            }
+        }
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -2039,6 +2055,8 @@ namespace Thetis
         #region Properties
         public void HighlightTXProfileSaveItems(bool bHighlight)
         {
+            Common.HightlightControl(chkLegacyEQ, bHighlight);
+
             Common.HightlightControl(chkTXEQEnabled, bHighlight);
 
             Common.HightlightControl(rad3Band, bHighlight);

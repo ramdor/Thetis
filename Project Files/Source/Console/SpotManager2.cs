@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2025 Richard Samphire MW0LGE
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -77,6 +77,7 @@ namespace Thetis
             public string TextColor { get; set; } = ""; // text colour A92GE
             public string Flag { get; set; } = "";
             public string FlagSpotter { get; set; } = "";
+            public long Distance { get; set; } = -1;
 
             public bool IsSWL { get; set; } = false;
             public long SWLSecondsToLive { get; set; } = 0; // 0 = no expiry
@@ -97,6 +98,7 @@ namespace Thetis
             public DateTime utc_spot_time;
             public bool IsSWL;
             public long SWLSecondsToLive;
+            public long distance;
 
             public bool previously_highlighted;
             public bool flashing;
@@ -485,6 +487,7 @@ namespace Thetis
             long swl_seconds_to_live = 0;
             Image flag_image = null;
             Image flag_spotter_image = null;
+            long distance = -1;
 
             if (jsonSpotData != null)
             {
@@ -502,6 +505,8 @@ namespace Thetis
                 is_swl = jsonSpotData.IsSWL;
                 swl_seconds_to_live = jsonSpotData.SWLSecondsToLive;
                 if (swl_seconds_to_live < 0) swl_seconds_to_live = 0;
+
+                distance = jsonSpotData.Distance;
             }
 
             if (!string.IsNullOrEmpty(callsign) && !callsign.StartsWith("CQ_", StringComparison.OrdinalIgnoreCase))
@@ -552,7 +557,9 @@ namespace Thetis
                 flashing = (DateTime.UtcNow - spotted_time).TotalSeconds <= 120,
 
                 text_colour = text_colour,
-                use_text_colour = use_text_colour
+                use_text_colour = use_text_colour,
+
+                distance = distance
             };
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)

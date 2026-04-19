@@ -160,6 +160,7 @@ namespace Thetis
         private const int PcAudioWasapiOutputIdBase = 200000;
 
         private const int RecordSpaceCheckMs = 2000;
+        private const int WaveThingStopWaitMs = 2000;
 
         private readonly object _sync = new object();
 
@@ -215,6 +216,7 @@ namespace Thetis
         public float DitherAmount { get; set; }
 
         public bool MoxOnPlayback { get; set; } = true;
+        public double MonoToStereoGainDb { get; set; } = 6.0;
 
         public bool GenerateMP3File { get; set; } = false;
         public bool GenerateJSON { get; set; } = false;
@@ -298,7 +300,7 @@ namespace Thetis
                     string hdrErr;
 
                     if (!tryParseWaveHeader(br, out fmtTag, out sr, out ch, out bps, out ds, out dl, out hdrErr)) return null;
-                    if (ch != 2) return null;
+                    if (ch < 1 || ch > 2) return null;
                     if (sr <= 0) return null;
 
                     int bytesPerSample;
@@ -383,12 +385,12 @@ namespace Thetis
                     DateTime parsedUtc;
                     if (tryParseUtcStamp(existing.utc_time, out parsedUtc)) utcTime = parsedUtc;
 
-                    d.Frequency = existing.frequency ?? "";
-                    d.Mode = existing.mode ?? "";
-                    d.Band = existing.band ?? "";
-                    //d.DDCFrequency = existing.ddcfrequency ?? "";
+                    d.Frequency = existing.frequency;
+                    d.Mode = existing.mode;
+                    d.Band = existing.band;
+                    //d.DDCFrequency = existing.ddcfrequency;
 
-                    d.Mp3File = existing.mp3_file ?? "";
+                    d.Mp3File = existing.mp3_file;
                     d.Mp3FileSizeBytes = existing.mp3_file_size_bytes;
                 }
                 else
@@ -1580,6 +1582,7 @@ namespace Thetis
             stopRecordSpaceTimer();
             string recordId = null;
             string filename = null;
+            WaveFileWriter writer = null;
 
             lock (_sync)
             {
@@ -1593,7 +1596,7 @@ namespace Thetis
 
                     if (_active_record_wfw_id >= 0)
                     {
-                        WaveFileWriter writer = WaveThing.wave_file_writer[_active_record_wfw_id];
+                        writer = WaveThing.wave_file_writer[_active_record_wfw_id];
                         if (writer != null)
                         {
                             writer.Stop();
@@ -1621,6 +1624,18 @@ namespace Thetis
                     setRecordingState(false);
                     clearActiveRecordLocked();
                 }
+            }
+
+            if (writer != null)
+            {
+                try
+                {
+                    if (writer.WaitForStop(WaveThingStopWaitMs))
+                    {
+                        completeRecordStateIfCurrent(recordId, filename);
+                    }
+                }
+                catch { }
             }
 
             storeRestoreSettings(false, false);
@@ -1703,7 +1718,7 @@ namespace Thetis
                         string headerError;
 
                         if (!tryParseWaveHeader(br, out formatTag, out sampleRate, out channels, out bitsPerSample, out dataStart, out dataLengthBytes, out headerError)) return false;
-                        if (channels != 2) return false;
+                        if (channels < 1 || channels > 2) return false;
                         if (sampleRate < 6000) return false;
                         if (dataLengthBytes <= 0) return false;
 
@@ -1800,6 +1815,7 @@ namespace Thetis
                         dataLengthBytes,
                         PlaybackCosineFadeEnabled,
                         PlaybackCosineFadeMs,
+                        MonoToStereoGainDb,
                         reader,
                         onWdspPlaybackFinished);
 
@@ -1876,9 +1892,9 @@ namespace Thetis
                             {
                                 if (tryParseWaveHeader(br, out int fmtTag, out int sr, out int ch, out int bps, out long ds, out long dl, out string hdrErr))
                                 {
-                                    if(ch != 2)
+                                    if (ch < 1 || ch > 2)
                                     {
-                                        error = "File is not 2 channel.";
+                                        error = "Unsupported channel count.";
                                         return false;
                                     }
                                     refreshExistingJsonFromWavIfNeeded(play_id, fullPath, fmtTag, sr, ch, bps);
@@ -2039,6 +2055,7 @@ namespace Thetis
             bool wdsp = false;
             string playId = null;
             string filename = null;
+            WaveFileReader1 reader = null;
 
             lock (_sync)
             {
@@ -2052,7 +2069,7 @@ namespace Thetis
                         _console.SetWavePlayback(_active_playback_wfw_id, false);
                         Audio.WavePlayback = false;
 
-                        WaveFileReader1 reader = WaveThing.wave_file_reader[_active_playback_wfw_id];
+                        reader = WaveThing.wave_file_reader[_active_playback_wfw_id];
                         if (reader != null)
                         {
                             reader.Stop();
@@ -2070,6 +2087,11 @@ namespace Thetis
                     error = ex.Message;
                     try { cleanupPcPlayback(); } catch { }
                 }
+            }
+
+            if (reader != null)
+            {
+                try { reader.WaitForStop(WaveThingStopWaitMs); } catch { }
             }
 
             if (wdsp) storeRestoreSettings(false, true);
@@ -2186,147 +2208,147 @@ namespace Thetis
 
                 try
                 {
-                float gain = _pc_input_gain;
-                if (gain <= 0.0f)
-                {
+                    float gain = _pc_input_gain;
+                    if (gain <= 0.0f)
+                    {
+                        if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
+                        {
+                            _pc_record_gain_buffer = new byte[e.BytesRecorded];
+                        }
+                        if (BitDepthMode == AudioBitDepthMode.Pcm8)
+                        {
+                            int i = 0;
+                            while (i < e.BytesRecorded)
+                            {
+                                _pc_record_gain_buffer[i] = 128;
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            Array.Clear(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        }
+                        _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
+                    PCInputSource src = PCInputSource;
+                
+                    if (gain == 1.0f && src == PCInputSource.Both)
+                    {
+                        _pc_wave_writer.Write(e.Buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
                     if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
                     {
                         _pc_record_gain_buffer = new byte[e.BytesRecorded];
                     }
-                    if (BitDepthMode == AudioBitDepthMode.Pcm8)
+
+                    Buffer.BlockCopy(e.Buffer, 0, _pc_record_gain_buffer, 0, e.BytesRecorded);
+
+                    if (src != PCInputSource.Both)
+                    {
+                        applyPcInputSourceStereoRemap(_pc_record_gain_buffer, e.BytesRecorded);
+                    }
+                
+                    if (gain == 1.0f)
+                    {
+                        _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
+                    int max = e.BytesRecorded;
+
+                    if (BitDepthMode == AudioBitDepthMode.IeeeFloat32)
                     {
                         int i = 0;
-                        while (i < e.BytesRecorded)
+                        while (i + 3 < max)
                         {
-                            _pc_record_gain_buffer[i] = 128;
+                            float sample = BitConverter.ToSingle(_pc_record_gain_buffer, i);
+                            float scaled = sample * gain;
+                            if (scaled > 1.0f) scaled = 1.0f;
+                            if (scaled < -1.0f) scaled = -1.0f;
+                            byte[] b = BitConverter.GetBytes(scaled);
+                            _pc_record_gain_buffer[i] = b[0];
+                            _pc_record_gain_buffer[i + 1] = b[1];
+                            _pc_record_gain_buffer[i + 2] = b[2];
+                            _pc_record_gain_buffer[i + 3] = b[3];
+                            i += 4;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm32)
+                    {
+                        int i = 0;
+                        while (i + 3 < max)
+                        {
+                            int sample = BitConverter.ToInt32(_pc_record_gain_buffer, i);
+                            double scaled = sample * (double)gain;
+                            if (scaled > int.MaxValue) scaled = int.MaxValue;
+                            if (scaled < int.MinValue) scaled = int.MinValue;
+                            int out_sample = (int)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
+                            _pc_record_gain_buffer[i + 3] = (byte)((out_sample >> 24) & 0xFF);
+                            i += 4;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm24)
+                    {
+                        int i = 0;
+                        while (i + 2 < max)
+                        {
+                            int sample = _pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8) | (_pc_record_gain_buffer[i + 2] << 16);
+                            if ((sample & 0x800000) != 0) sample |= unchecked((int)0xFF000000);
+
+                            double scaled = sample * (double)gain;
+                            if (scaled > 8388607.0) scaled = 8388607.0;
+                            if (scaled < -8388608.0) scaled = -8388608.0;
+
+                            int out_sample = (int)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
+                            i += 3;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm8)
+                    {
+                        int i = 0;
+                        while (i < max)
+                        {
+                            int sample = _pc_record_gain_buffer[i] - 128;
+                            double scaled = sample * (double)gain;
+                            if (scaled > 127.0) scaled = 127.0;
+                            if (scaled < -128.0) scaled = -128.0;
+                            int out_sample = (int)scaled + 128;
+                            _pc_record_gain_buffer[i] = (byte)out_sample;
                             i++;
                         }
                     }
                     else
                     {
-                        Array.Clear(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        int i = 0;
+                        while (i + 1 < max)
+                        {
+                            short sample = (short)(_pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8));
+                            float scaled = sample * gain;
+                            if (scaled > 32767.0f) scaled = 32767.0f;
+                            if (scaled < -32768.0f) scaled = -32768.0f;
+                            short out_sample = (short)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            i += 2;
+                        }
                     }
+
                     _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
                     _pc_wave_writer.Flush();
-                    return;
                 }
-
-                PCInputSource src = PCInputSource;
-                
-                if (gain == 1.0f && src == PCInputSource.Both)
-                {
-                    _pc_wave_writer.Write(e.Buffer, 0, e.BytesRecorded);
-                    _pc_wave_writer.Flush();
-                    return;
-                }
-
-                if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
-                {
-                    _pc_record_gain_buffer = new byte[e.BytesRecorded];
-                }
-
-                Buffer.BlockCopy(e.Buffer, 0, _pc_record_gain_buffer, 0, e.BytesRecorded);
-
-                if (src != PCInputSource.Both)
-                {
-                    applyPcInputSourceStereoRemap(_pc_record_gain_buffer, e.BytesRecorded);
-                }
-                
-                if (gain == 1.0f)
-                {
-                    _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
-                    _pc_wave_writer.Flush();
-                    return;
-                }
-
-                int max = e.BytesRecorded;
-
-                if (BitDepthMode == AudioBitDepthMode.IeeeFloat32)
-                {
-                    int i = 0;
-                    while (i + 3 < max)
-                    {
-                        float sample = BitConverter.ToSingle(_pc_record_gain_buffer, i);
-                        float scaled = sample * gain;
-                        if (scaled > 1.0f) scaled = 1.0f;
-                        if (scaled < -1.0f) scaled = -1.0f;
-                        byte[] b = BitConverter.GetBytes(scaled);
-                        _pc_record_gain_buffer[i] = b[0];
-                        _pc_record_gain_buffer[i + 1] = b[1];
-                        _pc_record_gain_buffer[i + 2] = b[2];
-                        _pc_record_gain_buffer[i + 3] = b[3];
-                        i += 4;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm32)
-                {
-                    int i = 0;
-                    while (i + 3 < max)
-                    {
-                        int sample = BitConverter.ToInt32(_pc_record_gain_buffer, i);
-                        double scaled = sample * (double)gain;
-                        if (scaled > int.MaxValue) scaled = int.MaxValue;
-                        if (scaled < int.MinValue) scaled = int.MinValue;
-                        int out_sample = (int)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
-                        _pc_record_gain_buffer[i + 3] = (byte)((out_sample >> 24) & 0xFF);
-                        i += 4;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm24)
-                {
-                    int i = 0;
-                    while (i + 2 < max)
-                    {
-                        int sample = _pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8) | (_pc_record_gain_buffer[i + 2] << 16);
-                        if ((sample & 0x800000) != 0) sample |= unchecked((int)0xFF000000);
-
-                        double scaled = sample * (double)gain;
-                        if (scaled > 8388607.0) scaled = 8388607.0;
-                        if (scaled < -8388608.0) scaled = -8388608.0;
-
-                        int out_sample = (int)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
-                        i += 3;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm8)
-                {
-                    int i = 0;
-                    while (i < max)
-                    {
-                        int sample = _pc_record_gain_buffer[i] - 128;
-                        double scaled = sample * (double)gain;
-                        if (scaled > 127.0) scaled = 127.0;
-                        if (scaled < -128.0) scaled = -128.0;
-                        int out_sample = (int)scaled + 128;
-                        _pc_record_gain_buffer[i] = (byte)out_sample;
-                        i++;
-                    }
-                }
-                else
-                {
-                    int i = 0;
-                    while (i + 1 < max)
-                    {
-                        short sample = (short)(_pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8));
-                        float scaled = sample * gain;
-                        if (scaled > 32767.0f) scaled = 32767.0f;
-                        if (scaled < -32768.0f) scaled = -32768.0f;
-                        short out_sample = (short)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        i += 2;
-                    }
-                }
-
-                _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
-                _pc_wave_writer.Flush();
-            }
                 catch (Exception ex)
                 {
                     markActiveRecordFailureLocked(ex);
@@ -2468,9 +2490,6 @@ namespace Thetis
         {
             Action a = delegate
             {
-                stopRecordSpaceTimer();
-                storeRestoreSettings(false, false);
-
                 if (recordSucceeded && details != null)
                 {
                     details.UtcTime = ensureUtc(details.UtcTime);
@@ -2549,12 +2568,7 @@ namespace Thetis
                     raiseRecordError(unique_id, wav, failureMessage);
                 }
 
-                setRecordingState(false);
-
-                lock (_sync)
-                {
-                    clearActiveRecordLocked();
-                }
+                completeRecordStateIfCurrent(unique_id, wav);
             };
 
             if (_sync_context != null)
@@ -2575,13 +2589,13 @@ namespace Thetis
 
                 RecordingJsonModel m = new RecordingJsonModel();
                 m.utc_time = utc.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                m.frequency = details.Frequency ?? "";
-                m.mode = details.Mode ?? "";
-                m.band = details.Band ?? "";
-                //m.ddcfrequency = details.DDCFrequency ?? "";
+                if (details.Frequency != null) m.frequency = details.Frequency;
+                if (details.Mode != null) m.mode = details.Mode;
+                if (details.Band != null) m.band = details.Band;
+                //if (details.DDCFrequency != null) m.ddcfrequency = details.DDCFrequency;
 
-                m.wav_file = details.WavFile ?? "";
-                m.wav_file_size_bytes = details.WavFileSizeBytes;
+                if (details.WavFile != null) m.wav_file = details.WavFile;
+                if (details.WavFileSizeBytes.HasValue) m.wav_file_size_bytes = details.WavFileSizeBytes.Value;
 
                 DateTime? wavLast = details.WavFileLastWriteUtc;
 
@@ -2610,8 +2624,8 @@ namespace Thetis
                 string fmt = details.FormatTag == 3 ? "IEEE_FLOAT" : (details.FormatTag == 1 ? "PCM" : details.FormatTag.ToString());
                 m.tag_description = fmt + " " + details.BitDepth.ToString() + "-bit";
 
-                m.mp3_file = details.Mp3File ?? "";
-                m.mp3_file_size_bytes = details.Mp3FileSizeBytes;
+                if (details.Mp3File != null) m.mp3_file = details.Mp3File;
+                if (details.Mp3FileSizeBytes.HasValue) m.mp3_file_size_bytes = details.Mp3FileSizeBytes.Value;
 
                 double? dur = details.PlayDurationSeconds;
 
@@ -2628,7 +2642,7 @@ namespace Thetis
                     }
                 }
 
-                m.play_duration_seconds = dur;
+                if (dur.HasValue) m.play_duration_seconds = dur.Value;
 
                 string s = JsonConvert.SerializeObject(m, Formatting.Indented);
 
@@ -2750,6 +2764,50 @@ namespace Thetis
             _active_record_sample_rate = 0;
             _active_record_failed = false;
             _active_record_failure_message = null;
+        }
+
+        private bool isActiveRecordMatchLocked(string unique_id, string wav)
+        {
+            return string.Equals(_active_record_id ?? string.Empty, unique_id ?? string.Empty, StringComparison.Ordinal) &&
+                string.Equals(_active_record_filename, wav, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void completeRecordStateIfCurrent(string unique_id, string wav)
+        {
+            bool raise = false;
+            string record_id = null;
+            string filename = null;
+
+            lock (_sync)
+            {
+                if (!isActiveRecordMatchLocked(unique_id, wav)) return;
+
+                raise = _is_recording;
+                record_id = _active_record_id;
+                filename = _active_record_filename;
+                _is_recording = false;
+                clearActiveRecordLocked();
+            }
+
+            stopRecordSpaceTimer();
+            storeRestoreSettings(false, false);
+
+            if (raise)
+            {
+                Action<bool, string, string> h = RecordingChanged;
+                if (h != null)
+                {
+                    Delegate[] list = h.GetInvocationList();
+                    for (int i = 0; i < list.Length; i++)
+                    {
+                        try
+                        {
+                            ((Action<bool, string, string>)list[i])(false, record_id, filename);
+                        }
+                        catch { }
+                    }
+                }
+            }
         }
 
         private void setRecordingState(bool recording)
@@ -2987,25 +3045,25 @@ namespace Thetis
 
         public sealed class RecordingJsonModel
         {
-            public string utc_time { get; set; }
-            public string frequency { get; set; }
-            public string mode { get; set; }
-            public string band { get; set; }
+            public string utc_time { get; set; } = "";
+            public string frequency { get; set; } = "";
+            public string mode { get; set; } = "";
+            public string band { get; set; } = "";
             //public string ddcfrequency { get; set; }
 
-            public string wav_file { get; set; }
-            public long? wav_file_size_bytes { get; set; }
-            public string wav_file_last_write_utc { get; set; }
-            public double? play_duration_seconds { get; set; }
+            public string wav_file { get; set; } = "";
+            public long wav_file_size_bytes { get; set; } = 0;
+            public string wav_file_last_write_utc { get; set; } = "";
+            public double play_duration_seconds { get; set; } = 0.0;
 
             public int sample_rate { get; set; }
             public short bit_depth { get; set; }
             public short channels { get; set; }
             public short format_tag { get; set; }
-            public string tag_description { get; set; }
+            public string tag_description { get; set; } = "";
 
-            public string mp3_file { get; set; }
-            public long? mp3_file_size_bytes { get; set; }
+            public string mp3_file { get; set; } = "";
+            public long mp3_file_size_bytes { get; set; } = 0;
         }
     }
 
@@ -3094,7 +3152,8 @@ namespace Thetis
 
         private int _id;
         private BinaryWriter _writer;
-        private bool _record;
+        private volatile bool _record;
+        private readonly Thread _thread;
         private short _channels;
         private short _format_tag;
         private short _bit_depth;
@@ -3209,11 +3268,11 @@ namespace Thetis
 
             _writer = new BinaryWriter(File.Open(file, FileMode.Create));
 
-            Thread t = new Thread(new ThreadStart(ProcessRecordBuffers));
-            t.Name = "Wave File Write Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
-            t.Start();
+            _thread = new Thread(new ThreadStart(ProcessRecordBuffers));
+            _thread.Name = "Wave File Write Thread";
+            _thread.IsBackground = true;
+            _thread.Priority = ThreadPriority.Normal;
+            _thread.Start();
         }
 
         public float RecordGain
@@ -3254,14 +3313,14 @@ namespace Thetis
         {
             try
             {
-            WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, 0);
+                WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, 0);
 
                 while ((_record == true || _rb_l.ReadSpace() > 0) && _failure == null)
-            {
-                    while ((_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0)) && _failure == null)
                 {
-                    WriteBuffer(ref _writer, ref _length_counter);
-                }
+                    while ((_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0)) && _failure == null)
+                    {
+                        WriteBuffer(ref _writer, ref _length_counter);
+                    }
                     if (_failure == null) Thread.Sleep(3);
                 }
             }
@@ -3277,13 +3336,13 @@ namespace Thetis
                 {
                     if (_failure == null)
                     {
-                _writer.Seek(0, SeekOrigin.Begin);
-                WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
-                _writer.Flush();
+                        _writer.Seek(0, SeekOrigin.Begin);
+                        WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
+                        _writer.Flush();
                     }
 
-                _writer.Close();
-            }
+                    _writer.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -3309,6 +3368,14 @@ namespace Thetis
         public void Stop()
         {
             _record = false;
+        }
+
+        public bool WaitForStop(int timeout_ms)
+        {
+            if (_thread == null) return true;
+            if (Thread.CurrentThread == _thread) return true;
+
+            return _thread.Join(timeout_ms);
         }
 
         private void WriteBuffer(ref BinaryWriter w, ref int count)
@@ -3513,10 +3580,12 @@ namespace Thetis
         private BinaryReader reader;
         private int format;
         private int sample_rate;
+        private int source_channels;
         private int channels;
         private int bitdepth;
 
-        private bool playback;
+        private volatile bool playback;
+        private readonly Thread _thread;
 
         private RingBufferFloat rb_l;
         private RingBufferFloat rb_r;
@@ -3552,12 +3621,14 @@ namespace Thetis
         private long _total_frames;
         private long _frames_read;
         private int _bytes_per_frame;
+        private float _mono_gain = 1.0f;
 
-        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, BinaryReader binread, Action<Exception> finished)
+        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, double mono_gain_db, BinaryReader binread, Action<Exception> finished)
         {
             id = wfr_id;
             format = fmt;
             sample_rate = samp_rate;
+            source_channels = chan;
             channels = chan;
             bitdepth = bit_depth;
             reader = binread;
@@ -3567,18 +3638,22 @@ namespace Thetis
             _fade_ms = fade_ms;
             if (_fade_ms < 0) _fade_ms = 0;
 
+            if (source_channels < 1) source_channels = 1;
+            if (source_channels > 2) source_channels = 2;
             if (channels < 1) channels = 1;
             if (channels > 2) channels = 2;
+            if (channels == 1) channels = 2;
+            if (source_channels == 1) _mono_gain = (float)Math.Pow(10.0, mono_gain_db / 20.0);
 
             if (format == 3)
             {
-                _bytes_per_frame = channels * 4;
+                _bytes_per_frame = source_channels * 4;
             }
             else
             {
                 int bytes_per_sample = bitdepth / 8;
                 if (bytes_per_sample < 1) bytes_per_sample = 1;
-                _bytes_per_frame = channels * bytes_per_sample;
+                _bytes_per_frame = source_channels * bytes_per_sample;
             }
 
             if (_bytes_per_frame < 1) _bytes_per_frame = 1;
@@ -3629,15 +3704,15 @@ namespace Thetis
 
             if (format == 1)
             {
-                if (bitdepth == 32) io_buf_size = IN_BLOCK * 4 * 2;
-                else if (bitdepth == 24) io_buf_size = IN_BLOCK * 3 * 2;
-                else if (bitdepth == 16) io_buf_size = IN_BLOCK * 2 * 2;
-                else if (bitdepth == 8) io_buf_size = IN_BLOCK * 2;
-                else io_buf_size = IN_BLOCK * 2 * 2;
+                if (bitdepth == 32) io_buf_size = IN_BLOCK * 4 * source_channels;
+                else if (bitdepth == 24) io_buf_size = IN_BLOCK * 3 * source_channels;
+                else if (bitdepth == 16) io_buf_size = IN_BLOCK * 2 * source_channels;
+                else if (bitdepth == 8) io_buf_size = IN_BLOCK * source_channels;
+                else io_buf_size = IN_BLOCK * 2 * source_channels;
             }
             else
             {
-                io_buf_size = IN_BLOCK * 4 * 2;
+                io_buf_size = IN_BLOCK * 4 * source_channels;
             }
 
             if (sample_rate != rcvr_rate)
@@ -3664,11 +3739,11 @@ namespace Thetis
                 ReadBuffer(ref reader);
             } while (rb_l.WriteSpace() > OUT_BLOCK && !eof);
 
-            Thread t = new Thread(new ThreadStart(ProcessBuffers));
-            t.Name = "Wave File Read Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
-            t.Start();
+            _thread = new Thread(new ThreadStart(ProcessBuffers));
+            _thread.Name = "Wave File Read Thread";
+            _thread.IsBackground = true;
+            _thread.Priority = ThreadPriority.Normal;
+            _thread.Start();
         }
 
         private static float[] buildCosineFade(int frames)
@@ -3700,22 +3775,30 @@ namespace Thetis
             playback = false;
         }
 
+        public bool WaitForStop(int timeout_ms)
+        {
+            if (_thread == null) return true;
+            if (Thread.CurrentThread == _thread) return true;
+
+            return _thread.Join(timeout_ms);
+        }
+
         private void ProcessBuffers()
         {
             try
             {
-            while (playback)
-            {
-                while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
+                while (playback)
                 {
-                    ReadBuffer(ref reader);
+                    while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
+                    {
+                        ReadBuffer(ref reader);
+                        if (!playback) break;
+                    }
+
                     if (!playback) break;
+
+                    Thread.Sleep(10);
                 }
-
-                if (!playback) break;
-
-                Thread.Sleep(10);
-            }
             }
             catch (Exception ex)
             {
@@ -3739,19 +3822,7 @@ namespace Thetis
             if (val < io_buf_size)
             {
                 eof = true;
-
-                if (format == 1)
-                {
-                    if (bitdepth == 32) num_reads = val / 8;
-                    else if (bitdepth == 24) num_reads = val / 6;
-                    else if (bitdepth == 16) num_reads = val / 4;
-                    else if (bitdepth == 8) num_reads = val / 2;
-                    else num_reads = val / 4;
-                }
-                else
-                {
-                    num_reads = val / 8;
-                }
+                num_reads = val / _bytes_per_frame;
             }
 
             for (int i = 0; i < num_reads; i++)
@@ -3760,45 +3831,78 @@ namespace Thetis
                 {
                     if (bitdepth == 32)
                     {
-                        buf_l_in[i] = ((io_buf[i * 8 + 3] << 24)
-                                       | ((io_buf[i * 8 + 2] & 0xFF) << 16)
-                                       | ((io_buf[i * 8 + 1] & 0xFF) << 8)
-                                       | (io_buf[i * 8] & 0xFF))
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = ((io_buf[ofs + 3] << 24)
+                                       | ((io_buf[ofs + 2] & 0xFF) << 16)
+                                       | ((io_buf[ofs + 1] & 0xFF) << 8)
+                                       | (io_buf[ofs] & 0xFF))
                                        / 2147483648.0f;
 
-                        buf_r_in[i] = ((io_buf[i * 8 + 7] << 24)
-                                       | ((io_buf[i * 8 + 6] & 0xFF) << 16)
-                                       | ((io_buf[i * 8 + 5] & 0xFF) << 8)
-                                       | (io_buf[i * 8 + 4] & 0xFF))
+                        if (source_channels > 1)
+                        {
+                            buf_r_in[i] = ((io_buf[ofs + 7] << 24)
+                                           | ((io_buf[ofs + 6] & 0xFF) << 16)
+                                           | ((io_buf[ofs + 5] & 0xFF) << 8)
+                                           | (io_buf[ofs + 4] & 0xFF))
                                        / 2147483648.0f;
+                        }
+                        else
+                        {
+                            buf_r_in[i] = buf_l_in[i];
+                        }
                     }
                     else if (bitdepth == 24)
                     {
-                        buf_l_in[i] = (((io_buf[i * 6 + 2] << 24)
-                                      | ((io_buf[i * 6 + 1] & 0xFF) << 16)
-                                      | ((io_buf[i * 6] & 0xFF) << 8)) >> 8)
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = (((io_buf[ofs + 2] << 24)
+                                      | ((io_buf[ofs + 1] & 0xFF) << 16)
+                                      | ((io_buf[ofs] & 0xFF) << 8)) >> 8)
                                       / 8388608.0f;
 
-                        buf_r_in[i] = (((io_buf[i * 6 + 5] << 24)
-                                       | ((io_buf[i * 6 + 4] & 0xFF) << 16)
-                                       | ((io_buf[i * 6 + 3] & 0xFF) << 8)) >> 8)
+                        if (source_channels > 1)
+                        {
+                            buf_r_in[i] = (((io_buf[ofs + 5] << 24)
+                                           | ((io_buf[ofs + 4] & 0xFF) << 16)
+                                           | ((io_buf[ofs + 3] & 0xFF) << 8)) >> 8)
                                        / 8388608.0f;
+                        }
+                        else
+                        {
+                            buf_r_in[i] = buf_l_in[i];
+                        }
                     }
                     else if (bitdepth == 16)
                     {
-                        buf_l_in[i] = (float)((double)BitConverter.ToInt16(io_buf, i * 4) / 32767.0);
-                        buf_r_in[i] = (float)((double)BitConverter.ToInt16(io_buf, i * 4 + 2) / 32767.0);
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = (float)((double)BitConverter.ToInt16(io_buf, ofs) / 32767.0);
+                        if (source_channels > 1) buf_r_in[i] = (float)((double)BitConverter.ToInt16(io_buf, ofs + 2) / 32767.0);
+                        else buf_r_in[i] = buf_l_in[i];
                     }
                     else
                     {
-                        buf_l_in[i] = ((io_buf[i * 2] & 0xFF) - 128) / 128.0f;
-                        buf_r_in[i] = ((io_buf[i * 2 + 1] & 0xFF) - 128) / 128.0f;
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = ((io_buf[ofs] & 0xFF) - 128) / 128.0f;
+                        if (source_channels > 1) buf_r_in[i] = ((io_buf[ofs + 1] & 0xFF) - 128) / 128.0f;
+                        else buf_r_in[i] = buf_l_in[i];
                     }
                 }
                 else
                 {
-                    buf_l_in[i] = BitConverter.ToSingle(io_buf, i * 8);
-                    buf_r_in[i] = BitConverter.ToSingle(io_buf, i * 8 + 4);
+                    int ofs = i * _bytes_per_frame;
+                    buf_l_in[i] = BitConverter.ToSingle(io_buf, ofs);
+                    if (source_channels > 1) buf_r_in[i] = BitConverter.ToSingle(io_buf, ofs + 4);
+                    else buf_r_in[i] = buf_l_in[i];
+                }
+            }
+
+            if (source_channels == 1 && _mono_gain != 1.0f)
+            {
+                int i = 0;
+                while (i < num_reads)
+                {
+                    buf_l_in[i] *= _mono_gain;
+                    buf_r_in[i] *= _mono_gain;
+                    i++;
                 }
             }
 
@@ -3826,7 +3930,7 @@ namespace Thetis
                     }
 
                     buf_l_in[i] *= gain;
-                    if (channels > 1) buf_r_in[i] *= gain;
+                    buf_r_in[i] *= gain;
                     i++;
                 }
             }
@@ -3854,11 +3958,8 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_l);
 
-                    if (channels > 1)
-                    {
-                        fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
-                            WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_r);
-                    }
+                    fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
+                        WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_r);
                 }
                 else
                 {
@@ -3873,11 +3974,8 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_l);
 
-                    if (channels > 1)
-                    {
-                        fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
-                            WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_r);
-                    }
+                    fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
+                        WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_r);
                 }
                 else
                 {
@@ -3887,8 +3985,7 @@ namespace Thetis
             }
 
             rb_l.Write(buf_l_out, out_cnt);
-            if (channels > 1) rb_r.Write(buf_r_out, out_cnt);
-            else rb_r.Write(buf_l_out, out_cnt);
+            rb_r.Write(buf_r_out, out_cnt);
 
             total_samps_written += out_cnt;
         }

@@ -1456,6 +1456,7 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+	<!--
 	<catstruct code="ZZIV">
 		<desc>IF2VFO</desc>
 		<active>false</active>
@@ -1463,6 +1464,7 @@
 		<ngetparms>-1</ngetparms>
 		<nansparms>-1</nansparms>
 	</catstruct>
+	-->
 	<catstruct code="ZZZB">
 		<desc>Zero Beat</desc>
 		<active>true</active>
@@ -2908,14 +2910,14 @@
 		<nansparms>1</nansparms>
 	</catstruct>	
 	<catstruct code="ZZGA">
-		<desc>Add guid - used for TCPIPcat</desc>
+		<desc>Add guid - used by TCPIPcat internally, ignore</desc>
 		<active>true</active>
 		<nsetparms>36</nsetparms>
 		<ngetparms>0</ngetparms>
 		<nansparms>40</nansparms>
 	</catstruct>
 	<catstruct code="ZZGR">
-		<desc>Remove guid - used for TCPIPcat</desc>
+		<desc>Remove guid - used by TCPIPcat internally, ignore</desc>
 		<active>true</active>
 		<nsetparms>36</nsetparms>
 		<ngetparms>0</ngetparms>
@@ -2943,7 +2945,7 @@
 		<nansparms>1</nansparms>
 	</catstruct>
 	<catstruct code="ZZJS">
-		<desc>Stop Wav Recording or Playbax</desc>
+		<desc>Stop Wav Recording or Playback</desc>
 		<active>true</active>
 		<nsetparms>0</nsetparms>
 		<ngetparms>0</ngetparms>

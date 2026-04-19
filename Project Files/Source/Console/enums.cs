@@ -5,7 +5,7 @@ This file is part of a program that implements a Software-Defined Radio.
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
 Copyright (C) 2000-2025 Original authors
-Copyright (C) 2020-2025 Richard Samphire MW0LGE
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -127,6 +127,7 @@ namespace Thetis
         ANVELINAPRO3,
         HERMESLITE,     //MI0BOT
         REDPITAYA,      //DH1KLM
+        ANAN_G1,        //N1GP G1 added
         LAST
     }
 
@@ -396,6 +397,7 @@ namespace Thetis
         HermesLite = 6,     // MI0BOT
         Saturn = 10,        // ANAN-G2: added G8NJJ
         SaturnMKII = 11,    // ANAN-G2: MKII board?
+        HermesIII = 20,     // ANAN-G1
         Unknown = 999,      // MW0LGE
     }
 

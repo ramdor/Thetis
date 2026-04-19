@@ -1769,6 +1769,7 @@ namespace Thetis
             addToIgnore(ref ignoreList, grpMeterItemVfoDisplaySettings);
             addToIgnore(ref ignoreList, grpMeterItemRotator);
             addToIgnore(ref ignoreList, grpMeterItemSettings);
+            if (grpWaveRecordItem != null) addToIgnore(ref ignoreList, grpWaveRecordItem);
 
             addToIgnore(ref ignoreList, grpGainByBandPA);
 
@@ -2923,15 +2924,40 @@ namespace Thetis
 
         public void GetTxProfiles()
         {
-            comboTXProfileName.Items.Clear();
-            foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
+            DataSet data_set = DB.ds;
+            if (data_set == null) return;
+            if (comboTXProfileName == null) return;
+            if (!data_set.Tables.Contains("TXProfile")) return;
+
+            DataTable tx_profile_table = data_set.Tables["TXProfile"];
+            if (tx_profile_table == null) return;
+            if (!tx_profile_table.Columns.Contains("Name")) return;
+
+            comboTXProfileName.BeginUpdate();
+            try
             {
-                if (dr.RowState != DataRowState.Deleted)
+                comboTXProfileName.Items.Clear();
+
+                HashSet<string> profile_names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (DataRow dr in tx_profile_table.Rows)
                 {
-                    string profile_name = (string)dr["Name"];
-                    if (!comboTXProfileName.Items.Contains(profile_name))
+                    if (dr == null) continue;
+                    if (dr.RowState == DataRowState.Deleted) continue;
+                    if (dr.IsNull("Name")) continue;
+
+                    string profile_name = Convert.ToString(dr["Name"]);
+                    if (string.IsNullOrWhiteSpace(profile_name)) continue;
+
+                    profile_name = profile_name.Trim();
+
+                    if (profile_names.Add(profile_name))
                         comboTXProfileName.Items.Add(profile_name);
                 }
+            }
+            finally
+            {
+                comboTXProfileName.EndUpdate();
             }
         }
 
@@ -3014,8 +3040,9 @@ namespace Thetis
             {
                 if (isTXProfileSettingDifferent<int>(dr, "FilterLow", (int)udTXFilterLow.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "FilterHigh", (int)udTXFilterHigh.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<string>(dr, "RXParaEQData", console.EQForm.ParaEQRXData, out sReportOut)) sReport += "RX EQ changed\n";
-                if (isTXProfileSettingDifferent<string>(dr, "TXParaEQData", console.EQForm.ParaEQTXData, out sReportOut)) sReport += "TX EQ changed\n";
+                if (isTXProfileSettingDifferent<bool>(dr, "EQUseLegacy", console.EQForm.UsingLegacyEQ, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<string>(dr, "RXParaEQData", console.EQForm.ParaEQRXData, out sReportOut)) sReport += "RX ParaEQ changed" + Environment.NewLine; ;
+                if (isTXProfileSettingDifferent<string>(dr, "TXParaEQData", console.EQForm.ParaEQTXData, out sReportOut)) sReport += "TX ParaEQ changed" + Environment.NewLine; ;
                 if (isTXProfileSettingDifferent<int>(dr, "TXEQNumBands", console.EQForm.NumBands, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "TXEQEnabled", console.EQForm.TXEQEnabled, out sReportOut)) sReport += sReportOut;
                 int[] eq = console.EQForm.TXEQ;
@@ -3166,7 +3193,8 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Exclusive_Out", (bool)chkVAC2ExclusiveOut.Checked, out sReportOut)) sReport += sReportOut;
                 //
 
-                //CFC
+                //CFC                
+                if (isTXProfileSettingDifferent<bool>(dr, "CFCUseLegacy", chkCFC_legacy.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCEnabled", chkCFCEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPostEqEnabled", chkCFCPeqEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseRotatorEnabled", chkPHROTEnable.Checked, out sReportOut)) sReport += sReportOut;
@@ -3183,7 +3211,7 @@ namespace Thetis
                 for (int i = 22; i < 32; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "CFCEqFreq" + (i - 22).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
 
-                if (isTXProfileSettingDifferent<string>(dr, "CFCParaEQData", CFCConfigForm.ConfigData, out sReportOut)) sReport += "CFC data changed\n";                
+                if (isTXProfileSettingDifferent<string>(dr, "CFCParaEQData", CFCConfigForm.ConfigData, out sReportOut)) sReport += "CFC para data changed" + Environment.NewLine;                
             }
 
             return sReport;
@@ -3212,6 +3240,7 @@ namespace Thetis
             {
                 if (DB.ConvertFromDBVal<int>(dr["FilterLow"]) != (int)udTXFilterLow.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["FilterHigh"]) != (int)udTXFilterHigh.Value) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["EQUseLegacy"]) != console.EQForm.UsingLegacyEQ) return true;
                 if (DB.ConvertFromDBVal<string>(dr["RXParaEQData"]) != console.EQForm.ParaEQRXData) return true;
                 if (DB.ConvertFromDBVal<string>(dr["TXParaEQData"]) != console.EQForm.ParaEQTXData) return true;
                 if (DB.ConvertFromDBVal<int>(dr["TXEQNumBands"]) != console.EQForm.NumBands) return true;
@@ -3373,6 +3402,7 @@ namespace Thetis
                 //
 
                 //CFC
+                if (DB.ConvertFromDBVal<bool>(dr["CFCUseLegacy"]) != chkCFC_legacy.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseRotatorEnabled"]) != chkPHROTEnable.Checked) return true;
@@ -3531,6 +3561,7 @@ namespace Thetis
             //
 
             //CFC
+            Common.HightlightControl(chkCFC_legacy, bHighlight);
             Common.HightlightControl(chkCFCEnable, bHighlight);
             Common.HightlightControl(chkCFCPeqEnable, bHighlight);
             Common.HightlightControl(chkPHROTEnable, bHighlight);
@@ -3581,10 +3612,11 @@ namespace Thetis
 
             dr["FilterLow"] = (int)udTXFilterLow.Value;
             dr["FilterHigh"] = (int)udTXFilterHigh.Value;
+            dr["EQUseLegacy"] = console.EQForm.UsingLegacyEQ;
             dr["RXParaEQData"] = console.EQForm.ParaEQRXData;
             dr["TXParaEQData"] = console.EQForm.ParaEQTXData;
             dr["TXEQNumBands"] = console.EQForm.NumBands;
-            dr["TXEQEnabled"] = console.EQForm.TXEQEnabled;
+            dr["TXEQEnabled"] = console.EQForm.TXEQEnabled;            
             int[] eq = console.EQForm.TXEQ;
             dr["TXEQPreamp"] = eq[0];
             for (int i = 1; i < 11; i++)
@@ -3735,6 +3767,7 @@ namespace Thetis
             //
 
             //CFC
+            dr["CFCUseLegacy"] = (bool)chkCFC_legacy.Checked;
             dr["CFCEnabled"] = (bool)chkCFCEnable.Checked;
             dr["CFCPostEqEnabled"] = (bool)chkCFCPeqEnable.Checked;
             dr["CFCPhaseRotatorEnabled"] = (bool)chkPHROTEnable.Checked;
@@ -6304,6 +6337,7 @@ namespace Thetis
                 HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
                 HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
                 HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G1 && //N1GP G1 added
                 HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
                 HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                 HardwareSpecific.Model != HPSDRModel.REDPITAYA)//DH1KLM
@@ -6391,7 +6425,7 @@ namespace Thetis
                 HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                 HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
                 HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+                HardwareSpecific.Model == HPSDRModel.REDPITAYA || HardwareSpecific.Model == HPSDRModel.ANAN_G1) //DH1KLM  //N1GP G1 added
             {
                 if (!tcGeneral.TabPages.Contains(tpOtherHW))
                 {
@@ -9281,6 +9315,7 @@ namespace Thetis
                 chkVAC2Enable.Checked = false;
             }
 
+            console.EQForm.UsingLegacyEQ = (bool)dr["EQUseLegacy"];
             console.EQForm.ParaEQRXData = (string)dr["RXParaEQData"];
             console.EQForm.ParaEQTXData = (string)dr["TXParaEQData"];
 
@@ -9456,6 +9491,11 @@ namespace Thetis
             //
 
             //CFC
+            chkCFC_legacy.CheckedChanged -= chkCFC_legacy_CheckedChanged;
+            chkCFC_legacy.Checked = (bool)dr["CFCUseLegacy"];
+            chkCFC_legacy_CheckedChanged(this, EventArgs.Empty);
+            chkCFC_legacy.CheckedChanged += chkCFC_legacy_CheckedChanged;
+
             chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
             chkCFCPeqEnable.Checked = (bool)dr["CFCPostEqEnabled"];
             chkPHROTEnable.Checked = (bool)dr["CFCPhaseRotatorEnabled"];
@@ -9547,9 +9587,8 @@ namespace Thetis
             string name = InputBox.Show("Save Profile", "Please enter a profile name:",
                 _current_profile);
 
-            // no more , in profile names, because it will make the tci tx profile messages look like they have multiple parts
-            // existing ones will cause issues no doubt, but just not worth the effort to reparse the database
-            name = name.Replace(",", "_");
+            // prevent these chars as they will cause issues for TCI messages that include tx profiles
+            name = name.Replace(',', '_').Replace(':', '_').Replace(';', '_');
 
             if (string.IsNullOrEmpty(name))
             {
@@ -15773,6 +15812,7 @@ namespace Thetis
             //MW0LGE_21f
             if (AlexPresent &&
                 HardwareSpecific.Model != HPSDRModel.ANAN10 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G1 && //N1GP G1 added
                 HardwareSpecific.Model != HPSDRModel.ANAN10E &&
                 HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
                 HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
@@ -15831,6 +15871,7 @@ namespace Thetis
             //MW0LGE_21f
             if (AlexPresent &&
                 HardwareSpecific.Model != HPSDRModel.ANAN10 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G1 && //N1GP G1 added
                 HardwareSpecific.Model != HPSDRModel.ANAN10E &&
                 HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
                 HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
@@ -19860,6 +19901,50 @@ namespace Thetis
                     setupAttRXControls(2);
                     break;
 
+                case HPSDRModel.ANAN_G1: //N1GP G1 added
+                    chkAlexPresent.Checked = true;
+                    chkAlexPresent.Enabled = true;
+                    chkApolloPresent.Enabled = false;
+                    chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
+
+                    chkGeneralRXOnly.Visible = true;
+                    chkHermesStepAttenuator.Enabled = true;
+                    udHermesStepAttenuatorData.Enabled = true;
+                    chkRX2StepAtt.Checked = false;
+                    chkRX2StepAtt.Enabled = false;
+                    udHermesStepAttenuatorDataRX2.Enabled = false;
+                    chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
+                    chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    chkAutoPACalibrate.Checked = false;
+                    chkAutoPACalibrate.Visible = false;
+                    chkBypassANANPASettings.Visible = true;
+                    labelRXAntControl.Text = "  BYPS  EXT1  XVTR";
+                    RXAntChk1Name = "BYPS";
+                    RXAntChk2Name = "EXT1";
+                    RXAntChk3Name = "XVTR";
+                    labelATTOnTX.Visible = true;
+                    udATTOnTX.Visible = true;
+                    chkEXT1OutOnTx.Text = "Ext 1 on Tx";
+                    chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
+                    panelAlex1HPFControl.Visible = false;
+                    panelBPFControl.Visible = true;
+                    chkDisable6mLNAonRX.Parent = panelBPFControl;
+                    chkDisable6mLNAonRX.Location = new Point(16, 208);
+                    chkDisable6mLNAonTX.Parent = panelBPFControl;
+                    chkDisable6mLNAonTX.Location = new Point(63, 208);
+                    chkAlexHPFBypass.Parent = panelBPFControl;
+                    chkAlexHPFBypass.Location = new Point(140, 185);
+                    chkDisableHPFonTX.Parent = panelBPFControl;
+                    chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
+                    chkAutoATTRx1.Enabled = false;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
+                    break;
+
                 case HPSDRModel.ANAN10:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
@@ -20449,6 +20534,7 @@ namespace Thetis
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
+                case HPSDRModel.ANAN_G1: //N1GP G1 added
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -20626,6 +20712,7 @@ namespace Thetis
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
+                case HPSDRModel.ANAN_G1: //N1GP G1 added
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -20655,6 +20742,7 @@ namespace Thetis
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
+                case HPSDRModel.ANAN_G1: //N1GP G1 added
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -23655,6 +23743,24 @@ namespace Thetis
                             if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
+                    case HPSDRModel.ANAN_G1: //N1GP G1 added
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)n;
+                            string sSetting = "udANAN_G1PAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
+                        }
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)n;
+                            string sSetting = "udANAN_G1PAGainVHF" + (n - (int)Band.VHF0).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
+                        }
+                        break;
                     case HPSDRModel.FIRST: // special case for bypass
                     case HPSDRModel.HPSDR:
                         if (p.Model == HPSDRModel.HPSDR || (p.Model == HPSDRModel.FIRST && p.ProfileName == _sPA_PROFILE_BYPASS))
@@ -24946,6 +25052,28 @@ namespace Thetis
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
+            else if (mt == MeterType.WAVE_RECORD)
+            {
+                if (_reset_waverecord_order_map) igs.SetSetting<short[]>("waverecord_order_map", null);
+
+                igs.SetSetting<float>("waverecord_vertical_ratio", (float)nudWaveRecord_vertical_ratio.Value);
+                igs.SetSetting<float>("waverecord_radius", (float)nudWaveRecord_radius.Value);
+                igs.SetSetting<System.Drawing.Color>("waverecord_back_colour", clrbtnWaveRecord_back.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_row_colour", clrbtnWaveRecord_row.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_row_border_colour", clrbtnWaveRecord_border.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_text_colour", clrbtnWaveRecord_text.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_fill_colour", clrbtnWaveRecord_button_fill.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_border_colour", clrbtnWaveRecord_button_border.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_button_hover_colour", clrbtnWaveRecord_button_hover.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_play_colour", clrbtnWaveRecord_play.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_stop_colour", clrbtnWaveRecord_stop.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_delete_colour", clrbtnWaveRecord_delete.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", clrbtnWaveRecord_scroll_track.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", clrbtnWaveRecord_scroll_thumb.Color);
+                igs.SetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", clrbtnWaveRecord_scroll_hover.Color);
+                igs.FadeOnRx = chkWaveRecord_fade_rx.Checked;
+                igs.FadeOnTx = chkWaveRecord_fade_tx.Checked;
+            }
             else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
                      mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
                      mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
@@ -25481,7 +25609,7 @@ namespace Thetis
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
                 mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY &&
-                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS && mt != MeterType.VOICE_RECORD_PLAY_BUTTONS
+                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS && mt != MeterType.WAVE_RECORD && mt != MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -25589,6 +25717,26 @@ namespace Thetis
 
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
+            }
+            else if (mt == MeterType.WAVE_RECORD)
+            {
+                nudWaveRecord_vertical_ratio.Value = (decimal)igs.GetSetting<float>("waverecord_vertical_ratio", true, 0.10f, 2f, 0.60f);
+                nudWaveRecord_radius.Value = (decimal)igs.GetSetting<float>("waverecord_radius", true, 0f, 2f, 0.20f);
+                clrbtnWaveRecord_back.Color = igs.GetSetting<System.Drawing.Color>("waverecord_back_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(16, 16, 16));
+                clrbtnWaveRecord_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_border_colour", false, Color.Empty, Color.Empty, igs.GetSetting<System.Drawing.Color>("waverecord_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(70, 70, 70)));
+                clrbtnWaveRecord_row.Color = igs.GetSetting<System.Drawing.Color>("waverecord_row_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(28, 28, 28));
+                clrbtnWaveRecord_text.Color = igs.GetSetting<System.Drawing.Color>("waverecord_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnWaveRecord_button_fill.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(40, 40, 40));
+                clrbtnWaveRecord_button_border.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(86, 86, 86));
+                clrbtnWaveRecord_button_hover.Color = igs.GetSetting<System.Drawing.Color>("waverecord_button_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(90, 90, 90));
+                clrbtnWaveRecord_play.Color = igs.GetSetting<System.Drawing.Color>("waverecord_play_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnWaveRecord_stop.Color = igs.GetSetting<System.Drawing.Color>("waverecord_stop_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Olive);
+                clrbtnWaveRecord_delete.Color = igs.GetSetting<System.Drawing.Color>("waverecord_delete_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
+                clrbtnWaveRecord_scroll_track.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrolltrack_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(36, 36, 36));
+                clrbtnWaveRecord_scroll_thumb.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(118, 118, 118));
+                clrbtnWaveRecord_scroll_hover.Color = igs.GetSetting<System.Drawing.Color>("waverecord_scrollthumb_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.FromArgb(160, 160, 160));
+                chkWaveRecord_fade_rx.Checked = igs.FadeOnRx;
+                chkWaveRecord_fade_tx.Checked = igs.FadeOnTx;
             }
             else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
                      mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
@@ -26510,6 +26658,10 @@ namespace Thetis
         {
             updateMeterType();
         }
+        private void waveRecordSettingControlChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
         private void moveButtonBoxSettings()
         {
             //move the buttonbox settings
@@ -26525,6 +26677,7 @@ namespace Thetis
             setupMMSettingsGroupBoxes(MeterType.LED, false);
             setupMMSettingsGroupBoxes(MeterType.DIAL_DISPLAY, false);
             setupMMSettingsGroupBoxes(MeterType.WEB_IMAGE, false);
+            setupMMSettingsGroupBoxes(MeterType.WAVE_RECORD, false);
             setupMMSettingsGroupBoxes(MeterType.OTHER_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.VOICE_RECORD_PLAY_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.TUNESTEP_BUTTONS, false);
@@ -26556,6 +26709,7 @@ namespace Thetis
                 grpHistoryItem.Visible = false;
                 grpMeterItemFilterDisplay.Visible = false;
                 grpDialDisplay.Visible = false;
+                grpWaveRecordItem.Visible = false;
             }
 
             switch (mt)
@@ -26615,6 +26769,12 @@ namespace Thetis
                     comboWebImage_BsdWorld.SelectedIndex = 0;
                     comboWebImage_nasa.SelectedIndex = 0;
                     comboWebImage_noaa.SelectedIndex = 0;
+                    break;
+                case MeterType.WAVE_RECORD:
+                    grpWaveRecordItem.Parent = grpMultiMeterHolder;
+                    grpWaveRecordItem.Location = loc;
+                    grpWaveRecordItem.Visible = true;
+                    grpWaveRecordItem.BringToFront();
                     break;
                 case MeterType.VOICE_RECORD_PLAY_BUTTONS:
                 case MeterType.OTHER_BUTTONS:
@@ -26879,6 +27039,11 @@ namespace Thetis
                         _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), false, false, false, true));
                     }
                 }
+                else if (mt == MeterType.WAVE_RECORD)
+                {
+                    _itemGroupSettings.SetSetting<string[]>("waverecord_filepaths", currentSettings.GetSetting<string[]>("waverecord_filepaths", false, null, null, null));
+                    _itemGroupSettings.SetSetting<short[]>("waverecord_order_map", currentSettings.GetSetting<short[]>("waverecord_order_map", false, null, null, null));
+                }
                 else if (mt == MeterType.OTHER_BUTTONS)
                 {
                     // prevent overwrite of the following, copy from current settings
@@ -26936,6 +27101,7 @@ namespace Thetis
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK ||
                 mt == MeterType.FILTER_DISPLAY || mt == MeterType.CUSTOM_METER_BAR ||
+                mt == MeterType.WAVE_RECORD ||
                 mt == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
@@ -26947,6 +27113,7 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK ||
                 _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR ||
+                _itemGroupSettingsMeterType == MeterType.WAVE_RECORD ||
                 _itemGroupSettingsMeterType == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
@@ -34911,11 +35078,18 @@ namespace Thetis
         }
 
         private bool _reset_button_map_layout = false;
+        private bool _reset_waverecord_order_map = false;
         private void btnOtherButtons_reset_layout_Click(object sender, EventArgs e)
         {
             _reset_button_map_layout = true;
             updateMeterType();
             _reset_button_map_layout = false;
+        }
+        private void btnWaveRecord_reset_layout_Click(object sender, EventArgs e)
+        {
+            _reset_waverecord_order_map = true;
+            updateMeterType();
+            _reset_waverecord_order_map = false;
         }
 
         private void btnContainer_save_Click(object sender, EventArgs e)
@@ -35327,6 +35501,32 @@ namespace Thetis
         public bool TCIsendInitialStateOnConnect
         {
             get { return chkTCIsendInitialStateOnConnect.Checked; }
+        }
+        public bool TCISwapIQ
+        {
+            get { return chkTCISwapIQ.Checked; }
+        }
+        public bool TCIAlwaysStreamIQ
+        {
+            get { return chkTCIAlwaysStreamIQ.Checked; }
+        }
+        public TCITxStereoInputMode TCITXInputChannel
+        {
+            get
+            {
+                if (radTCITXchannel_L.Checked)
+                {
+                    return TCITxStereoInputMode.Left;
+                }
+                else if (radTCITXchannel_R.Checked)
+                {
+                    return TCITxStereoInputMode.Right;
+                }
+                else
+                {
+                    return TCITxStereoInputMode.Both;
+                }
+            }
         }
 
         private void comboAPF_type_SelectedIndexChanged(object sender, EventArgs e)
@@ -36233,6 +36433,32 @@ namespace Thetis
                 }
             }
         }
+        public void OpenWaveRecordFolder()
+        {
+            string fullPath = Path.Combine(console.ARP.AudioFolder, "waverecord");
+            try
+            {
+                //if not there make it
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
+        }
+        private void btnRecording_openWaverecordFolder_Click(object sender, EventArgs e)
+        {
+            OpenWaveRecordFolder();
+        }
 
         private void btnRecording_openQuickFolder_Click(object sender, EventArgs e)
         {
@@ -36377,7 +36603,10 @@ namespace Thetis
         {
             console.ARP.WDSPTXAudioGainInDb = (double)nudRecording_txGain.Value;
         }
-
+        private void nudRecording_monoPlaybackGain_ValueChanged(object sender, EventArgs e)
+        {
+            console.ARP.MonoToStereoGainDb = (double)nudRecording_monoPlaybackGain.Value;
+        }
         private void chkRecording_disable_during_playback(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -37202,6 +37431,11 @@ namespace Thetis
         private void clrbtnWaterfall_time_label_colour_Changed(object sender, EventArgs e)
         {
             Display.WaterfallTimeColour = clrbtnWaterfall_time_label_colour.Color;
+        }
+
+        private void tbTCISpotBackPanel_alpha_Scroll(object sender, EventArgs e)
+        {
+            Display.TCIBackPanelAlpha = tbTCISpotBackPanel_alpha.Value;
         }
     }
 

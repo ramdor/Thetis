@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2025 Richard Samphire MW0LGE
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -660,7 +660,7 @@ namespace Thetis
             (OtherButtonId.VOX_M1,         5, 6, "VOX-", "", "", "Decrease vox level"),
             (OtherButtonId.LEVELER,        5, 7, "Leveler", "", "", "Leveler on/off"),
             (OtherButtonId.PHASE_ROT,      5, 8, "PhaRot", "", "", "Phase rotator on/off"),
-            (OtherButtonId.WAVE_RECORD,    5, 9, "Record", "stop", "record", "Wave record"),
+            (OtherButtonId.WAVE_RECORD,    5, 9, "Wav Record", "stop", "record", "Wave record"),
 
             (OtherButtonId.INFO_TEXT,     -1, -1, "AGC", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),

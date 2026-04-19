@@ -181,7 +181,9 @@ namespace Thetis
 
             WDSP.RNNRloadModel(""); // this will cause a clear up of a loaded model
 
-            cmaster.DestroyRadio();
+            cmaster.StopTCIStreamThreads();
+
+            cmaster.DestroyRadio();            
 		}
 
         private static bool _cache_impulse = true;

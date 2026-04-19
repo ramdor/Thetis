@@ -418,12 +418,12 @@ void SendpOutboundTx(void (*Outbound)(int id, int nsamples, double* buff))
 	SetILVOutputPointer(0, pcm->OutboundTx);
 }
 
+//tci
 PORT
 void SendpOutboundTCIRxIQ (void (*Outbound)(int id, int nsamples, double* buff))
 {
 	pcm->OutboundTCIRxIQ = Outbound;
 }
-
 
 PORT
 void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff))
@@ -432,16 +432,17 @@ void SendpInboundTCITxAudio (void (*Inbound)(int nsamples, double* buff))
 }
 
 PORT
-void SetTCIRun (int active)
+void SetRXTCIRun (int active)
 {
-	_InterlockedExchange (&pcm->tci_run, active);
+	_InterlockedExchange (&pcm->tci_rx_out_run, active);
 }
 
 PORT
-void SetTXTCIAudio (int txid, int active)
+void SetTXTCIAudioRun (int txid, int active)
 {
 	_InterlockedExchange (&pcm->xmtr[txid].use_tci_audio, active);
 }
+//end tci
 
 PORT
 void SetRunPanadapter (int id, int run)

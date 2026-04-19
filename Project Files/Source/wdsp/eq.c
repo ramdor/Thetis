@@ -176,6 +176,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 		// parametric eq with Q factor - Richard Samphire (c) 2026 - MW0LGE
 		// note atm, first/last entry should be on edges of required filter due to
 		// Q not being applied outside these
+		// original implentation is commented out below
 		double nyquist_hz = samplerate * 0.5;
 		double bin_offset = (N & 1) ? 0.0 : 0.5;
 		double bin_hz = (mid > 0) ? (nyquist_hz / (double)mid) : 0.0;
