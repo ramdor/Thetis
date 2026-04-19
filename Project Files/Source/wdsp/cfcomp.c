@@ -40,7 +40,7 @@ mw0lge@grange-lane.co.uk - Richard Samphire (c) 2026
 
 #include "comm.h"
 
-// -- used in the cfc parametric code
+// -- used in the cfc parametric code - mw0lge@grange-lane.co.uk - Richard Samphire (c) 2026
 #define TAIL_MIX 0.08		// the blend between the main filter lobe and the tail
 #define TAIL_SCALE 2.5		// how wide the tail is relative to the main lobe
 #define BW_REF_HZ 1000.0	// reference bandwidth for Q factor calculations (Hz). Q of 1 spreads +-1000Hz
@@ -107,6 +107,8 @@ int fCOMPcompare (const void * a, const void * b)
 
 void calc_comp(CFCOMP a)
 {
+	// modified for use with Q factor - Richard Samphire (c) 2026 - MW0LGE
+	// original implentation is commented out below
 	int i, j;
 	double f, frac, fincr, fmax;
 	double* sary;

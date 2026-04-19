@@ -2208,147 +2208,147 @@ namespace Thetis
 
                 try
                 {
-                float gain = _pc_input_gain;
-                if (gain <= 0.0f)
-                {
+                    float gain = _pc_input_gain;
+                    if (gain <= 0.0f)
+                    {
+                        if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
+                        {
+                            _pc_record_gain_buffer = new byte[e.BytesRecorded];
+                        }
+                        if (BitDepthMode == AudioBitDepthMode.Pcm8)
+                        {
+                            int i = 0;
+                            while (i < e.BytesRecorded)
+                            {
+                                _pc_record_gain_buffer[i] = 128;
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            Array.Clear(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        }
+                        _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
+                    PCInputSource src = PCInputSource;
+                
+                    if (gain == 1.0f && src == PCInputSource.Both)
+                    {
+                        _pc_wave_writer.Write(e.Buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
                     if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
                     {
                         _pc_record_gain_buffer = new byte[e.BytesRecorded];
                     }
-                    if (BitDepthMode == AudioBitDepthMode.Pcm8)
+
+                    Buffer.BlockCopy(e.Buffer, 0, _pc_record_gain_buffer, 0, e.BytesRecorded);
+
+                    if (src != PCInputSource.Both)
+                    {
+                        applyPcInputSourceStereoRemap(_pc_record_gain_buffer, e.BytesRecorded);
+                    }
+                
+                    if (gain == 1.0f)
+                    {
+                        _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        _pc_wave_writer.Flush();
+                        return;
+                    }
+
+                    int max = e.BytesRecorded;
+
+                    if (BitDepthMode == AudioBitDepthMode.IeeeFloat32)
                     {
                         int i = 0;
-                        while (i < e.BytesRecorded)
+                        while (i + 3 < max)
                         {
-                            _pc_record_gain_buffer[i] = 128;
+                            float sample = BitConverter.ToSingle(_pc_record_gain_buffer, i);
+                            float scaled = sample * gain;
+                            if (scaled > 1.0f) scaled = 1.0f;
+                            if (scaled < -1.0f) scaled = -1.0f;
+                            byte[] b = BitConverter.GetBytes(scaled);
+                            _pc_record_gain_buffer[i] = b[0];
+                            _pc_record_gain_buffer[i + 1] = b[1];
+                            _pc_record_gain_buffer[i + 2] = b[2];
+                            _pc_record_gain_buffer[i + 3] = b[3];
+                            i += 4;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm32)
+                    {
+                        int i = 0;
+                        while (i + 3 < max)
+                        {
+                            int sample = BitConverter.ToInt32(_pc_record_gain_buffer, i);
+                            double scaled = sample * (double)gain;
+                            if (scaled > int.MaxValue) scaled = int.MaxValue;
+                            if (scaled < int.MinValue) scaled = int.MinValue;
+                            int out_sample = (int)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
+                            _pc_record_gain_buffer[i + 3] = (byte)((out_sample >> 24) & 0xFF);
+                            i += 4;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm24)
+                    {
+                        int i = 0;
+                        while (i + 2 < max)
+                        {
+                            int sample = _pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8) | (_pc_record_gain_buffer[i + 2] << 16);
+                            if ((sample & 0x800000) != 0) sample |= unchecked((int)0xFF000000);
+
+                            double scaled = sample * (double)gain;
+                            if (scaled > 8388607.0) scaled = 8388607.0;
+                            if (scaled < -8388608.0) scaled = -8388608.0;
+
+                            int out_sample = (int)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
+                            i += 3;
+                        }
+                    }
+                    else if (BitDepthMode == AudioBitDepthMode.Pcm8)
+                    {
+                        int i = 0;
+                        while (i < max)
+                        {
+                            int sample = _pc_record_gain_buffer[i] - 128;
+                            double scaled = sample * (double)gain;
+                            if (scaled > 127.0) scaled = 127.0;
+                            if (scaled < -128.0) scaled = -128.0;
+                            int out_sample = (int)scaled + 128;
+                            _pc_record_gain_buffer[i] = (byte)out_sample;
                             i++;
                         }
                     }
                     else
                     {
-                        Array.Clear(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                        int i = 0;
+                        while (i + 1 < max)
+                        {
+                            short sample = (short)(_pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8));
+                            float scaled = sample * gain;
+                            if (scaled > 32767.0f) scaled = 32767.0f;
+                            if (scaled < -32768.0f) scaled = -32768.0f;
+                            short out_sample = (short)scaled;
+                            _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
+                            _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
+                            i += 2;
+                        }
                     }
+
                     _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
                     _pc_wave_writer.Flush();
-                    return;
                 }
-
-                PCInputSource src = PCInputSource;
-                
-                if (gain == 1.0f && src == PCInputSource.Both)
-                {
-                    _pc_wave_writer.Write(e.Buffer, 0, e.BytesRecorded);
-                    _pc_wave_writer.Flush();
-                    return;
-                }
-
-                if (_pc_record_gain_buffer == null || _pc_record_gain_buffer.Length < e.BytesRecorded)
-                {
-                    _pc_record_gain_buffer = new byte[e.BytesRecorded];
-                }
-
-                Buffer.BlockCopy(e.Buffer, 0, _pc_record_gain_buffer, 0, e.BytesRecorded);
-
-                if (src != PCInputSource.Both)
-                {
-                    applyPcInputSourceStereoRemap(_pc_record_gain_buffer, e.BytesRecorded);
-                }
-                
-                if (gain == 1.0f)
-                {
-                    _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
-                    _pc_wave_writer.Flush();
-                    return;
-                }
-
-                int max = e.BytesRecorded;
-
-                if (BitDepthMode == AudioBitDepthMode.IeeeFloat32)
-                {
-                    int i = 0;
-                    while (i + 3 < max)
-                    {
-                        float sample = BitConverter.ToSingle(_pc_record_gain_buffer, i);
-                        float scaled = sample * gain;
-                        if (scaled > 1.0f) scaled = 1.0f;
-                        if (scaled < -1.0f) scaled = -1.0f;
-                        byte[] b = BitConverter.GetBytes(scaled);
-                        _pc_record_gain_buffer[i] = b[0];
-                        _pc_record_gain_buffer[i + 1] = b[1];
-                        _pc_record_gain_buffer[i + 2] = b[2];
-                        _pc_record_gain_buffer[i + 3] = b[3];
-                        i += 4;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm32)
-                {
-                    int i = 0;
-                    while (i + 3 < max)
-                    {
-                        int sample = BitConverter.ToInt32(_pc_record_gain_buffer, i);
-                        double scaled = sample * (double)gain;
-                        if (scaled > int.MaxValue) scaled = int.MaxValue;
-                        if (scaled < int.MinValue) scaled = int.MinValue;
-                        int out_sample = (int)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
-                        _pc_record_gain_buffer[i + 3] = (byte)((out_sample >> 24) & 0xFF);
-                        i += 4;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm24)
-                {
-                    int i = 0;
-                    while (i + 2 < max)
-                    {
-                        int sample = _pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8) | (_pc_record_gain_buffer[i + 2] << 16);
-                        if ((sample & 0x800000) != 0) sample |= unchecked((int)0xFF000000);
-
-                        double scaled = sample * (double)gain;
-                        if (scaled > 8388607.0) scaled = 8388607.0;
-                        if (scaled < -8388608.0) scaled = -8388608.0;
-
-                        int out_sample = (int)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        _pc_record_gain_buffer[i + 2] = (byte)((out_sample >> 16) & 0xFF);
-                        i += 3;
-                    }
-                }
-                else if (BitDepthMode == AudioBitDepthMode.Pcm8)
-                {
-                    int i = 0;
-                    while (i < max)
-                    {
-                        int sample = _pc_record_gain_buffer[i] - 128;
-                        double scaled = sample * (double)gain;
-                        if (scaled > 127.0) scaled = 127.0;
-                        if (scaled < -128.0) scaled = -128.0;
-                        int out_sample = (int)scaled + 128;
-                        _pc_record_gain_buffer[i] = (byte)out_sample;
-                        i++;
-                    }
-                }
-                else
-                {
-                    int i = 0;
-                    while (i + 1 < max)
-                    {
-                        short sample = (short)(_pc_record_gain_buffer[i] | (_pc_record_gain_buffer[i + 1] << 8));
-                        float scaled = sample * gain;
-                        if (scaled > 32767.0f) scaled = 32767.0f;
-                        if (scaled < -32768.0f) scaled = -32768.0f;
-                        short out_sample = (short)scaled;
-                        _pc_record_gain_buffer[i] = (byte)(out_sample & 0xFF);
-                        _pc_record_gain_buffer[i + 1] = (byte)((out_sample >> 8) & 0xFF);
-                        i += 2;
-                    }
-                }
-
-                _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
-                _pc_wave_writer.Flush();
-            }
                 catch (Exception ex)
                 {
                     markActiveRecordFailureLocked(ex);
@@ -3313,14 +3313,14 @@ namespace Thetis
         {
             try
             {
-            WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, 0);
+                WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, 0);
 
                 while ((_record == true || _rb_l.ReadSpace() > 0) && _failure == null)
-            {
-                    while ((_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0)) && _failure == null)
                 {
-                    WriteBuffer(ref _writer, ref _length_counter);
-                }
+                    while ((_rb_l.ReadSpace() > IN_BLOCK || (_record == false && _rb_l.ReadSpace() > 0)) && _failure == null)
+                    {
+                        WriteBuffer(ref _writer, ref _length_counter);
+                    }
                     if (_failure == null) Thread.Sleep(3);
                 }
             }
@@ -3336,13 +3336,13 @@ namespace Thetis
                 {
                     if (_failure == null)
                     {
-                _writer.Seek(0, SeekOrigin.Begin);
-                WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
-                _writer.Flush();
+                        _writer.Seek(0, SeekOrigin.Begin);
+                        WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
+                        _writer.Flush();
                     }
 
-                _writer.Close();
-            }
+                    _writer.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -3787,18 +3787,18 @@ namespace Thetis
         {
             try
             {
-            while (playback)
-            {
-                while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
+                while (playback)
                 {
-                    ReadBuffer(ref reader);
+                    while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
+                    {
+                        ReadBuffer(ref reader);
+                        if (!playback) break;
+                    }
+
                     if (!playback) break;
+
+                    Thread.Sleep(10);
                 }
-
-                if (!playback) break;
-
-                Thread.Sleep(10);
-            }
             }
             catch (Exception ex)
             {
@@ -3845,7 +3845,7 @@ namespace Thetis
                                            | ((io_buf[ofs + 5] & 0xFF) << 8)
                                            | (io_buf[ofs + 4] & 0xFF))
                                        / 2147483648.0f;
-                    }
+                        }
                         else
                         {
                             buf_r_in[i] = buf_l_in[i];
@@ -3865,7 +3865,7 @@ namespace Thetis
                                            | ((io_buf[ofs + 4] & 0xFF) << 16)
                                            | ((io_buf[ofs + 3] & 0xFF) << 8)) >> 8)
                                        / 8388608.0f;
-                    }
+                        }
                         else
                         {
                             buf_r_in[i] = buf_l_in[i];
@@ -3958,9 +3958,9 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_l);
 
-                        fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
-                            WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_r);
-                    }
+                    fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
+                        WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_r);
+                }
                 else
                 {
                     buf_l_in.CopyTo(buf_l_out, 0);
@@ -3974,9 +3974,9 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_l);
 
-                        fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
-                            WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_r);
-                    }
+                    fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
+                        WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_r);
+                }
                 else
                 {
                     buf_l_in.CopyTo(buf_l_out, 0);

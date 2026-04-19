@@ -47,6 +47,11 @@
 // its original terms and is not affected by this dual-licensing statement in any way.        //
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Final modifictions by MW0LGE Richard Samphire - 19th April 2026
+// Nothing further added by him after this date, and his repo is now in archive https://github.com/ramdor/Thetis
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Migrated to VS2026 - 18/12/25 MW0LGE v2.10.3.12
 
@@ -887,8 +892,9 @@ namespace Thetis
                 {
                     string msg = "The database is incorrectly configured for this version of Thetis.\n\n" +
                         "This is most likely because the database has not yet been updated.\n\n" +
-                        "Try holding left CTRL as you start up Thetis,\n" +
-                        "and keep it held until you see a message.";
+                        "Try holding either CTRL key BEFORE Thetis is re-launched,\n" +
+                        "and KEEP IT HELD until you see a message at which point you may release it.";
+
                     MessageBox.Show(msg, "Database Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
