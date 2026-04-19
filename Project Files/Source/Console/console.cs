@@ -1585,8 +1585,9 @@ namespace Thetis
                 {
                     string msg = "The database is incorrectly configured for this version of Thetis.\n\n" +
                         "This is most likely because the database has not yet been updated.\n\n" +
-                        "Try holding left CTRL as you start up Thetis,\n" +
-                        "and keep it held until you see a message.";
+                        "Try holding either CTRL key BEFORE Thetis is re-launched,\n" +
+                        "and KEEP IT HELD until you see a message at which point you may release it.";
+
                     MessageBox.Show(msg, "Database Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }

@@ -36603,7 +36603,10 @@ namespace Thetis
         {
             console.ARP.WDSPTXAudioGainInDb = (double)nudRecording_txGain.Value;
         }
-
+        private void nudRecording_monoPlaybackGain_ValueChanged(object sender, EventArgs e)
+        {
+            console.ARP.MonoToStereoGainDb = (double)nudRecording_monoPlaybackGain.Value;
+        }
         private void chkRecording_disable_during_playback(object sender, EventArgs e)
         {
             if (initializing) return;

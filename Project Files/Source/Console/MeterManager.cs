@@ -32786,6 +32786,12 @@ namespace Thetis
 
             private void OnDragEnter(object sender, DragEventArgs e)
             {
+                if (Common.IsAdministrator())
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
+
                 string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
                 clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
                 e.Effect = waveRecord != null && waveRecord.CanAcceptFiles(filePaths) ? DragDropEffects.Copy : DragDropEffects.None;
@@ -32793,6 +32799,12 @@ namespace Thetis
 
             private void OnDragOver(object sender, DragEventArgs e)
             {
+                if (Common.IsAdministrator())
+                {
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
+
                 string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
                 clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
                 e.Effect = waveRecord != null && waveRecord.CanAcceptFiles(filePaths) ? DragDropEffects.Copy : DragDropEffects.None;
@@ -32800,6 +32812,8 @@ namespace Thetis
 
             private void OnDragDrop(object sender, DragEventArgs e)
             {
+                if (Common.IsAdministrator()) return;
+
                 string[] filePaths = e.Data.GetDataPresent(DataFormats.FileDrop) ? e.Data.GetData(DataFormats.FileDrop) as string[] : null;
                 clsWaveRecord waveRecord = tryGetWaveRecordDropTarget(sender, new System.Drawing.Point(e.X, e.Y));
                 if (waveRecord == null || !waveRecord.CanAcceptFiles(filePaths)) return;
@@ -38632,6 +38646,7 @@ namespace Thetis
                 System.Drawing.Color scrollbarTrackColour = wave.ScrollbarTrackColour;
                 System.Drawing.Color scrollbarThumbColour = wave.ScrollbarThumbColour;
                 System.Drawing.Color scrollbarThumbHoverColour = wave.ScrollbarThumbHoverColour;
+                bool adminMode = Common.IsAdministrator();
 
                 RoundedRectangle dragging_rr = new RoundedRectangle();
                 RoundedRectangle rr = new RoundedRectangle();
@@ -38644,6 +38659,17 @@ namespace Thetis
                 if (contentRect.Width <= 6f || contentRect.Height <= 6f)
                 {
                     wave.SetRenderLayout(new SharpDX.RectangleF(), new SharpDX.RectangleF(), new SharpDX.RectangleF(), rowPitch, 0f, false, null);
+                    return;
+                }
+
+                if (adminMode)
+                {
+                    _renderTarget.PushAxisAlignedClip(contentRect, AntialiasMode.Aliased);
+                    float emptyHeight = contentRect.Height * 0.10f;
+                    plotText("This list can not be used whilst", contentRect.Left + (contentRect.Width / 2f), contentRect.Top + (contentRect.Height * 0.42f), rect.Width, wave.FontSize * 0.80f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, true, contentRect.Width * 0.80f, false, emptyHeight);
+                    plotText("Thetis is being run in Administrator mode", contentRect.Left + (contentRect.Width / 2f), contentRect.Top + (contentRect.Height * 0.52f), rect.Width, wave.FontSize * 0.80f, textColour, nFade, wave.FontFamily, wave.FontStyle, false, true, contentRect.Width * 0.80f, false, emptyHeight);
+                    _renderTarget.PopAxisAlignedClip();
+                    wave.SetRenderLayout(contentRect, new SharpDX.RectangleF(), new SharpDX.RectangleF(), rowPitch, 0f, false, new List<clsWaveRecord.WaveRecordHitRegion>());
                     return;
                 }
 
@@ -38871,7 +38897,6 @@ namespace Thetis
                 }
 
                 _renderTarget.PopAxisAlignedClip();
-
                 if (showScrollbar)
                 {
                     float thumbHeight = Math.Max(24f, (contentRect.Height / Math.Max(totalContentHeight, 1f)) * scrollTrackRect.Height);

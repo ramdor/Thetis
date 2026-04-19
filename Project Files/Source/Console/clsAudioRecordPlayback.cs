@@ -216,6 +216,7 @@ namespace Thetis
         public float DitherAmount { get; set; }
 
         public bool MoxOnPlayback { get; set; } = true;
+        public double MonoToStereoGainDb { get; set; } = 6.0;
 
         public bool GenerateMP3File { get; set; } = false;
         public bool GenerateJSON { get; set; } = false;
@@ -299,7 +300,7 @@ namespace Thetis
                     string hdrErr;
 
                     if (!tryParseWaveHeader(br, out fmtTag, out sr, out ch, out bps, out ds, out dl, out hdrErr)) return null;
-                    if (ch != 2) return null;
+                    if (ch < 1 || ch > 2) return null;
                     if (sr <= 0) return null;
 
                     int bytesPerSample;
@@ -384,12 +385,12 @@ namespace Thetis
                     DateTime parsedUtc;
                     if (tryParseUtcStamp(existing.utc_time, out parsedUtc)) utcTime = parsedUtc;
 
-                    d.Frequency = existing.frequency ?? "";
-                    d.Mode = existing.mode ?? "";
-                    d.Band = existing.band ?? "";
-                    //d.DDCFrequency = existing.ddcfrequency ?? "";
+                    d.Frequency = existing.frequency;
+                    d.Mode = existing.mode;
+                    d.Band = existing.band;
+                    //d.DDCFrequency = existing.ddcfrequency;
 
-                    d.Mp3File = existing.mp3_file ?? "";
+                    d.Mp3File = existing.mp3_file;
                     d.Mp3FileSizeBytes = existing.mp3_file_size_bytes;
                 }
                 else
@@ -1717,7 +1718,7 @@ namespace Thetis
                         string headerError;
 
                         if (!tryParseWaveHeader(br, out formatTag, out sampleRate, out channels, out bitsPerSample, out dataStart, out dataLengthBytes, out headerError)) return false;
-                        if (channels != 2) return false;
+                        if (channels < 1 || channels > 2) return false;
                         if (sampleRate < 6000) return false;
                         if (dataLengthBytes <= 0) return false;
 
@@ -1814,6 +1815,7 @@ namespace Thetis
                         dataLengthBytes,
                         PlaybackCosineFadeEnabled,
                         PlaybackCosineFadeMs,
+                        MonoToStereoGainDb,
                         reader,
                         onWdspPlaybackFinished);
 
@@ -1890,9 +1892,9 @@ namespace Thetis
                             {
                                 if (tryParseWaveHeader(br, out int fmtTag, out int sr, out int ch, out int bps, out long ds, out long dl, out string hdrErr))
                                 {
-                                    if(ch != 2)
+                                    if (ch < 1 || ch > 2)
                                     {
-                                        error = "File is not 2 channel.";
+                                        error = "Unsupported channel count.";
                                         return false;
                                     }
                                     refreshExistingJsonFromWavIfNeeded(play_id, fullPath, fmtTag, sr, ch, bps);
@@ -2587,13 +2589,13 @@ namespace Thetis
 
                 RecordingJsonModel m = new RecordingJsonModel();
                 m.utc_time = utc.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                m.frequency = details.Frequency ?? "";
-                m.mode = details.Mode ?? "";
-                m.band = details.Band ?? "";
-                //m.ddcfrequency = details.DDCFrequency ?? "";
+                if (details.Frequency != null) m.frequency = details.Frequency;
+                if (details.Mode != null) m.mode = details.Mode;
+                if (details.Band != null) m.band = details.Band;
+                //if (details.DDCFrequency != null) m.ddcfrequency = details.DDCFrequency;
 
-                m.wav_file = details.WavFile ?? "";
-                m.wav_file_size_bytes = details.WavFileSizeBytes;
+                if (details.WavFile != null) m.wav_file = details.WavFile;
+                if (details.WavFileSizeBytes.HasValue) m.wav_file_size_bytes = details.WavFileSizeBytes.Value;
 
                 DateTime? wavLast = details.WavFileLastWriteUtc;
 
@@ -2622,8 +2624,8 @@ namespace Thetis
                 string fmt = details.FormatTag == 3 ? "IEEE_FLOAT" : (details.FormatTag == 1 ? "PCM" : details.FormatTag.ToString());
                 m.tag_description = fmt + " " + details.BitDepth.ToString() + "-bit";
 
-                m.mp3_file = details.Mp3File ?? "";
-                m.mp3_file_size_bytes = details.Mp3FileSizeBytes;
+                if (details.Mp3File != null) m.mp3_file = details.Mp3File;
+                if (details.Mp3FileSizeBytes.HasValue) m.mp3_file_size_bytes = details.Mp3FileSizeBytes.Value;
 
                 double? dur = details.PlayDurationSeconds;
 
@@ -2640,7 +2642,7 @@ namespace Thetis
                     }
                 }
 
-                m.play_duration_seconds = dur;
+                if (dur.HasValue) m.play_duration_seconds = dur.Value;
 
                 string s = JsonConvert.SerializeObject(m, Formatting.Indented);
 
@@ -3043,25 +3045,25 @@ namespace Thetis
 
         public sealed class RecordingJsonModel
         {
-            public string utc_time { get; set; }
-            public string frequency { get; set; }
-            public string mode { get; set; }
-            public string band { get; set; }
+            public string utc_time { get; set; } = "";
+            public string frequency { get; set; } = "";
+            public string mode { get; set; } = "";
+            public string band { get; set; } = "";
             //public string ddcfrequency { get; set; }
 
-            public string wav_file { get; set; }
-            public long? wav_file_size_bytes { get; set; }
-            public string wav_file_last_write_utc { get; set; }
-            public double? play_duration_seconds { get; set; }
+            public string wav_file { get; set; } = "";
+            public long wav_file_size_bytes { get; set; } = 0;
+            public string wav_file_last_write_utc { get; set; } = "";
+            public double play_duration_seconds { get; set; } = 0.0;
 
             public int sample_rate { get; set; }
             public short bit_depth { get; set; }
             public short channels { get; set; }
             public short format_tag { get; set; }
-            public string tag_description { get; set; }
+            public string tag_description { get; set; } = "";
 
-            public string mp3_file { get; set; }
-            public long? mp3_file_size_bytes { get; set; }
+            public string mp3_file { get; set; } = "";
+            public long mp3_file_size_bytes { get; set; } = 0;
         }
     }
 
@@ -3578,6 +3580,7 @@ namespace Thetis
         private BinaryReader reader;
         private int format;
         private int sample_rate;
+        private int source_channels;
         private int channels;
         private int bitdepth;
 
@@ -3618,12 +3621,14 @@ namespace Thetis
         private long _total_frames;
         private long _frames_read;
         private int _bytes_per_frame;
+        private float _mono_gain = 1.0f;
 
-        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, BinaryReader binread, Action<Exception> finished)
+        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, double mono_gain_db, BinaryReader binread, Action<Exception> finished)
         {
             id = wfr_id;
             format = fmt;
             sample_rate = samp_rate;
+            source_channels = chan;
             channels = chan;
             bitdepth = bit_depth;
             reader = binread;
@@ -3633,18 +3638,22 @@ namespace Thetis
             _fade_ms = fade_ms;
             if (_fade_ms < 0) _fade_ms = 0;
 
+            if (source_channels < 1) source_channels = 1;
+            if (source_channels > 2) source_channels = 2;
             if (channels < 1) channels = 1;
             if (channels > 2) channels = 2;
+            if (channels == 1) channels = 2;
+            if (source_channels == 1) _mono_gain = (float)Math.Pow(10.0, mono_gain_db / 20.0);
 
             if (format == 3)
             {
-                _bytes_per_frame = channels * 4;
+                _bytes_per_frame = source_channels * 4;
             }
             else
             {
                 int bytes_per_sample = bitdepth / 8;
                 if (bytes_per_sample < 1) bytes_per_sample = 1;
-                _bytes_per_frame = channels * bytes_per_sample;
+                _bytes_per_frame = source_channels * bytes_per_sample;
             }
 
             if (_bytes_per_frame < 1) _bytes_per_frame = 1;
@@ -3695,15 +3704,15 @@ namespace Thetis
 
             if (format == 1)
             {
-                if (bitdepth == 32) io_buf_size = IN_BLOCK * 4 * 2;
-                else if (bitdepth == 24) io_buf_size = IN_BLOCK * 3 * 2;
-                else if (bitdepth == 16) io_buf_size = IN_BLOCK * 2 * 2;
-                else if (bitdepth == 8) io_buf_size = IN_BLOCK * 2;
-                else io_buf_size = IN_BLOCK * 2 * 2;
+                if (bitdepth == 32) io_buf_size = IN_BLOCK * 4 * source_channels;
+                else if (bitdepth == 24) io_buf_size = IN_BLOCK * 3 * source_channels;
+                else if (bitdepth == 16) io_buf_size = IN_BLOCK * 2 * source_channels;
+                else if (bitdepth == 8) io_buf_size = IN_BLOCK * source_channels;
+                else io_buf_size = IN_BLOCK * 2 * source_channels;
             }
             else
             {
-                io_buf_size = IN_BLOCK * 4 * 2;
+                io_buf_size = IN_BLOCK * 4 * source_channels;
             }
 
             if (sample_rate != rcvr_rate)
@@ -3813,19 +3822,7 @@ namespace Thetis
             if (val < io_buf_size)
             {
                 eof = true;
-
-                if (format == 1)
-                {
-                    if (bitdepth == 32) num_reads = val / 8;
-                    else if (bitdepth == 24) num_reads = val / 6;
-                    else if (bitdepth == 16) num_reads = val / 4;
-                    else if (bitdepth == 8) num_reads = val / 2;
-                    else num_reads = val / 4;
-                }
-                else
-                {
-                    num_reads = val / 8;
-                }
+                num_reads = val / _bytes_per_frame;
             }
 
             for (int i = 0; i < num_reads; i++)
@@ -3834,45 +3831,78 @@ namespace Thetis
                 {
                     if (bitdepth == 32)
                     {
-                        buf_l_in[i] = ((io_buf[i * 8 + 3] << 24)
-                                       | ((io_buf[i * 8 + 2] & 0xFF) << 16)
-                                       | ((io_buf[i * 8 + 1] & 0xFF) << 8)
-                                       | (io_buf[i * 8] & 0xFF))
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = ((io_buf[ofs + 3] << 24)
+                                       | ((io_buf[ofs + 2] & 0xFF) << 16)
+                                       | ((io_buf[ofs + 1] & 0xFF) << 8)
+                                       | (io_buf[ofs] & 0xFF))
                                        / 2147483648.0f;
 
-                        buf_r_in[i] = ((io_buf[i * 8 + 7] << 24)
-                                       | ((io_buf[i * 8 + 6] & 0xFF) << 16)
-                                       | ((io_buf[i * 8 + 5] & 0xFF) << 8)
-                                       | (io_buf[i * 8 + 4] & 0xFF))
+                        if (source_channels > 1)
+                        {
+                            buf_r_in[i] = ((io_buf[ofs + 7] << 24)
+                                           | ((io_buf[ofs + 6] & 0xFF) << 16)
+                                           | ((io_buf[ofs + 5] & 0xFF) << 8)
+                                           | (io_buf[ofs + 4] & 0xFF))
                                        / 2147483648.0f;
+                    }
+                        else
+                        {
+                            buf_r_in[i] = buf_l_in[i];
+                        }
                     }
                     else if (bitdepth == 24)
                     {
-                        buf_l_in[i] = (((io_buf[i * 6 + 2] << 24)
-                                      | ((io_buf[i * 6 + 1] & 0xFF) << 16)
-                                      | ((io_buf[i * 6] & 0xFF) << 8)) >> 8)
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = (((io_buf[ofs + 2] << 24)
+                                      | ((io_buf[ofs + 1] & 0xFF) << 16)
+                                      | ((io_buf[ofs] & 0xFF) << 8)) >> 8)
                                       / 8388608.0f;
 
-                        buf_r_in[i] = (((io_buf[i * 6 + 5] << 24)
-                                       | ((io_buf[i * 6 + 4] & 0xFF) << 16)
-                                       | ((io_buf[i * 6 + 3] & 0xFF) << 8)) >> 8)
+                        if (source_channels > 1)
+                        {
+                            buf_r_in[i] = (((io_buf[ofs + 5] << 24)
+                                           | ((io_buf[ofs + 4] & 0xFF) << 16)
+                                           | ((io_buf[ofs + 3] & 0xFF) << 8)) >> 8)
                                        / 8388608.0f;
+                    }
+                        else
+                        {
+                            buf_r_in[i] = buf_l_in[i];
+                        }
                     }
                     else if (bitdepth == 16)
                     {
-                        buf_l_in[i] = (float)((double)BitConverter.ToInt16(io_buf, i * 4) / 32767.0);
-                        buf_r_in[i] = (float)((double)BitConverter.ToInt16(io_buf, i * 4 + 2) / 32767.0);
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = (float)((double)BitConverter.ToInt16(io_buf, ofs) / 32767.0);
+                        if (source_channels > 1) buf_r_in[i] = (float)((double)BitConverter.ToInt16(io_buf, ofs + 2) / 32767.0);
+                        else buf_r_in[i] = buf_l_in[i];
                     }
                     else
                     {
-                        buf_l_in[i] = ((io_buf[i * 2] & 0xFF) - 128) / 128.0f;
-                        buf_r_in[i] = ((io_buf[i * 2 + 1] & 0xFF) - 128) / 128.0f;
+                        int ofs = i * _bytes_per_frame;
+                        buf_l_in[i] = ((io_buf[ofs] & 0xFF) - 128) / 128.0f;
+                        if (source_channels > 1) buf_r_in[i] = ((io_buf[ofs + 1] & 0xFF) - 128) / 128.0f;
+                        else buf_r_in[i] = buf_l_in[i];
                     }
                 }
                 else
                 {
-                    buf_l_in[i] = BitConverter.ToSingle(io_buf, i * 8);
-                    buf_r_in[i] = BitConverter.ToSingle(io_buf, i * 8 + 4);
+                    int ofs = i * _bytes_per_frame;
+                    buf_l_in[i] = BitConverter.ToSingle(io_buf, ofs);
+                    if (source_channels > 1) buf_r_in[i] = BitConverter.ToSingle(io_buf, ofs + 4);
+                    else buf_r_in[i] = buf_l_in[i];
+                }
+            }
+
+            if (source_channels == 1 && _mono_gain != 1.0f)
+            {
+                int i = 0;
+                while (i < num_reads)
+                {
+                    buf_l_in[i] *= _mono_gain;
+                    buf_r_in[i] *= _mono_gain;
+                    i++;
                 }
             }
 
@@ -3900,7 +3930,7 @@ namespace Thetis
                     }
 
                     buf_l_in[i] *= gain;
-                    if (channels > 1) buf_r_in[i] *= gain;
+                    buf_r_in[i] *= gain;
                     i++;
                 }
             }
@@ -3928,12 +3958,9 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_l);
 
-                    if (channels > 1)
-                    {
                         fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
                             WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_r);
                     }
-                }
                 else
                 {
                     buf_l_in.CopyTo(buf_l_out, 0);
@@ -3947,12 +3974,9 @@ namespace Thetis
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_l);
 
-                    if (channels > 1)
-                    {
                         fixed (float* in_ptr = &buf_r_in[0], out_ptr = &buf_r_out[0])
                             WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_r);
                     }
-                }
                 else
                 {
                     buf_l_in.CopyTo(buf_l_out, 0);
@@ -3961,8 +3985,7 @@ namespace Thetis
             }
 
             rb_l.Write(buf_l_out, out_cnt);
-            if (channels > 1) rb_r.Write(buf_r_out, out_cnt);
-            else rb_r.Write(buf_l_out, out_cnt);
+            rb_r.Write(buf_r_out, out_cnt);
 
             total_samps_written += out_cnt;
         }

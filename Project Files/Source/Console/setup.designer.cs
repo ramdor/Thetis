@@ -4492,6 +4492,9 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
+            this.labelTS663 = new System.Windows.Forms.LabelTS();
+            this.nudRecording_monoPlaybackGain = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS664 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5604,6 +5607,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -32343,6 +32347,9 @@
             // 
             // groupBoxTS60
             // 
+            this.groupBoxTS60.Controls.Add(this.labelTS664);
+            this.groupBoxTS60.Controls.Add(this.labelTS663);
+            this.groupBoxTS60.Controls.Add(this.nudRecording_monoPlaybackGain);
             this.groupBoxTS60.Controls.Add(this.ucReording_free_space);
             this.groupBoxTS60.Controls.Add(this.labelTS660);
             this.groupBoxTS60.Controls.Add(this.nudRecording_stop_free_space);
@@ -71127,6 +71134,57 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
+            // labelTS663
+            // 
+            this.labelTS663.AutoSize = true;
+            this.labelTS663.Image = null;
+            this.labelTS663.Location = new System.Drawing.Point(190, 121);
+            this.labelTS663.Name = "labelTS663";
+            this.labelTS663.Size = new System.Drawing.Size(20, 13);
+            this.labelTS663.TabIndex = 139;
+            this.labelTS663.Text = "dB";
+            // 
+            // nudRecording_monoPlaybackGain
+            // 
+            this.nudRecording_monoPlaybackGain.DecimalPlaces = 1;
+            this.nudRecording_monoPlaybackGain.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudRecording_monoPlaybackGain.Location = new System.Drawing.Point(131, 118);
+            this.nudRecording_monoPlaybackGain.Maximum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            this.nudRecording_monoPlaybackGain.Minimum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            -2147483648});
+            this.nudRecording_monoPlaybackGain.Name = "nudRecording_monoPlaybackGain";
+            this.nudRecording_monoPlaybackGain.Size = new System.Drawing.Size(53, 20);
+            this.nudRecording_monoPlaybackGain.TabIndex = 138;
+            this.nudRecording_monoPlaybackGain.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudRecording_monoPlaybackGain, "Gain applied to mono files when played back");
+            this.nudRecording_monoPlaybackGain.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudRecording_monoPlaybackGain.ValueChanged += new System.EventHandler(this.nudRecording_monoPlaybackGain_ValueChanged);
+            // 
+            // labelTS664
+            // 
+            this.labelTS664.AutoSize = true;
+            this.labelTS664.Image = null;
+            this.labelTS664.Location = new System.Drawing.Point(18, 120);
+            this.labelTS664.Name = "labelTS664";
+            this.labelTS664.Size = new System.Drawing.Size(109, 13);
+            this.labelTS664.TabIndex = 140;
+            this.labelTS664.Text = "Mono Playback Gain:";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -72524,6 +72582,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -77019,5 +77078,8 @@
         private ButtonTS btnRecording_openWaverecordFolder;
         private TrackBarTS tbTCISpotBackPanel_alpha;
         private LabelTS labelTS662;
+        private LabelTS labelTS664;
+        private LabelTS labelTS663;
+        private NumericUpDownTS nudRecording_monoPlaybackGain;
     }
 }
