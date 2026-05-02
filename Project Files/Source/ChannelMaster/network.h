@@ -413,15 +413,16 @@ static const double const_1_div_2147483648_ = 1.0 / 2147483648.0;
 
 enum HPSDRHW
 {
-	Atlas = 0,
-	Hermes = 1,      // ANAN-10/100
-	HermesII = 2,    // ANAN-10E/100B
-	Angelia = 3,     // ANAN-100D
-	Orion = 4,       // ANAN-200D
-	OrionMKII = 5,   // ANAN-7000DLE/8000DLE AnvelinaPro3
-	HermesLite = 6,  // MI0BOT: HL2 allocated number
-	Saturn = 10,     // ANAN-G2: added G8NJJ
-	SaturnMKII = 11  // ANAN-G2: MKII board
+	Atlas = 0,          // Metis in PowerSDR, but Atlas in Thetis
+	Hermes = 1,         // ANAN-10 ANAN100
+	HermesII = 2,       // ANAN-10E ANAN-100B HeremesII
+	Angelia = 3,        // ANAN-100D
+	Orion = 4,          // ANAN-200D
+	OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3 RedPitaya
+	HermesLite = 6,     // MI0BOT
+	Saturn = 10,        // ANAN-G2: added G8NJJ
+	SaturnMKII = 11,    // ANAN-G2: MKII board?
+	HermesC10 = 20      // ANAN-G2E //N1GP G2E added (HermesC10)
 };
 
 enum _HPSDRModel //from enums.cs
@@ -441,7 +442,8 @@ enum _HPSDRModel //from enums.cs
 	HPSDRModel_ANAN_G2_1K = 12,
 	HPSDRModel_ANVELINAPRO3 = 13,
 	HPSDRModel_HERMESLITE = 14,
-	HPSDRModel_REDPITAYA = 15
+	HPSDRModel_REDPITAYA = 15,
+	HPSDRModel_ANAN_G2E = 16 //N1GP G2E added
 } HPSDRModel;
 
 enum _RadioProtocol

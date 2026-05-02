@@ -240,6 +240,12 @@ namespace Thetis
         private static readonly double[] _waterfallBitmapSpanHz = new double[] { double.NaN, double.NaN };
         private static readonly double[] _waterfallBitmapShiftRemainderPixels = new double[2];
         private static readonly int[] _waterfallBitmapWidths = new int[2];
+        private static bool _allowWaterfallSmear = false;
+        public static bool AllowWaterfallSmear
+        {
+            get { return _allowWaterfallSmear; }
+            set { _allowWaterfallSmear = value; }
+        }
 
         private static float[] waterfall_data;
 
@@ -6355,7 +6361,7 @@ namespace Thetis
             // this add row block prevents rows from being added if the centre frequency changes
             // for a duration 20% greater than fft fill time to allow buckets to aproach expected levels
             // all to reduce smearing when centre frequency is changed
-            bool stopWaterfall = rx == 1 ? _stopRx1Waterfall : _stopRx2Waterfall;
+            bool stopWaterfall = !_allowWaterfallSmear && (rx == 1 ? _stopRx1Waterfall : _stopRx2Waterfall);
             if (stopWaterfall)                
             {
                 DateTime stopTime = rx == 1 ? _rx1_centrefreq_change_time : _rx2_centrefreq_change_time;
@@ -6657,7 +6663,8 @@ namespace Thetis
                     bool clearExistingBitmap;
 
                     double currentWaterfallCenterMHz = rx == 1 ? _currentWaterfallPixelRef[0] : _currentWaterfallPixelRef[1];
-                    horizontalShiftPixels = prepareWaterfallBitmapShift(rx, W, currentWaterfallCenterMHz, out clearExistingBitmap);
+                    clearExistingBitmap = false;
+                    horizontalShiftPixels = _allowWaterfallSmear ? 0 : prepareWaterfallBitmapShift(rx, W, currentWaterfallCenterMHz, out clearExistingBitmap);
                     if (horizontalShiftPixels > W) horizontalShiftPixels = W;
                     else if (horizontalShiftPixels < -W) horizontalShiftPixels = -W;
 

@@ -1945,6 +1945,9 @@
             this.chkRecording_dither = new System.Windows.Forms.CheckBoxTS();
             this.comboRecording_samplerate = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS60 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS664 = new System.Windows.Forms.LabelTS();
+            this.labelTS663 = new System.Windows.Forms.LabelTS();
+            this.nudRecording_monoPlaybackGain = new System.Windows.Forms.NumericUpDownTS();
             this.ucReording_free_space = new Thetis.ucProgress();
             this.labelTS660 = new System.Windows.Forms.LabelTS();
             this.nudRecording_stop_free_space = new System.Windows.Forms.NumericUpDownTS();
@@ -3128,6 +3131,7 @@
             this.clrbtnTXAttenuationBackground = new Thetis.ColorButton();
             this.labelTS195 = new System.Windows.Forms.LabelTS();
             this.groupBoxTS31 = new System.Windows.Forms.GroupBoxTS();
+            this.chkWaterfall_smear = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableLEDFont = new System.Windows.Forms.CheckBoxTS();
             this.labelTS8 = new System.Windows.Forms.LabelTS();
             this.clrbtnSliderLimitBar = new Thetis.ColorButton();
@@ -4492,9 +4496,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
-            this.labelTS663 = new System.Windows.Forms.LabelTS();
-            this.nudRecording_monoPlaybackGain = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS664 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4856,6 +4857,7 @@
             this.groupBoxTS62.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).BeginInit();
             this.groupBoxTS60.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).BeginInit();
             this.grpGlobalStopPlayRecord.SuspendLayout();
             this.groupBoxTS67.SuspendLayout();
@@ -5607,7 +5609,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -8568,7 +8569,7 @@
             "ANAN-200D",
             "ANAN-7000DLE",
             "ANAN-8000DLE",
-            "ANAN-G1",
+            "ANAN-G2E",
             "ANAN-G2",
             "ANAN-G2-1K",
             "ANVELINA-PRO3",
@@ -32374,6 +32375,57 @@
             this.groupBoxTS60.TabStop = false;
             this.groupBoxTS60.Text = "Options";
             // 
+            // labelTS664
+            // 
+            this.labelTS664.AutoSize = true;
+            this.labelTS664.Image = null;
+            this.labelTS664.Location = new System.Drawing.Point(18, 120);
+            this.labelTS664.Name = "labelTS664";
+            this.labelTS664.Size = new System.Drawing.Size(109, 13);
+            this.labelTS664.TabIndex = 140;
+            this.labelTS664.Text = "Mono Playback Gain:";
+            // 
+            // labelTS663
+            // 
+            this.labelTS663.AutoSize = true;
+            this.labelTS663.Image = null;
+            this.labelTS663.Location = new System.Drawing.Point(190, 121);
+            this.labelTS663.Name = "labelTS663";
+            this.labelTS663.Size = new System.Drawing.Size(20, 13);
+            this.labelTS663.TabIndex = 139;
+            this.labelTS663.Text = "dB";
+            // 
+            // nudRecording_monoPlaybackGain
+            // 
+            this.nudRecording_monoPlaybackGain.DecimalPlaces = 1;
+            this.nudRecording_monoPlaybackGain.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudRecording_monoPlaybackGain.Location = new System.Drawing.Point(131, 118);
+            this.nudRecording_monoPlaybackGain.Maximum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            this.nudRecording_monoPlaybackGain.Minimum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            -2147483648});
+            this.nudRecording_monoPlaybackGain.Name = "nudRecording_monoPlaybackGain";
+            this.nudRecording_monoPlaybackGain.Size = new System.Drawing.Size(53, 20);
+            this.nudRecording_monoPlaybackGain.TabIndex = 138;
+            this.nudRecording_monoPlaybackGain.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudRecording_monoPlaybackGain, "Gain applied to mono files when played back");
+            this.nudRecording_monoPlaybackGain.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudRecording_monoPlaybackGain.ValueChanged += new System.EventHandler(this.nudRecording_monoPlaybackGain_ValueChanged);
+            // 
             // ucReording_free_space
             // 
             this.ucReording_free_space.BackColor = System.Drawing.Color.LightGray;
@@ -33139,7 +33191,7 @@
             this.grpDisplay8000DLE.Size = new System.Drawing.Size(215, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
             this.grpDisplay8000DLE.TabStop = false;
-            this.grpDisplay8000DLE.Text = "7000/8000/G2/ANV/RP";
+            this.grpDisplay8000DLE.Text = "7000/8000/G2/G2E/ANV/RP";
             // 
             // chkANAN8000DLEDisplayVoltsAmps
             // 
@@ -51698,6 +51750,7 @@
             // 
             // groupBoxTS31
             // 
+            this.groupBoxTS31.Controls.Add(this.chkWaterfall_smear);
             this.groupBoxTS31.Controls.Add(this.chkEnableLEDFont);
             this.groupBoxTS31.Controls.Add(this.labelTS8);
             this.groupBoxTS31.Controls.Add(this.clrbtnSliderLimitBar);
@@ -51712,6 +51765,19 @@
             this.groupBoxTS31.TabIndex = 93;
             this.groupBoxTS31.TabStop = false;
             this.groupBoxTS31.Text = "General";
+            // 
+            // chkWaterfall_smear
+            // 
+            this.chkWaterfall_smear.AutoSize = true;
+            this.chkWaterfall_smear.Image = null;
+            this.chkWaterfall_smear.Location = new System.Drawing.Point(6, 78);
+            this.chkWaterfall_smear.Name = "chkWaterfall_smear";
+            this.chkWaterfall_smear.Size = new System.Drawing.Size(94, 30);
+            this.chkWaterfall_smear.TabIndex = 93;
+            this.chkWaterfall_smear.Text = "Allow smeared\r\nwaterfalls";
+            this.toolTip1.SetToolTip(this.chkWaterfall_smear, "Waterfalls will smear when display centre frequency changes");
+            this.chkWaterfall_smear.UseVisualStyleBackColor = true;
+            this.chkWaterfall_smear.CheckedChanged += new System.EventHandler(this.chkWaterfall_smear_CheckedChanged);
             // 
             // chkEnableLEDFont
             // 
@@ -51755,9 +51821,9 @@
             this.chkConsoleDarkModeTitleBar.Image = null;
             this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(6, 42);
             this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
-            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(201, 17);
+            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(120, 30);
             this.chkConsoleDarkModeTitleBar.TabIndex = 92;
-            this.chkConsoleDarkModeTitleBar.Text = "Dark mode title bars + some windows";
+            this.chkConsoleDarkModeTitleBar.Text = "Dark mode title bars\r\nand some windows";
             this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode title bars (only on Windows 10 and later)\r\nSome window contents may als" +
         "o become dark (diversity for example)");
             this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
@@ -71134,57 +71200,6 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
-            // labelTS663
-            // 
-            this.labelTS663.AutoSize = true;
-            this.labelTS663.Image = null;
-            this.labelTS663.Location = new System.Drawing.Point(190, 121);
-            this.labelTS663.Name = "labelTS663";
-            this.labelTS663.Size = new System.Drawing.Size(20, 13);
-            this.labelTS663.TabIndex = 139;
-            this.labelTS663.Text = "dB";
-            // 
-            // nudRecording_monoPlaybackGain
-            // 
-            this.nudRecording_monoPlaybackGain.DecimalPlaces = 1;
-            this.nudRecording_monoPlaybackGain.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudRecording_monoPlaybackGain.Location = new System.Drawing.Point(131, 118);
-            this.nudRecording_monoPlaybackGain.Maximum = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
-            this.nudRecording_monoPlaybackGain.Minimum = new decimal(new int[] {
-            70,
-            0,
-            0,
-            -2147483648});
-            this.nudRecording_monoPlaybackGain.Name = "nudRecording_monoPlaybackGain";
-            this.nudRecording_monoPlaybackGain.Size = new System.Drawing.Size(53, 20);
-            this.nudRecording_monoPlaybackGain.TabIndex = 138;
-            this.nudRecording_monoPlaybackGain.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudRecording_monoPlaybackGain, "Gain applied to mono files when played back");
-            this.nudRecording_monoPlaybackGain.Value = new decimal(new int[] {
-            6,
-            0,
-            0,
-            0});
-            this.nudRecording_monoPlaybackGain.ValueChanged += new System.EventHandler(this.nudRecording_monoPlaybackGain_ValueChanged);
-            // 
-            // labelTS664
-            // 
-            this.labelTS664.AutoSize = true;
-            this.labelTS664.Image = null;
-            this.labelTS664.Location = new System.Drawing.Point(18, 120);
-            this.labelTS664.Name = "labelTS664";
-            this.labelTS664.Size = new System.Drawing.Size(109, 13);
-            this.labelTS664.TabIndex = 140;
-            this.labelTS664.Text = "Mono Playback Gain:";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71662,6 +71677,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).EndInit();
             this.groupBoxTS60.ResumeLayout(false);
             this.groupBoxTS60.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).EndInit();
             this.grpGlobalStopPlayRecord.ResumeLayout(false);
             this.grpGlobalStopPlayRecord.PerformLayout();
@@ -72582,7 +72598,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_monoPlaybackGain)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -77081,5 +77096,6 @@
         private LabelTS labelTS664;
         private LabelTS labelTS663;
         private NumericUpDownTS nudRecording_monoPlaybackGain;
+        private CheckBoxTS chkWaterfall_smear;
     }
 }
