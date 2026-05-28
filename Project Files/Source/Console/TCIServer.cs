@@ -348,7 +348,8 @@ namespace Thetis
         TX_AUDIO_STREAM = 2,
         TX_CHRONO = 3,
         LINEOUT_STREAM = 4,
-        DISPLAY_STREAM = 10
+        DISPLAY_STREAM = 10,
+        DISPLAY_DELTA_STREAM = 11
     }
 
     internal enum TCISampleType : uint
@@ -725,6 +726,7 @@ namespace Thetis
             public float MaxDbm;
             public int LastDataIndex;
             public float[] PixelBuffer;
+            public byte[] LastSentFrame;
         }
 
 		//
@@ -812,6 +814,7 @@ namespace Thetis
         private bool m_seenModernTxAudioNegotiation = false;
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
         private clsSpectrumProcessor m_spectrumProcessor = null;
+        private bool m_displayDeltaMode = false;
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
@@ -2225,6 +2228,10 @@ namespace Thetis
         private void sendDisplayPixels(int receiver, int pixels)
         {
             sendTextFrame("display_pixels:" + receiver.ToString() + "," + pixels.ToString() + ";");
+        }
+        private void sendDisplayDeltaMode(bool enabled)
+        {
+            sendTextFrame("display_delta_mode:" + enabled.ToString().ToLowerInvariant() + ";");
         }
         private void sendDisplayFrameRate(int receiver, int frameRate)
         {
@@ -5566,6 +5573,9 @@ namespace Thetis
                     case "display_pixels":
                         handleDisplayPixels(args);
                         break;
+                    case "display_delta_mode":
+                        handleDisplayDeltaMode(args);
+                        break;
                     case "display_framerate":
                         handleDisplayFrameRate(args);
                         break;
@@ -5968,7 +5978,7 @@ namespace Thetis
             buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
         }
 
-        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload)
+        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload, int displayDeltaBits = 0, int displayPayloadLength = 0)
         {
             int samplePayloadLength = samplePayload != null ? samplePayload.Length : 0;
             byte[] payload = new byte[64 + samplePayloadLength];
@@ -5983,8 +5993,11 @@ namespace Thetis
             writeUInt32(payload, offset, (uint)streamType); offset += 4;
             writeUInt32(payload, offset, (uint)channels); offset += 4;
 
-            for (int i = 0; i < 8; i++, offset += 4)
-                writeUInt32(payload, offset, 0);
+            if (streamType == TCIStreamType.DISPLAY_DELTA_STREAM)
+            {
+                payload[56] = (byte)displayDeltaBits;
+                writeUInt32(payload, 57, (uint)displayPayloadLength);
+            }
 
             if (samplePayloadLength > 0)
                 Buffer.BlockCopy(samplePayload, 0, payload, 64, samplePayloadLength);
@@ -7231,6 +7244,14 @@ namespace Thetis
             if (receiver < 0 || receiver > 1) return false;
             return m_displaySubscriptions.TryGetValue(receiver, out subscription);
         }
+        private void resetDisplayDeltaState()
+        {
+            foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+            {
+                if (subscription != null)
+                    subscription.LastSentFrame = null;
+            }
+        }
         private void handleDisplayStart(string[] args)
         {
             if (args.Length != 6 && args.Length != 11) return;
@@ -7315,6 +7336,7 @@ namespace Thetis
                 subscription.MaxDbm = maxDbm;
                 subscription.LastDataIndex = 0;
                 subscription.PixelBuffer = null;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayStart(receiver, pixels, frameRate, fftSize, windowType, detectorType, averageMode, averageTimeMs, normOneHz, minDbm, maxDbm);
@@ -7355,6 +7377,7 @@ namespace Thetis
                 subscription.Pixels = pixels;
                 subscription.LastDataIndex = 0;
                 subscription.PixelBuffer = null;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayPixels(receiver, pixels);
@@ -7372,6 +7395,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverFrameRate(receiver, frameRate)) return;
                 subscription.FrameRate = frameRate;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayFrameRate(receiver, frameRate);
@@ -7389,6 +7413,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverFFTSize(receiver, fftSize)) return;
                 subscription.FFTSize = fftSize;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayFFTSize(receiver, fftSize);
@@ -7406,6 +7431,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverWindowType(receiver, windowType)) return;
                 subscription.WindowType = windowType;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayWindow(receiver, windowType);
@@ -7423,6 +7449,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverDetectorTypePan(receiver, detectorType)) return;
                 subscription.DetectorType = detectorType;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayDetector(receiver, detectorType);
@@ -7440,6 +7467,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverAverageMode(receiver, averageMode)) return;
                 subscription.AverageMode = averageMode;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayAveraging(receiver, averageMode);
@@ -7457,6 +7485,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverAverageTimeMs(receiver, averageTimeMs)) return;
                 subscription.AverageTimeMs = averageTimeMs;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayAverageTime(receiver, averageTimeMs);
@@ -7473,6 +7502,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverNormOneHzPan(receiver, normOneHz)) return;
                 subscription.NormOneHz = normOneHz;
                 subscription.LastDataIndex = 0;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayOneHz(receiver, normOneHz);
@@ -7492,9 +7522,23 @@ namespace Thetis
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 subscription.MinDbm = minDbm;
                 subscription.MaxDbm = maxDbm;
+                subscription.LastSentFrame = null;
             }
 
             sendDisplayDbmRange(receiver, minDbm, maxDbm);
+        }
+        private void handleDisplayDeltaMode(string[] args)
+        {
+            if (args.Length != 1) return;
+            if (!bool.TryParse(args[0], out bool enabled)) return;
+
+            lock (m_objStreamLock)
+            {
+                m_displayDeltaMode = enabled;
+                resetDisplayDeltaState();
+            }
+
+            sendDisplayDeltaMode(enabled);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static byte quantizeDisplayValue(float value, float minDbm, float maxDbm)
@@ -7507,6 +7551,43 @@ namespace Thetis
             if (quantized < 1) quantized = 1;
             if (quantized > 254) quantized = 254;
             return (byte)quantized;
+        }
+        private static int getDisplayDeltaBits(int maxAbsoluteDelta)
+        {
+            if (maxAbsoluteDelta <= 7) return 4;
+            if (maxAbsoluteDelta <= 15) return 5;
+            if (maxAbsoluteDelta <= 31) return 6;
+            if (maxAbsoluteDelta <= 63) return 7;
+            return 0;
+        }
+        private static byte[] buildDisplayDeltaPayload(byte[] currentFrame, byte[] previousFrame, int pixelCount, int bitsPerDelta)
+        {
+            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || bitsPerDelta < 4 || bitsPerDelta > 7)
+                return null;
+
+            int totalBits = pixelCount * bitsPerDelta;
+            int totalBytes = (totalBits + 7) / 8;
+            byte[] payload = new byte[totalBytes];
+            int bias = (1 << (bitsPerDelta - 1)) - 1;
+            int bitOffset = 0;
+
+            for (int i = 0; i < pixelCount; i++)
+            {
+                int delta = currentFrame[i] - previousFrame[i];
+                int packedValue = delta + bias;
+
+                for (int bitIndex = bitsPerDelta - 1; bitIndex >= 0; bitIndex--)
+                {
+                    int bit = (packedValue >> bitIndex) & 1;
+                    int byteIndex = bitOffset >> 3;
+                    int bitInByte = 7 - (bitOffset & 7);
+                    if (bit != 0)
+                        payload[byteIndex] = (byte)(payload[byteIndex] | (byte)(1 << bitInByte));
+                    bitOffset++;
+                }
+            }
+
+            return payload;
         }
         private void serviceDisplayStreams()
         {
@@ -7542,7 +7623,36 @@ namespace Thetis
                     if (!m_spectrumProcessor.TryGetReceiverSampleRate(subscription.Receiver, out sampleRate) || sampleRate <= 0)
                         sampleRate = cmaster.GetInputRate(0, subscription.Receiver);
 
-                    byte[] payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
+                     byte[] payload;
+                     if (m_displayDeltaMode && subscription.LastSentFrame != null && subscription.LastSentFrame.Length == pixelCount)
+                     {
+                         int maxAbsoluteDelta = 0;
+                         for (int i = 0; i < pixelCount; i++)
+                         {
+                             int absoluteDelta = Math.Abs(encoded[i] - subscription.LastSentFrame[i]);
+                             if (absoluteDelta > maxAbsoluteDelta)
+                                 maxAbsoluteDelta = absoluteDelta;
+                         }
+
+                         int bitsPerDelta = getDisplayDeltaBits(maxAbsoluteDelta);
+                         if (bitsPerDelta > 0)
+                         {
+                             byte[] deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
+                             payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload != null ? deltaPayload.Length : 0);
+                         }
+                         else
+                         {
+                             payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
+                         }
+                     }
+                     else
+                     {
+                         payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
+                     }
+
+                     if (subscription.LastSentFrame == null || subscription.LastSentFrame.Length != pixelCount)
+                         subscription.LastSentFrame = new byte[pixelCount];
+                     Buffer.BlockCopy(encoded, 0, subscription.LastSentFrame, 0, pixelCount);
                     subscription.LastDataIndex = dataIndex;
 
                     if (payloads == null)
