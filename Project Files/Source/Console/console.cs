@@ -1122,10 +1122,10 @@ namespace Thetis
             LogTool.Finish();
 
             //_spectrumProcessor = new clsSpectrumProcessor(this);
-            //_spectrumProcessor.AddReceiver(0, 720, 30, 262144);
-            ////_spectrumProcessor.AddReceiver(1, 128, 15, 8192);
+            //_spectrumProcessor.AddReceiver(0, 1024, 15, 8192);
             //_rx1SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(0, -130, -40);
-            ////_rx2SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(1, -130, -40);
+            //_spectrumProcessor.AddReceiver(1, 1024, 15, 8192);
+            //_rx2SpectrumTestForm = _spectrumProcessor.ShowReceiverTestForm(1, -130, -40);
         }
         private clsSpectrumProcessor _spectrumProcessor;
         private Form _rx1SpectrumTestForm;
@@ -10715,7 +10715,15 @@ namespace Thetis
 
                 m_dCentreFrequency = value;
 
-                if (dOldRounded != dNewRounded) CentreFrequencyHandlers?.Invoke(1, dOldRounded, dNewRounded, RX1Band, radio.GetDSPRX(0, 0).RXOsc);
+                if (dOldRounded != dNewRounded)
+                {
+                    //[2.10.3.16]MW0LGE this offset is now used with the old frequency to calculate
+                    //the required offset to the new frequency
+                    double oscfreq = (dOldRounded * 1e6) - radio.GetDSPRX(0, 0).RXOsc;
+                    double offset = (dNewRounded * 1e6) - oscfreq;
+
+                    CentreFrequencyHandlers?.Invoke(1, dOldRounded, dNewRounded, RX1Band, offset);
+                }
             }
         }
 
@@ -10733,7 +10741,15 @@ namespace Thetis
 
                 m_dCentreRX2Frequency = value;
 
-                if (dOldRounded != dNewRounded) CentreFrequencyHandlers?.Invoke(2, dOldRounded, dNewRounded, RX2Band, radio.GetDSPRX(1, 0).RXOsc);
+                if (dOldRounded != dNewRounded)
+                {
+                    //[2.10.3.16]MW0LGE this offset is now used with the old frequency to calculate
+                    //the required offset to the new frequency
+                    double oscfreq = (dOldRounded * 1e6) - radio.GetDSPRX(1, 0).RXOsc;
+                    double offset = (dNewRounded * 1e6) - oscfreq;
+
+                    CentreFrequencyHandlers?.Invoke(2, dOldRounded, dNewRounded, RX2Band, offset);
+                }
             }
         }
 

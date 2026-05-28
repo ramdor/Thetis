@@ -13,8 +13,12 @@ This repo will no longer be updated or monitored.
 
 EDIT: actually v2.10.3.15 will be the last ;)
 
-## v2.10.3.15.n1mm - Change Log
+## v2.10.3.16 - Change Log
 - [add] option added to setup n1mm to use/ignore the cw frequency tone shift when sending spectrum to n1mm, default now off (was previously always enabled)
+- [add] new low bandwidth TCI display stream
+- [add] new compressed TCI audio stream support using OPUS encoding
+- [change] changed some tci code around centre frequency change and dds messages. An inbound dds message if Thetis is in CTUN off mode, will cause frequency change to that dds frequency
+- [fix] cleaned up dds and if messages sent from thetis to try to minimise repeats/dupes
 
 ## v2.10.3.15 - Change Log
 - [add] option to allow smearing of waterfalls (default off), Setup->Appearance->General

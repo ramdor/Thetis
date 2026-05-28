@@ -397,7 +397,7 @@
 				  Source="$(var.FilesPath)Markdig.dll"
 				  KeyPath="yes"
               />
-		</Component>
+		</Component>			
 
 		<!-- 
 		NAudio
@@ -502,6 +502,12 @@
 		<Component Guid="*">
 			<File Id="SvgDLL"
 				  Source="$(var.FilesPath)Svg.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="ConcentusDLL"
+				  Source="$(var.FilesPath)Concentus.dll"
 				  KeyPath="yes"
               />
 		</Component>

@@ -102,11 +102,6 @@ namespace Thetis
             return AddSource(SpectrumSourceType.Receiver, receiverId, pixels, frameRate, fftSize);
         }
 
-        public bool AddTransmitter(int transmitterId, int pixels, int frameRate, int fftSize)
-        {
-            return AddSource(SpectrumSourceType.Transmitter, transmitterId, pixels, frameRate, fftSize);
-        }
-
         private bool AddSource(SpectrumSourceType sourceType, int sourceId, int pixels, int frameRate, int fftSize)
         {
             ThrowIfDisposed();
@@ -116,8 +111,11 @@ namespace Thetis
             frameRate = ClampInt(frameRate, 1, 120);
             fftSize = NormalizeFftSize(fftSize);
 
-            string key = MakeSourceKey(sourceType, sourceId);
-            SpectrumEndpoint endpoint = new SpectrumEndpoint(sourceType, sourceId, pixels, frameRate, fftSize);
+            SpectrumSourceType endpointType = NormalizeEndpointSourceType(sourceType);
+            string key = MakeSourceKey(endpointType, sourceId);
+            SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(sourceId) : null;
+
+            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, sourceId, pixels, frameRate, fftSize, templateSpec);
 
             lock (_endpointsLock)
             {
@@ -137,11 +135,6 @@ namespace Thetis
         public bool RemoveReceiver(int receiverId)
         {
             return RemoveSource(SpectrumSourceType.Receiver, receiverId);
-        }
-
-        public bool RemoveTransmitter(int transmitterId)
-        {
-            return RemoveSource(SpectrumSourceType.Transmitter, transmitterId);
         }
 
         private bool RemoveSource(SpectrumSourceType sourceType, int sourceId)
@@ -175,18 +168,13 @@ namespace Thetis
 
             lock (_endpointsLock)
             {
-                return _endpoints.ContainsKey(MakeSourceKey(sourceType, sourceId));
+                return _endpoints.ContainsKey(MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId));
             }
         }
 
         public bool SetReceiverPixelResolution(int receiverId, int pixels)
         {
             return SetPixelResolution(SpectrumSourceType.Receiver, receiverId, pixels);
-        }
-
-        public bool SetTransmitterPixelResolution(int transmitterId, int pixels)
-        {
-            return SetPixelResolution(SpectrumSourceType.Transmitter, transmitterId, pixels);
         }
 
         private bool SetPixelResolution(SpectrumSourceType sourceType, int sourceId, int pixels)
@@ -203,11 +191,6 @@ namespace Thetis
             return SetFrameRate(SpectrumSourceType.Receiver, receiverId, frameRate);
         }
 
-        public bool SetTransmitterFrameRate(int transmitterId, int frameRate)
-        {
-            return SetFrameRate(SpectrumSourceType.Transmitter, transmitterId, frameRate);
-        }
-
         private bool SetFrameRate(SpectrumSourceType sourceType, int sourceId, int frameRate)
         {
             SpectrumEndpoint endpoint;
@@ -222,11 +205,6 @@ namespace Thetis
             return SetFFTSize(SpectrumSourceType.Receiver, receiverId, fftSize);
         }
 
-        public bool SetTransmitterFFTSize(int transmitterId, int fftSize)
-        {
-            return SetFFTSize(SpectrumSourceType.Transmitter, transmitterId, fftSize);
-        }
-
         private bool SetFFTSize(SpectrumSourceType sourceType, int sourceId, int fftSize)
         {
             SpectrumEndpoint endpoint;
@@ -236,14 +214,79 @@ namespace Thetis
             return true;
         }
 
+        public bool SetReceiverWindowType(int receiverId, int windowType)
+        {
+            return SetWindowType(SpectrumSourceType.Receiver, receiverId, windowType);
+        }
+
+        private bool SetWindowType(SpectrumSourceType sourceType, int sourceId, int windowType)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+
+            endpoint.SetWindowType(ClampInt(windowType, 0, 6));
+            return true;
+        }
+
+        public bool SetReceiverDetectorTypePan(int receiverId, int detectorTypePan)
+        {
+            return SetDetectorTypePan(SpectrumSourceType.Receiver, receiverId, detectorTypePan);
+        }
+
+        private bool SetDetectorTypePan(SpectrumSourceType sourceType, int sourceId, int detectorTypePan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+
+            endpoint.SetDetectorTypePan(ClampInt(detectorTypePan, 0, 4));
+            return true;
+        }
+
+        public bool SetReceiverAverageMode(int receiverId, int averageMode)
+        {
+            return SetAverageMode(SpectrumSourceType.Receiver, receiverId, averageMode);
+        }
+
+        private bool SetAverageMode(SpectrumSourceType sourceType, int sourceId, int averageMode)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+
+            endpoint.SetAverageMode(ClampInt(averageMode, 0, 3));
+            return true;
+        }
+
+        public bool SetReceiverAverageTimeMs(int receiverId, double averageTimeMs)
+        {
+            return SetAverageTimeMs(SpectrumSourceType.Receiver, receiverId, averageTimeMs);
+        }
+
+        private bool SetAverageTimeMs(SpectrumSourceType sourceType, int sourceId, double averageTimeMs)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+
+            endpoint.SetAverageTauSeconds(Math.Max(0.001, Math.Min(9.999, averageTimeMs * 0.001)));
+            return true;
+        }
+
+        public bool SetReceiverNormOneHzPan(int receiverId, bool normOneHzPan)
+        {
+            return SetNormOneHzPan(SpectrumSourceType.Receiver, receiverId, normOneHzPan);
+        }
+
+        private bool SetNormOneHzPan(SpectrumSourceType sourceType, int sourceId, bool normOneHzPan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+
+            endpoint.SetNormOneHzPan(normOneHzPan);
+            return true;
+        }
+
         public bool SetReceiverSampleRate(int receiverId, int sampleRate)
         {
             return SetSampleRate(SpectrumSourceType.Receiver, receiverId, sampleRate);
-        }
-
-        public bool SetTransmitterSampleRate(int transmitterId, int sampleRate)
-        {
-            return SetSampleRate(SpectrumSourceType.Transmitter, transmitterId, sampleRate);
         }
 
         private bool SetSampleRate(SpectrumSourceType sourceType, int sourceId, int sampleRate)
@@ -260,11 +303,6 @@ namespace Thetis
             return SetZoomSlider(SpectrumSourceType.Receiver, receiverId, zoomSlider);
         }
 
-        public bool SetTransmitterZoomSlider(int transmitterId, double zoomSlider)
-        {
-            return SetZoomSlider(SpectrumSourceType.Transmitter, transmitterId, zoomSlider);
-        }
-
         private bool SetZoomSlider(SpectrumSourceType sourceType, int sourceId, double zoomSlider)
         {
             SpectrumEndpoint endpoint;
@@ -277,11 +315,6 @@ namespace Thetis
         public bool SetReceiverPanSlider(int receiverId, double panSlider)
         {
             return SetPanSlider(SpectrumSourceType.Receiver, receiverId, panSlider);
-        }
-
-        public bool SetTransmitterPanSlider(int transmitterId, double panSlider)
-        {
-            return SetPanSlider(SpectrumSourceType.Transmitter, transmitterId, panSlider);
         }
 
         private bool SetPanSlider(SpectrumSourceType sourceType, int sourceId, double panSlider)
@@ -298,11 +331,6 @@ namespace Thetis
             return CentrePan(SpectrumSourceType.Receiver, receiverId);
         }
 
-        public bool CentreTransmitterPan(int transmitterId)
-        {
-            return CentrePan(SpectrumSourceType.Transmitter, transmitterId);
-        }
-
         private bool CentrePan(SpectrumSourceType sourceType, int sourceId)
         {
             return SetPanSlider(sourceType, sourceId, 0.5);
@@ -311,11 +339,6 @@ namespace Thetis
         public bool SetReceiverEnabled(int receiverId, bool enabled)
         {
             return SetEnabled(SpectrumSourceType.Receiver, receiverId, enabled);
-        }
-
-        public bool SetTransmitterEnabled(int transmitterId, bool enabled)
-        {
-            return SetEnabled(SpectrumSourceType.Transmitter, transmitterId, enabled);
         }
 
         private bool SetEnabled(SpectrumSourceType sourceType, int sourceId, bool enabled)
@@ -332,11 +355,6 @@ namespace Thetis
             return ResetBuffers(SpectrumSourceType.Receiver, receiverId);
         }
 
-        public bool ResetTransmitterBuffers(int transmitterId)
-        {
-            return ResetBuffers(SpectrumSourceType.Transmitter, transmitterId);
-        }
-
         private bool ResetBuffers(SpectrumSourceType sourceType, int sourceId)
         {
             SpectrumEndpoint endpoint;
@@ -351,19 +369,14 @@ namespace Thetis
             return TryGetLatestPixels(SpectrumSourceType.Receiver, receiverId, out pixels, out dataIndex);
         }
 
-        public bool TryGetTransmitterPixels(int transmitterId, out float[] pixels, out int dataIndex)
-        {
-            return TryGetLatestPixels(SpectrumSourceType.Transmitter, transmitterId, out pixels, out dataIndex);
-        }
-
         public bool TryCopyReceiverPixels(int receiverId, float[] destination, out int pixelCount, out int dataIndex)
         {
             return TryCopyLatestPixels(SpectrumSourceType.Receiver, receiverId, destination, out pixelCount, out dataIndex);
         }
 
-        public bool TryCopyTransmitterPixels(int transmitterId, float[] destination, out int pixelCount, out int dataIndex)
+        public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
         {
-            return TryCopyLatestPixels(SpectrumSourceType.Transmitter, transmitterId, destination, out pixelCount, out dataIndex);
+            return TryGetSampleRate(SpectrumSourceType.Receiver, receiverId, out sampleRate);
         }
 
         private bool TryGetLatestPixels(SpectrumSourceType sourceType, int sourceId, out float[] pixels, out int dataIndex)
@@ -429,14 +442,26 @@ namespace Thetis
             return endpoint.TryGetFFTSize(out fftSize);
         }
 
+        private bool IsReceiverInLocalMox(int receiverId)
+        {
+            if (receiverId < 0)
+                return false;
+
+            if (!Display.MOX)
+                return false;
+
+            if (receiverId == 0)
+                return !_console.VFOBTX || (_console.VFOBTX && !_console.RX2Enabled);
+
+            if (receiverId == 1)
+                return _console.VFOBTX && _console.RX2Enabled;
+
+            return false;
+        }
+
         public Form ShowReceiverTestForm(int receiverId, float? min_dBm = null, float? max_dBm = null)
         {
             return ShowTestForm(SpectrumSourceType.Receiver, receiverId, min_dBm, max_dBm);
-        }
-
-        public Form ShowTransmitterTestForm(int transmitterId, float? min_dBm = null, float? max_dBm = null)
-        {
-            return ShowTestForm(SpectrumSourceType.Transmitter, transmitterId, min_dBm, max_dBm);
         }
 
         private Form ShowTestForm(SpectrumSourceType sourceType, int sourceId, float? min_dBm = null, float? max_dBm = null)
@@ -504,10 +529,8 @@ namespace Thetis
 
             for (int i = 0; i < endpoints.Length; i++)
             {
-                SpectrumEndpoint endpoint = endpoints[i];
-
-                if (endpoint.SourceType == SpectrumSourceType.Transmitter || endpoint.MatchesReceiverEvent(rx))
-                    endpoint.SyncFrequencies();
+                if (endpoints[i].MatchesReceiverEvent(rx))
+                    endpoints[i].SyncFrequencies();
             }
         }
 
@@ -544,7 +567,7 @@ namespace Thetis
 
             lock (_endpointsLock)
             {
-                return _endpoints.TryGetValue(MakeSourceKey(sourceType, sourceId), out endpoint);
+                return _endpoints.TryGetValue(MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId), out endpoint);
             }
         }
 
@@ -555,7 +578,7 @@ namespace Thetis
 
             lock (_endpointsLock)
             {
-                string key = MakeSourceKey(sourceType, sourceId);
+                string key = MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId);
                 if (!_endpoints.TryGetValue(key, out endpoint))
                     return false;
 
@@ -581,6 +604,11 @@ namespace Thetis
         private void ThrowIfDisposed()
         {
             if (_disposed) throw new ObjectDisposedException(GetType().Name);
+        }
+
+        private static SpectrumSourceType NormalizeEndpointSourceType(SpectrumSourceType sourceType)
+        {
+            return SpectrumSourceType.Receiver;
         }
 
         private static string MakeSourceKey(SpectrumSourceType sourceType, int sourceId)
@@ -646,19 +674,23 @@ namespace Thetis
         private sealed class SpectrumEndpoint
         {
             private readonly object _syncRoot = new object();
-            private readonly SpectrumSourceType _sourceType;
+            private readonly Console _console;
             private readonly int _sourceId;
             private readonly int _displayId;
+            private readonly int _txDisplayId;
             private readonly int _maxFftSize;
             private readonly SpecHPSDR _spec;
+            private readonly SpecHPSDR _txSpec;
 
             private float[] _latestPixels;
             private float[] _workingPixels;
             private int _pixels;
             private int _frameRate;
             private int _configuredSampleRate;
+            private int _txConfiguredSampleRate;
             private int _fftSize;
             private int _blockSize;
+            private int _txBlockSize;
             private int _windowType;
             private int _detectorTypePan;
             private int _averageMode;
@@ -674,22 +706,25 @@ namespace Thetis
             private int _dataIndex;
             private long _nextReadUtcTicks;
 
-            public SpectrumEndpoint(SpectrumSourceType sourceType, int sourceId, int pixels, int frameRate, int fftSize)
+            public SpectrumEndpoint(Console console, int sourceId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec)
             {
-                _sourceType = sourceType;
+                _console = console;
                 _sourceId = sourceId;
                 _pixels = pixels;
                 _frameRate = frameRate;
-                _configuredSampleRate = DefaultSampleRate;
+                _configuredSampleRate = templateSpec != null ? templateSpec.SampleRate : DefaultSampleRate;
+                SpecHPSDR txTemplateSpec = console.specRX != null ? console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
+                _txConfiguredSampleRate = txTemplateSpec != null ? txTemplateSpec.SampleRate : _configuredSampleRate;
                 _fftSize = NormalizeFftSize(fftSize);
-                _blockSize = ResolveDefaultBlockSize(_configuredSampleRate);
-                _windowType = DefaultWindowType;
-                _detectorTypePan = DefaultDetectorTypePan;
-                _averageMode = DefaultAverageMode;
-                _averageTau = DefaultAverageTau;
-                _averageOn = false;
-                _peakOn = false;
-                _normOneHzPan = false;
+                _blockSize = templateSpec != null ? templateSpec.BlockSize : ResolveDefaultBlockSize(_configuredSampleRate);
+                _txBlockSize = txTemplateSpec != null ? txTemplateSpec.BlockSize : ResolveDefaultBlockSize(_txConfiguredSampleRate);
+                _windowType = templateSpec != null ? templateSpec.WindowType : DefaultWindowType;
+                _detectorTypePan = templateSpec != null ? templateSpec.DetTypePan : DefaultDetectorTypePan;
+                _averageMode = templateSpec != null ? templateSpec.AverageMode : DefaultAverageMode;
+                _averageTau = templateSpec != null ? templateSpec.AvTau : DefaultAverageTau;
+                _averageOn = templateSpec != null && templateSpec.AverageOn;
+                _peakOn = templateSpec != null && templateSpec.PeakOn;
+                _normOneHzPan = templateSpec != null && templateSpec.NormOneHzPan;
                 _zoomSlider = 0.0;
                 _panSlider = 0.5;
                 _maxFftSize = DefaultMaxFftSize;
@@ -698,27 +733,35 @@ namespace Thetis
                 EnsurePixelBuffersLocked(_pixels);
                 ClearPixelBuffersLocked();
 
-                _displayId = cmaster.AllocAnalyzer((int)_sourceType, _sourceId, _maxFftSize);
+                _displayId = cmaster.AllocAnalyzer((int)SpectrumSourceType.Receiver, _sourceId, _maxFftSize);
                 if (_displayId < 0)
-                    throw new InvalidOperationException("Unable to allocate analyzer for source type " + _sourceType.ToString() + " id " + _sourceId.ToString() + ".");
+                    throw new InvalidOperationException("Unable to allocate analyzer for source type " + SpectrumSourceType.Receiver.ToString() + " id " + _sourceId.ToString() + ".");
+
+                _txDisplayId = cmaster.AllocAnalyzer((int)SpectrumSourceType.Transmitter, 0, _maxFftSize);
+                if (_txDisplayId < 0)
+                {
+                    try { cmaster.FreeAnalyzer(_displayId); } catch { }
+                    throw new InvalidOperationException("Unable to allocate analyzer for source type " + SpectrumSourceType.Transmitter.ToString() + " id 0.");
+                }
 
                 _spec = new SpecHPSDR(_displayId)
                 {
                     Update = false
                 };
 
+                _txSpec = new SpecHPSDR(_txDisplayId)
+                {
+                    Update = false
+                };
+
                 Refresh();
                 cmaster.RunAnalyzer(_displayId, 1);
-            }
-
-            public SpectrumSourceType SourceType
-            {
-                get { return _sourceType; }
+                cmaster.RunAnalyzer(_txDisplayId, 1);
             }
 
             public bool MatchesReceiverEvent(int rx)
             {
-                return _sourceType == SpectrumSourceType.Receiver && (_sourceId + 1) == rx;
+                return (_sourceId + 1) == rx;
             }
 
             public void SetPixels(int pixels)
@@ -732,6 +775,8 @@ namespace Thetis
 
                     _spec.Pixels = _pixels;
                     _spec.resetPixelBuffers();
+                    _txSpec.Pixels = _pixels;
+                    _txSpec.resetPixelBuffers();
                     _hasData = false;
                     _nextReadUtcTicks = 0;
                 }
@@ -745,8 +790,7 @@ namespace Thetis
 
                     _frameRate = frameRate;
                     _spec.FrameRate = _frameRate;
-                    _spec.resetPixelBuffers();
-                    _hasData = false;
+                    _txSpec.FrameRate = _frameRate;
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -758,6 +802,62 @@ namespace Thetis
                     if (_shutdown || fftSize == _fftSize) return;
 
                     _fftSize = fftSize;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetWindowType(int windowType)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || windowType == _windowType) return;
+
+                    _windowType = windowType;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetDetectorTypePan(int detectorTypePan)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || detectorTypePan == _detectorTypePan) return;
+
+                    _detectorTypePan = detectorTypePan;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetAverageMode(int averageMode)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || averageMode == _averageMode) return;
+
+                    _averageMode = averageMode;
+                    _averageOn = averageMode != 0;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetAverageTauSeconds(double averageTau)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || Math.Abs(_averageTau - averageTau) < 0.000001) return;
+
+                    _averageTau = averageTau;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetNormOneHzPan(bool normOneHzPan)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || normOneHzPan == _normOneHzPan) return;
+
+                    _normOneHzPan = normOneHzPan;
                     RefreshLocked();
                 }
             }
@@ -782,9 +882,6 @@ namespace Thetis
 
                     _zoomSlider = zoomSlider;
                     _spec.ZoomSlider = _zoomSlider;
-                    _spec.resetPixelBuffers();
-                    ClearPixelBuffersLocked();
-                    _hasData = false;
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -797,9 +894,6 @@ namespace Thetis
 
                     _panSlider = panSlider;
                     _spec.PanSlider = _panSlider;
-                    _spec.resetPixelBuffers();
-                    ClearPixelBuffersLocked();
-                    _hasData = false;
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -812,6 +906,7 @@ namespace Thetis
 
                     _enabled = enabled;
                     cmaster.RunAnalyzer(_displayId, _enabled ? 1 : 0);
+                    cmaster.RunAnalyzer(_txDisplayId, _enabled ? 1 : 0);
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -822,9 +917,6 @@ namespace Thetis
                 {
                     if (_shutdown) return;
 
-                    _spec.resetPixelBuffers();
-                    ClearPixelBuffersLocked();
-                    _hasData = false;
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -846,6 +938,7 @@ namespace Thetis
                     if (_shutdown) return;
 
                     _spec.resetPixelBuffers();
+                    _txSpec.resetPixelBuffers();
                     ClearPixelBuffersLocked();
                     _hasData = false;
                     _nextReadUtcTicks = 0;
@@ -872,15 +965,18 @@ namespace Thetis
                     _nextReadUtcTicks = nowUtcTicks + (TimeSpan.TicksPerSecond / Math.Max(1, _frameRate));
 
                     int flag = 0;
+                    int displayId = ResolveReadDisplayId();
+                    if (displayId == _txDisplayId)
+                        SyncTransmitterSettingsLocked();
                     unsafe
                     {
                         fixed (float* ptr = &_workingPixels[0])
-                            SpecHPSDRDLL.GetPixels(_displayId, 0, ptr, ref flag);
+                            SpecHPSDRDLL.GetPixels(displayId, 0, ptr, ref flag);
                     }
 
                     if (flag != 1) return false;
 
-                    float offset = GetPixelOffset();
+                    float offset = GetPixelOffset(displayId);
                     if (offset != 0.0f)
                     {
                         for (int i = 0; i < _pixels; i++)
@@ -941,7 +1037,15 @@ namespace Thetis
             {
                 lock (_syncRoot)
                 {
-                    sampleRate = _configuredSampleRate;
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
+                        sampleRate = _configuredSampleRate;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        sampleRate = _txConfiguredSampleRate;
+                    }
                     return !_shutdown;
                 }
             }
@@ -965,7 +1069,9 @@ namespace Thetis
                     _enabled = false;
 
                     try { cmaster.RunAnalyzer(_displayId, 0); } catch { }
+                    try { cmaster.RunAnalyzer(_txDisplayId, 0); } catch { }
                     try { cmaster.FreeAnalyzer(_displayId); } catch { }
+                    try { cmaster.FreeAnalyzer(_txDisplayId); } catch { }
                     ReturnPixelBuffer(ref _latestPixels);
                     ReturnPixelBuffer(ref _workingPixels);
                 }
@@ -973,31 +1079,33 @@ namespace Thetis
 
             private void RefreshLocked()
             {
-                _spec.Update = false;
-                _spec.PixelOut = 1;
-                _spec.IgnoreFrequencyOffset = true;
-                _spec.FrameRate = _frameRate;
-                _spec.Pixels = _pixels;
-                _spec.DetTypePan = _detectorTypePan;
-                _spec.AvTau = _averageTau;
-                _spec.FFTSize = Math.Min(_fftSize, _maxFftSize);
-                _spec.BlockSize = _blockSize;
-                _spec.SampleRate = _configuredSampleRate;
-                _spec.WindowType = _windowType;
-                _spec.AverageMode = _averageMode;
-                _spec.AverageOn = _averageOn;
-                _spec.PeakOn = _peakOn;
-                _spec.NormOneHzPan = _normOneHzPan;
-                _spec.ZoomSlider = _zoomSlider;
-                _spec.PanSlider = _panSlider;
-
-                _spec.Update = true;
-                _spec.initAnalyzer();
-                _spec.resetPixelBuffers();
-
-                _hasData = false;
+                RefreshDisplaySpecLocked(_spec, _configuredSampleRate, _blockSize);
+                RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
                 _nextReadUtcTicks = 0;
-                ClearPixelBuffersLocked();
+            }
+
+            private void RefreshDisplaySpecLocked(SpecHPSDR spec, int sampleRate, int blockSize)
+            {
+                spec.Update = false;
+                spec.PixelOut = 1;
+                spec.IgnoreFrequencyOffset = true;
+                spec.FrameRate = _frameRate;
+                spec.Pixels = _pixels;
+                spec.DetTypePan = _detectorTypePan;
+                spec.AvTau = _averageTau;
+                spec.FFTSize = Math.Min(_fftSize, _maxFftSize);
+                spec.BlockSize = blockSize;
+                spec.SampleRate = sampleRate;
+                spec.WindowType = _windowType;
+                spec.AverageMode = _averageMode;
+                spec.AverageOn = _averageOn;
+                spec.PeakOn = _peakOn;
+                spec.NormOneHzPan = _normOneHzPan;
+                spec.ZoomSlider = _zoomSlider;
+                spec.PanSlider = _panSlider;
+                spec.UseClip = false;
+                spec.Update = true;
+                spec.initAnalyzer();
             }
 
             private static int ResolveDefaultBlockSize(int sampleRate)
@@ -1006,17 +1114,62 @@ namespace Thetis
                 return blockSize > 0 ? blockSize : 2048;
             }
 
-            private float GetPixelOffset()
+            private int ResolveReadDisplayId()
             {
-                switch (_sourceType)
-                {
-                    case SpectrumSourceType.Transmitter:
-                        return Display.TXDisplayCalOffset;
-                    case SpectrumSourceType.Receiver:
-                        return _sourceId == 1 ? Display.RX2OffsetWithDup : Display.RX1OffsetWithDup;
-                    default:
-                        return 0.0f;
-                }
+                if (!IsReceiverInLocalMox())
+                    return _displayId;
+
+                if (_console.DisplayDuplex)
+                    return _displayId;
+
+                return _txDisplayId;
+            }
+
+            private float GetPixelOffset(int displayId)
+            {
+                if (displayId == _txDisplayId)
+                    return Display.TXDisplayCalOffset;
+
+                return _sourceId == 1 ? Display.RX2OffsetWithDup : Display.RX1OffsetWithDup;
+            }
+
+            private bool IsReceiverInLocalMox()
+            {
+                if (!Display.MOX)
+                    return false;
+
+                if (_sourceId == 0)
+                    return !_console.VFOBTX || (_console.VFOBTX && !_console.RX2Enabled);
+
+                if (_sourceId == 1)
+                    return _console.VFOBTX && _console.RX2Enabled;
+
+                return false;
+            }
+
+            private void SyncTransmitterSettingsLocked()
+            {
+                if (_console.specRX == null)
+                    return;
+
+                SpecHPSDR spec = _console.specRX.GetSpecRX(cmaster.inid(1, 0));
+                if (spec == null)
+                    return;
+
+                int sampleRate = spec.SampleRate > 0 ? spec.SampleRate : _txConfiguredSampleRate;
+                int blockSize = spec.BlockSize > 0 ? spec.BlockSize : ResolveDefaultBlockSize(sampleRate);
+                if (sampleRate == _txConfiguredSampleRate && blockSize == _txBlockSize)
+                    return;
+
+                _txConfiguredSampleRate = sampleRate;
+                _txBlockSize = blockSize;
+                RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
+            }
+
+            private int GetTransmitterSampleRate()
+            {
+                SyncTransmitterSettingsLocked();
+                return _txConfiguredSampleRate;
             }
 
             private void EnsurePixelBuffersLocked(int pixels)
@@ -1229,23 +1382,87 @@ namespace Thetis
                     plotMin -= 1.0f;
                 }
 
-                EnsurePointBuffer(pixelCount);
-                PointF[] points = _pointBuffer;
                 float width = plotRect.Width - 1f;
                 float height = plotRect.Height - 1f;
                 float range = plotMax - plotMin;
+                PointF[] segment = new PointF[pixelCount * 2];
+                int segmentCount = 0;
+                bool hasVisibleData = false;
+                bool previousValid = false;
+                float previousSample = 0f;
+                float previousX = 0f;
 
                 for (int i = 0; i < pixelCount; i++)
                 {
+                    float sample = pixels[i];
                     float x = plotRect.Left + (width * i / (pixelCount - 1f));
-                    float normalized = (pixels[i] - plotMin) / range;
-                    if (normalized < 0f) normalized = 0f;
-                    if (normalized > 1f) normalized = 1f;
-                    float y = plotRect.Bottom - (normalized * height);
-                    points[i] = new PointF(x, y);
+                    bool currentValid = sample >= plotMin;
+
+                    if (currentValid)
+                    {
+                        if (previousValid)
+                        {
+                            float normalized = (sample - plotMin) / range;
+                            if (normalized > 1f) normalized = 1f;
+                            float y = plotRect.Bottom - (normalized * height);
+                            segment[segmentCount++] = new PointF(x, y);
+                        }
+                        else
+                        {
+                            if (i > 0)
+                            {
+                                float delta = sample - previousSample;
+                                float ratio = Math.Abs(delta) < 0.000001f ? 0f : (plotMin - previousSample) / delta;
+                                if (ratio < 0f) ratio = 0f;
+                                if (ratio > 1f) ratio = 1f;
+                                float startX = previousX + ((x - previousX) * ratio);
+                                segment[segmentCount++] = new PointF(startX, plotRect.Bottom);
+                            }
+
+                            float normalized = (sample - plotMin) / range;
+                            if (normalized > 1f) normalized = 1f;
+                            float y = plotRect.Bottom - (normalized * height);
+                            segment[segmentCount++] = new PointF(x, y);
+                        }
+
+                        hasVisibleData = true;
+                    }
+                    else if (previousValid)
+                    {
+                        float delta = sample - previousSample;
+                        float ratio = Math.Abs(delta) < 0.000001f ? 0f : (plotMin - previousSample) / delta;
+                        if (ratio < 0f) ratio = 0f;
+                        if (ratio > 1f) ratio = 1f;
+                        float endX = previousX + ((x - previousX) * ratio);
+                        segment[segmentCount++] = new PointF(endX, plotRect.Bottom);
+
+                        if (segmentCount > 1)
+                        {
+                            PointF[] line = new PointF[segmentCount];
+                            Array.Copy(segment, line, segmentCount);
+                            g.DrawLines(_tracePen, line);
+                        }
+
+                        segmentCount = 0;
+                    }
+
+                    previousValid = currentValid;
+                    previousSample = sample;
+                    previousX = x;
                 }
 
-                g.DrawLines(_tracePen, points);
+                if (segmentCount > 1)
+                {
+                    PointF[] line = new PointF[segmentCount];
+                    Array.Copy(segment, line, segmentCount);
+                    g.DrawLines(_tracePen, line);
+                }
+
+                if (!hasVisibleData)
+                {
+                    g.DrawString("No visible dBm data.", _font, _textBrush, plotRect.Left, plotRect.Top);
+                    return;
+                }
 
                 string sourceText = _sourceType == SpectrumSourceType.Receiver
                     ? "RX" + (_sourceId + 1).ToString()
@@ -1309,9 +1526,14 @@ namespace Thetis
 
             private bool TryCopyPixelsWithBuffer(float[] destination, out int pixelCount, out int dataIndex)
             {
-                return _sourceType == SpectrumSourceType.Receiver
-                    ? _processor.TryCopyReceiverPixels(_sourceId, destination, out pixelCount, out dataIndex)
-                    : _processor.TryCopyTransmitterPixels(_sourceId, destination, out pixelCount, out dataIndex);
+                if (_sourceType == SpectrumSourceType.Transmitter && !_processor.IsReceiverInLocalMox(_sourceId))
+                {
+                    pixelCount = 0;
+                    dataIndex = 0;
+                    return false;
+                }
+
+                return _processor.TryCopyReceiverPixels(_sourceId, destination, out pixelCount, out dataIndex);
             }
 
             private void EnsurePointBuffer(int pixelCount)
