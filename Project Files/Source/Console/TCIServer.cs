@@ -583,7 +583,7 @@ namespace Thetis
                 {
                     case Reading.AVG_SIGNAL_STRENGTH:
                     case Reading.SIGNAL_MAX_BIN:
-                    case Reading.SIGNAL_STRENGTH:                    
+                    case Reading.SIGNAL_STRENGTH:
                         {
                             int rx = receiver - 1;
                             if (rx < 0 || rx > 1) return false;
@@ -641,7 +641,7 @@ namespace Thetis
 
                 signal = state.Signal;
                 avg_signal = state.AvgSignal;
-                peak_bin_signal= state.PeakBinSignal;
+                peak_bin_signal = state.PeakBinSignal;
                 return true;
             }
         }
@@ -686,7 +686,7 @@ namespace Thetis
     }
 
     public class TCPIPtciSocketListener
-	{
+    {
         private enum TCIOutboundPriority
         {
             Urgent = 0,
@@ -729,13 +729,13 @@ namespace Thetis
             public byte[] LastSentFrame;
         }
 
-		//
-		public delegate void ClientConnected();
-		public delegate void ClientDisconnected();
-		public delegate void ClientError(SocketException se);
-		public ClientConnected ClientConnectedHandlers;
-		public ClientDisconnected ClientDisconnectedHandlers;
-		public ClientError ClientErrorHandlers;
+        //
+        public delegate void ClientConnected();
+        public delegate void ClientDisconnected();
+        public delegate void ClientError(SocketException se);
+        public ClientConnected ClientConnectedHandlers;
+        public ClientDisconnected ClientDisconnectedHandlers;
+        public ClientError ClientErrorHandlers;
         //
 
         public struct VFOData
@@ -758,18 +758,18 @@ namespace Thetis
         }
 
         private Console _console;
-		private TcpClient m_client = null;
-		private NetworkStream m_stream = null;
-		private bool m_stopClient = false;
-		private bool m_disconnected = false;
+        private TcpClient m_client = null;
+        private NetworkStream m_stream = null;
+        private bool m_stopClient = false;
+        private bool m_disconnected = false;
         private int m_disconnectNotified = 0;
-		private Thread m_clientListenerThread = null;
-		private bool m_markedForDeletion = false;
-		private bool m_bWebSocket = false;
-		private Thread m_VFODataThread = null;
+        private Thread m_clientListenerThread = null;
+        private bool m_markedForDeletion = false;
+        private bool m_bWebSocket = false;
+        private Thread m_VFODataThread = null;
         private Thread m_sendThread = null;
-		private TCPIPtciServer m_server = null;
-		private int m_nRateLimit;
+        private TCPIPtciServer m_server = null;
+        private int m_nRateLimit;
         private LinkedList<VFOData> m_vfoDataList = new LinkedList<VFOData>();
         private List<byte> _m_buffer = new List<byte>();
         private Stopwatch m_swVFO = new Stopwatch();
@@ -802,10 +802,10 @@ namespace Thetis
         private readonly clsAudioCompression.OpusSettings m_audioOpusSettings = new clsAudioCompression.OpusSettings();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
-		private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
+        private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
         private TCIAudioCodec m_audioCodec = TCIAudioCodec.PCM;
-		private int m_audioStreamChannels = 2;
-		private int m_audioStreamSamples = 2048;
+        private int m_audioStreamChannels = 2;
+        private int m_audioStreamSamples = 2048;
         private bool m_audioStreamSamplesExplicitlySet = false;
         private int m_txStreamAudioBufferingMs = 50;
         private bool m_txUsesTCIAudio = false;
@@ -818,24 +818,24 @@ namespace Thetis
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
-		{
-			_console = c;
-			m_nRateLimit = rateLimit;
-			m_server = server;
-			m_client = client;
+        {
+            _console = c;
+            m_nRateLimit = rateLimit;
+            m_server = server;
+            m_client = client;
             m_client.ReceiveTimeout = 0;
-			m_stream = client.GetStream();
+            m_stream = client.GetStream();
             m_stream.ReadTimeout = Timeout.Infinite;
-			m_audioStreamSamples = getDefaultAudioStreamSamples(m_audioSampleRate);
-			for (int i = 0; i < m_hwSampleRate.Length; i++)
-			{
-				m_hwSampleRate[i] = cmaster.GetInputRate(0, i);
+            m_audioStreamSamples = getDefaultAudioStreamSamples(m_audioSampleRate);
+            for (int i = 0; i < m_hwSampleRate.Length; i++)
+            {
+                m_hwSampleRate[i] = cmaster.GetInputRate(0, i);
             }
-		}
-		~TCPIPtciSocketListener()
-		{
-			StopSocketListener();
-		}
+        }
+        ~TCPIPtciSocketListener()
+        {
+            StopSocketListener();
+        }
         private Console consoleThreadSafe
         {
             get
@@ -853,26 +853,26 @@ namespace Thetis
         //
         public void ClickedOnSpot(string callsign, long frequency, int rx = -1, int chan = -1)
         {
-			if(rx == -1 || chan == -1)
+            if (rx == -1 || chan == -1)
             {
-				sendClickedOnSpot(callsign, frequency);
-			}
+                sendClickedOnSpot(callsign, frequency);
+            }
             else
             {
-				sendClickedOnSpotRX(rx - 1, chan, callsign, frequency);
+                sendClickedOnSpotRX(rx - 1, chan, callsign, frequency);
             }
         }
-		public void ThetisFocusChange(bool focus)
-		{
-			if (m_disconnected) return;
-			sendAppFocus(focus);
-		}
-		public void RX2EnabledChange(bool enabled)
+        public void ThetisFocusChange(bool focus)
         {
-			if (m_disconnected) return;
-			sendRXEnable(1, enabled);
-			sendTXEnable(1, enabled && !consoleThreadSafe.MOX);
-		}
+            if (m_disconnected) return;
+            sendAppFocus(focus);
+        }
+        public void RX2EnabledChange(bool enabled)
+        {
+            if (m_disconnected) return;
+            sendRXEnable(1, enabled);
+            sendTXEnable(1, enabled && !consoleThreadSafe.MOX);
+        }
         public void HWSampleRateChange(int rx, int oldSampleRate, int newSampleRate)
         {
             if (m_disconnected) return;
@@ -1120,30 +1120,30 @@ namespace Thetis
             return outputSamples;
         }
 
-		public void DrivePowerChange(int rx, int newPower, bool tune)
+        public void DrivePowerChange(int rx, int newPower, bool tune)
         {
-			if (m_disconnected) return;
+            if (m_disconnected) return;
             if (tune)
-				sendTunePower(rx - 1, newPower);
-			else
-				sendDrivePower(rx - 1, newPower);
-		}
-		public void TuneChange(int rx, bool oldTune, bool newTune)
-        {
-			if (m_disconnected) return;
-			sendTune(rx-1, newTune);
+                sendTunePower(rx - 1, newPower);
+            else
+                sendDrivePower(rx - 1, newPower);
         }
-		public void SplitChange(int rx, bool newSplit)
-		{
-			if (m_disconnected) return;
-			bool bSplit = consoleThreadSafe.VFOSplit;
-			sendSplit(rx-1, bSplit);
-		}
+        public void TuneChange(int rx, bool oldTune, bool newTune)
+        {
+            if (m_disconnected) return;
+            sendTune(rx - 1, newTune);
+        }
+        public void SplitChange(int rx, bool newSplit)
+        {
+            if (m_disconnected) return;
+            bool bSplit = consoleThreadSafe.VFOSplit;
+            sendSplit(rx - 1, bSplit);
+        }
         public void MuteChanged(int rx, bool newState)
         {
             if (m_disconnected) return;
-			sendMute(consoleThreadSafe.MUT || (consoleThreadSafe.RX2Enabled && consoleThreadSafe.MUT2));
-			sendMuteRX(rx - 1, newState);
+            sendMute(consoleThreadSafe.MUT || (consoleThreadSafe.RX2Enabled && consoleThreadSafe.MUT2));
+            sendMuteRX(rx - 1, newState);
         }
         public void AnfChanged(int rx, bool newState)
         {
@@ -1211,15 +1211,15 @@ namespace Thetis
             sendCalibration(rx, meter_offset, display_offset, xvtr_gain_offset, offset_6m, tx_display_offset);
         }
         public void MONChanged(bool newState)
-		{
+        {
             if (m_disconnected) return;
-			sendMONEnable(newState);
+            sendMONEnable(newState);
         }
-		public void MONVolumeChanged(int newVolume)
-		{
-			if (m_disconnected) return;
+        public void MONVolumeChanged(int newVolume)
+        {
+            if (m_disconnected) return;
             sendMONVolume(linearToDbVolume(newVolume));
-		}
+        }
         public void VolumeChanged(int newVolume)
         {
             if (m_disconnected) return;
@@ -1363,110 +1363,110 @@ namespace Thetis
             if (m_disconnected) return;
             sendDiguOffset(newValue);
         }
-		public void TXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
-		{
+        public void TXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
+        {
             if (m_disconnected) return;
             sendTXFrequencyChanged(new_frequency, new_band, rx2_enabled, tx_vfob);
         }
         private void limitList()
         {
-			lock (m_objVFODataLock)
-			{
-				while (m_vfoDataList.Count > 10)
-				{
-					m_vfoDataList.RemoveFirst();
-				}
-			}
-		}
-
-		private object m_objVFODataLock = new Object();
-		private async void VFOdata()
-        {
-			while (!m_stopClient)
+            lock (m_objVFODataLock)
             {
-				int nCount;
-				lock (m_objVFODataLock)
+                while (m_vfoDataList.Count > 10)
                 {
-					nCount = m_vfoDataList.Count;
+                    m_vfoDataList.RemoveFirst();
+                }
+            }
+        }
+
+        private object m_objVFODataLock = new Object();
+        private async void VFOdata()
+        {
+            while (!m_stopClient)
+            {
+                int nCount;
+                lock (m_objVFODataLock)
+                {
+                    nCount = m_vfoDataList.Count;
                 }
 
-				if(nCount > 0)
+                if (nCount > 0)
                 {
-					LinkedListNode<VFOData> vfon = null;
-					VFOData vfoData;
+                    LinkedListNode<VFOData> vfon = null;
+                    VFOData vfoData;
 
-					lock (m_objVFODataLock)
+                    lock (m_objVFODataLock)
                     {
-						vfon = m_vfoDataList.First;
-						vfoData = vfon.Value;
-						vfon = null;
-						m_vfoDataList.RemoveFirst();
-					}
+                        vfon = m_vfoDataList.First;
+                        vfoData = vfon.Value;
+                        vfon = null;
+                        m_vfoDataList.RemoveFirst();
+                    }
 
-					if (vfoData.SendTXInfo)
-					{
-						// tx info only
-						sendTXFrequencyChanged((long)(vfoData.freqMHz * 1e6), vfoData.TXfreqBand, vfoData.RX2EnabledForTX, vfoData.TXVFOB);
-					}
-					else
-					{
-						if (vfoData.cen)
-						{
-							sendDDS(vfoData.rx, (long)(vfoData.centreMHz * 1e6));
-							if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-						}
-						else
-						{
-							if (vfoData.duplicate_tochan != -1)
-							{
-								if (!vfoData.replace_if_duplicated)
-								{
-									if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-									sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
-								}
-								if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
-								sendVFO(vfoData.rx, vfoData.duplicate_tochan, (long)(vfoData.freqMHz * 1e6));
-							}
-							else
-							{
-								if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-								sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
-							}
-						}
-					}
+                    if (vfoData.SendTXInfo)
+                    {
+                        // tx info only
+                        sendTXFrequencyChanged((long)(vfoData.freqMHz * 1e6), vfoData.TXfreqBand, vfoData.RX2EnabledForTX, vfoData.TXVFOB);
+                    }
+                    else
+                    {
+                        if (vfoData.cen)
+                        {
+                            sendDDS(vfoData.rx, (long)(vfoData.centreMHz * 1e6));
+                            if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+                        }
+                        else
+                        {
+                            if (vfoData.duplicate_tochan != -1)
+                            {
+                                if (!vfoData.replace_if_duplicated)
+                                {
+                                    if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+                                    sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
+                                }
+                                if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
+                                sendVFO(vfoData.rx, vfoData.duplicate_tochan, (long)(vfoData.freqMHz * 1e6));
+                            }
+                            else
+                            {
+                                if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+                                sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
+                            }
+                        }
+                    }
                 }
 
                 lock (m_objVFODataLock)
                 {
-					nCount = m_vfoDataList.Count;
-				}
+                    nCount = m_vfoDataList.Count;
+                }
 
-				if (!m_stopClient)
-				{ 
-					if(nCount == 0) 
-						await Task.Delay(1);
-				}
-			}
-		}
+                if (!m_stopClient)
+                {
+                    if (nCount == 0)
+                        await Task.Delay(1);
+                }
+            }
+        }
 
-		private void vfoFrequencyChange(VFOData vfod)
-		{
-			if (m_disconnected) return;
-			lock (m_objVFODataLock)
-			{
-				limitList();
-				m_vfoDataList.AddLast(vfod);
-			}
-		}
-		private void centreFrequencyChange(VFOData vfod)
-		{
-			if (m_disconnected) return;
-			lock (m_objVFODataLock)
-			{
-				limitList();
-				m_vfoDataList.AddLast(vfod);
-			}
-		}
+        private void vfoFrequencyChange(VFOData vfod)
+        {
+            if (m_disconnected) return;
+            lock (m_objVFODataLock)
+            {
+                limitList();
+                m_vfoDataList.AddLast(vfod);
+            }
+        }
+        private void centreFrequencyChange(VFOData vfod)
+        {
+            if (m_disconnected) return;
+            lock (m_objVFODataLock)
+            {
+                limitList();
+                m_vfoDataList.AddLast(vfod);
+            }
+        }
         private void txFrequencyChange(VFOData vfod)
         {
             if (m_disconnected) return;
@@ -1478,197 +1478,197 @@ namespace Thetis
         }
         public void MoxChange(int rx, bool oldMox, bool newMox)
         {
-			if (m_disconnected) return;
+            if (m_disconnected) return;
 
             if (newMox)
             {
-				if (rx == 1)
-				{
-					if (consoleThreadSafe.RX2Enabled) sendTXEnable(1, false);
-				}
-				else
-				{
-					sendTXEnable(0, false);
-				}
-			}
-			else
-			{
-				if (rx == 1)
-				{
-					if(consoleThreadSafe.RX2Enabled) sendTXEnable(1, true);
-				}
-				else
-				{
-					sendTXEnable(0, true);
-				}
-			}
-		
-			sendMOX(rx - 1, newMox);
-		}
-		public void ModeChange(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
-        {
-			if (m_disconnected) return;
-			sendMode(rx-1, newMode);
-        }
-		public void BandChange(int rx, Band oldBand, Band newBand)
-        {
-			if (m_disconnected) return;
+                if (rx == 1)
+                {
+                    if (consoleThreadSafe.RX2Enabled) sendTXEnable(1, false);
+                }
+                else
+                {
+                    sendTXEnable(0, false);
+                }
+            }
+            else
+            {
+                if (rx == 1)
+                {
+                    if (consoleThreadSafe.RX2Enabled) sendTXEnable(1, true);
+                }
+                else
+                {
+                    sendTXEnable(0, true);
+                }
+            }
 
-			// check band for tx? TODO
-			sendTXEnable(rx-1, rx == 1 ? true : consoleThreadSafe.RX2Enabled); // MW0LGE_22b fixed, rx1 should be tx only, not rx2
-		}
-		public void FilterChange(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high)
+            sendMOX(rx - 1, newMox);
+        }
+        public void ModeChange(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
         {
-			if (m_disconnected) return;
-			sendFilterBand(rx-1, low, high);
-		}
-		public void FilterEdgesChange(int rx, Filter filter, Band band, int low, int high)
-		{
-			if (m_disconnected) return;
-			sendFilterBand(rx-1, low, high);
+            if (m_disconnected) return;
+            sendMode(rx - 1, newMode);
+        }
+        public void BandChange(int rx, Band oldBand, Band newBand)
+        {
+            if (m_disconnected) return;
+
+            // check band for tx? TODO
+            sendTXEnable(rx - 1, rx == 1 ? true : consoleThreadSafe.RX2Enabled); // MW0LGE_22b fixed, rx1 should be tx only, not rx2
+        }
+        public void FilterChange(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high)
+        {
+            if (m_disconnected) return;
+            sendFilterBand(rx - 1, low, high);
+        }
+        public void FilterEdgesChange(int rx, Filter filter, Band band, int low, int high)
+        {
+            if (m_disconnected) return;
+            sendFilterBand(rx - 1, low, high);
         }
         public void TXFilterBandChanged(int low, int high)
         {
             if (m_disconnected) return;
             sendTXFilterBandEx(low, high);
         }
-		public void PowerChange(bool oldPower, bool newPower)
+        public void PowerChange(bool oldPower, bool newPower)
         {
-			if (m_disconnected) return;
-			sendStartStop(newPower);
+            if (m_disconnected) return;
+            sendStartStop(newPower);
         }
-		//
+        //
 
-		public void StartSocketListener()
-		{
-			if (m_client != null)
-			{
+        public void StartSocketListener()
+        {
+            if (m_client != null)
+            {
                 m_sendThread = new Thread(new ThreadStart(SendThreadProc));
                 m_sendThread.Name = "TCI client sender Thread";
                 m_sendThread.Priority = ThreadPriority.AboveNormal;
                 m_sendThread.Start();
 
-				m_VFODataThread = new Thread(new ThreadStart(VFOdata));
-				m_VFODataThread.Priority = ThreadPriority.Normal;
-				m_VFODataThread.Start();
+                m_VFODataThread = new Thread(new ThreadStart(VFOdata));
+                m_VFODataThread.Priority = ThreadPriority.Normal;
+                m_VFODataThread.Start();
 
-				m_clientListenerThread =
-					new Thread(new ThreadStart(SocketListenerThreadStart));
-				m_clientListenerThread.Name = "TCI client listener Thread";
+                m_clientListenerThread =
+                    new Thread(new ThreadStart(SocketListenerThreadStart));
+                m_clientListenerThread.Name = "TCI client listener Thread";
 
                 m_clientListenerThread.Start();
-			}
-		}
+            }
+        }
 
-		private enum EOpcodeType
-		{			
-			Fragment = 0, /* continuation code */			
-			Text = 1, /*  text code */			
-			Binary = 2, /*  binary code */			
-			ClosedConnection = 8, /* closed connection */			
-			Ping = 9, /* ping */			
-			Pong = 10 /* pong */
-		}
+        private enum EOpcodeType
+        {
+            Fragment = 0, /* continuation code */
+            Text = 1, /*  text code */
+            Binary = 2, /*  binary code */
+            ClosedConnection = 8, /* closed connection */
+            Ping = 9, /* ping */
+            Pong = 10 /* pong */
+        }
 
-		private static byte[] getFrameFromString(string Message, EOpcodeType Opcode = EOpcodeType.Text)
-		{
-			byte[] response;
+        private static byte[] getFrameFromString(string Message, EOpcodeType Opcode = EOpcodeType.Text)
+        {
+            byte[] response;
             //byte[] bytesRaw = Encoding.Default.GetBytes(Message);
             byte[] bytesRaw = Encoding.UTF8.GetBytes(Message ?? string.Empty); // utf-8 required for text frame
             byte[] frame = new byte[10];
 
-			long indexStartRawData = -1;
-			long length = (long)bytesRaw.Length;
+            long indexStartRawData = -1;
+            long length = (long)bytesRaw.Length;
 
-			frame[0] = (byte)(128 + (int)Opcode);
-			if (length <= 125)
-			{
-				frame[1] = (byte)length;
-				indexStartRawData = 2;
-			}
-			else if (length >= 126 && length <= 65535)
-			{
-				frame[1] = (byte)126;
-				frame[2] = (byte)((length >> 8) & 255);
-				frame[3] = (byte)(length & 255);
-				indexStartRawData = 4;
-			}
-			else
-			{
-				frame[1] = (byte)127;
-				frame[2] = (byte)((length >> 56) & 255);
-				frame[3] = (byte)((length >> 48) & 255);
-				frame[4] = (byte)((length >> 40) & 255);
-				frame[5] = (byte)((length >> 32) & 255);
-				frame[6] = (byte)((length >> 24) & 255);
-				frame[7] = (byte)((length >> 16) & 255);
-				frame[8] = (byte)((length >> 8) & 255);
-				frame[9] = (byte)(length & 255);
+            frame[0] = (byte)(128 + (int)Opcode);
+            if (length <= 125)
+            {
+                frame[1] = (byte)length;
+                indexStartRawData = 2;
+            }
+            else if (length >= 126 && length <= 65535)
+            {
+                frame[1] = (byte)126;
+                frame[2] = (byte)((length >> 8) & 255);
+                frame[3] = (byte)(length & 255);
+                indexStartRawData = 4;
+            }
+            else
+            {
+                frame[1] = (byte)127;
+                frame[2] = (byte)((length >> 56) & 255);
+                frame[3] = (byte)((length >> 48) & 255);
+                frame[4] = (byte)((length >> 40) & 255);
+                frame[5] = (byte)((length >> 32) & 255);
+                frame[6] = (byte)((length >> 24) & 255);
+                frame[7] = (byte)((length >> 16) & 255);
+                frame[8] = (byte)((length >> 8) & 255);
+                frame[9] = (byte)(length & 255);
 
-				indexStartRawData = 10;
-			}
+                indexStartRawData = 10;
+            }
 
-			response = new byte[indexStartRawData + length];
+            response = new byte[indexStartRawData + length];
 
-			long i, reponseIdx = 0;
+            long i, reponseIdx = 0;
 
-			//Add the frame bytes to the reponse
-			for (i = 0; i < indexStartRawData; i++)
-			{
-				response[reponseIdx] = frame[i];
-				reponseIdx++;
-			}
+            //Add the frame bytes to the reponse
+            for (i = 0; i < indexStartRawData; i++)
+            {
+                response[reponseIdx] = frame[i];
+                reponseIdx++;
+            }
 
-			//Add the data bytes to the response
-			for (i = 0; i < length; i++)
-			{
-				response[reponseIdx] = bytesRaw[i];
-				reponseIdx++;
-			}
+            //Add the data bytes to the response
+            for (i = 0; i < length; i++)
+            {
+                response[reponseIdx] = bytesRaw[i];
+                reponseIdx++;
+            }
 
-			return response;
-		}
+            return response;
+        }
 
-		private static byte[] GetFrameFromBytes(byte[] payload, EOpcodeType opcode = EOpcodeType.Binary)
-		{
-			if (payload == null) payload = Array.Empty<byte>();
+        private static byte[] GetFrameFromBytes(byte[] payload, EOpcodeType opcode = EOpcodeType.Binary)
+        {
+            if (payload == null) payload = Array.Empty<byte>();
 
-			byte[] frame = new byte[10];
-			long indexStartRawData = -1;
-			long length = payload.LongLength;
+            byte[] frame = new byte[10];
+            long indexStartRawData = -1;
+            long length = payload.LongLength;
 
-			frame[0] = (byte)(128 + (int)opcode);
-			if (length <= 125)
-			{
-				frame[1] = (byte)length;
-				indexStartRawData = 2;
-			}
-			else if (length <= 65535)
-			{
-				frame[1] = (byte)126;
-				frame[2] = (byte)((length >> 8) & 255);
-				frame[3] = (byte)(length & 255);
-				indexStartRawData = 4;
-			}
-			else
-			{
-				frame[1] = (byte)127;
-				frame[2] = (byte)((length >> 56) & 255);
-				frame[3] = (byte)((length >> 48) & 255);
-				frame[4] = (byte)((length >> 40) & 255);
-				frame[5] = (byte)((length >> 32) & 255);
-				frame[6] = (byte)((length >> 24) & 255);
-				frame[7] = (byte)((length >> 16) & 255);
-				frame[8] = (byte)((length >> 8) & 255);
-				frame[9] = (byte)(length & 255);
-				indexStartRawData = 10;
-			}
+            frame[0] = (byte)(128 + (int)opcode);
+            if (length <= 125)
+            {
+                frame[1] = (byte)length;
+                indexStartRawData = 2;
+            }
+            else if (length <= 65535)
+            {
+                frame[1] = (byte)126;
+                frame[2] = (byte)((length >> 8) & 255);
+                frame[3] = (byte)(length & 255);
+                indexStartRawData = 4;
+            }
+            else
+            {
+                frame[1] = (byte)127;
+                frame[2] = (byte)((length >> 56) & 255);
+                frame[3] = (byte)((length >> 48) & 255);
+                frame[4] = (byte)((length >> 40) & 255);
+                frame[5] = (byte)((length >> 32) & 255);
+                frame[6] = (byte)((length >> 24) & 255);
+                frame[7] = (byte)((length >> 16) & 255);
+                frame[8] = (byte)((length >> 8) & 255);
+                frame[9] = (byte)(length & 255);
+                indexStartRawData = 10;
+            }
 
-			byte[] response = new byte[indexStartRawData + length];
-			Buffer.BlockCopy(frame, 0, response, 0, (int)indexStartRawData);
-			if (length > 0) Buffer.BlockCopy(payload, 0, response, (int)indexStartRawData, (int)length);
-			return response;
-		}
+            byte[] response = new byte[indexStartRawData + length];
+            Buffer.BlockCopy(frame, 0, response, 0, (int)indexStartRawData);
+            if (length > 0) Buffer.BlockCopy(payload, 0, response, (int)indexStartRawData, (int)length);
+            return response;
+        }
 
         private static string getCoalescedTextFrameKey(string message)
         {
@@ -1915,54 +1915,54 @@ namespace Thetis
             return false;
         }
 
-		private bool upgradeToWebSocket(string msg)
+        private bool upgradeToWebSocket(string msg)
         {
-			bool bRet;
+            bool bRet;
 
-			try
-			{
-				// 1. Obtain the value of the "Sec-WebSocket-Key" request header without any leading or trailing whitespace
-				// 2. Concatenate it with "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" (a special GUID specified by RFC 6455)
-				// 3. Compute SHA-1 and Base64 hash of the new value
-				// 4. Write the hash back as the value of "Sec-WebSocket-Accept" response header in an HTTP response
-				string swk = Regex.Match(msg, "Sec-WebSocket-Key: (.*)").Groups[1].Value.Trim();
-				string swka = swk + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-				byte[] swkaSha1 = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(swka));
-				string swkaSha1Base64 = Convert.ToBase64String(swkaSha1);
-
-				// HTTP/1.1 defines the sequence CR LF as the end-of-line marker
-				byte[] response = Encoding.UTF8.GetBytes(
-					"HTTP/1.1 101 Switching Protocols\r\n" +
-					"Connection: Upgrade\r\n" +
-					"Upgrade: websocket\r\n" +
-					"Sec-WebSocket-Accept: " + swkaSha1Base64 + "\r\n\r\n");
-
-				m_stream.Write(response, 0, response.Length);
-
-				bRet = true;
-			}
-			catch
+            try
             {
-				bRet = false;
+                // 1. Obtain the value of the "Sec-WebSocket-Key" request header without any leading or trailing whitespace
+                // 2. Concatenate it with "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" (a special GUID specified by RFC 6455)
+                // 3. Compute SHA-1 and Base64 hash of the new value
+                // 4. Write the hash back as the value of "Sec-WebSocket-Accept" response header in an HTTP response
+                string swk = Regex.Match(msg, "Sec-WebSocket-Key: (.*)").Groups[1].Value.Trim();
+                string swka = swk + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+                byte[] swkaSha1 = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(swka));
+                string swkaSha1Base64 = Convert.ToBase64String(swkaSha1);
+
+                // HTTP/1.1 defines the sequence CR LF as the end-of-line marker
+                byte[] response = Encoding.UTF8.GetBytes(
+                    "HTTP/1.1 101 Switching Protocols\r\n" +
+                    "Connection: Upgrade\r\n" +
+                    "Upgrade: websocket\r\n" +
+                    "Sec-WebSocket-Accept: " + swkaSha1Base64 + "\r\n\r\n");
+
+                m_stream.Write(response, 0, response.Length);
+
+                bRet = true;
+            }
+            catch
+            {
+                bRet = false;
             }
 
-			return bRet;
-		}
+            return bRet;
+        }
 
-		//
-		private void sendStart()
+        //
+        private void sendStart()
         {
-			sendTextFrame("start;");
-		}
-		private void sendStop()
-		{
-			sendTextFrame("stop;");
-		}
-		private void sendSplit(int rx, bool bSplit)
+            sendTextFrame("start;");
+        }
+        private void sendStop()
         {
-			string s = "split_enable:" + rx.ToString() + "," + bSplit.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
+            sendTextFrame("stop;");
+        }
+        private void sendSplit(int rx, bool bSplit)
+        {
+            string s = "split_enable:" + rx.ToString() + "," + bSplit.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
         private void sendRITEnable(int rx, bool enabled)
         {
             string s = "rit_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
@@ -2113,8 +2113,8 @@ namespace Thetis
         {
             if (consoleThreadSafe.RX2Enabled)
             {
-            if (tryGetVFOLockState(0, 0, out bool lock00))
-                sendVFOLock(0, 0, lock00);
+                if (tryGetVFOLockState(0, 0, out bool lock00))
+                    sendVFOLock(0, 0, lock00);
                 if (tryGetVFOLockState(1, 0, out bool lock10))
                     sendVFOLock(1, 0, lock10);
                 if (tryGetVFOLockState(1, 1, out bool lock11))
@@ -2138,77 +2138,77 @@ namespace Thetis
             string s = "digu_offset:" + offset.ToString() + ";";
             sendTextFrame(s);
         }
-		private void sendVFO(int rx, int chan, long vfo = -1)
+        private void sendVFO(int rx, int chan, long vfo = -1)
         {
-			bool bVFOaUseRX2;
-			if (m_server != null && consoleThreadSafe != null)
-				bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
-			else
-				bVFOaUseRX2 = false;
+            bool bVFOaUseRX2;
+            if (m_server != null && consoleThreadSafe != null)
+                bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
+            else
+                bVFOaUseRX2 = false;
 
-			if (vfo == -1)
-			{
-				if (rx == 0)
-				{
-					if (chan == 0)
-						vfo = (long)(consoleThreadSafe.VFOAFreq * 1e6);
-					else if (chan == 1)
-						vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
-				}
-				else if (rx == 1)
-				{
-					if(chan == 0)
+            if (vfo == -1)
+            {
+                if (rx == 0)
+                {
+                    if (chan == 0)
+                        vfo = (long)(consoleThreadSafe.VFOAFreq * 1e6);
+                    else if (chan == 1)
+                        vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
+                }
+                else if (rx == 1)
+                {
+                    if (chan == 0)
                     {
-						if(bVFOaUseRX2)
-							vfo = (long)(consoleThreadSafe.VFOAFreq * 1e6);
-						else
-							vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
-					}
+                        if (bVFOaUseRX2)
+                            vfo = (long)(consoleThreadSafe.VFOAFreq * 1e6);
+                        else
+                            vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
+                    }
                     else if (chan == 1)
                     {
-						vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
-					}
-				}					
-			}
-			string s = "vfo:" + rx.ToString() + "," + chan.ToString() + "," + vfo.ToString() + ";";
-			sendTextFrame(s);
+                        vfo = (long)(consoleThreadSafe.VFOBFreq * 1e6);
+                    }
+                }
+            }
+            string s = "vfo:" + rx.ToString() + "," + chan.ToString() + "," + vfo.ToString() + ";";
+            sendTextFrame(s);
         }
-		private void sendIF(int rx, int chan, int offset = -999999999)
-		{
-			if (offset == -999999999)
-			{
-				if (rx == 0)
-				{
-					if (chan == 0)
-					{
-						offset = (int)consoleThreadSafe.radio.GetDSPRX(0, 0).RXOsc;
-					}
-					else if (chan == 1)
-					{
-						offset = (int)consoleThreadSafe.radio.GetDSPRX(0, 1).RXOsc;
-					}
-					else offset = 0;
-				}
-				else if (rx == 1)
-					offset = (int)consoleThreadSafe.radio.GetDSPRX(1, 0).RXOsc;
-			}
+        private void sendIF(int rx, int chan, int offset = -999999999)
+        {
+            if (offset == -999999999)
+            {
+                if (rx == 0)
+                {
+                    if (chan == 0)
+                    {
+                        offset = (int)consoleThreadSafe.radio.GetDSPRX(0, 0).RXOsc;
+                    }
+                    else if (chan == 1)
+                    {
+                        offset = (int)consoleThreadSafe.radio.GetDSPRX(0, 1).RXOsc;
+                    }
+                    else offset = 0;
+                }
+                else if (rx == 1)
+                    offset = (int)consoleThreadSafe.radio.GetDSPRX(1, 0).RXOsc;
+            }
 
-			offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
+            offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
 
             string s = "if:" + rx.ToString() + "," + chan.ToString() + "," + offset.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendMOX(int rx, bool mox, bool signalTCI = false)
+            sendTextFrame(s);
+        }
+        private void sendMOX(int rx, bool mox, bool signalTCI = false)
         {
-			string sTXSignalFromTCI;
-			if (signalTCI)
-				sTXSignalFromTCI = ",tci";
-			else
-				sTXSignalFromTCI = "";
+            string sTXSignalFromTCI;
+            if (signalTCI)
+                sTXSignalFromTCI = ",tci";
+            else
+                sTXSignalFromTCI = "";
 
-			string s = "trx:" + rx.ToString() + "," + mox.ToString().ToLower() + sTXSignalFromTCI + ";";
-			sendTextFrame(s);
-		}
+            string s = "trx:" + rx.ToString() + "," + mox.ToString().ToLower() + sTXSignalFromTCI + ";";
+            sendTextFrame(s);
+        }
         private void sendAudioStartStop(int receiver, bool enable)
         {
             sendTextFrame((enable ? "audio_start:" : "audio_stop:") + receiver.ToString() + ";");
@@ -2265,28 +2265,28 @@ namespace Thetis
         {
             sendTextFrame("display_dbm_range:" + receiver.ToString() + "," + minDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + maxDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
-		private void sendMode(int rx, DSPMode mode = DSPMode.FIRST)
+        private void sendMode(int rx, DSPMode mode = DSPMode.FIRST)
         {
-			if(mode == DSPMode.FIRST)
+            if (mode == DSPMode.FIRST)
             {
                 if (rx == 0)
-					mode = consoleThreadSafe.RX1DSPMode;
-				else if(rx == 1)
-					mode = consoleThreadSafe.RX2DSPMode;
+                    mode = consoleThreadSafe.RX1DSPMode;
+                else if (rx == 1)
+                    mode = consoleThreadSafe.RX2DSPMode;
             }
-			if (mode == DSPMode.FIRST || mode == DSPMode.LAST) return;
+            if (mode == DSPMode.FIRST || mode == DSPMode.LAST) return;
 
-			string sMode;
-			if (m_server != null && m_server.CWLUbecomesCW && (mode == DSPMode.CWL || mode == DSPMode.CWU))
-			{
-				sMode = "cw";
-			}
-			else
-				sMode = mode.ToString().ToLower();
+            string sMode;
+            if (m_server != null && m_server.CWLUbecomesCW && (mode == DSPMode.CWL || mode == DSPMode.CWU))
+            {
+                sMode = "cw";
+            }
+            else
+                sMode = mode.ToString().ToLower();
 
-			string s = "modulation:" + rx.ToString() + "," + sMode.ToUpper() + ";"; // MW0LGE_22b mods are uppcase on the sun, replicate
-			sendTextFrame(s);
-		}
+            string s = "modulation:" + rx.ToString() + "," + sMode.ToUpper() + ";"; // MW0LGE_22b mods are uppcase on the sun, replicate
+            sendTextFrame(s);
+        }
         private void sendMute(bool mute)
         {
             string s = "mute:" + mute.ToString().ToLower() + ";";
@@ -2297,8 +2297,8 @@ namespace Thetis
             string s = "rx_mute:" + rx.ToString() + "," + mute.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
-		private void sendMONEnable(bool enable)
-		{
+        private void sendMONEnable(bool enable)
+        {
             string s = "mon_enable:" + enable.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
@@ -2309,8 +2309,8 @@ namespace Thetis
             string s = "volume:" + volume.ToString("F1", CultureInfo.InvariantCulture).ToLower() + ";";
             sendTextFrame(s);
         }
-		private void sendMONVolume(double volume)
-		{
+        private void sendMONVolume(double volume)
+        {
             if (volume < -60f || volume > 0f) return;
 
             string s = "mon_volume:" + volume.ToString("F1", CultureInfo.InvariantCulture).ToLower() + ";";
@@ -2405,8 +2405,8 @@ namespace Thetis
             string s = "agc_gain:" + rx.ToString() + "," + gain.ToString() + ";";
             sendTextFrame(s);
         }
-		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
-		{
+        private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
+        {
             string s = $"tx_frequency:{new_frequency};";
             sendTextFrame(s.ToLower());
 
@@ -2420,99 +2420,99 @@ namespace Thetis
             sendTextFrame(s.ToLower());
         }
         private void sendTunePower(int rx, int drive)
-		{
-			if (drive < 0 || drive > 100) return;
+        {
+            if (drive < 0 || drive > 100) return;
 
-			string s = "tune_drive:" + rx.ToString() + "," + drive.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendDrivePower(int rx, int drive)
-		{
-			if (drive < 0 || drive > 100) return;
+            string s = "tune_drive:" + rx.ToString() + "," + drive.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendDrivePower(int rx, int drive)
+        {
+            if (drive < 0 || drive > 100) return;
 
-			string s = "drive:" + rx.ToString() + "," + drive.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendTune(int rx, bool tune)
-		{
-			string s = "tune:" + rx.ToString() + "," + tune.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendRXEnable(int rx, bool enable)
-		{
-			string s = "rx_enable:" + rx.ToString() + "," + enable.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendTXEnable(int rx, bool bEnable)
+            string s = "drive:" + rx.ToString() + "," + drive.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendTune(int rx, bool tune)
         {
-			string s = "tx_enable:" + rx.ToString() + "," + bEnable.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendVFOLimits(int low, int high)
+            string s = "tune:" + rx.ToString() + "," + tune.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRXEnable(int rx, bool enable)
         {
-			string s = "vfo_limits:" + low.ToString() + "," + high.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendAppFocus(bool focus)
+            string s = "rx_enable:" + rx.ToString() + "," + enable.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendTXEnable(int rx, bool bEnable)
         {
-			string s = "app_focus:" + focus.ToString().ToLower() + ";";
-			sendTextFrame(s);
-		}
-		private void sendIFLimits(int low, int high)
-		{
-			string s = "if_limits:" + low.ToString() + "," + high.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendClickedOnSpot(string callsign, long frequency)
-		{
-			string s = "clicked_on_spot:" + callsign.Trim() + "," + frequency.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendClickedOnSpotRX(int rx, int chan, string callsign, long frequency)
-		{
-			string s = "rx_clicked_on_spot:" + rx.ToString() + "," + chan.ToString() + "," + callsign.Trim() + "," + frequency.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendRxSensors(int rx, double levelDbm)
-		{
-			sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
-		}
-		private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm)
-		{
-			sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
+            string s = "tx_enable:" + rx.ToString() + "," + bEnable.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendVFOLimits(int low, int high)
+        {
+            string s = "vfo_limits:" + low.ToString() + "," + high.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendAppFocus(bool focus)
+        {
+            string s = "app_focus:" + focus.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendIFLimits(int low, int high)
+        {
+            string s = "if_limits:" + low.ToString() + "," + high.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendClickedOnSpot(string callsign, long frequency)
+        {
+            string s = "clicked_on_spot:" + callsign.Trim() + "," + frequency.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendClickedOnSpotRX(int rx, int chan, string callsign, long frequency)
+        {
+            string s = "rx_clicked_on_spot:" + rx.ToString() + "," + chan.ToString() + "," + callsign.Trim() + "," + frequency.ToString() + ";";
+            sendTextFrame(s);
+        }
+        private void sendRxSensors(int rx, double levelDbm)
+        {
+            sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
+        }
+        private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm)
+        {
+            sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
             sendTextFrame("rx_channel_sensors_ex:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
-		private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
-		{
-			string message = string.Format(
-				"tx_sensors:{0},{1:F1},{2:F1},{3:F1},{4:F1};",
-				rx,
-				micLevelDbm,
-				rmsPowerWatts,
-				peakPowerWatts,
-				swr);
-			sendTextFrame(message);
-		}
-		private void sendDDS(int rx, long ddsFreq = -1)
+        private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
         {
-			if (ddsFreq == -1)
-			{
-				if (rx == 0)
-					ddsFreq = (long)(consoleThreadSafe.CentreFrequency * 1e6);
-				else if (rx == 1)
-					ddsFreq = (long)(consoleThreadSafe.CentreRX2Frequency * 1e6);
-			}
+            string message = string.Format(
+                "tx_sensors:{0},{1:F1},{2:F1},{3:F1},{4:F1};",
+                rx,
+                micLevelDbm,
+                rmsPowerWatts,
+                peakPowerWatts,
+                swr);
+            sendTextFrame(message);
+        }
+        private void sendDDS(int rx, long ddsFreq = -1)
+        {
+            if (ddsFreq == -1)
+            {
+                if (rx == 0)
+                    ddsFreq = (long)(consoleThreadSafe.CentreFrequency * 1e6);
+                else if (rx == 1)
+                    ddsFreq = (long)(consoleThreadSafe.CentreRX2Frequency * 1e6);
+            }
 
-			ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx+1); //MW0LGE [2.9.0.7]
+            ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7]
 
             string s = "dds:" + rx.ToString() + "," + ddsFreq.ToString() + ";";
-			sendTextFrame(s);
-		}
-		private void sendFilterBand(int rx, int low, int high)
+            sendTextFrame(s);
+        }
+        private void sendFilterBand(int rx, int low, int high)
         {
-			string s = "rx_filter_band:" + rx.ToString() + "," + low.ToString() + "," + high.ToString() + ";";
-			sendTextFrame(s);
-		}
+            string s = "rx_filter_band:" + rx.ToString() + "," + low.ToString() + "," + high.ToString() + ";";
+            sendTextFrame(s);
+        }
         private void normalizeTXFilterBandForSet(ref int low, ref int high)
         {
             low = Math.Max(0, low);
@@ -2544,12 +2544,12 @@ namespace Thetis
         {
             sendTextFrame("display_duplex:" + enabled.ToString().ToLowerInvariant() + ";");
         }
-		private void sendStartStop(bool bPower)
+        private void sendStartStop(bool bPower)
         {
-			if (bPower)
-				sendStart();
-			else
-				sendStop();
+            if (bPower)
+                sendStart();
+            else
+                sendStop();
         }
         //
         private int preampModeToAttenuation(PreampMode mode)
@@ -2583,28 +2583,28 @@ namespace Thetis
 
         private void sendInitialRadioState()
         {
-			bool bSend = m_server != null ? m_server.SendInitialFrequencyStateOnConnect : true;
-			bool bRX2Enabled = consoleThreadSafe.RX2Enabled;
+            bool bSend = m_server != null ? m_server.SendInitialFrequencyStateOnConnect : true;
+            bool bRX2Enabled = consoleThreadSafe.RX2Enabled;
 
             if (bSend)
-			{
-				sendDDS(0);
-				sendDDS(1);
-				sendIF(0, 0);
-				sendIF(0, 1);
-				sendIF(1, 1);
-				sendIF(1, 1);
-				sendVFO(0, 0);
-				sendVFO(0, 1);
-				sendVFO(1, 0);
-				sendVFO(1, 1);
+            {
+                sendDDS(0);
+                sendDDS(1);
+                sendIF(0, 0);
+                sendIF(0, 1);
+                sendIF(1, 1);
+                sendIF(1, 1);
+                sendVFO(0, 0);
+                sendVFO(0, 1);
+                sendVFO(1, 0);
+                sendVFO(1, 1);
 
                 //bespoke
                 sendTXFrequencyChanged((long)(consoleThreadSafe.TXFreq * 1e6), consoleThreadSafe.TXBand, consoleThreadSafe.RX2Enabled, consoleThreadSafe.VFOBTX);
             }
 
             sendMode(0);
-			sendMode(1);
+            sendMode(1);
 
             sendFilterBand(0, consoleThreadSafe.RX1FilterLow, consoleThreadSafe.RX1FilterHigh);
             sendFilterBand(1, consoleThreadSafe.RX2FilterLow, consoleThreadSafe.RX2FilterHigh);
@@ -2612,7 +2612,7 @@ namespace Thetis
             sendDisplayDuplex(consoleThreadSafe.DisplayDuplex);
 
             sendRXEnable(0, !consoleThreadSafe.MOX);
-			sendRXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
+            sendRXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
 
             //NR
             for (int rx = 1; rx <= 2; rx++)
@@ -2712,15 +2712,15 @@ namespace Thetis
             }
 
             sendSplit(0, consoleThreadSafe.VFOSplit);
-			sendSplit(1, bRX2Enabled && consoleThreadSafe.VFOSplit);
+            sendSplit(1, bRX2Enabled && consoleThreadSafe.VFOSplit);
 
-			sendTXEnable(0, !consoleThreadSafe.MOX);
-			sendTXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
+            sendTXEnable(0, !consoleThreadSafe.MOX);
+            sendTXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
 
             sendRxChannelEnable(0, 0, true);
             sendRxChannelEnable(0, 1, consoleThreadSafe.GetSubRX(1));
             sendRxChannelEnable(1, 0, bRX2Enabled);
-			sendRxChannelEnable(1, 1, false); // no sub rx on rx2
+            sendRxChannelEnable(1, 1, false); // no sub rx on rx2
 
             //sendDrivePower()
             //sendTunePower()
@@ -2739,11 +2739,11 @@ namespace Thetis
             sendIQStartStop(1, false);
 
             sendIQSampleRate(getPublishedIQSampleRate());
-			sendAudioSampleRate(m_audioSampleRate);
+            sendAudioSampleRate(m_audioSampleRate);
             sendAudioCodec(m_audioCodec);
-			sendAudioStreamSampleType(getPublishedAudioSampleTypeLocked());
-			sendAudioStreamChannels(m_audioStreamChannels);
-			sendAudioStreamSamples(m_audioStreamSamples);
+            sendAudioStreamSampleType(getPublishedAudioSampleTypeLocked());
+            sendAudioStreamChannels(m_audioStreamChannels);
+            sendAudioStreamSamples(m_audioStreamSamples);
 
             sendAudioOpusApplication(m_audioOpusSettings.Application);
             sendAudioOpusSignal(m_audioOpusSettings.Signal);
@@ -2757,99 +2757,99 @@ namespace Thetis
             sendAudioOpusPacketLoss(m_audioOpusSettings.PacketLossPercent);
             sendAudioOpusFrameMs(m_audioOpusSettings.FrameMs);
 
-			sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
+            sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
 
-			sendMute(consoleThreadSafe.MUT || (consoleThreadSafe.MUT2 && bRX2Enabled));
-			sendMuteRX(0, consoleThreadSafe.MUT);
+            sendMute(consoleThreadSafe.MUT || (consoleThreadSafe.MUT2 && bRX2Enabled));
+            sendMuteRX(0, consoleThreadSafe.MUT);
             sendMuteRX(1, consoleThreadSafe.MUT2);
             sendVolume(linearToDbVolume(consoleThreadSafe.AF));
 
-			sendMONEnable(consoleThreadSafe.MON);
+            sendMONEnable(consoleThreadSafe.MON);
             sendMONVolume(linearToDbVolume(consoleThreadSafe.TXAF));
 
             sendStartStop(consoleThreadSafe.PowerOn);// MW0LGE_22b moved here to replicate sun
 
-			Debug.Print("SENT INITIAL STATE");
-		}
+            Debug.Print("SENT INITIAL STATE");
+        }
 
-		private void sendInitialisationData()
+        private void sendInitialisationData()
         {
-			string sProtocol; //MW0LGE_22 emulate ee3 protocol
-			if (m_server != null && m_server.EmulateExpertSDR3Protocol)
-				sProtocol = "ExpertSDR3";
+            string sProtocol; //MW0LGE_22 emulate ee3 protocol
+            if (m_server != null && m_server.EmulateExpertSDR3Protocol)
+                sProtocol = "ExpertSDR3";
             else
-				sProtocol = "Thetis";
+                sProtocol = "Thetis";
 
-			sendTextFrame("protocol:" + sProtocol + ",2.0;");
+            sendTextFrame("protocol:" + sProtocol + ",2.0;");
 
-			string sDevice; //MW0LGE_22 emulate sunsdr
-			if (m_server != null && m_server.EmulateSunSDR2Pro)
-				sDevice = "SunSDR2PRO";
-			else
-				sDevice = HardwareSpecific.Model.ToString();
+            string sDevice; //MW0LGE_22 emulate sunsdr
+            if (m_server != null && m_server.EmulateSunSDR2Pro)
+                sDevice = "SunSDR2PRO";
+            else
+                sDevice = HardwareSpecific.Model.ToString();
 
-			sendTextFrame("device:" + sDevice + ";");
-			sendTextFrame("receive_only:false;");
-			sendTextFrame("trx_count:2;");
-			sendTextFrame("channels_count:2;");
+            sendTextFrame("device:" + sDevice + ";");
+            sendTextFrame("receive_only:false;");
+            sendTextFrame("trx_count:2;");
+            sendTextFrame("channels_count:2;");
 
-			sendVFOLimits(0, (int)(consoleThreadSafe.MaxFreq * 1e6));
+            sendVFOLimits(0, (int)(consoleThreadSafe.MaxFreq * 1e6));
 
-			int halfSample = consoleThreadSafe.SampleRateRX1 / 2;
-			sendIFLimits(-halfSample, halfSample); // only VFOA/rx1
+            int halfSample = consoleThreadSafe.SampleRateRX1 / 2;
+            sendIFLimits(-halfSample, halfSample); // only VFOA/rx1
 
-			string sCW;
-			if (m_server != null)
-				sCW = m_server.CWLUbecomesCW ? "cwl,cwu,cw" : "cwl,cwu";
-			else
-				sCW = "cwl,cwu";
+            string sCW;
+            if (m_server != null)
+                sCW = m_server.CWLUbecomesCW ? "cwl,cwu,cw" : "cwl,cwu";
+            else
+                sCW = "cwl,cwu";
 
-			sendTextFrame("modulations_list:" + ("am,sam,dsb,lsb,usb,nfm,fm,digl,digu," + sCW).ToUpper() + ";"); // MW0LGE_22b modulations are upper in sun, so replicate
+            sendTextFrame("modulations_list:" + ("am,sam,dsb,lsb,usb,nfm,fm,digl,digu," + sCW).ToUpper() + ";"); // MW0LGE_22b modulations are upper in sun, so replicate
 
-			sendInitialRadioState();
+            sendInitialRadioState();
 
-			sendTextFrame("ready;");
+            sendTextFrame("ready;");
 
-			Debug.Print("SENT INIT DATA");
+            Debug.Print("SENT INIT DATA");
             m_server?.RefreshStreamRunState();
-		}
+        }
 
-		private void setRxSensorsEnabled(bool enabled, int intervalMs, bool fireImmediately)
-		{
-			m_sensorManager.ConfigureRxSensors(enabled, intervalMs);
+        private void setRxSensorsEnabled(bool enabled, int intervalMs, bool fireImmediately)
+        {
+            m_sensorManager.ConfigureRxSensors(enabled, intervalMs);
 
-			if (m_tmRxSensors != null)
-			{
-				m_tmRxSensors.Change(Timeout.Infinite, Timeout.Infinite);
-				m_tmRxSensors.Dispose();
-				m_tmRxSensors = null;
-			}
+            if (m_tmRxSensors != null)
+            {
+                m_tmRxSensors.Change(Timeout.Infinite, Timeout.Infinite);
+                m_tmRxSensors.Dispose();
+                m_tmRxSensors = null;
+            }
 
-			if (enabled)
-			m_tmRxSensors = new System.Threading.Timer(RxSensorsTimerCallback, null, fireImmediately ? 0 : m_sensorManager.RxIntervalMs, m_sensorManager.RxIntervalMs);
-		}
+            if (enabled)
+                m_tmRxSensors = new System.Threading.Timer(RxSensorsTimerCallback, null, fireImmediately ? 0 : m_sensorManager.RxIntervalMs, m_sensorManager.RxIntervalMs);
+        }
 
-		private void setTxSensorsEnabled(bool enabled, int intervalMs, bool fireImmediately)
-		{
-			m_sensorManager.ConfigureTxSensors(enabled, intervalMs);
+        private void setTxSensorsEnabled(bool enabled, int intervalMs, bool fireImmediately)
+        {
+            m_sensorManager.ConfigureTxSensors(enabled, intervalMs);
 
-			if (m_tmTxSensors != null)
-			{
-				m_tmTxSensors.Change(Timeout.Infinite, Timeout.Infinite);
-				m_tmTxSensors.Dispose();
-				m_tmTxSensors = null;
-			}
+            if (m_tmTxSensors != null)
+            {
+                m_tmTxSensors.Change(Timeout.Infinite, Timeout.Infinite);
+                m_tmTxSensors.Dispose();
+                m_tmTxSensors = null;
+            }
 
-			if (enabled)
-			m_tmTxSensors = new System.Threading.Timer(TxSensorsTimerCallback, null, fireImmediately ? 0 : m_sensorManager.TxIntervalMs, m_sensorManager.TxIntervalMs);
-		}
+            if (enabled)
+                m_tmTxSensors = new System.Threading.Timer(TxSensorsTimerCallback, null, fireImmediately ? 0 : m_sensorManager.TxIntervalMs, m_sensorManager.TxIntervalMs);
+        }
 
-		private void RxSensorsTimerCallback(object state)
-		{
-			if (m_stopClient || m_disconnected) return;
+        private void RxSensorsTimerCallback(object state)
+        {
+            if (m_stopClient || m_disconnected) return;
 
-			bool rx2Enabled = false;
-			bool rx1SubEnabled = false;
+            bool rx2Enabled = false;
+            bool rx1SubEnabled = false;
             try
             {
                 rx2Enabled = consoleThreadSafe.RX2Enabled;
@@ -2858,76 +2858,76 @@ namespace Thetis
             catch
             { }
 
-			if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig))
-			{
-			    sendRxSensors(0, rx1Main_sig);
-			    sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig);
-			    m_sensorManager.ConsumeRxChannelReading(0, 0);
-		    }
+            if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig))
+            {
+                sendRxSensors(0, rx1Main_sig);
+                sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig);
+                m_sensorManager.ConsumeRxChannelReading(0, 0);
+            }
 
-			if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig))
-		    {
-				sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig);
-				m_sensorManager.ConsumeRxChannelReading(0, 1);
-			}
+            if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig))
+            {
+                sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig);
+                m_sensorManager.ConsumeRxChannelReading(0, 1);
+            }
 
-			if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig))
-			{
-				sendRxSensors(1, rx2Main_sig);
-				sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig);
-				m_sensorManager.ConsumeRxChannelReading(1, 0);
-			}
-		}
+            if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig))
+            {
+                sendRxSensors(1, rx2Main_sig);
+                sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig);
+                m_sensorManager.ConsumeRxChannelReading(1, 0);
+            }
+        }
 
-		private void TxSensorsTimerCallback(object state)
-		{
-			if (m_stopClient || m_disconnected) return;
+        private void TxSensorsTimerCallback(object state)
+        {
+            if (m_stopClient || m_disconnected) return;
 
-			if (m_sensorManager.TryGetTxReadingsForSend(out double micLevelDbm, out double powerWatts, out double peakPowerWatts, out double swr))
-			{
-			    sendTxSensors(0, micLevelDbm, powerWatts, peakPowerWatts, swr);
-			    sendTxSensors(1, micLevelDbm, powerWatts, peakPowerWatts, swr);
-				m_sensorManager.ConsumeTxReadings();
-			}
-		}
+            if (m_sensorManager.TryGetTxReadingsForSend(out double micLevelDbm, out double powerWatts, out double peakPowerWatts, out double swr))
+            {
+                sendTxSensors(0, micLevelDbm, powerWatts, peakPowerWatts, swr);
+                sendTxSensors(1, micLevelDbm, powerWatts, peakPowerWatts, swr);
+                m_sensorManager.ConsumeTxReadings();
+            }
+        }
 
-		private int findEndOfHeader(byte[] bytes)
-		{
-			int nFind = 0;
-			for (int i = 0; i <= bytes.Length-4; i++)
-			{
-				if (bytes[i] == '\r' &&
-					bytes[i + 1] == '\n' &&
-					bytes[i + 2] == '\r' &&
-					bytes[i + 3] == '\n')
-				{
-					nFind = i + 4;
-					break;
-				}
-			}
-			return nFind;
-		}		
+        private int findEndOfHeader(byte[] bytes)
+        {
+            int nFind = 0;
+            for (int i = 0; i <= bytes.Length - 4; i++)
+            {
+                if (bytes[i] == '\r' &&
+                    bytes[i + 1] == '\n' &&
+                    bytes[i + 2] == '\r' &&
+                    bytes[i + 3] == '\n')
+                {
+                    nFind = i + 4;
+                    break;
+                }
+            }
+            return nFind;
+        }
 
-		private void SocketListenerThreadStart()
-		{
-			System.Threading.Timer t = new System.Threading.Timer(new TimerCallback(PingFrameTimer),
-				null, 1000 * 20, 1000 * 20); // per websock spec ping frames are every 20 seconds.
-											 // Ideally we should receive something
-											// back within 20 seconds, but just use it to cause exception
-											// on socket if client has dc'ed without telling us with a disconnect frame
+        private void SocketListenerThreadStart()
+        {
+            System.Threading.Timer t = new System.Threading.Timer(new TimerCallback(PingFrameTimer),
+                null, 1000 * 20, 1000 * 20); // per websock spec ping frames are every 20 seconds.
+                                             // Ideally we should receive something
+                                             // back within 20 seconds, but just use it to cause exception
+                                             // on socket if client has dc'ed without telling us with a disconnect frame
             byte[] bytes = new byte[SOCKET_READ_BUFFER_SIZE];
 
-			Debug.Print("TCPIP TCI Client Connected !");
-			ClientConnectedHandlers?.Invoke();
+            Debug.Print("TCPIP TCI Client Connected !");
+            ClientConnectedHandlers?.Invoke();
 
-			//SendClientData("# Thetis TCP/IP TCI #" + Environment.NewLine);
+            //SendClientData("# Thetis TCP/IP TCI #" + Environment.NewLine);
 
-			while (!m_stopClient)
-			{
-				try
-				{
+            while (!m_stopClient)
+            {
+                try
+                {
                     if (m_stream == null || m_client == null)
-					{
+                    {
                         m_stopClient = true;
                         continue;
                     }
@@ -2948,7 +2948,7 @@ namespace Thetis
                         continue;
                     }
 
-					int nRead = m_stream.Read(bytes, 0, bytes.Length);
+                    int nRead = m_stream.Read(bytes, 0, bytes.Length);
                     if (nRead < 1)
                     {
                         m_stopClient = true;
@@ -2957,82 +2957,82 @@ namespace Thetis
 
                     _m_buffer.AddRange(bytes.Take(nRead));
 
-					if (!m_bWebSocket)
-					{
+                    if (!m_bWebSocket)
+                    {
                         byte[] bufferedBytes = _m_buffer.ToArray();
                         int nStart = findEndOfHeader(bufferedBytes);
                         if (nStart > 0)
                         {
                             string msg = Encoding.UTF8.GetString(bufferedBytes, 0, nStart);
                             if (Regex.IsMatch(msg, "^GET", RegexOptions.IgnoreCase))
-							{
+                            {
 
-								if (upgradeToWebSocket(msg))
-								{
-									m_bWebSocket = true;
-									Debug.Print("Upgraded to websocket");
+                                if (upgradeToWebSocket(msg))
+                                {
+                                    m_bWebSocket = true;
+                                    Debug.Print("Upgraded to websocket");
 
                                     _m_buffer.RemoveRange(0, nStart);
-									sendInitialisationData();
-								}
-								else
-								{
-									Debug.Print("Not Upgraded to websocket");
-									m_stopClient = true;
-								}
-							}
-						}
+                                    sendInitialisationData();
+                                }
+                                else
+                                {
+                                    Debug.Print("Not Upgraded to websocket");
+                                    m_stopClient = true;
+                                }
+                            }
+                        }
                     }
 
-					if (m_bWebSocket)
-					{
+                    if (m_bWebSocket)
+                    {
                         byte[] bytesAsArray = _m_buffer.ToArray();
-						int frameLen = GetFrameLength(bytesAsArray);
-						while (!m_stopClient && frameLen > -1 && bytesAsArray.Length >= frameLen)
-						{
+                        int frameLen = GetFrameLength(bytesAsArray);
+                        while (!m_stopClient && frameLen > -1 && bytesAsArray.Length >= frameLen)
+                        {
                             byte[] frameBytes = new byte[frameLen];
                             Buffer.BlockCopy(bytesAsArray, 0, frameBytes, 0, frameLen);
-							// enough data to process a frame, dump bytes from the buffer
-							_m_buffer.RemoveRange(0, frameLen);
+                            // enough data to process a frame, dump bytes from the buffer
+                            _m_buffer.RemoveRange(0, frameLen);
 
                             try
                             {
-							    ParseReceiveBuffer(frameBytes);
+                                ParseReceiveBuffer(frameBytes);
                             }
                             catch
                             {
                             }
 
-							bytesAsArray = _m_buffer.ToArray();
-							frameLen = GetFrameLength(bytesAsArray);
-						}
-					}
-				}
+                            bytesAsArray = _m_buffer.ToArray();
+                            frameLen = GetFrameLength(bytesAsArray);
+                        }
+                    }
+                }
                 catch (IOException ioEx) when (isSocketReadTimeout(ioEx))
                 {
                     continue;
-				}
-				catch (SocketException se)
-				{
-					m_stopClient = true;
-					ClientErrorHandlers?.Invoke(se);
-				}
+                }
+                catch (SocketException se)
+                {
+                    m_stopClient = true;
+                    ClientErrorHandlers?.Invoke(se);
+                }
                 catch
                 {
-					m_stopClient = true;
-				}
-			}
+                    m_stopClient = true;
+                }
+            }
 
             m_markedForDeletion = true;
 
             t.Change(Timeout.Infinite, Timeout.Infinite);
-			t = null;
+            t = null;
 
-			Debug.Print("TCPIP TCI Client Disconnected !");
-			m_disconnected = true;
+            Debug.Print("TCPIP TCI Client Disconnected !");
+            m_disconnected = true;
             notifyServerDisconnected();
-			ClientDisconnectedHandlers?.Invoke();
-		}
+            ClientDisconnectedHandlers?.Invoke();
+        }
         private void notifyServerDisconnected(TCPIPtciServer server = null)
         {
             if (Interlocked.Exchange(ref m_disconnectNotified, 1) != 0) return;
@@ -3044,82 +3044,82 @@ namespace Thetis
             }
             catch { }
         }
-		private void sendPingFrame(string sMsg)
-		{
-			try
-			{
-				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
-				{
-					if (m_client.Connected)
-					{
-                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Ping), null, TCIOutboundPriority.Urgent);
-					}
-				}
-			}
-			catch
-			{
-				Debug.Print("problem writing ping frame");
-				m_stopClient = true;
-			}
-		}
-		private void sendPongFrame(string sMsg)
-		{
-			try
-			{
-				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
-				{
-					if (m_client.Connected)
-					{
-                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Pong), null, TCIOutboundPriority.Urgent);
-					}
-				}
-			}
-			catch
-			{
-				Debug.Print("problem writing pong frame");
-				m_stopClient = true;
-			}
-		}
-		private void sendTextFrame(string sMsg)
-		{
-			try
-			{
-				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
-				{
+        private void sendPingFrame(string sMsg)
+        {
+            try
+            {
+                if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
+                {
                     if (m_client.Connected)
-					{
-                        enqueueOutboundFrame( getFrameFromString(sMsg, EOpcodeType.Text),
+                    {
+                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Ping), null, TCIOutboundPriority.Urgent);
+                    }
+                }
+            }
+            catch
+            {
+                Debug.Print("problem writing ping frame");
+                m_stopClient = true;
+            }
+        }
+        private void sendPongFrame(string sMsg)
+        {
+            try
+            {
+                if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
+                {
+                    if (m_client.Connected)
+                    {
+                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Pong), null, TCIOutboundPriority.Urgent);
+                    }
+                }
+            }
+            catch
+            {
+                Debug.Print("problem writing pong frame");
+                m_stopClient = true;
+            }
+        }
+        private void sendTextFrame(string sMsg)
+        {
+            try
+            {
+                if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
+                {
+                    if (m_client.Connected)
+                    {
+                        enqueueOutboundFrame(getFrameFromString(sMsg, EOpcodeType.Text),
                             sMsg, TCIOutboundPriority.Control, getCoalescedTextFrameKey(sMsg));
-					}
-				}
-			}
-			catch(Exception)
-			{
-				Debug.Print("problem writing text frame");
-				m_stopClient = true;
-			}
-		}
-		private void sendBinaryFrame(byte[] payload, bool payload_is_audio = false)
-		{
-			try
-			{
-				if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
-				{
-					if (m_client.Connected)
-					{
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Debug.Print("problem writing text frame");
+                m_stopClient = true;
+            }
+        }
+        private void sendBinaryFrame(byte[] payload, bool payload_is_audio = false)
+        {
+            try
+            {
+                if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
+                {
+                    if (m_client.Connected)
+                    {
                         enqueueOutboundFrame(GetFrameFromBytes(payload, EOpcodeType.Binary), null, payload_is_audio ? TCIOutboundPriority.Urgent : TCIOutboundPriority.Binary);
-					}
-				}
-			}
-			catch
-			{
-				Debug.Print("problem writing binary frame");
-				m_stopClient = true;
-			}
-		}
+                    }
+                }
+            }
+            catch
+            {
+                Debug.Print("problem writing binary frame");
+                m_stopClient = true;
+            }
+        }
 
-		private void sendCloseFrame()
-		{
+        private void sendCloseFrame()
+        {
             try
             {
                 if (!m_stopClient && m_bWebSocket && m_client != null && m_stream != null)
@@ -3131,24 +3131,24 @@ namespace Thetis
                 }
             }
             catch { }
-		}
-		public void StopSocketListener()
-		{
-			TCPIPtciServer server = m_server;
+        }
+        public void StopSocketListener()
+        {
+            TCPIPtciServer server = m_server;
             notifyServerDisconnected(server);
-			lock (m_objStreamLock)
-			{
-				m_txUsesTCIAudio = false;
+            lock (m_objStreamLock)
+            {
+                m_txUsesTCIAudio = false;
                 m_tciPttActive = false;
-			}
-			clearQueuedTxAudio();
+            }
+            clearQueuedTxAudio();
             clearRxAudioStreamState();
             m_audioCompression.Dispose();
             server?.ReleaseActiveTxAudioListener(this);
-			server?.RefreshTxAudioSourceState();
+            server?.RefreshTxAudioSourceState();
             m_server?.RefreshStreamRunState();
-			if (m_client != null)
-			{
+            if (m_client != null)
+            {
                 if (m_tmVFOtimer != null)
                 {
                     m_tmVFOtimer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -3179,19 +3179,19 @@ namespace Thetis
 
                 if (m_stream != null)
                 {
-					sendStop();
-					
-					sendCloseFrame();
+                    sendStop();
+
+                    sendCloseFrame();
 
                     flushOutboundFrames(100);
 
-					m_stream.Close();
-					m_stream = null;
-				}
+                    m_stream.Close();
+                    m_stream = null;
+                }
 
-				m_stopClient = true;
+                m_stopClient = true;
                 m_outboundFrameEvent.Set();
-				m_client.Close();
+                m_client.Close();
 
                 if (m_sendThread != null)
                 {
@@ -3210,49 +3210,49 @@ namespace Thetis
                     m_spectrumProcessor = null;
                 }
 
-				if (m_VFODataThread != null)
-				{
-					m_VFODataThread.Join(50);
+                if (m_VFODataThread != null)
+                {
+                    m_VFODataThread.Join(50);
 
-					if (m_VFODataThread.IsAlive)
-					{
-						m_VFODataThread.Abort();
-					}
-					m_VFODataThread = null;
-				}
+                    if (m_VFODataThread.IsAlive)
+                    {
+                        m_VFODataThread.Abort();
+                    }
+                    m_VFODataThread = null;
+                }
 
-				if (m_clientListenerThread != null)
-				{
-					m_clientListenerThread.Join(50);
+                if (m_clientListenerThread != null)
+                {
+                    m_clientListenerThread.Join(50);
 
-					if (m_clientListenerThread.IsAlive)
-					{
-						m_clientListenerThread.Abort();
-						m_disconnected = true;
+                    if (m_clientListenerThread.IsAlive)
+                    {
+                        m_clientListenerThread.Abort();
+                        m_disconnected = true;
                         notifyServerDisconnected(server);
-						ClientDisconnectedHandlers?.Invoke();
-					}
+                        ClientDisconnectedHandlers?.Invoke();
+                    }
 
-					m_clientListenerThread = null;
-				}
+                    m_clientListenerThread = null;
+                }
 
-				m_server = null;
-				m_client = null;
+                m_server = null;
+                m_client = null;
                 clearOutboundFrames();
-				m_markedForDeletion = true;
-			}
-		}
+                m_markedForDeletion = true;
+            }
+        }
 
-		public bool IsMarkedForDeletion()
-		{
-			return m_markedForDeletion;
-		}
-		public bool IsDisconnected()
-		{
-			return m_disconnected;
-		}
-		private int GetFrameLength(Byte[] bytes)
-		{
+        public bool IsMarkedForDeletion()
+        {
+            return m_markedForDeletion;
+        }
+        public bool IsDisconnected()
+        {
+            return m_disconnected;
+        }
+        private int GetFrameLength(Byte[] bytes)
+        {
             //https://noio-ws.readthedocs.io/en/latest/overview_of_websockets.html
 
             if (bytes.Length < 2) return -1; // at least 2 bytes to get payload length
@@ -3260,14 +3260,14 @@ namespace Thetis
             bool mask = (bytes[1] & 0b10000000) != 0;	// frame is masked bit
             int payloadLen = bytes[1] & 0b01111111;
 
-			if (payloadLen <= 125)
-			{
-				return mask ? payloadLen + 6 : payloadLen + 2;
+            if (payloadLen <= 125)
+            {
+                return mask ? payloadLen + 6 : payloadLen + 2;
             }
-			else if (payloadLen == 126)
-			{
+            else if (payloadLen == 126)
+            {
                 // need more bytes
-				if(bytes.Length < 4) return -1;
+                if (bytes.Length < 4) return -1;
                 int extendedLen = (bytes[2] << 8) | bytes[3];
                 return mask ? extendedLen + 8 : extendedLen + 4;
             }
@@ -3290,20 +3290,20 @@ namespace Thetis
 
             return -1;
         }
-		private void ParseReceiveBuffer(Byte[] bytes)
-		{
-			if (bytes.Length == 0) return;
+        private void ParseReceiveBuffer(Byte[] bytes)
+        {
+            if (bytes.Length == 0) return;
 
             bool mask = (bytes[1] & 0b10000000) != 0;
-			EOpcodeType opcode = (EOpcodeType)(bytes[0] & 0b00001111);
-			
-			if (opcode == EOpcodeType.ClosedConnection)
-			{
-				sendCloseFrame();
+            EOpcodeType opcode = (EOpcodeType)(bytes[0] & 0b00001111);
 
-				m_stopClient = true;
-				return;
-			}
+            if (opcode == EOpcodeType.ClosedConnection)
+            {
+                sendCloseFrame();
+
+                m_stopClient = true;
+                return;
+            }
 
             int dataLength = 0;
             int keyIndex = 0;
@@ -3312,7 +3312,7 @@ namespace Thetis
             if (payloadLen <= 125)
             {
                 keyIndex = 2;
-				dataLength = payloadLen;
+                dataLength = payloadLen;
             }
             else if (payloadLen == 126)
             {
@@ -3335,7 +3335,7 @@ namespace Thetis
                 dataLength = (int)extendedLength;
             }
 
-			int dataIndex = keyIndex;
+            int dataIndex = keyIndex;
             if (mask)
             {
                 if (bytes.Length < keyIndex + 4) return;
@@ -3343,90 +3343,90 @@ namespace Thetis
             }
             if (dataLength < 0 || bytes.Length < dataIndex + dataLength) return;
 
-			if (mask)
-			{
-				byte[] key = new byte[] { bytes[keyIndex], bytes[keyIndex + 1], bytes[keyIndex + 2], bytes[keyIndex + 3] };
-
-				for (int i = 0; i < dataLength; i++)
-				{
-					bytes[dataIndex + i] = (byte)(bytes[dataIndex + i] ^ key[i % 4]);
-				}
-			}
-
-			if (opcode == EOpcodeType.Text)
-			{
-				parseTextFrame(Encoding.UTF8.GetString(bytes, dataIndex, dataLength));
-			}
-			else if(opcode == EOpcodeType.Ping)
+            if (mask)
             {
-				sendPongFrame("Thetis");
+                byte[] key = new byte[] { bytes[keyIndex], bytes[keyIndex + 1], bytes[keyIndex + 2], bytes[keyIndex + 3] };
+
+                for (int i = 0; i < dataLength; i++)
+                {
+                    bytes[dataIndex + i] = (byte)(bytes[dataIndex + i] ^ key[i % 4]);
+                }
             }
-			else if(opcode == EOpcodeType.Binary)
+
+            if (opcode == EOpcodeType.Text)
+            {
+                parseTextFrame(Encoding.UTF8.GetString(bytes, dataIndex, dataLength));
+            }
+            else if (opcode == EOpcodeType.Ping)
+            {
+                sendPongFrame("Thetis");
+            }
+            else if (opcode == EOpcodeType.Binary)
             {
                 byte[] payload = new byte[dataLength];
                 Buffer.BlockCopy(bytes, dataIndex, payload, 0, dataLength);
                 handleBinaryFrame(payload);
             }
-			//else
-			//{
-			//	Debug.Print("UNNOWN OPCODE " + opcode.ToString());
-			//}
-		}
-		private void handleSetInFocus()
-        {
-			consoleThreadSafe.Focus();
+            //else
+            //{
+            //	Debug.Print("UNNOWN OPCODE " + opcode.ToString());
+            //}
         }
-		private void handleStart()
+        private void handleSetInFocus()
         {
-			if(!consoleThreadSafe.PowerOn)
-				consoleThreadSafe.PowerOn = true;
+            consoleThreadSafe.Focus();
         }
-		private void handleStop()
-		{
+        private void handleStart()
+        {
+            if (!consoleThreadSafe.PowerOn)
+                consoleThreadSafe.PowerOn = true;
+        }
+        private void handleStop()
+        {
             if (consoleThreadSafe.PowerOn)
-				consoleThreadSafe.PowerOn = false;
-		}
-		private void handleSpotClear()
-		{
-			SpotManager2.ClearAllSpots(true, false);
-		}
-		private void handleSplitEnableMessage(string[] args)
-		{
-			int rx = 0;
-			bool bSplit = false;
+                consoleThreadSafe.PowerOn = false;
+        }
+        private void handleSpotClear()
+        {
+            SpotManager2.ClearAllSpots(true, false);
+        }
+        private void handleSplitEnableMessage(string[] args)
+        {
+            int rx = 0;
+            bool bSplit = false;
 
-			bool bOK = int.TryParse(args[0], out rx);
-			if (args.Length == 2)
-			{
-				// set
-				if (bOK)
-					bOK = bool.TryParse(args[1], out bSplit);
+            bool bOK = int.TryParse(args[0], out rx);
+            if (args.Length == 2)
+            {
+                // set
+                if (bOK)
+                    bOK = bool.TryParse(args[1], out bSplit);
 
-				if (bOK)
-				{
-					if (!consoleThreadSafe.IsSetupFormNull)
-					{
+                if (bOK)
+                {
+                    if (!consoleThreadSafe.IsSetupFormNull)
+                    {
                         if (consoleThreadSafe.SetupForm.SplitFromCATorTCIcancelsQSPLIT)
                         {
                             if (consoleThreadSafe.SetupForm.QuickSplitEnabled)
                                 consoleThreadSafe.SetupForm.QuickSplitEnabled = false;
                         }
                     }
-					if (rx == 0 || rx == 1)
-						if(consoleThreadSafe.VFOSplit != bSplit)
-							consoleThreadSafe.VFOSplit = bSplit;
-				}
-			}
-			else if(args.Length == 1)
-			{
-				// get
-				if (bOK)
-				{
-					bool bSplitGet = consoleThreadSafe.VFOSplit;
-					sendSplit(rx, bSplitGet);
-				}
-			}
-		}
+                    if (rx == 0 || rx == 1)
+                        if (consoleThreadSafe.VFOSplit != bSplit)
+                            consoleThreadSafe.VFOSplit = bSplit;
+                }
+            }
+            else if (args.Length == 1)
+            {
+                // get
+                if (bOK)
+                {
+                    bool bSplitGet = consoleThreadSafe.VFOSplit;
+                    sendSplit(rx, bSplitGet);
+                }
+            }
+        }
         private void handleRITEnableMessage(string[] args)
         {
             if (args.Length < 1 || args.Length > 2) return;
@@ -3523,7 +3523,7 @@ namespace Thetis
             else
             {
                 if (!bool.TryParse(args[1], out bool enabled)) return;
-                    if (rx == 0)
+                if (rx == 0)
                 {
                     consoleThreadSafe.SetupForm.RX1APFEnable = enabled;
                 }
@@ -3743,17 +3743,17 @@ namespace Thetis
 
             m_server?.HandleCwKeyer(this, rx, pressed, Math.Max(0, durationMs));
         }
-		private void handleTrxMessage(string[] args)
-		{
-			int rx = 0;
-			bool bMox = false;
+        private void handleTrxMessage(string[] args)
+        {
+            int rx = 0;
+            bool bMox = false;
 
-			bool bOK = int.TryParse(args[0], out rx);
-			if (bOK && args.Length > 1)
-				bOK = bool.TryParse(args[1], out bMox);
+            bool bOK = int.TryParse(args[0], out rx);
+            if (bOK && args.Length > 1)
+                bOK = bool.TryParse(args[1], out bMox);
 
-			if (args.Length > 1)
-			{ 
+            if (args.Length > 1)
+            {
                 if (bOK && shouldIgnoreTrxForCurrentCwBreakIn())
                 {
                     bool releaseOwner;
@@ -3806,44 +3806,44 @@ namespace Thetis
                 if (!m_tciPttActive)
                     clearQueuedTxAudio();
 
-				if (bOK)
-				{
-					if (bMox && alreadyMox)
+                if (bOK)
+                {
+                    if (bMox && alreadyMox)
                     {
                         m_server?.RefreshTxAudioSourceState();
-						m_server?.RefreshStreamRunState();
+                        m_server?.RefreshStreamRunState();
                         return;
                     }
 
-					if (rx == 0)
-					{
-						if (consoleThreadSafe.RX2Enabled && consoleThreadSafe.VFOBTX)
-							consoleThreadSafe.VFOATX = true;
+                    if (rx == 0)
+                    {
+                        if (consoleThreadSafe.RX2Enabled && consoleThreadSafe.VFOBTX)
+                            consoleThreadSafe.VFOATX = true;
 
-						if (consoleThreadSafe.MOX != bMox)
-							consoleThreadSafe.TCIPTT = bMox;
-					}
+                        if (consoleThreadSafe.MOX != bMox)
+                            consoleThreadSafe.TCIPTT = bMox;
+                    }
                     else if (rx == 1 && consoleThreadSafe.RX2Enabled)
                     {
-						if (!consoleThreadSafe.VFOBTX)
-							consoleThreadSafe.VFOBTX = true;
+                        if (!consoleThreadSafe.VFOBTX)
+                            consoleThreadSafe.VFOBTX = true;
 
-						if (consoleThreadSafe.MOX != bMox)
-							consoleThreadSafe.TCIPTT = bMox;
-					}
+                        if (consoleThreadSafe.MOX != bMox)
+                            consoleThreadSafe.TCIPTT = bMox;
+                    }
 
                     if (!bMox)
                         m_server?.NotifyCwTciPttReleased(this);
-				}
+                }
 
-				m_server?.RefreshTxAudioSourceState();
-				m_server?.RefreshStreamRunState();
-			}
-			else if (bOK && args.Length == 1)
-            {
-				sendMOX(rx, consoleThreadSafe.MOX, m_txUsesTCIAudio);
+                m_server?.RefreshTxAudioSourceState();
+                m_server?.RefreshStreamRunState();
             }
-		}
+            else if (bOK && args.Length == 1)
+            {
+                sendMOX(rx, consoleThreadSafe.MOX, m_txUsesTCIAudio);
+            }
+        }
 
         private bool shouldIgnoreTrxForCurrentCwBreakIn()
         {
@@ -3859,124 +3859,124 @@ namespace Thetis
             return breakInMode == BreakIn.QSK || breakInMode == BreakIn.Manual;
         }
 
-		private void handleIF(string[] args)
-		{
-			int rx = 0;
-			int chan = 0;
-			long lIF = 0;
+        private void handleIF(string[] args)
+        {
+            int rx = 0;
+            int chan = 0;
+            long lIF = 0;
 
-			bool bOK = int.TryParse(args[0], out rx);
-			if (bOK)
-				bOK = int.TryParse(args[1], out chan);
-			if (args.Length == 3)
-			{
-				if (bOK)
-					bOK = long.TryParse(args[2], out lIF);
+            bool bOK = int.TryParse(args[0], out rx);
+            if (bOK)
+                bOK = int.TryParse(args[1], out chan);
+            if (args.Length == 3)
+            {
+                if (bOK)
+                    bOK = long.TryParse(args[2], out lIF);
 
-				if (bOK)
-				{
-					double dIF = lIF / 1e6;
-					double vfo;
+                if (bOK)
+                {
+                    double dIF = lIF / 1e6;
+                    double vfo;
 
-					if (rx == 0)
-					{
-						vfo = consoleThreadSafe.CentreFrequency + dIF;
-						vfo = Math.Round(vfo, 6);
-						if (chan == 0)
-						{
-							if (consoleThreadSafe.VFOAFreq != vfo)
-								consoleThreadSafe.VFOAFreq = vfo;
-						}
-						else if (chan == 1)
-						{
-							if (consoleThreadSafe.VFOBFreq != vfo)
-								consoleThreadSafe.VFOBFreq = vfo;
-						}
-					}
-					else if (rx == 1)
-					{
-						if (consoleThreadSafe.RX2Enabled)
-						{
-							vfo = consoleThreadSafe.CentreRX2Frequency + dIF;
-							vfo = Math.Round(vfo, 6);
-							if (chan == 0)
-							{
-								if (consoleThreadSafe.VFOBFreq != vfo)
-									consoleThreadSafe.VFOBFreq = vfo;
-							}
-							else if (chan == 1)
-							{
-								if (consoleThreadSafe.VFOBFreq != vfo)
-									consoleThreadSafe.VFOBFreq = vfo;
-							}
-						}
-					}
-				}
-			}
-			else if (args.Length == 2)
-			{
-				bool bVFOaUseRX2;
-				if (m_server != null && consoleThreadSafe != null)
-					bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
-				else
-					bVFOaUseRX2 = false;
+                    if (rx == 0)
+                    {
+                        vfo = consoleThreadSafe.CentreFrequency + dIF;
+                        vfo = Math.Round(vfo, 6);
+                        if (chan == 0)
+                        {
+                            if (consoleThreadSafe.VFOAFreq != vfo)
+                                consoleThreadSafe.VFOAFreq = vfo;
+                        }
+                        else if (chan == 1)
+                        {
+                            if (consoleThreadSafe.VFOBFreq != vfo)
+                                consoleThreadSafe.VFOBFreq = vfo;
+                        }
+                    }
+                    else if (rx == 1)
+                    {
+                        if (consoleThreadSafe.RX2Enabled)
+                        {
+                            vfo = consoleThreadSafe.CentreRX2Frequency + dIF;
+                            vfo = Math.Round(vfo, 6);
+                            if (chan == 0)
+                            {
+                                if (consoleThreadSafe.VFOBFreq != vfo)
+                                    consoleThreadSafe.VFOBFreq = vfo;
+                            }
+                            else if (chan == 1)
+                            {
+                                if (consoleThreadSafe.VFOBFreq != vfo)
+                                    consoleThreadSafe.VFOBFreq = vfo;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (args.Length == 2)
+            {
+                bool bVFOaUseRX2;
+                if (m_server != null && consoleThreadSafe != null)
+                    bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
+                else
+                    bVFOaUseRX2 = false;
 
-				// query
-				if (bOK)
-				{
-					double dIF = 0;
-					if (rx == 0)
-					{
-						if (chan == 0)
-						{
-							dIF = consoleThreadSafe.VFOAFreq - consoleThreadSafe.CentreFrequency;
-						}
-						else if (chan == 1)
-						{
-							dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreFrequency;
-						}
-					}
-					else if (rx == 1)
-					{
-						if (chan == 0)
-						{
-							if(bVFOaUseRX2)
-								dIF = consoleThreadSafe.VFOAFreq - consoleThreadSafe.CentreFrequency;
-							else
-								dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreRX2Frequency;
-						}
-						else
-						{
-							dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreRX2Frequency;
-						}
-					}
+                // query
+                if (bOK)
+                {
+                    double dIF = 0;
+                    if (rx == 0)
+                    {
+                        if (chan == 0)
+                        {
+                            dIF = consoleThreadSafe.VFOAFreq - consoleThreadSafe.CentreFrequency;
+                        }
+                        else if (chan == 1)
+                        {
+                            dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreFrequency;
+                        }
+                    }
+                    else if (rx == 1)
+                    {
+                        if (chan == 0)
+                        {
+                            if (bVFOaUseRX2)
+                                dIF = consoleThreadSafe.VFOAFreq - consoleThreadSafe.CentreFrequency;
+                            else
+                                dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreRX2Frequency;
+                        }
+                        else
+                        {
+                            dIF = consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreRX2Frequency;
+                        }
+                    }
 
-					dIF *= 1e6; // into HZ
-					sendIF(rx, chan, (int)dIF);
-				}
-			}
-		}
+                    dIF *= 1e6; // into HZ
+                    sendIF(rx, chan, (int)dIF);
+                }
+            }
+        }
 
-		private void handleDDS(string[] args)
-		{
-			int rx = 0;
-			long ddsLong = 0;
+        private void handleDDS(string[] args)
+        {
+            int rx = 0;
+            long ddsLong = 0;
 
-			bool bOK = int.TryParse(args[0], out rx);
+            bool bOK = int.TryParse(args[0], out rx);
 
-			if (args.Length == 2)
-			{
-				if (bOK)
-					bOK = long.TryParse(args[1], out ddsLong);
-				if (bOK)
-				{
-					double dds = ddsLong / 1e6;
+            if (args.Length == 2)
+            {
+                if (bOK)
+                    bOK = long.TryParse(args[1], out ddsLong);
+                if (bOK)
+                {
+                    double dds = ddsLong / 1e6;
 
                     //[2.10.3.16]MW0LGE changes here to fix issue with dds causing multiple IF messages
                     //also, a dds when ctun is off will cause direct frequency change to the dds
                     //this can be followed by an if message if necessary
-					if (rx == 0)
-					{
+                    if (rx == 0)
+                    {
                         consoleThreadSafe.CentreFrequency = dds;
                         if (consoleThreadSafe.ClickTuneDisplay)
                             consoleThreadSafe.VFOAFreq = consoleThreadSafe.VFOAFreq;
@@ -3987,8 +3987,8 @@ namespace Thetis
                         //consoleThreadSafe.CentreFrequency = dds;
                         //consoleThreadSafe.VFOAFreq += c;
                     }
-					else if (rx == 1)
-					{
+                    else if (rx == 1)
+                    {
                         consoleThreadSafe.CentreRX2Frequency = dds;
                         if (consoleThreadSafe.ClickTuneRX2Display)
                             consoleThreadSafe.VFOBFreq = consoleThreadSafe.VFOBFreq;
@@ -4000,193 +4000,193 @@ namespace Thetis
                         //consoleThreadSafe.VFOBFreq += c;
                     }
                 }
-			}
-			else if (bOK && args.Length == 1)
-			{
-				// query
-				if (bOK)
-				{
-					double dds = 0;
-					if (rx == 0)
-					{
-						dds = consoleThreadSafe.CentreFrequency;
-					}
-					else if (rx == 1)
-					{
-						dds = consoleThreadSafe.CentreRX2Frequency;
-					}
+            }
+            else if (bOK && args.Length == 1)
+            {
+                // query
+                if (bOK)
+                {
+                    double dds = 0;
+                    if (rx == 0)
+                    {
+                        dds = consoleThreadSafe.CentreFrequency;
+                    }
+                    else if (rx == 1)
+                    {
+                        dds = consoleThreadSafe.CentreRX2Frequency;
+                    }
 
-					sendDDS(rx, (long)(dds * 1e6));
-				}
-			}
-		}
+                    sendDDS(rx, (long)(dds * 1e6));
+                }
+            }
+        }
 
-		private void handleVFOMessage(string[] args)
-		{
-			int rx = 0;
-			int chan = 0;
-			long freq = 0;
+        private void handleVFOMessage(string[] args)
+        {
+            int rx = 0;
+            int chan = 0;
+            long freq = 0;
 
-			bool bVFOaUseRX2;
-			if (m_server != null && consoleThreadSafe != null)
-				bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
-			else
-				bVFOaUseRX2 = false;
+            bool bVFOaUseRX2;
+            if (m_server != null && consoleThreadSafe != null)
+                bVFOaUseRX2 = consoleThreadSafe.RX2Enabled && m_server.UseRX1VFOaForRX2VFOa;
+            else
+                bVFOaUseRX2 = false;
 
-			bool bOK = int.TryParse(args[0], out rx);
-			if (bOK)
-				bOK = int.TryParse(args[1], out chan);
-			if (args.Length == 3)
-			{
-				if (bOK)
-					bOK = long.TryParse(args[2], out freq);
+            bool bOK = int.TryParse(args[0], out rx);
+            if (bOK)
+                bOK = int.TryParse(args[1], out chan);
+            if (args.Length == 3)
+            {
+                if (bOK)
+                    bOK = long.TryParse(args[2], out freq);
 
-				if (bOK)
-				{
-					double vfo = freq / 1e6;
-					vfo = Math.Round(vfo, 6);
+                if (bOK)
+                {
+                    double vfo = freq / 1e6;
+                    vfo = Math.Round(vfo, 6);
 
-					if (rx == 0)
-					{
-						if (chan == 0)
-						{
-							if (consoleThreadSafe.VFOAFreq != vfo)
-								consoleThreadSafe.VFOAFreq = vfo;
-						}
-						else if (chan == 1)
-						{
-							if (consoleThreadSafe.VFOBFreq != vfo)
-								consoleThreadSafe.VFOBFreq = vfo;
-						}
-					}
-					else if (rx == 1)
-					{
-						if (consoleThreadSafe.RX2Enabled)
-						{
-							if (chan == 0)
-							{
-								if (bVFOaUseRX2)
-								{
-									if (consoleThreadSafe.VFOAFreq != vfo)
-										consoleThreadSafe.VFOAFreq = vfo;
-								}
+                    if (rx == 0)
+                    {
+                        if (chan == 0)
+                        {
+                            if (consoleThreadSafe.VFOAFreq != vfo)
+                                consoleThreadSafe.VFOAFreq = vfo;
+                        }
+                        else if (chan == 1)
+                        {
+                            if (consoleThreadSafe.VFOBFreq != vfo)
+                                consoleThreadSafe.VFOBFreq = vfo;
+                        }
+                    }
+                    else if (rx == 1)
+                    {
+                        if (consoleThreadSafe.RX2Enabled)
+                        {
+                            if (chan == 0)
+                            {
+                                if (bVFOaUseRX2)
+                                {
+                                    if (consoleThreadSafe.VFOAFreq != vfo)
+                                        consoleThreadSafe.VFOAFreq = vfo;
+                                }
                                 else
                                 {
-									if (consoleThreadSafe.VFOBFreq != vfo)
-										consoleThreadSafe.VFOBFreq = vfo;
-								}
-							}
-							else if (chan == 1)
-							{
-								if (consoleThreadSafe.VFOBFreq != vfo)
-									consoleThreadSafe.VFOBFreq = vfo;
-							}
-						}
-					}
-				}
-			}
-			else if(args.Length == 2)
-			{
-				if (bOK)
-				{
-					double vfo = 0;
-					if (rx == 0)
-					{
-						if (chan == 0)
-						{
-							vfo = consoleThreadSafe.VFOAFreq;
-						}
-						else if (chan == 1)
-						{
-							vfo = consoleThreadSafe.VFOBFreq;
-						}
-					}
-					else if (rx == 1)
-					{
-						if (chan == 0)
-						{
-							if (bVFOaUseRX2)
-								vfo = consoleThreadSafe.VFOAFreq;
-							else
-								vfo = consoleThreadSafe.VFOBFreq;
-						}
-						else
-						{
-							vfo = consoleThreadSafe.VFOBFreq;
-						}
-					}
+                                    if (consoleThreadSafe.VFOBFreq != vfo)
+                                        consoleThreadSafe.VFOBFreq = vfo;
+                                }
+                            }
+                            else if (chan == 1)
+                            {
+                                if (consoleThreadSafe.VFOBFreq != vfo)
+                                    consoleThreadSafe.VFOBFreq = vfo;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (args.Length == 2)
+            {
+                if (bOK)
+                {
+                    double vfo = 0;
+                    if (rx == 0)
+                    {
+                        if (chan == 0)
+                        {
+                            vfo = consoleThreadSafe.VFOAFreq;
+                        }
+                        else if (chan == 1)
+                        {
+                            vfo = consoleThreadSafe.VFOBFreq;
+                        }
+                    }
+                    else if (rx == 1)
+                    {
+                        if (chan == 0)
+                        {
+                            if (bVFOaUseRX2)
+                                vfo = consoleThreadSafe.VFOAFreq;
+                            else
+                                vfo = consoleThreadSafe.VFOBFreq;
+                        }
+                        else
+                        {
+                            vfo = consoleThreadSafe.VFOBFreq;
+                        }
+                    }
 
-					TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
-					{
-						cen = false,
-						centreMHz = -1,
-						rx = bVFOaUseRX2 ? 1 : rx,
-						freqMHz = vfo,
-						offsetHz = -1,
-						chan = chan,
-						duplicate_tochan = -1,
-						replace_if_duplicated = false,
-						sendIF = false
-					};
+                    TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
+                    {
+                        cen = false,
+                        centreMHz = -1,
+                        rx = bVFOaUseRX2 ? 1 : rx,
+                        freqMHz = vfo,
+                        offsetHz = -1,
+                        chan = chan,
+                        duplicate_tochan = -1,
+                        replace_if_duplicated = false,
+                        sendIF = false
+                    };
 
-					VFOChange(vfod);
-				}
-			}
-		}
+                    VFOChange(vfod);
+                }
+            }
+        }
 
-		private void handleModulationMessage(string[] args)
+        private void handleModulationMessage(string[] args)
         {
-			bool bOK = int.TryParse(args[0], out int rx);
+            bool bOK = int.TryParse(args[0], out int rx);
 
-			if (args.Length == 2)
-			{
-				if (bOK)
-				{
-					DSPMode mode;
+            if (args.Length == 2)
+            {
+                if (bOK)
+                {
+                    DSPMode mode;
 
-					switch (args[1].ToLower())
-					{
-						case "lsb":
-							mode = DSPMode.LSB;
-							break;
-						case "usb":
-							mode = DSPMode.USB;
-							break;
-						case "dsb":
-							mode = DSPMode.DSB;
-							break;
-						case "am":
-							mode = DSPMode.AM;
-							break;
-						case "sam":
-							mode = DSPMode.SAM;
-							break;
-						case "nfm":
-						case "fm":
-							mode = DSPMode.FM;
-							break;
-						case "cw":
+                    switch (args[1].ToLower())
+                    {
+                        case "lsb":
+                            mode = DSPMode.LSB;
+                            break;
+                        case "usb":
+                            mode = DSPMode.USB;
+                            break;
+                        case "dsb":
+                            mode = DSPMode.DSB;
+                            break;
+                        case "am":
+                            mode = DSPMode.AM;
+                            break;
+                        case "sam":
+                            mode = DSPMode.SAM;
+                            break;
+                        case "nfm":
+                        case "fm":
+                            mode = DSPMode.FM;
+                            break;
+                        case "cw":
                             //change if needed [2.10.3.6]MW0LGE fixes #365
                             bool bChange = false;
                             if (m_server != null && consoleThreadSafe != null)
-							{
-								if(m_server.CWbecomesCWUabove10mhz)
-								{
-									bool bVFOA10orAbove = consoleThreadSafe.VFOAFreq >= 10.0;
+                            {
+                                if (m_server.CWbecomesCWUabove10mhz)
+                                {
+                                    bool bVFOA10orAbove = consoleThreadSafe.VFOAFreq >= 10.0;
                                     bool bVFOB10orAbove = consoleThreadSafe.VFOBFreq >= 10.0;
-									
+
                                     if (rx == 0)
-									{
-										if(consoleThreadSafe.VFOATX)
+                                    {
+                                        if (consoleThreadSafe.VFOATX)
                                             bChange = bVFOA10orAbove;
-										else
+                                        else
                                             bChange = bVFOB10orAbove;
                                     }
                                     else if (rx == 1)
-									{
-										if (consoleThreadSafe.VFOBTX)
-											bChange = bVFOB10orAbove;
-										else
+                                    {
+                                        if (consoleThreadSafe.VFOBTX)
+                                            bChange = bVFOB10orAbove;
+                                        else
                                             bChange = bVFOA10orAbove;
                                     }
                                 }
@@ -4194,84 +4194,84 @@ namespace Thetis
                             mode = bChange ? DSPMode.CWU : DSPMode.CWL;
                             break;
                         case "cwl":
-							mode = DSPMode.CWL;
-							break;
-						case "cwu":
-							mode = DSPMode.CWU;
-							break;
-						case "digl":
-							mode = DSPMode.DIGL;
-							break;
-						case "digu":
-							mode = DSPMode.DIGU;
-							break;
-						default:
-							mode = DSPMode.FIRST;
-							break;
+                            mode = DSPMode.CWL;
+                            break;
+                        case "cwu":
+                            mode = DSPMode.CWU;
+                            break;
+                        case "digl":
+                            mode = DSPMode.DIGL;
+                            break;
+                        case "digu":
+                            mode = DSPMode.DIGU;
+                            break;
+                        default:
+                            mode = DSPMode.FIRST;
+                            break;
 
-					}
-					if (mode != DSPMode.FIRST)
-					{
-						if (rx == 0)
-						{
-							if(consoleThreadSafe.RX1DSPMode != mode)
-								consoleThreadSafe.RX1DSPMode = mode;
-						}
-						else if (rx == 1)
-						{
-							if(consoleThreadSafe.RX2DSPMode != mode)
-								consoleThreadSafe.RX2DSPMode = mode;
-						}
-					}
-				}
-			}
+                    }
+                    if (mode != DSPMode.FIRST)
+                    {
+                        if (rx == 0)
+                        {
+                            if (consoleThreadSafe.RX1DSPMode != mode)
+                                consoleThreadSafe.RX1DSPMode = mode;
+                        }
+                        else if (rx == 1)
+                        {
+                            if (consoleThreadSafe.RX2DSPMode != mode)
+                                consoleThreadSafe.RX2DSPMode = mode;
+                        }
+                    }
+                }
+            }
             else if (bOK && args.Length == 1)
             {
                 //query
                 if (rx == 0)
                 {
-					sendMode(rx, consoleThreadSafe.RX1DSPMode);
+                    sendMode(rx, consoleThreadSafe.RX1DSPMode);
                 }
-				else if(rx == 1)
+                else if (rx == 1)
                 {
-					sendMode(rx, consoleThreadSafe.RX2DSPMode);
-				}
+                    sendMode(rx, consoleThreadSafe.RX2DSPMode);
+                }
             }
         }
-		private void handleDeleteSpot(string[] args)
+        private void handleDeleteSpot(string[] args)
         {
-			if(args.Length == 1)
+            if (args.Length == 1)
             {
-				SpotManager2.DeleteSpot(args[0]);
+                SpotManager2.DeleteSpot(args[0]);
             }
         }
 
         // line out to switch vacs
-		private void lineOutEnable(int vac_number, bool enable)
-		{			
-			switch (vac_number)
-			{
-				case 0:
+        private void lineOutEnable(int vac_number, bool enable)
+        {
+            switch (vac_number)
+            {
+                case 0:
                     consoleThreadSafe.Invoke(new MethodInvoker(() =>
                     {
-						if (consoleThreadSafe.SetupForm.VACEnable != enable)
-						{
-							consoleThreadSafe.SetupForm.VACEnable = enable;
-						}
+                        if (consoleThreadSafe.SetupForm.VACEnable != enable)
+                        {
+                            consoleThreadSafe.SetupForm.VACEnable = enable;
+                        }
                     }));
                     break;
-				case 1:
+                case 1:
                     consoleThreadSafe.Invoke(new MethodInvoker(() =>
                     {
-						if (consoleThreadSafe.SetupForm.VAC2Enable != enable)
-						{
-							consoleThreadSafe.SetupForm.VAC2Enable = enable;
-						}
+                        if (consoleThreadSafe.SetupForm.VAC2Enable != enable)
+                        {
+                            consoleThreadSafe.SetupForm.VAC2Enable = enable;
+                        }
                     }));
                     break;
-				default:
-					break;
-			}
+                default:
+                    break;
+            }
         }
 
         private void handleLineOutStart(string[] args)
@@ -4301,81 +4301,81 @@ namespace Thetis
         }
         //
         private void handleDrive(string[] args)
-		{
-			if (args.Length < 1) return;
+        {
+            if (args.Length < 1) return;
 
-			bool bOK = int.TryParse(args[0], out int rx);
+            bool bOK = int.TryParse(args[0], out int rx);
 
-			if (bOK && args.Length == 2)
+            if (bOK && args.Length == 2)
             {
-				//set
-				bOK = int.TryParse(args[1], out int pwr);
+                //set
+                bOK = int.TryParse(args[1], out int pwr);
                 if (bOK)
                 {
-					consoleThreadSafe.PWR = pwr;
+                    consoleThreadSafe.PWR = pwr;
                 }
-			}
-			else if (bOK && args.Length == 1)
-            {
-				//read
-				int pwr;
-				if (consoleThreadSafe.SendLimitedPowerLevels)
-					pwr = consoleThreadSafe.PWRConstrained;
-				else
-					pwr = consoleThreadSafe.PWR;
-
-				sendDrivePower(rx, pwr);
             }
-		}
-		private void handleTuneDrive(string[] args)
+            else if (bOK && args.Length == 1)
+            {
+                //read
+                int pwr;
+                if (consoleThreadSafe.SendLimitedPowerLevels)
+                    pwr = consoleThreadSafe.PWRConstrained;
+                else
+                    pwr = consoleThreadSafe.PWR;
+
+                sendDrivePower(rx, pwr);
+            }
+        }
+        private void handleTuneDrive(string[] args)
         {
-			if (args.Length < 1) return;
+            if (args.Length < 1) return;
 
-			bool bOK = int.TryParse(args[0], out int rx);
+            bool bOK = int.TryParse(args[0], out int rx);
 
-			if (bOK && args.Length == 2)
-			{
-				//set
-				bOK = int.TryParse(args[1], out int pwr);
-				if (bOK)
-				{
-					switch (consoleThreadSafe.TuneDrivePowerOrigin)
-					{
-						case DrivePowerSource.DRIVE_SLIDER:
-							consoleThreadSafe.PWR = pwr;
-							break;
-						case DrivePowerSource.TUNE_SLIDER:
-					        consoleThreadSafe.TunePWR = pwr;
-							break;
-					}
-				}
-			}
-			else if (bOK && args.Length == 1)
-			{
-				//read
-				int pwr = 0;
-				switch (consoleThreadSafe.TuneDrivePowerOrigin)
-				{
-					case DrivePowerSource.DRIVE_SLIDER:
-						if (consoleThreadSafe.SendLimitedPowerLevels)
-							pwr = consoleThreadSafe.PWRConstrained;
-						else
-							pwr = consoleThreadSafe.PWR;
-						break;
-					case DrivePowerSource.TUNE_SLIDER:
-						if (consoleThreadSafe.SendLimitedPowerLevels)
-							pwr = consoleThreadSafe.TunePWRConstrained;
-						else
-							pwr = consoleThreadSafe.TunePWR;
-						break;
-					case DrivePowerSource.FIXED:
-						pwr = consoleThreadSafe.TunePower;
-						break;
-				}
+            if (bOK && args.Length == 2)
+            {
+                //set
+                bOK = int.TryParse(args[1], out int pwr);
+                if (bOK)
+                {
+                    switch (consoleThreadSafe.TuneDrivePowerOrigin)
+                    {
+                        case DrivePowerSource.DRIVE_SLIDER:
+                            consoleThreadSafe.PWR = pwr;
+                            break;
+                        case DrivePowerSource.TUNE_SLIDER:
+                            consoleThreadSafe.TunePWR = pwr;
+                            break;
+                    }
+                }
+            }
+            else if (bOK && args.Length == 1)
+            {
+                //read
+                int pwr = 0;
+                switch (consoleThreadSafe.TuneDrivePowerOrigin)
+                {
+                    case DrivePowerSource.DRIVE_SLIDER:
+                        if (consoleThreadSafe.SendLimitedPowerLevels)
+                            pwr = consoleThreadSafe.PWRConstrained;
+                        else
+                            pwr = consoleThreadSafe.PWR;
+                        break;
+                    case DrivePowerSource.TUNE_SLIDER:
+                        if (consoleThreadSafe.SendLimitedPowerLevels)
+                            pwr = consoleThreadSafe.TunePWRConstrained;
+                        else
+                            pwr = consoleThreadSafe.TunePWR;
+                        break;
+                    case DrivePowerSource.FIXED:
+                        pwr = consoleThreadSafe.TunePower;
+                        break;
+                }
 
-				sendTunePower(rx, pwr);
-			}
-		}
+                sendTunePower(rx, pwr);
+            }
+        }
         private void handleMute(string[] args, bool hasArgs = true)
         {
             if (hasArgs && args.Length == 1)
@@ -4384,8 +4384,8 @@ namespace Thetis
                 //set
                 if (bOK)
                 {
-					consoleThreadSafe.MUT = mute;
-					consoleThreadSafe.MUT2 = mute;
+                    consoleThreadSafe.MUT = mute;
+                    consoleThreadSafe.MUT2 = mute;
                 }
             }
             else if (!hasArgs)
@@ -4406,9 +4406,9 @@ namespace Thetis
                 bOK = bool.TryParse(args[1], out bool mute);
                 if (bOK)
                 {
-                    if(rx == 0)
+                    if (rx == 0)
                         consoleThreadSafe.MUT = mute;
-                    else if(rx == 1)
+                    else if (rx == 1)
                         consoleThreadSafe.MUT2 = mute;
                 }
             }
@@ -4418,25 +4418,25 @@ namespace Thetis
                 sendMuteRX(rx, rx == 0 ? consoleThreadSafe.MUT : consoleThreadSafe.MUT2);
             }
         }
-		private void handleMONEnable(string[] args, bool hasArgs = true)
-		{
+        private void handleMONEnable(string[] args, bool hasArgs = true)
+        {
             if (hasArgs && args.Length == 1)
             {
                 //set
                 bool bOK = bool.TryParse(args[0], out bool enable);
                 if (bOK)
                 {
-					consoleThreadSafe.MON = enable;
+                    consoleThreadSafe.MON = enable;
                 }
             }
             else if (!hasArgs)
             {
-				//read
-				sendMONEnable(consoleThreadSafe.MON);
+                //read
+                sendMONEnable(consoleThreadSafe.MON);
             }
         }
-		private double linearToDbVolume(int volume)
-		{
+        private double linearToDbVolume(int volume)
+        {
             double dbMin = -60f;
             double dbMax = 0;
             double linearMax = 100f;
@@ -4458,8 +4458,8 @@ namespace Thetis
 
             return (int)linearValue;
         }
-		private void handleMONVolume(string[] args, bool hasArgs = true)
-		{
+        private void handleMONVolume(string[] args, bool hasArgs = true)
+        {
             if (hasArgs && args.Length == 1)
             {
                 //set
@@ -4471,7 +4471,7 @@ namespace Thetis
             }
             else if (!hasArgs)
             {
-				//read
+                //read
                 sendMONVolume(linearToDbVolume(consoleThreadSafe.TXAF));
             }
         }
@@ -4489,253 +4489,253 @@ namespace Thetis
         }
         private void handleSpotSimulateClick(string[] args)
         {
-			if (m_server == null) return;
+            if (m_server == null) return;
 
             if (args.Length == 2)
             {
-				string callsign = args[0];
+                string callsign = args[0];
                 bool bOK = long.TryParse(args[1], out long freq);
                 if (bOK)
-				{
-					m_server.SendSpotSimulationClickToAll(callsign, freq);
+                {
+                    m_server.SendSpotSimulationClickToAll(callsign, freq);
                 }
             }
         }
-		private void handleSpot(string[] args, bool is_json, string msg)
+        private void handleSpot(string[] args, bool is_json, string msg)
         {
-			if (args.Length >= 4) // 4 as argument 5 may contain commas
-			{
-				long freq = 0;
-				uint argb = 0;
-				DSPMode mode = DSPMode.FIRST;
-				bool json_found = false;
+            if (args.Length >= 4) // 4 as argument 5 may contain commas
+            {
+                long freq = 0;
+                uint argb = 0;
+                DSPMode mode = DSPMode.FIRST;
+                bool json_found = false;
 
                 string sAdditional = "";
-				if (!is_json)
-				{
+                if (!is_json)
+                {
                     // join 5+ arguments back together
                     for (int i = 4; i < args.Length; i++)
-					{
-						sAdditional += args[i] + ",";
-					}
-					if (sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
-				}
-				else
-				{
-					int thetis_tag = msg.ToLower().IndexOf("[json]{");
-					if (thetis_tag > -1)
-					{
-						sAdditional = msg.Substring(thetis_tag + 6); // +8  =  the len of [json]
+                    {
+                        sAdditional += args[i] + ",";
+                    }
+                    if (sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
+                }
+                else
+                {
+                    int thetis_tag = msg.ToLower().IndexOf("[json]{");
+                    if (thetis_tag > -1)
+                    {
+                        sAdditional = msg.Substring(thetis_tag + 6); // +8  =  the len of [json]
                         json_found = true;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         // we should have found a [json] tag, ignore if not
                         return;
-					}
+                    }
                 }
 
-				bool bOK = long.TryParse(args[2], out freq);
+                bool bOK = long.TryParse(args[2], out freq);
                 if (bOK)
-					bOK = uint.TryParse(args[3], out argb);
-				if (bOK)
-				{
-					bOK = Enum.TryParse(args[1].ToUpper(), out mode);
+                    bOK = uint.TryParse(args[3], out argb);
+                if (bOK)
+                {
+                    bOK = Enum.TryParse(args[1].ToUpper(), out mode);
                     if (!bOK)
                     {
-						bool isFreqencyNormallyUSB = freq >= 10000000 || (freq >= 5300000 && freq < 5410000);
+                        bool isFreqencyNormallyUSB = freq >= 10000000 || (freq >= 5300000 && freq < 5410000);
 
-						string mode_filtered = SpotManager2.FilterForRawMode(args[1].ToLower());
+                        string mode_filtered = SpotManager2.FilterForRawMode(args[1].ToLower());
 
                         switch (mode_filtered)
                         {
-							case "lsb":
-								mode = DSPMode.LSB;
-								break;
-							case "usb":
-								mode = DSPMode.USB;
-								break;
-							case "am":
-								mode = DSPMode.AM;
-								break;
-							case "fm":
+                            case "lsb":
+                                mode = DSPMode.LSB;
+                                break;
+                            case "usb":
+                                mode = DSPMode.USB;
+                                break;
+                            case "am":
+                                mode = DSPMode.AM;
+                                break;
+                            case "fm":
                             case "nfm":
                                 mode = DSPMode.FM;
-								break;
-							case "dsb":
-								mode = DSPMode.DSB;
-								break;
-							case "drm":
-								mode = DSPMode.DRM;
-								break;
-							case "spec":
-								mode = DSPMode.SPEC;
-								break;
-							case "sam":
-								mode = DSPMode.SAM;
-								break;
-							case "cwl":
-								mode = DSPMode.CWL;
-								break;
-							case "cwu":
-								mode = DSPMode.CWU;
+                                break;
+                            case "dsb":
+                                mode = DSPMode.DSB;
+                                break;
+                            case "drm":
+                                mode = DSPMode.DRM;
+                                break;
+                            case "spec":
+                                mode = DSPMode.SPEC;
+                                break;
+                            case "sam":
+                                mode = DSPMode.SAM;
+                                break;
+                            case "cwl":
+                                mode = DSPMode.CWL;
+                                break;
+                            case "cwu":
+                                mode = DSPMode.CWU;
                                 break;
                             case "digu":
-								mode = DSPMode.DIGU;
+                                mode = DSPMode.DIGU;
                                 break;
                             case "digl":
-								mode = DSPMode.DIGL;
+                                mode = DSPMode.DIGL;
                                 break;
                             case "ssb":
-								if(isFreqencyNormallyUSB)
-									mode = DSPMode.USB;
-								else
-									mode = DSPMode.LSB;
-								break;
-							case "cw":
-								switch(m_server.CWSpotForce)
-								{
-									case TCICWSpotForce.CWU:
+                                if (isFreqencyNormallyUSB)
+                                    mode = DSPMode.USB;
+                                else
+                                    mode = DSPMode.LSB;
+                                break;
+                            case "cw":
+                                switch (m_server.CWSpotForce)
+                                {
+                                    case TCICWSpotForce.CWU:
                                         mode = DSPMode.CWU;
                                         break;
-									case TCICWSpotForce.CWL:
+                                    case TCICWSpotForce.CWL:
                                         mode = DSPMode.CWL;
                                         break;
-									case TCICWSpotForce.DEFAULT:
-									default:
+                                    case TCICWSpotForce.DEFAULT:
+                                    default:
                                         if (isFreqencyNormallyUSB)
                                             mode = DSPMode.CWU;
                                         else
                                             mode = DSPMode.CWL;
                                         break;
-								}
-								break;
-							case "rtty":
-							case "psk":
-							case "olivia":
-							case "jt65":
-							case "jt9":
-							case "contesa":
-							case "fsk":
-							case "mt63":
-							case "domi":
-							case "packtor":
-							case "sstv":
-								if (isFreqencyNormallyUSB)
-									mode = DSPMode.DIGU;
-								else
-									mode = DSPMode.DIGL;
-								break;
-							case "ft8":
-								mode = DSPMode.DIGU; // always usb on ft8
-								break;
-							default:
-								// unknown mode, just set to first, so that Display will draw it centred at least
-								mode = DSPMode.FIRST;
-								break;
+                                }
+                                break;
+                            case "rtty":
+                            case "psk":
+                            case "olivia":
+                            case "jt65":
+                            case "jt9":
+                            case "contesa":
+                            case "fsk":
+                            case "mt63":
+                            case "domi":
+                            case "packtor":
+                            case "sstv":
+                                if (isFreqencyNormallyUSB)
+                                    mode = DSPMode.DIGU;
+                                else
+                                    mode = DSPMode.DIGL;
+                                break;
+                            case "ft8":
+                                mode = DSPMode.DIGU; // always usb on ft8
+                                break;
+                            default:
+                                // unknown mode, just set to first, so that Display will draw it centred at least
+                                mode = DSPMode.FIRST;
+                                break;
                         }
-						bOK = true;
+                        bOK = true;
                     }
-				}
-				if (bOK)
-				{
-					byte[] bytes = Encoding.UTF8.GetBytes(sAdditional);
-					byte[] converted = Encoding.Convert(Encoding.UTF8, Encoding.Unicode, bytes);
+                }
+                if (bOK)
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(sAdditional);
+                    byte[] converted = Encoding.Convert(Encoding.UTF8, Encoding.Unicode, bytes);
 
-					string sAdditionalConvertedText = Encoding.Unicode.GetString(converted, 0, converted.Length);
+                    string sAdditionalConvertedText = Encoding.Unicode.GetString(converted, 0, converted.Length);
 
-					if (sAdditionalConvertedText.ToLower() == "nil") sAdditionalConvertedText = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
-																									//downside is that any additional text that is the string 'nil'
-																									//will be removed, not that it is too much of an issue
+                    if (sAdditionalConvertedText.ToLower() == "nil") sAdditionalConvertedText = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
+                                                                                                    //downside is that any additional text that is the string 'nil'
+                                                                                                    //will be removed, not that it is too much of an issue
 
-					SpotManager2.JsonSpotData jsonSpotData = null;
+                    SpotManager2.JsonSpotData jsonSpotData = null;
 
                     if (json_found)
-					{
-						try
-						{
+                    {
+                        try
+                        {
                             jsonSpotData = JsonConvert.DeserializeObject<SpotManager2.JsonSpotData>(sAdditionalConvertedText);
                         }
-                        catch 
-						{
-							// json failed in some way, ignore
-							return;
-						}
-					}
+                        catch
+                        {
+                            // json failed in some way, ignore
+                            return;
+                        }
+                    }
 
-					SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, jsonSpotData);
-				}
-			}
-		}
+                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, jsonSpotData);
+                }
+            }
+        }
 
         private void handleTune(string[] args)
         {
-			int rx = 0;
-			bool tune = false;
+            int rx = 0;
+            bool tune = false;
 
-			if (args.Length == 2)
-			{
-				bool bOK = int.TryParse(args[0], out rx);
-				if (bOK)
-					bOK = bool.TryParse(args[1], out tune);
+            if (args.Length == 2)
+            {
+                bool bOK = int.TryParse(args[0], out rx);
+                if (bOK)
+                    bOK = bool.TryParse(args[1], out tune);
                 if (bOK)
                 {
-					if(consoleThreadSafe.TUN != tune)
-						consoleThreadSafe.TUN = tune;
+                    if (consoleThreadSafe.TUN != tune)
+                        consoleThreadSafe.TUN = tune;
                 }
-			}
-            else if(args.Length == 1)
-            {
-				//query
-				sendTune(rx, consoleThreadSafe.TUN);
             }
-		}
+            else if (args.Length == 1)
+            {
+                //query
+                sendTune(rx, consoleThreadSafe.TUN);
+            }
+        }
 
         private void handleRxFilterBand(string[] args)
         {
             if (m_server == null) return;
 
-			int rx = 0;
-			int low = 0;
-			int high = 0;
+            int rx = 0;
+            int low = 0;
+            int high = 0;
 
-			if (args.Length == 1)
-			{
-				//read
-				bool bOK = int.TryParse(args[0], out rx);
+            if (args.Length == 1)
+            {
+                //read
+                bool bOK = int.TryParse(args[0], out rx);
 
                 switch (rx)
                 {
                     case 0:
-						low = consoleThreadSafe.RX1FilterLow;
-						high = consoleThreadSafe.RX1FilterHigh;
+                        low = consoleThreadSafe.RX1FilterLow;
+                        high = consoleThreadSafe.RX1FilterHigh;
                         break;
                     case 1:
-						low = consoleThreadSafe.RX2FilterLow;
-						high = consoleThreadSafe.RX2FilterHigh;
+                        low = consoleThreadSafe.RX2FilterLow;
+                        high = consoleThreadSafe.RX2FilterHigh;
                         break;
                 }
 
                 sendFilterBand(rx, low, high);
-			}
+            }
             else if (args.Length == 3)
             {
                 //set
                 bool bOK = int.TryParse(args[0], out rx);
                 if (bOK) bOK = int.TryParse(args[1], out low);
                 if (bOK) bOK = int.TryParse(args[2], out high);
-				if (bOK)
-				{
-					switch (rx)
-					{
-						case 0:
+                if (bOK)
+                {
+                    switch (rx)
+                    {
+                        case 0:
                             consoleThreadSafe.UpdateRX1Filters(low, high);
                             break;
-						case 1:
+                        case 1:
                             consoleThreadSafe.UpdateRX2Filters(low, high);
                             break;
-					}
-				}
+                    }
+                }
             }
         }
         private void handleTXFilterBandEx(string[] args)
@@ -4759,67 +4759,67 @@ namespace Thetis
         }
         private void handleRXEnable(string[] args)
         {
-			int rx = 0;
-			bool enable = false;
+            int rx = 0;
+            bool enable = false;
 
-			bool bOK = int.TryParse(args[0], out rx);
+            bool bOK = int.TryParse(args[0], out rx);
             if (rx < 0 || rx > 1) return;
 
             if (args.Length == 2)
-			{				
-				if (bOK)
-					bOK = bool.TryParse(args[1], out enable);
-				if (bOK)
-				{
-					// rx0 is always enabled
-					if (rx == 1)
-					{
-						if (consoleThreadSafe.RX2Enabled != enable)
-							consoleThreadSafe.RX2Enabled = enable;
-					}
-				}
-			}
-			else if (bOK && args.Length == 1)
-			{
-				//query
-				if (rx == 0)
-				{
-					sendRXEnable(rx, !consoleThreadSafe.MOX);
-				}
-                else if(rx == 1)
+            {
+                if (bOK)
+                    bOK = bool.TryParse(args[1], out enable);
+                if (bOK)
                 {
-					sendRXEnable(rx, consoleThreadSafe.RX2Enabled && !consoleThreadSafe.MOX);
+                    // rx0 is always enabled
+                    if (rx == 1)
+                    {
+                        if (consoleThreadSafe.RX2Enabled != enable)
+                            consoleThreadSafe.RX2Enabled = enable;
+                    }
                 }
-			}
-		}
+            }
+            else if (bOK && args.Length == 1)
+            {
+                //query
+                if (rx == 0)
+                {
+                    sendRXEnable(rx, !consoleThreadSafe.MOX);
+                }
+                else if (rx == 1)
+                {
+                    sendRXEnable(rx, consoleThreadSafe.RX2Enabled && !consoleThreadSafe.MOX);
+                }
+            }
+        }
 
-		private void handleRxSensorsEnable(string[] args)
-		{
-			if (args == null || args.Length < 1 || args.Length > 2) return;
-			if (!bool.TryParse(args[0], out bool enabled)) return;
+        private void handleRxSensorsEnable(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!bool.TryParse(args[0], out bool enabled)) return;
 
-			int intervalMs = m_sensorManager.RxIntervalMs;
-			if (args.Length == 2 && !int.TryParse(args[1], out intervalMs))
-				return;
+            int intervalMs = m_sensorManager.RxIntervalMs;
+            if (args.Length == 2 && !int.TryParse(args[1], out intervalMs))
+                return;
 
-			setRxSensorsEnabled(enabled, intervalMs, enabled);
-		}
+            setRxSensorsEnabled(enabled, intervalMs, enabled);
+        }
         private void handleTxSensorsEnable(string[] args)
-		{
-			if (args == null || args.Length < 1 || args.Length > 2) return;
-			if (!bool.TryParse(args[0], out bool enabled)) return;
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!bool.TryParse(args[0], out bool enabled)) return;
 
-			int intervalMs = m_sensorManager.TxIntervalMs;
-			if (args.Length == 2 && !int.TryParse(args[1], out intervalMs))
-				return;
+            int intervalMs = m_sensorManager.TxIntervalMs;
+            if (args.Length == 2 && !int.TryParse(args[1], out intervalMs))
+                return;
 
-			setTxSensorsEnabled(enabled, intervalMs, enabled);
-		}
+            setTxSensorsEnabled(enabled, intervalMs, enabled);
+        }
         //
         private void sendNREnable(int rx, bool enabled, bool is_extended, int nr)
         {
             string s;
-            if(is_extended)
+            if (is_extended)
                 s = "rx_nr_enable_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + "," + nr.ToString() + ";";
             else
                 s = "rx_nr_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
@@ -4926,8 +4926,8 @@ namespace Thetis
                 //set
                 if (!bool.TryParse(args[1], out enable)) return;
 
-                consoleThreadSafe.SetANF(rx + 1, enable);                
-            }            
+                consoleThreadSafe.SetANF(rx + 1, enable);
+            }
         }
         private double dbToAudioGain(double db)
         {
@@ -4996,7 +4996,7 @@ namespace Thetis
                 //set
                 if (!double.TryParse(args[2], out double db)) return;
 
-                double ag = dbToAudioGain(db) * 100f;              
+                double ag = dbToAudioGain(db) * 100f;
 
                 switch (rx + 1)
                 {
@@ -5198,11 +5198,11 @@ namespace Thetis
         }
         private void handleCTUN(string[] args)
         {
-            if(args== null || args.Length < 1 || args.Length > 2) return;
+            if (args == null || args.Length < 1 || args.Length > 2) return;
             if (!int.TryParse(args[0], out int rx)) return;
 
             bool enable = false;
-            if(args.Length == 1)
+            if (args.Length == 1)
             {
                 //get
                 enable = consoleThreadSafe.GetCTUN(rx + 1);
@@ -5304,7 +5304,7 @@ namespace Thetis
                 {
                     ret.Replace(";", "");
                     string response = $"run_cat_ex:{cat_com},{ret}";
-                    if(response.Right(1) != ";") response += ";";
+                    if (response.Right(1) != ";") response += ";";
                     sendTextFrame(response);
                 }
             }
@@ -6107,10 +6107,10 @@ namespace Thetis
 
         private void sendIQSampleRate(int sampleRate)
         {
-			if (sampleRate < 48000) sampleRate = 48000;
-			if (sampleRate > 384000) sampleRate = 384000; // iq can only go up to that
+            if (sampleRate < 48000) sampleRate = 48000;
+            if (sampleRate > 384000) sampleRate = 384000; // iq can only go up to that
 
-			sendTextFrame("iq_samplerate:" + sampleRate.ToString() + ";");
+            sendTextFrame("iq_samplerate:" + sampleRate.ToString() + ";");
         }
 
         private void sendAudioSampleRate(int sampleRate)
@@ -6202,7 +6202,7 @@ namespace Thetis
         {
             lock (m_objStreamLock)
             {
-				if (m_server != null && m_server.AlwaysStreamIQ) return true;
+                if (m_server != null && m_server.AlwaysStreamIQ) return true;
                 return m_iqStreamEnabled.Contains(receiver);
             }
         }
@@ -6268,7 +6268,7 @@ namespace Thetis
                 {
                     samples = resampleRxAudioSamples(receiver, sampleRate, targetSampleRate, left, right, samples, out left, out right, out bool resampled);
                     if (resampled)
-                    sampleRate = targetSampleRate;
+                        sampleRate = targetSampleRate;
                     if (samples <= 0)
                         return;
                 }
@@ -6298,22 +6298,22 @@ namespace Thetis
                     if (packetSamples <= 0 || leftPending.Count < packetSamples || rightPending.Count < packetSamples)
                         break;
 
-					float[] interleaved = channels <= 1 ? new float[packetSamples] : new float[packetSamples * 2];
-					if (channels <= 1)
-					{
-						leftPending.CopyTo(interleaved, 0, packetSamples);
-					}
-					else
-					{
-						for (int i = 0; i < packetSamples; i++)
-						{
-							interleaved[2 * i] = leftPending.Peek(i);
-							interleaved[2 * i + 1] = rightPending.Peek(i);
-						}
-					}
+                    float[] interleaved = channels <= 1 ? new float[packetSamples] : new float[packetSamples * 2];
+                    if (channels <= 1)
+                    {
+                        leftPending.CopyTo(interleaved, 0, packetSamples);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < packetSamples; i++)
+                        {
+                            interleaved[2 * i] = leftPending.Peek(i);
+                            interleaved[2 * i + 1] = rightPending.Peek(i);
+                        }
+                    }
 
-					leftPending.Advance(packetSamples);
-					rightPending.Advance(packetSamples);
+                    leftPending.Advance(packetSamples);
+                    rightPending.Advance(packetSamples);
 
                     if (codec == TCIAudioCodec.OPUS)
                     {
@@ -6323,9 +6323,9 @@ namespace Thetis
                     }
                     else
                     {
-					    byte[] encoded = encodeSamples(interleaved, sampleType);
-					    sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, channels, encoded), true);
-				    }
+                        byte[] encoded = encodeSamples(interleaved, sampleType);
+                        sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, channels, encoded), true);
+                    }
                 }
             }
         }
@@ -6346,7 +6346,7 @@ namespace Thetis
                 useModernLengthSemantics = m_seenModernTxAudioNegotiation;
             }
 
-			int requestLength = useModernLengthSemantics ? samples * Math.Max(1, channels) : samples;
+            int requestLength = useModernLengthSemantics ? samples * Math.Max(1, channels) : samples;
             sendBinaryFrame(buildStreamPayload(receiver, sampleRate, sampleType, requestLength, TCIStreamType.TX_CHRONO, channels, Array.Empty<byte>()), true);
         }
 
@@ -6548,15 +6548,15 @@ namespace Thetis
             if (args.Length != 1) return;
             if (int.TryParse(args[0], out int sampleRate))
             {
-				//just echo out that we have changed to keep client happy, we dont change Thetis H/W sample rate for now
-				//
+                //just echo out that we have changed to keep client happy, we dont change Thetis H/W sample rate for now
+                //
                 //if (sampleRate == 48000 || sampleRate == 96000 || sampleRate == 192000 || sampleRate == 384000)
                 //{
-				//	for (int i = 0; i < m_hwSampleRate.Length; i++)
-				//	{
-				//		m_hwSampleRate[i] = sampleRate;
-				//		applyIQSampleRateToReceiver(0, sampleRate);
-				//	}
+                //	for (int i = 0; i < m_hwSampleRate.Length; i++)
+                //	{
+                //		m_hwSampleRate[i] = sampleRate;
+                //		applyIQSampleRateToReceiver(0, sampleRate);
+                //	}
                 //}
                 sendIQSampleRate(sampleRate);
             }
@@ -6564,18 +6564,18 @@ namespace Thetis
 
         private int getCurrentMaxHWSampleRate()
         {
-			int max = 48000;
+            int max = 48000;
             try
             {
                 for (int receiver = 0; receiver < cmaster.CMrcvr; receiver++)
                 {
                     int sampleRate = cmaster.GetInputRate(0, receiver);
-					if (sampleRate > max) max = sampleRate;
+                    if (sampleRate > max) max = sampleRate;
                 }
             }
             catch { }
 
-			return max;
+            return max;
         }
 
         private void handleAudioSampleRate(string[] args)
@@ -6663,12 +6663,12 @@ namespace Thetis
                 if (enable) m_iqStreamEnabled.Add(receiver);
                 else m_iqStreamEnabled.Remove(receiver);
             }
-			// not used atm due to the TCI protocol not having per RX IQ sample rate
-			// here for the future
-			//if (enable)
-			//    applyIQSampleRateToReceiver(receiver, m_iqSampleRate);
+            // not used atm due to the TCI protocol not having per RX IQ sample rate
+            // here for the future
+            //if (enable)
+            //    applyIQSampleRateToReceiver(receiver, m_iqSampleRate);
 
-			sendIQStartStop(receiver, enable);
+            sendIQStartStop(receiver, enable);
             m_server?.RefreshStreamRunState();
         }
         private void sendIQStartStop(int receiver, bool enable)
@@ -6704,48 +6704,48 @@ namespace Thetis
                 applyRate();
         }
 
-		private void handleRxChannelEnable(string[] args)
-		{
+        private void handleRxChannelEnable(string[] args)
+        {
             if (args.Length < 2 || args.Length > 3) return;
             if (!int.TryParse(args[0], out int receiver)) return;
-			if(args.Length == 2)
-			{
+            if (args.Length == 2)
+            {
                 if (!int.TryParse(args[1], out int channel)) return;
 
-				//get
-				bool enabled = false;
+                //get
+                bool enabled = false;
                 switch (receiver)
-				{
-					case 0:
-						enabled = channel == 0 ? true : consoleThreadSafe.GetSubRX(1);
+                {
+                    case 0:
+                        enabled = channel == 0 ? true : consoleThreadSafe.GetSubRX(1);
                         break;
-					case 1:
-						//just return rx2 state as no subrx
-						enabled = channel == 0 ? consoleThreadSafe.RX2Enabled : false;
+                    case 1:
+                        //just return rx2 state as no subrx
+                        enabled = channel == 0 ? consoleThreadSafe.RX2Enabled : false;
                         break;
-				}
-				sendRxChannelEnable(receiver, channel, enabled);
-			}
-			else
-			{
+                }
+                sendRxChannelEnable(receiver, channel, enabled);
+            }
+            else
+            {
                 //set len 3
                 if (!int.TryParse(args[1], out int channel)) return;
                 if (!bool.TryParse(args[2], out bool enabled)) return;
 
-				if (receiver == 0 && channel == 1)  // rx1 sub rx, cant disable rx1
-				{
-					consoleThreadSafe.SetSubRX(1, enabled);
-				}
-				else if(receiver == 1) // main or sub will set state
-				{
-					consoleThreadSafe.RX2Enabled = enabled;
-				}
+                if (receiver == 0 && channel == 1)  // rx1 sub rx, cant disable rx1
+                {
+                    consoleThreadSafe.SetSubRX(1, enabled);
+                }
+                else if (receiver == 1) // main or sub will set state
+                {
+                    consoleThreadSafe.RX2Enabled = enabled;
+                }
 
                 sendRxChannelEnable(receiver, channel, enabled);
             }
         }
-		private void sendRxChannelEnable(int rx, int channel, bool enabled)
-		{
+        private void sendRxChannelEnable(int rx, int channel, bool enabled)
+        {
             sendTextFrame("rx_channel_enable:" + rx.ToString() + "," + channel.ToString() + "," + enabled.ToString().ToLower() + ";");
         }
         private void handleAudioStart(string[] args, bool enable)
@@ -7554,6 +7554,8 @@ namespace Thetis
         }
         private static int getDisplayDeltaBits(int maxAbsoluteDelta)
         {
+            if (maxAbsoluteDelta <= 1) return 2;
+            if (maxAbsoluteDelta <= 3) return 3;
             if (maxAbsoluteDelta <= 7) return 4;
             if (maxAbsoluteDelta <= 15) return 5;
             if (maxAbsoluteDelta <= 31) return 6;
@@ -7562,7 +7564,7 @@ namespace Thetis
         }
         private static byte[] buildDisplayDeltaPayload(byte[] currentFrame, byte[] previousFrame, int pixelCount, int bitsPerDelta)
         {
-            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || bitsPerDelta < 4 || bitsPerDelta > 7)
+            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || bitsPerDelta < 2 || bitsPerDelta > 7)
                 return null;
 
             int totalBits = pixelCount * bitsPerDelta;
@@ -7623,36 +7625,49 @@ namespace Thetis
                     if (!m_spectrumProcessor.TryGetReceiverSampleRate(subscription.Receiver, out sampleRate) || sampleRate <= 0)
                         sampleRate = cmaster.GetInputRate(0, subscription.Receiver);
 
-                     byte[] payload;
-                     if (m_displayDeltaMode && subscription.LastSentFrame != null && subscription.LastSentFrame.Length == pixelCount)
-                     {
-                         int maxAbsoluteDelta = 0;
-                         for (int i = 0; i < pixelCount; i++)
-                         {
-                             int absoluteDelta = Math.Abs(encoded[i] - subscription.LastSentFrame[i]);
-                             if (absoluteDelta > maxAbsoluteDelta)
-                                 maxAbsoluteDelta = absoluteDelta;
-                         }
+                    byte[] payload;
+                    if (m_displayDeltaMode && subscription.LastSentFrame != null && subscription.LastSentFrame.Length == pixelCount)
+                    {
+                        int maxAbsoluteDelta = 0;
+                        for (int i = 0; i < pixelCount; i++)
+                        {
+                            //int absoluteDelta = Math.Abs(encoded[i] - subscription.LastSentFrame[i]);
 
-                         int bitsPerDelta = getDisplayDeltaBits(maxAbsoluteDelta);
-                         if (bitsPerDelta > 0)
-                         {
-                             byte[] deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
-                             payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload != null ? deltaPayload.Length : 0);
-                         }
-                         else
-                         {
-                             payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
-                         }
-                     }
-                     else
-                     {
-                         payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
-                     }
+                            //if (absoluteDelta > maxAbsoluteDelta)
+                            //    maxAbsoluteDelta = absoluteDelta;
 
-                     if (subscription.LastSentFrame == null || subscription.LastSentFrame.Length != pixelCount)
-                         subscription.LastSentFrame = new byte[pixelCount];
-                     Buffer.BlockCopy(encoded, 0, subscription.LastSentFrame, 0, pixelCount);
+                            int absoluteDelta = encoded[i] - subscription.LastSentFrame[i];
+                            if (absoluteDelta < 0)
+                                absoluteDelta = -absoluteDelta;
+
+                            if (absoluteDelta > maxAbsoluteDelta)
+                                maxAbsoluteDelta = absoluteDelta;
+
+                            if (maxAbsoluteDelta >= 64)
+                            {
+                                break;
+                            }
+                        }
+
+                        int bitsPerDelta = maxAbsoluteDelta >= 64 ? 0 : getDisplayDeltaBits(maxAbsoluteDelta);
+                        if (bitsPerDelta > 0)
+                        {
+                            byte[] deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
+                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload != null ? deltaPayload.Length : 0);
+                        }
+                        else
+                        {
+                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
+                        }
+                    }
+                    else
+                    {
+                        payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
+                    }
+
+                    if (subscription.LastSentFrame == null || subscription.LastSentFrame.Length != pixelCount)
+                        subscription.LastSentFrame = new byte[pixelCount];
+                    Buffer.BlockCopy(encoded, 0, subscription.LastSentFrame, 0, pixelCount);
                     subscription.LastDataIndex = dataIndex;
 
                     if (payloads == null)
@@ -7676,7 +7691,7 @@ namespace Thetis
                 if (int.TryParse(args[0], out int buffering))
                 {
                     if (buffering >= 50 && buffering <= 500)
-                       m_txStreamAudioBufferingMs = buffering;
+                        m_txStreamAudioBufferingMs = buffering;
                 }
 
                 m_seenModernTxAudioNegotiation = true;
@@ -7684,10 +7699,10 @@ namespace Thetis
             sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
         }
 
-		private void PingFrameTimer(object o)
-		{
-			sendPingFrame("Thetis");
-		}
+        private void PingFrameTimer(object o)
+        {
+            sendPingFrame("Thetis");
+        }
 
         private void VFOcallback(Object o)
         {
@@ -7707,7 +7722,7 @@ namespace Thetis
                 m_tmVFOtimer = null;
             }
 
-			bool bOK = !m_swVFO.IsRunning || (m_swVFO.IsRunning && m_swVFO.ElapsedMilliseconds > m_nRateLimit);
+            bool bOK = !m_swVFO.IsRunning || (m_swVFO.IsRunning && m_swVFO.ElapsedMilliseconds > m_nRateLimit);
 
             if (bOK)
             {
@@ -7719,7 +7734,7 @@ namespace Thetis
                 m_tmVFOtimer = new System.Threading.Timer(VFOcallback, vfod, m_nRateLimit, Timeout.Infinite);
             }
         }
-		public void CentreChange(VFOData vfod)
+        public void CentreChange(VFOData vfod)
         {
             if (m_tmCentretimer != null)
             {
@@ -7727,7 +7742,7 @@ namespace Thetis
                 m_tmCentretimer = null;
             }
 
-			bool bOK = !m_swCentre.IsRunning || (m_swCentre.IsRunning && m_swCentre.ElapsedMilliseconds > m_nRateLimit);
+            bool bOK = !m_swCentre.IsRunning || (m_swCentre.IsRunning && m_swCentre.ElapsedMilliseconds > m_nRateLimit);
 
             if (bOK)
             {
@@ -7761,39 +7776,39 @@ namespace Thetis
         }
     }
 
-	public class TCPIPtciServer
-	{
-		//
-		public delegate void ClientConnected();
-		public delegate void ClientDisconnected();
-		public delegate void ClientError(SocketException se);
-		public delegate void ServerError(SocketException se);
-		public ClientConnected ClientConnectedHandlers;
-		public ClientDisconnected ClientDisconnectedHandlers;
-		public ClientError ClientErrorHandlers;
-		public ServerError ServerErrorHandlers;
-		//
+    public class TCPIPtciServer
+    {
+        //
+        public delegate void ClientConnected();
+        public delegate void ClientDisconnected();
+        public delegate void ClientError(SocketException se);
+        public delegate void ServerError(SocketException se);
+        public ClientConnected ClientConnectedHandlers;
+        public ClientDisconnected ClientDisconnectedHandlers;
+        public ClientError ClientErrorHandlers;
+        public ServerError ServerErrorHandlers;
+        //
 
-		private Console _console;
+        private Console _console;
 
-		public static IPAddress DEFAULT_SERVER = IPAddress.Parse("127.0.0.1");
-		public static int DEFAULT_PORT = 31001;
-		public static IPEndPoint DEFAULT_IP_END_POINT =
-			new IPEndPoint(DEFAULT_SERVER, DEFAULT_PORT);
+        public static IPAddress DEFAULT_SERVER = IPAddress.Parse("127.0.0.1");
+        public static int DEFAULT_PORT = 31001;
+        public static IPEndPoint DEFAULT_IP_END_POINT =
+            new IPEndPoint(DEFAULT_SERVER, DEFAULT_PORT);
 
-		private TcpListener m_server = null;
-		private bool m_stopServer = false;
-		private bool m_stopPurging = false;
-		private Thread m_serverThread = null;
-		private Thread m_purgingThread = null;
-		private List<TCPIPtciSocketListener> m_socketListenersList = null;
+        private TcpListener m_server = null;
+        private bool m_stopServer = false;
+        private bool m_stopPurging = false;
+        private Thread m_serverThread = null;
+        private Thread m_purgingThread = null;
+        private List<TCPIPtciSocketListener> m_socketListenersList = null;
         private TCPIPtciSocketListener m_activeTxAudioListener = null;
-		private object m_objLocker = new object();
+        private object m_objLocker = new object();
         private bool m_bSleepingInPurge = false;
-		private bool m_bDelegatesAdded = false;
-		private int m_nRateLimit = 0;
-		private bool m_bEmulateSunSDR2Pro = false;
-		private bool m_bEmulateExpertSDR3Protocol = true;
+        private bool m_bDelegatesAdded = false;
+        private int m_nRateLimit = 0;
+        private bool m_bEmulateSunSDR2Pro = false;
+        private bool m_bEmulateExpertSDR3Protocol = true;
         private bool m_bIQSwap = true;
         private bool m_bAlwaysStreamIQ = false;
         private TCITxStereoInputMode m_txStereoInputMode = TCITxStereoInputMode.Both;
@@ -7802,98 +7817,98 @@ namespace Thetis
 
         private frmLog _log;
 
-		private Console console
-		{
-			get
-			{
-				if (_console == null) return null;
+        private Console console
+        {
+            get
+            {
+                if (_console == null) return null;
 
-				if (_console.InvokeRequired)
-				{
+                if (_console.InvokeRequired)
+                {
                     return (Console)_console.Invoke(new Func<Console>(() => _console));
                 }
-				else 
-					return _console;
-			}
-		}
-		public TCPIPtciServer()
-		{
-			Init(DEFAULT_IP_END_POINT);
-		}
-		public TCPIPtciServer(IPAddress serverIP)
-		{
-			Init(new IPEndPoint(serverIP, DEFAULT_PORT));
-		}
-
-		public TCPIPtciServer(int port)
-		{
-			Init(new IPEndPoint(DEFAULT_SERVER, port));
-		}
-
-		public TCPIPtciServer(IPAddress serverIP, int port)
-		{
-			Init(new IPEndPoint(serverIP, port));
-		}
-
-		public TCPIPtciServer(IPEndPoint ipNport)
-		{
-			Init(ipNport);
-		}
-		~TCPIPtciServer()
-		{
-			StopServer();
-			if(_log != null)
-            {
-				_log.Close();
-				_log = null;
+                else
+                    return _console;
             }
-		}
+        }
+        public TCPIPtciServer()
+        {
+            Init(DEFAULT_IP_END_POINT);
+        }
+        public TCPIPtciServer(IPAddress serverIP)
+        {
+            Init(new IPEndPoint(serverIP, DEFAULT_PORT));
+        }
 
-		private void Init(IPEndPoint ipNport)
-		{
-			try
-			{
-				if (_log != null)
-                {
-					_log = null;
-                }
-				_log = new frmLog();
-				m_server = new TcpListener(ipNport);
-			}
-			catch
-			{
-				m_server = null;
+        public TCPIPtciServer(int port)
+        {
+            Init(new IPEndPoint(DEFAULT_SERVER, port));
+        }
+
+        public TCPIPtciServer(IPAddress serverIP, int port)
+        {
+            Init(new IPEndPoint(serverIP, port));
+        }
+
+        public TCPIPtciServer(IPEndPoint ipNport)
+        {
+            Init(ipNport);
+        }
+        ~TCPIPtciServer()
+        {
+            StopServer();
+            if (_log != null)
+            {
+                _log.Close();
+                _log = null;
             }
         }
 
-		public frmLog LogForm
+        private void Init(IPEndPoint ipNport)
+        {
+            try
+            {
+                if (_log != null)
+                {
+                    _log = null;
+                }
+                _log = new frmLog();
+                m_server = new TcpListener(ipNport);
+            }
+            catch
+            {
+                m_server = null;
+            }
+        }
+
+        public frmLog LogForm
         {
             get { return _log; }
         }
-		private bool m_bCopyRX2VFObToVFOa = false;
-		public bool CopyRX2VFObToVFOa
-		{
-			get { return m_bCopyRX2VFObToVFOa; }
-			set { m_bCopyRX2VFObToVFOa = value;	}
+        private bool m_bCopyRX2VFObToVFOa = false;
+        public bool CopyRX2VFObToVFOa
+        {
+            get { return m_bCopyRX2VFObToVFOa; }
+            set { m_bCopyRX2VFObToVFOa = value; }
         }
         private bool _replace_if_copy_RX2VFObToVFOa = false;
         public bool ReplaceRX2VFObIfCopyBtoA
         {
-			get { return _replace_if_copy_RX2VFObToVFOa; }
-			set { _replace_if_copy_RX2VFObToVFOa = value; }
+            get { return _replace_if_copy_RX2VFObToVFOa; }
+            set { _replace_if_copy_RX2VFObToVFOa = value; }
         }
         private bool m_bCWLUbecomesCW = false;
-		public bool CWLUbecomesCW
+        public bool CWLUbecomesCW
         {
-			get { return m_bCWLUbecomesCW; }
-			set { m_bCWLUbecomesCW = value; }
+            get { return m_bCWLUbecomesCW; }
+            set { m_bCWLUbecomesCW = value; }
         }
-		private bool m_bCWbecomesCWUabove10mhz = false;
-		public bool CWbecomesCWUabove10mhz
-		{
-			get { return m_bCWbecomesCWUabove10mhz; }
-			set { m_bCWbecomesCWUabove10mhz = value; }
-		}
+        private bool m_bCWbecomesCWUabove10mhz = false;
+        public bool CWbecomesCWUabove10mhz
+        {
+            get { return m_bCWbecomesCWUabove10mhz; }
+            set { m_bCWbecomesCWUabove10mhz = value; }
+        }
         private TCICWSpotForce _spot_force = TCICWSpotForce.DEFAULT;
         public TCICWSpotForce CWSpotForce
         {
@@ -7901,27 +7916,27 @@ namespace Thetis
             set { _spot_force = value; }
         }
         private bool m_bUseRX1VFOaForRX2VFOa = false;
-		public bool UseRX1VFOaForRX2VFOa
-		{
-			get { return m_bUseRX1VFOaForRX2VFOa; }
-			set { m_bUseRX1VFOaForRX2VFOa = value; }
-		}
-		private bool m_bSendInitialStateOnConnect = true;
-		public bool SendInitialFrequencyStateOnConnect
-		{
-			get { return m_bSendInitialStateOnConnect; }
-			set { m_bSendInitialStateOnConnect = value;	}
-		}
-		public bool EmulateSunSDR2Pro
+        public bool UseRX1VFOaForRX2VFOa
+        {
+            get { return m_bUseRX1VFOaForRX2VFOa; }
+            set { m_bUseRX1VFOaForRX2VFOa = value; }
+        }
+        private bool m_bSendInitialStateOnConnect = true;
+        public bool SendInitialFrequencyStateOnConnect
+        {
+            get { return m_bSendInitialStateOnConnect; }
+            set { m_bSendInitialStateOnConnect = value; }
+        }
+        public bool EmulateSunSDR2Pro
         {
             get { return m_bEmulateSunSDR2Pro; }
-			set { m_bEmulateSunSDR2Pro = value; }
+            set { m_bEmulateSunSDR2Pro = value; }
         }
-		public bool EmulateExpertSDR3Protocol
-		{
-			get { return m_bEmulateExpertSDR3Protocol; }
-			set { m_bEmulateExpertSDR3Protocol = value; }
-		}
+        public bool EmulateExpertSDR3Protocol
+        {
+            get { return m_bEmulateExpertSDR3Protocol; }
+            set { m_bEmulateExpertSDR3Protocol = value; }
+        }
         public bool IQSwap
         {
             get { return m_bIQSwap; }
@@ -7930,10 +7945,10 @@ namespace Thetis
         public bool AlwaysStreamIQ
         {
             get { return m_bAlwaysStreamIQ; }
-            set 
-            { 
-                m_bAlwaysStreamIQ = value; 
-                RefreshStreamRunState(); 
+            set
+            {
+                m_bAlwaysStreamIQ = value;
+                RefreshStreamRunState();
             }
         }
         public TCITxStereoInputMode TXStereoInputMode
@@ -7943,53 +7958,53 @@ namespace Thetis
         }
 
         public void StartServer(Console c, int rateLimit = 0)
-		{
-			if (m_server != null)
-			{
-				m_nRateLimit = rateLimit;
+        {
+            if (m_server != null)
+            {
+                m_nRateLimit = rateLimit;
 
-				if (c != null && !c.IsSetupFormNull)
-				{
-					m_bSendInitialStateOnConnect = c.SetupForm.TCIsendInitialStateOnConnect;;
+                if (c != null && !c.IsSetupFormNull)
+                {
+                    m_bSendInitialStateOnConnect = c.SetupForm.TCIsendInitialStateOnConnect; ;
 
-					m_bCopyRX2VFObToVFOa = c.SetupForm.TCIcopyRX2VFObToVFOa;
-					_replace_if_copy_RX2VFObToVFOa = c.SetupForm.TCIreplaceRX2VFObToVFOa;
-					m_bUseRX1VFOaForRX2VFOa = c.SetupForm.TCIuseRX1vfoaForRX2vfoa;
+                    m_bCopyRX2VFObToVFOa = c.SetupForm.TCIcopyRX2VFObToVFOa;
+                    _replace_if_copy_RX2VFObToVFOa = c.SetupForm.TCIreplaceRX2VFObToVFOa;
+                    m_bUseRX1VFOaForRX2VFOa = c.SetupForm.TCIuseRX1vfoaForRX2vfoa;
 
-					m_bCWLUbecomesCW = c.SetupForm.TCICWLUbecomesCW;
-					m_bCWbecomesCWUabove10mhz = c.SetupForm.TCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
+                    m_bCWLUbecomesCW = c.SetupForm.TCICWLUbecomesCW;
+                    m_bCWbecomesCWUabove10mhz = c.SetupForm.TCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
 
-					m_bEmulateSunSDR2Pro = c.SetupForm.EmulateSunSDR2Pro;
-					m_bEmulateExpertSDR3Protocol = c.SetupForm.EmulateExpertSDR3Protocol;
+                    m_bEmulateSunSDR2Pro = c.SetupForm.EmulateSunSDR2Pro;
+                    m_bEmulateExpertSDR3Protocol = c.SetupForm.EmulateExpertSDR3Protocol;
 
-					_spot_force = c.SetupForm.CWSpotForce;
+                    _spot_force = c.SetupForm.CWSpotForce;
 
                     m_bIQSwap = c.SetupForm.TCISwapIQ;
                     m_bAlwaysStreamIQ = c.SetupForm.TCIAlwaysStreamIQ;
                     m_txStereoInputMode = c.SetupForm.TCITXInputChannel;
                 }
-				else
-				{
-					m_bSendInitialStateOnConnect = true;
+                else
+                {
+                    m_bSendInitialStateOnConnect = true;
 
-					m_bCopyRX2VFObToVFOa = false;
-					_replace_if_copy_RX2VFObToVFOa = false;
-					m_bUseRX1VFOaForRX2VFOa = false;
+                    m_bCopyRX2VFObToVFOa = false;
+                    _replace_if_copy_RX2VFObToVFOa = false;
+                    m_bUseRX1VFOaForRX2VFOa = false;
 
-					m_bCWLUbecomesCW = false;
-					m_bCWbecomesCWUabove10mhz = false;
+                    m_bCWLUbecomesCW = false;
+                    m_bCWbecomesCWUabove10mhz = false;
 
-					m_bEmulateSunSDR2Pro = false;
-					m_bEmulateExpertSDR3Protocol = false;
+                    m_bEmulateSunSDR2Pro = false;
+                    m_bEmulateExpertSDR3Protocol = false;
 
-					_spot_force = TCICWSpotForce.DEFAULT;
+                    _spot_force = TCICWSpotForce.DEFAULT;
 
                     m_bIQSwap = true;
                     m_bAlwaysStreamIQ = false;
                     m_txStereoInputMode = TCITxStereoInputMode.Both;
                 }
 
-				_console = c;
+                _console = c;
                 if (m_cwController != null)
                 {
                     m_cwController.Dispose();
@@ -7998,32 +8013,32 @@ namespace Thetis
                 if (_console != null)
                     m_cwController = new TCICWController(this);
 
-				m_socketListenersList = new List<TCPIPtciSocketListener>();
+                m_socketListenersList = new List<TCPIPtciSocketListener>();
                 cmaster.SetRXTCIRun(0);
 
                 if (console != null && !m_bDelegatesAdded)
-				{
-					console.VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;
-					console.VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;
-					console.MoxChangeHandlers += OnMoxChangeHandler;
+                {
+                    console.VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;
+                    console.VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;
+                    console.MoxChangeHandlers += OnMoxChangeHandler;
                     console.MoxPreChangeHandlers += OnMoxPreChangeHandler;
-					console.ModeChangeHandlers += OnModeChangeHandler;
-					console.BandChangeHandlers += OnBandChangeHandler;
-					console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
-					console.FilterChangedHandlers += OnFilterChanged;
-					console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
+                    console.ModeChangeHandlers += OnModeChangeHandler;
+                    console.BandChangeHandlers += OnBandChangeHandler;
+                    console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
+                    console.FilterChangedHandlers += OnFilterChanged;
+                    console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
                     console.TXFiltersChangedHandlers += OnTXFiltersChanged;
-					console.PowerChangeHanders += OnPowerChangeHander;
-					console.SplitChangedHandlers += OnSplitChanged;
-					console.TuneChangedHandlers += OnTuneChanged;
-					console.DrivePowerChangedHandlers += OnDrivePowerChanged;
+                    console.PowerChangeHanders += OnPowerChangeHander;
+                    console.SplitChangedHandlers += OnSplitChanged;
+                    console.TuneChangedHandlers += OnTuneChanged;
+                    console.DrivePowerChangedHandlers += OnDrivePowerChanged;
                     console.DuplexChangedHandlers += OnDuplexChanged;
-					console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
-					console.ThetisFocusChangedHandlers += OnThetisFocusChanged;
-					console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
-					console.SpotClickedHandlers += OnSpotClicked;
-					console.MuteChangedHandlers += OnMuteChanged;
-					console.MONChangedHandlers += OnMONChanged;
+                    console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
+                    console.ThetisFocusChangedHandlers += OnThetisFocusChanged;
+                    console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
+                    console.SpotClickedHandlers += OnSpotClicked;
+                    console.MuteChangedHandlers += OnMuteChanged;
+                    console.MONChangedHandlers += OnMONChanged;
                     console.MONVolumeChangedHandlers += OnMONVolumeChanged;
                     console.VolumeChangedHandlers += OnVolumeChanged;
                     console.BalanceChangedHandlers += OnBalanceChanged;
@@ -8036,7 +8051,7 @@ namespace Thetis
                     console.XITChangedHandlers += OnXITChanged;
                     console.RITValueChangedHandlers += OnRITValueChanged;
                     console.XITValueChangedHandlers += OnXITValueChanged;
-					console.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
+                    console.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
                     console.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
                     console.NRChangedHandlers += OnNrChanged;
                     console.NBChangedHandlers += OnNbChanged;
@@ -8070,72 +8085,72 @@ namespace Thetis
                     console.Rx6mOffsetChangedHandlers += OnCalibrationChanged;
 
                     m_bDelegatesAdded = true;
-				}
+                }
 
-				try
-				{
-					m_server.Start();
+                try
+                {
+                    m_server.Start();
 
-					m_serverThread = new Thread(new ThreadStart(ServerThreadStart));
-					m_serverThread.Priority = ThreadPriority.BelowNormal;
-					m_serverThread.Name = "TCI server Thread";
-					m_serverThread.Start();
+                    m_serverThread = new Thread(new ThreadStart(ServerThreadStart));
+                    m_serverThread.Priority = ThreadPriority.BelowNormal;
+                    m_serverThread.Name = "TCI server Thread";
+                    m_serverThread.Start();
 
-					m_purgingThread = new Thread(new ThreadStart(PurgingThreadStart));
-					m_purgingThread.Priority = ThreadPriority.Lowest;
+                    m_purgingThread = new Thread(new ThreadStart(PurgingThreadStart));
+                    m_purgingThread.Priority = ThreadPriority.Lowest;
                     m_purgingThread.Name = "TCI purging Thread";
                     m_purgingThread.Start();
-				}
-				catch(SocketException se)
+                }
+                catch (SocketException se)
                 {
-					m_sLastError = se.Message;
-					StopServer();
+                    m_sLastError = se.Message;
+                    StopServer();
 
-					ServerErrorHandlers?.Invoke(se);
-				}
+                    ServerErrorHandlers?.Invoke(se);
+                }
                 catch
-				{
-					StopServer();
-				}
-			}
-		}
-
-		private string m_sLastError = "";
-		public string LastError
-        {
-			get 
-            {
-				string s = m_sLastError;
-				m_sLastError = "";
-				return s; 
-			}
+                {
+                    StopServer();
+                }
+            }
         }
 
-		public void StopServer()
-		{
-			if (m_server != null)
-			{
-				if (m_bDelegatesAdded)
-				{
-					console.VFOAFrequencyChangeHandlers -= OnVFOAFrequencyChangeHandler;
-					console.VFOBFrequencyChangeHandlers -= OnVFOBFrequencyChangeHandler;
-					console.MoxChangeHandlers -= OnMoxChangeHandler;
+        private string m_sLastError = "";
+        public string LastError
+        {
+            get
+            {
+                string s = m_sLastError;
+                m_sLastError = "";
+                return s;
+            }
+        }
+
+        public void StopServer()
+        {
+            if (m_server != null)
+            {
+                if (m_bDelegatesAdded)
+                {
+                    console.VFOAFrequencyChangeHandlers -= OnVFOAFrequencyChangeHandler;
+                    console.VFOBFrequencyChangeHandlers -= OnVFOBFrequencyChangeHandler;
+                    console.MoxChangeHandlers -= OnMoxChangeHandler;
                     console.MoxPreChangeHandlers -= OnMoxPreChangeHandler;
-					console.ModeChangeHandlers -= OnModeChangeHandler;
-					console.BandChangeHandlers -= OnBandChangeHandler;
-					console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
-					console.FilterChangedHandlers -= OnFilterChanged;
-					console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
+                    console.ModeChangeHandlers -= OnModeChangeHandler;
+                    console.BandChangeHandlers -= OnBandChangeHandler;
+                    console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
+                    console.FilterChangedHandlers -= OnFilterChanged;
+                    console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
                     console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
-					console.PowerChangeHanders -= OnPowerChangeHander;
-					console.SplitChangedHandlers -= OnSplitChanged;
-					console.TuneChangedHandlers -= OnTuneChanged;
-					console.DrivePowerChangedHandlers -= OnDrivePowerChanged;
+                    console.PowerChangeHanders -= OnPowerChangeHander;
+                    console.SplitChangedHandlers -= OnSplitChanged;
+                    console.TuneChangedHandlers -= OnTuneChanged;
+                    console.DrivePowerChangedHandlers -= OnDrivePowerChanged;
                     console.DuplexChangedHandlers -= OnDuplexChanged;
-					console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
-					console.ThetisFocusChangedHandlers -= OnThetisFocusChanged;
-					console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
-					console.SpotClickedHandlers -= OnSpotClicked;
+                    console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
+                    console.ThetisFocusChangedHandlers -= OnThetisFocusChanged;
+                    console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
+                    console.SpotClickedHandlers -= OnSpotClicked;
                     console.MuteChangedHandlers -= OnMuteChanged;
                     console.MONChangedHandlers -= OnMONChanged;
                     console.MONVolumeChangedHandlers -= OnMONVolumeChanged;
@@ -8184,40 +8199,41 @@ namespace Thetis
                     console.Rx6mOffsetChangedHandlers -= OnCalibrationChanged;
 
                     m_bDelegatesAdded = false;
-				}
+                }
 
-				// Stop the TCP/IP Server, so can clean up without more clients connecting
-				m_stopServer = true;
-				try
-				{
-					m_server.Stop();
-				}
+                // Stop the TCP/IP Server, so can clean up without more clients connecting
+                m_stopServer = true;
+                try
+                {
+                    m_server.Stop();
+                }
                 catch
                 {
 
                 }
 
-				if (m_serverThread != null) {
-					m_serverThread.Join(50); // dont need to wait long here, as we are blocking anyway
-					if (m_serverThread.IsAlive)
-						m_serverThread.Abort();
-					m_serverThread = null;
-				}
+                if (m_serverThread != null)
+                {
+                    m_serverThread.Join(50); // dont need to wait long here, as we are blocking anyway
+                    if (m_serverThread.IsAlive)
+                        m_serverThread.Abort();
+                    m_serverThread = null;
+                }
 
-				m_stopPurging = true;
-				if (m_purgingThread != null)
-				{
-					if (!m_bSleepingInPurge)
-						m_purgingThread.Join(500);
+                m_stopPurging = true;
+                if (m_purgingThread != null)
+                {
+                    if (!m_bSleepingInPurge)
+                        m_purgingThread.Join(500);
 
-					if (m_purgingThread.IsAlive)
-						m_purgingThread.Abort();
-					m_purgingThread = null;
-				}
+                    if (m_purgingThread.IsAlive)
+                        m_purgingThread.Abort();
+                    m_purgingThread = null;
+                }
 
 
-				// Stop All clients.
-				StopAllSocketListers();
+                // Stop All clients.
+                StopAllSocketListers();
                 cmaster.SetRXTCIRun(0);
 
                 if (m_cwController != null)
@@ -8226,9 +8242,9 @@ namespace Thetis
                     m_cwController = null;
                 }
 
-				m_server = null;
-			}
-		}
+                m_server = null;
+            }
+        }
 
         internal int GetCwMacrosSpeed()
         {
@@ -8383,125 +8399,125 @@ namespace Thetis
             }
         }
 
-		public int ClientsConnected
+        public int ClientsConnected
         {
-            get 
-            {				
-				int nRet = 0;
-				lock (m_objLocker)
-				{
+            get
+            {
+                int nRet = 0;
+                lock (m_objLocker)
+                {
                     if (m_server == null || m_socketListenersList == null) return nRet;
 
                     foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                     {
-						if (!socketListener.IsDisconnected()) nRet++;
+                        if (!socketListener.IsDisconnected()) nRet++;
                     }
-				}
-				return nRet;
-			}
+                }
+                return nRet;
+            }
         }
-		public bool IsServerRunning
+        public bool IsServerRunning
         {
-			get { return m_server != null; }
+            get { return m_server != null; }
         }
-		private void StopAllSocketListers()
-		{
+        private void StopAllSocketListers()
+        {
             List<TCPIPtciSocketListener> stopList;
 
-			lock (m_objLocker)
-			{
+            lock (m_objLocker)
+            {
                 if (m_socketListenersList == null) return;
 
                 stopList = new List<TCPIPtciSocketListener>(m_socketListenersList);
-				m_socketListenersList.Clear();
-				m_socketListenersList = null;
-			}
+                m_socketListenersList.Clear();
+                m_socketListenersList = null;
+            }
 
             foreach (TCPIPtciSocketListener socketListener in stopList)
-			{
-				socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-				socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-				socketListener.ClientErrorHandlers -= ClientErrorHandler;
+            {
+                socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
+                socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
+                socketListener.ClientErrorHandlers -= ClientErrorHandler;
                 socketListener.StopSocketListener();
-			}
-		}
-		private void ServerThreadStart()
-		{
-			//Socket clientSocket = null;
-			TcpClient client = null;
+            }
+        }
+        private void ServerThreadStart()
+        {
+            //Socket clientSocket = null;
+            TcpClient client = null;
 
-			TCPIPtciSocketListener socketListener = null;
-			bool bAddedDelegates = false;
-			while (!m_stopServer)
-			{
-				try
-				{
-					bAddedDelegates = false;
-					//clientSocket = m_server.AcceptSocket();
-					client = m_server.AcceptTcpClient();
-					client.NoDelay = true;
+            TCPIPtciSocketListener socketListener = null;
+            bool bAddedDelegates = false;
+            while (!m_stopServer)
+            {
+                try
+                {
+                    bAddedDelegates = false;
+                    //clientSocket = m_server.AcceptSocket();
+                    client = m_server.AcceptTcpClient();
+                    client.NoDelay = true;
 
-					socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit);
+                    socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit);
 
-					lock (m_objLocker)
-					{
-						m_socketListenersList.Add(socketListener);
-					}
+                    lock (m_objLocker)
+                    {
+                        m_socketListenersList.Add(socketListener);
+                    }
 
-					socketListener.ClientConnectedHandlers += ClientConnectedHandler;
-					socketListener.ClientDisconnectedHandlers += ClientDisconnectedHandler;
-					socketListener.ClientErrorHandlers += ClientErrorHandler;
-					bAddedDelegates = true;
+                    socketListener.ClientConnectedHandlers += ClientConnectedHandler;
+                    socketListener.ClientDisconnectedHandlers += ClientDisconnectedHandler;
+                    socketListener.ClientErrorHandlers += ClientErrorHandler;
+                    bAddedDelegates = true;
 
-					socketListener.StartSocketListener();
-				}
-				catch (SocketException se)
-				{
+                    socketListener.StartSocketListener();
+                }
+                catch (SocketException se)
+                {
                     if (bAddedDelegates && socketListener != null)
                     {
-						socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-						socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-						socketListener.ClientErrorHandlers -= ClientErrorHandler;
-					}
-					m_stopServer = true;
-					m_sLastError = se.Message;
-					ServerErrorHandlers?.Invoke(se);
-				}
+                        socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
+                        socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
+                        socketListener.ClientErrorHandlers -= ClientErrorHandler;
+                    }
+                    m_stopServer = true;
+                    m_sLastError = se.Message;
+                    ServerErrorHandlers?.Invoke(se);
+                }
                 catch
                 {
-					if (bAddedDelegates && socketListener != null)
-					{
-						socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-						socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-						socketListener.ClientErrorHandlers -= ClientErrorHandler;
-					}
-					m_stopServer = true;
-				}
-			}
-		}
-		private void PurgingThreadStart()
-		{
-			while (!m_stopPurging)
-			{
+                    if (bAddedDelegates && socketListener != null)
+                    {
+                        socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
+                        socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
+                        socketListener.ClientErrorHandlers -= ClientErrorHandler;
+                    }
+                    m_stopServer = true;
+                }
+            }
+        }
+        private void PurgingThreadStart()
+        {
+            while (!m_stopPurging)
+            {
                 List<TCPIPtciSocketListener> deleteList = new List<TCPIPtciSocketListener>();
 
-				lock (m_objLocker)
-				{
+                lock (m_objLocker)
+                {
                     if (m_server == null || m_socketListenersList == null) return;
 
                     foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-					{
-						if (socketListener.IsMarkedForDeletion())
-						{
-							deleteList.Add(socketListener);
-						}
-					}
+                    {
+                        if (socketListener.IsMarkedForDeletion())
+                        {
+                            deleteList.Add(socketListener);
+                        }
+                    }
 
-					for (int i = 0; i < deleteList.Count; ++i)
-					{
-						m_socketListenersList.Remove(deleteList[i]);
-					}
-				}
+                    for (int i = 0; i < deleteList.Count; ++i)
+                    {
+                        m_socketListenersList.Remove(deleteList[i]);
+                    }
+                }
 
                 foreach (TCPIPtciSocketListener socketListener in deleteList)
                 {
@@ -8511,31 +8527,31 @@ namespace Thetis
                     socketListener.StopSocketListener();
                 }
 
-				deleteList = null;
+                deleteList = null;
 
-				m_bSleepingInPurge = true;
-				Thread.Sleep(5000);
-				m_bSleepingInPurge = false;
-			}
-		}
-		private void ClientConnectedHandler()
-		{
-            RefreshStreamRunState();
-			ClientConnectedHandlers?.Invoke();
-		}
-		private void ClientDisconnectedHandler()
-        {
-            RefreshStreamRunState();
-			ClientDisconnectedHandlers?.Invoke();
+                m_bSleepingInPurge = true;
+                Thread.Sleep(5000);
+                m_bSleepingInPurge = false;
+            }
         }
-		private void ClientErrorHandler(SocketException se)
+        private void ClientConnectedHandler()
         {
-			m_sLastError = se.Message;
+            RefreshStreamRunState();
+            ClientConnectedHandlers?.Invoke();
+        }
+        private void ClientDisconnectedHandler()
+        {
+            RefreshStreamRunState();
+            ClientDisconnectedHandlers?.Invoke();
+        }
+        private void ClientErrorHandler(SocketException se)
+        {
+            m_sLastError = se.Message;
 
-			ClientErrorHandlers?.Invoke(se);
-		}
-		public void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
-		{
+            ClientErrorHandlers?.Invoke(se);
+        }
+        public void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
+        {
             bool bVFOaUseRX2;
             if (console != null)
                 bVFOaUseRX2 = console.RX2Enabled && UseRX1VFOaForRX2VFOa;
@@ -8561,12 +8577,12 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-					socketListener.VFOChange(vfod);
+                    socketListener.VFOChange(vfod);
                 }
             }
         }
-		public void OnVFOBFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
-		{
+        public void OnVFOBFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
+        {
             TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
             {
                 cen = false,
@@ -8580,31 +8596,31 @@ namespace Thetis
                 sendIF = true
             };
 
-			lock (m_objLocker)
-			{
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.VFOChange(vfod);
-				}
-			}
+                {
+                    socketListener.VFOChange(vfod);
+                }
+            }
         }
-		public void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
-		{
-			lock (m_objLocker)
-			{
+        public void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.MoxChange(rx, oldMox, newMox);
-					socketListener.SyncTciPttToMox(newMox);
-				}
-			}
+                {
+                    socketListener.MoxChange(rx, oldMox, newMox);
+                    socketListener.SyncTciPttToMox(newMox);
+                }
+            }
 
             RefreshTxAudioSourceState();
-		}
+        }
 
         public void OnMoxPreChangeHandler(int rx, bool currentMox, bool expectedMox)
         {
@@ -8619,35 +8635,35 @@ namespace Thetis
             }
 
             RefreshTxAudioSourceState();
-		}
-		public void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
-		{
-			lock (m_objLocker)
-			{
+        }
+        public void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.ModeChange(rx,oldMode,newMode, oldBand, newBand);
-				}
-			}
-		}
-		public void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
-		{
-			lock (m_objLocker)
-			{
-				if (m_server == null || m_socketListenersList == null) return;
+                {
+                    socketListener.ModeChange(rx, oldMode, newMode, oldBand, newBand);
+                }
+            }
+        }
+        public void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.BandChange(rx, oldBand, newBand);
-				}
-			}
-		}
-		public void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
-		{
-			//only want to send IF with this if CTUN is enabled
-			bool bCTun = rx == 1 ? console.ClickTuneDisplay : console.ClickTuneRX2Display;
+                {
+                    socketListener.BandChange(rx, oldBand, newBand);
+                }
+            }
+        }
+        public void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
+        {
+            //only want to send IF with this if CTUN is enabled
+            bool bCTun = rx == 1 ? console.ClickTuneDisplay : console.ClickTuneRX2Display;
 
             TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
             {
@@ -8671,30 +8687,30 @@ namespace Thetis
                 }
             }
         }
-		public void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
-		{
-			lock (m_objLocker)
-			{
+        public void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.FilterChange(rx, oldFilter, newFilter, band, low, high);
-				}
-			}
-		}
-		public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift)
-		{
-			lock (m_objLocker)
-			{
+                {
+                    socketListener.FilterChange(rx, oldFilter, newFilter, band, low, high);
+                }
+            }
+        }
+        public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.FilterEdgesChange(rx, filter, band, low, high);
-				}
-			}
-		}
+                {
+                    socketListener.FilterEdgesChange(rx, filter, band, low, high);
+                }
+            }
+        }
         public void OnTXFiltersChanged(int low, int high)
         {
             lock (m_objLocker)
@@ -8707,54 +8723,54 @@ namespace Thetis
                 }
             }
         }
-		public void OnPowerChangeHander(bool oldPower, bool newPower)
-		{
-			lock (m_objLocker)
-			{
-                if (m_server == null || m_socketListenersList == null) return;
-
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.PowerChange(oldPower, newPower);
-				}
-			}
-		}
-		public void OnThetisFocusChanged(bool focus)
-		{
-			lock (m_objLocker)
-			{
-                if (m_server == null || m_socketListenersList == null) return;
-
-                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.ThetisFocusChange(focus);
-				}
-			}
-		}
-		public void OnRX2EnabledChanged(bool enabled)
+        public void OnPowerChangeHander(bool oldPower, bool newPower)
         {
-			lock (m_objLocker)
-			{
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.RX2EnabledChange(enabled);
-				}
-			}
-		}
-		private void OnHWSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
-		{
-			lock (m_objLocker)
-			{
+                {
+                    socketListener.PowerChange(oldPower, newPower);
+                }
+            }
+        }
+        public void OnThetisFocusChanged(bool focus)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.HWSampleRateChange(rx, oldSampleRate, newSampleRate);
-				}
-			}
-		}
+                {
+                    socketListener.ThetisFocusChange(focus);
+                }
+            }
+        }
+        public void OnRX2EnabledChanged(bool enabled)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.RX2EnabledChange(enabled);
+                }
+            }
+        }
+        private void OnHWSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.HWSampleRateChange(rx, oldSampleRate, newSampleRate);
+                }
+            }
+        }
         private void OnDuplexChanged(int rx, bool oldDuplex, bool newDuplex)
         {
             lock (m_objLocker)
@@ -8767,58 +8783,58 @@ namespace Thetis
                 }
             }
         }
-		private void OnDrivePowerChanged(int rx, int newPower, bool tune)
-		{
-			lock (m_objLocker)
-			{
+        private void OnDrivePowerChanged(int rx, int newPower, bool tune)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.DrivePowerChange(rx, newPower, tune);
-				}
-			}
-		}
-		private void OnTuneChanged(int rx, bool oldTune, bool newTune)
-		{
-			lock (m_objLocker)
-			{
+                {
+                    socketListener.DrivePowerChange(rx, newPower, tune);
+                }
+            }
+        }
+        private void OnTuneChanged(int rx, bool oldTune, bool newTune)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.TuneChange(rx, oldTune, newTune);
-				}
-			}
-		}
-		private void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
-		{
-			lock (m_objLocker)
-			{
+                {
+                    socketListener.TuneChange(rx, oldTune, newTune);
+                }
+            }
+        }
+        private void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.SplitChange(rx, newSplit);
-				}
-			}
-		}
+                {
+                    socketListener.SplitChange(rx, newSplit);
+                }
+            }
+        }
 
-		private void OnSpotClicked(string callsign, long frequencyHz, int rx = -1, bool vfoB = false)
-		{
-			lock (m_objLocker)
-			{
+        private void OnSpotClicked(string callsign, long frequencyHz, int rx = -1, bool vfoB = false)
+        {
+            lock (m_objLocker)
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
-				{
-					socketListener.ClickedOnSpot(callsign, frequencyHz); // also send legacy command (EESDR3 does this)	MW0LGE [2.9.0.8]																	
+                {
+                    socketListener.ClickedOnSpot(callsign, frequencyHz); // also send legacy command (EESDR3 does this)	MW0LGE [2.9.0.8]																	
                     socketListener.ClickedOnSpot(callsign, frequencyHz, rx, vfoB ? 1 : 0);
-				}
-			}
-		}
-		private void OnMuteChanged(int rx, bool oldState, bool newState)
-		{
+                }
+            }
+        }
+        private void OnMuteChanged(int rx, bool oldState, bool newState)
+        {
             lock (m_objLocker)
             {
                 if (m_server == null || m_socketListenersList == null) return;
@@ -8937,7 +8953,7 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     if (rx == 2)
-                    socketListener.LockChanged(2, new_state);
+                        socketListener.LockChanged(2, new_state);
                     socketListener.VFOLocksChanged();
                 }
             }
@@ -9090,7 +9106,7 @@ namespace Thetis
         {
             lock (m_objLocker)
             {
-				if (m_server == null || m_socketListenersList == null) return;
+                if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
@@ -9230,8 +9246,8 @@ namespace Thetis
                 }
             }
         }
-		private void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
-		{
+        private void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
+        {
             TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
             {
                 cen = false,
@@ -9275,26 +9291,26 @@ namespace Thetis
         }
         public void ShowLog()
         {
-			if (_log != null) _log.ShowWithTitle("TCI");
-		}
+            if (_log != null) _log.ShowWithTitle("TCI");
+        }
 
-		public void CloseLog()
+        public void CloseLog()
         {
-			if (_log != null) _log.Hide();
-		}
-		public void SendSpotSimulationClickToAll(string callsign, long freq)
-		{            
+            if (_log != null) _log.Hide();
+        }
+        public void SendSpotSimulationClickToAll(string callsign, long freq)
+        {
             lock (m_objLocker)
-			{
+            {
                 if (m_server == null || m_socketListenersList == null) return;
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-					socketListener.ClickedOnSpot(callsign, freq);
+                    socketListener.ClickedOnSpot(callsign, freq);
                     socketListener.ClickedOnSpot(callsign, freq, 1, 0); //[2.10.3.9]MW0LGE also send out RX_CLICKED_ON_SPOT defaults to rx1 and vfoA
                 }
             }
-		}
+        }
         internal void RefreshStreamRunState()
         {
             bool run = false;
@@ -9327,7 +9343,7 @@ namespace Thetis
         }
 
         public void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
-        {            
+        {
             lock (m_objLocker)
             {
                 if (m_server == null || m_socketListenersList == null) return;
@@ -9340,7 +9356,7 @@ namespace Thetis
         }
 
         public void PublishRxAudioSamples(int receiver, int sampleRate, float[] left, float[] right, int samples = -1)
-        {            
+        {
             lock (m_objLocker)
             {
                 if (m_server == null || m_socketListenersList == null) return;
@@ -9452,7 +9468,7 @@ namespace Thetis
                 if (activeListener == null || activeListener == socketListener)
                 {
                     m_activeTxAudioListener = socketListener;
-                        return true;
+                    return true;
                 }
             }
 
@@ -9498,7 +9514,7 @@ namespace Thetis
         }
 
         public void SendTxChrono(int receiver)
-        {           
+        {
             lock (m_objLocker)
             {
                 TCPIPtciSocketListener activeListener = GetActiveTxAudioListener();
@@ -9880,7 +9896,7 @@ namespace Thetis
                     _keyerReleaseAtTicks = -1;
                     _keyerRx = -1;
                     shouldReleaseDirectKeyerMox = captureDirectKeyerMoxReleaseLocked();
-                        shouldReleaseMox = true;
+                    shouldReleaseMox = true;
 
                     _releaseTerminalTciPttWhenIdle = false;
                     releaseOwnershipIfIdleLocked();
@@ -10219,7 +10235,7 @@ namespace Thetis
                 InvokeOnConsole(c =>
                 {
                     byte[] bytes = Encoding.ASCII.GetBytes(text);
-                        c.CWXForm.RemoteMessage(bytes);
+                    c.CWXForm.RemoteMessage(bytes);
                 });
             }
 
