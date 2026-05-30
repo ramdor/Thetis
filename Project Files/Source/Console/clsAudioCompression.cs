@@ -47,7 +47,8 @@ namespace Thetis
     internal enum TCIAudioCodec
     {
         PCM = 0,
-        OPUS = 1
+        OPUS = 1,
+        CODEC2 = 2
     }
 
     internal sealed class clsAudioCompression : IDisposable
@@ -91,6 +92,23 @@ namespace Thetis
             public double FrameMs = 20.0;
         }
 
+        internal sealed class Codec2Settings
+        {
+            public int Mode = DefaultCodec2Mode;
+            public bool Gray = false;
+            public bool GrayConfigured = false;
+            public float DecodeBer = 0.0f;
+            public bool LpcPostFilter = false;
+            public bool LpcPostFilterBassBoost = false;
+            public float LpcPostFilterBeta = 0.2f;
+            public float LpcPostFilterGamma = 0.5f;
+            public bool LpcPostFilterConfigured = false;
+            public bool Mode700CPostFilter = false;
+            public bool Mode700CPostFilterConfigured = false;
+            public bool Mode700CEq = false;
+            public bool Mode700CEqConfigured = false;
+        }
+
         private IOpusEncoder m_encoder;
         private IOpusDecoder m_decoder;
         private int m_encoderSampleRate;
@@ -110,6 +128,17 @@ namespace Thetis
         private double m_encoderFrameMs;
         private byte[] m_encodeBuffer;
         private float[] m_decodeBuffer;
+        private Thetis.codec2.Codec2 m_codec2Encoder;
+        private Thetis.codec2.Codec2 m_codec2Decoder;
+        private Codec2Settings m_codec2EncoderSettings;
+        private Codec2Settings m_codec2DecoderSettings;
+        private short[] m_codec2EncodePcm;
+        private short[] m_codec2DecodePcm;
+        private byte[] m_codec2EncodeBuffer;
+        private byte[] m_codec2DecodeFrameBytes;
+
+        public const int Codec2SampleRate = 8000;
+        public const int DefaultCodec2Mode = Thetis.codec2.Codec2.Mode3200;
 
         public clsAudioCompression()
         {
@@ -121,12 +150,16 @@ namespace Thetis
         {
             resetEncoder();
             resetDecoder();
+            resetCodec2Encoder();
+            resetCodec2Decoder();
         }
 
         public void Reset()
         {
             resetEncoder();
             resetDecoder();
+            resetCodec2Encoder();
+            resetCodec2Decoder();
         }
 
         public byte[] EncodeOpus(float[] interleaved, int samplesPerChannel, int sampleRate, int channels, OpusSettings settings, out int encodedBytes)
@@ -171,6 +204,182 @@ namespace Thetis
             float[] decoded = new float[decodedValueCount];
             Buffer.BlockCopy(m_decodeBuffer, 0, decoded, 0, decodedValueCount * sizeof(float));
             return decoded;
+        }
+
+        public byte[] EncodeCodec2(float[] interleaved, int samplesPerChannel, int channels, Codec2Settings settings, out int encodedBytes)
+        {
+            encodedBytes = 0;
+            if (interleaved == null || interleaved.Length == 0 || samplesPerChannel <= 0 || channels != 1)
+                return Array.Empty<byte>();
+
+            ensureCodec2Encoder(settings);
+
+            int samplesPerFrame = m_codec2Encoder.SamplesPerFrame;
+            int bytesPerFrame = m_codec2Encoder.BytesPerFrame;
+            if (samplesPerChannel != samplesPerFrame || interleaved.Length < samplesPerFrame)
+                return Array.Empty<byte>();
+
+            if (m_codec2EncodePcm == null || m_codec2EncodePcm.Length < samplesPerFrame)
+                m_codec2EncodePcm = new short[samplesPerFrame];
+
+            if (m_codec2EncodeBuffer == null || m_codec2EncodeBuffer.Length < bytesPerFrame)
+                m_codec2EncodeBuffer = new byte[bytesPerFrame];
+
+            for (int i = 0; i < samplesPerFrame; i++)
+                m_codec2EncodePcm[i] = floatToInt16(interleaved[i]);
+
+            m_codec2Encoder.Encode(m_codec2EncodePcm, m_codec2EncodeBuffer);
+
+            ////
+            //ensureCodec2Decoder(settings);
+
+            //if (m_codec2DecodePcm == null || m_codec2DecodePcm.Length < samplesPerFrame)
+            //{
+            //    m_codec2DecodePcm = new short[samplesPerFrame];
+            //}
+
+            //if (m_codec2DecodeFrameBytes == null || m_codec2DecodeFrameBytes.Length < bytesPerFrame)
+            //{
+            //    m_codec2DecodeFrameBytes = new byte[bytesPerFrame];
+            //}
+
+            //Buffer.BlockCopy(m_codec2EncodeBuffer, 0, m_codec2DecodeFrameBytes, 0, bytesPerFrame);
+            //m_codec2Decoder.Decode(m_codec2DecodeFrameBytes, m_codec2DecodePcm, 0.0f);
+
+            //byte[] inputPcmBytes = new byte[samplesPerFrame * sizeof(short)];
+            //Buffer.BlockCopy(m_codec2EncodePcm, 0, inputPcmBytes, 0, inputPcmBytes.Length);
+
+            //using (System.IO.FileStream fileStream = new System.IO.FileStream(@"C:\temp\codec2_input_8000_s16.raw", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+            //{
+            //    fileStream.Write(inputPcmBytes, 0, inputPcmBytes.Length);
+            //}
+
+            //byte[] decodedPcmBytes = new byte[samplesPerFrame * sizeof(short)];
+            //Buffer.BlockCopy(m_codec2DecodePcm, 0, decodedPcmBytes, 0, decodedPcmBytes.Length);
+
+            //using (System.IO.FileStream fileStream = new System.IO.FileStream(@"C:\temp\codec2_decoded_8000_s16.raw", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+            //{
+            //    fileStream.Write(decodedPcmBytes, 0, decodedPcmBytes.Length);
+            //}
+            ////
+
+            encodedBytes = bytesPerFrame;
+            byte[] encoded = new byte[encodedBytes];
+            Buffer.BlockCopy(m_codec2EncodeBuffer, 0, encoded, 0, encodedBytes);
+            return encoded;
+        }
+
+        public float[] DecodeCodec2(byte[] payload, int payloadOffset, int payloadLength, Codec2Settings settings, out int decodedValueCount)
+        {
+            decodedValueCount = 0;
+            if (payload == null || payloadLength <= 0 || payloadOffset < 0 || payloadLength < 0 || payloadOffset > payload.Length || payloadOffset + payloadLength > payload.Length)
+                return Array.Empty<float>();
+
+            ensureCodec2Decoder(settings);
+
+            int samplesPerFrame = m_codec2Decoder.SamplesPerFrame;
+            int bytesPerFrame = m_codec2Decoder.BytesPerFrame;
+            if (bytesPerFrame <= 0 || payloadLength < bytesPerFrame)
+                return Array.Empty<float>();
+
+            int frames = payloadLength / bytesPerFrame;
+            int requiredValues = frames * samplesPerFrame;
+            if (requiredValues <= 0)
+                return Array.Empty<float>();
+
+            if (m_decodeBuffer == null || m_decodeBuffer.Length < requiredValues)
+                m_decodeBuffer = new float[requiredValues];
+
+            if (m_codec2DecodePcm == null || m_codec2DecodePcm.Length < samplesPerFrame)
+                m_codec2DecodePcm = new short[samplesPerFrame];
+
+            if (m_codec2DecodeFrameBytes == null || m_codec2DecodeFrameBytes.Length < bytesPerFrame)
+                m_codec2DecodeFrameBytes = new byte[bytesPerFrame];
+
+            float decodeBer = settings != null ? settings.DecodeBer : 0.0f;
+            for (int frame = 0; frame < frames; frame++)
+            {
+                Buffer.BlockCopy(payload, payloadOffset + frame * bytesPerFrame, m_codec2DecodeFrameBytes, 0, bytesPerFrame);
+                m_codec2Decoder.Decode(m_codec2DecodeFrameBytes, m_codec2DecodePcm, decodeBer);
+
+                int outputOffset = frame * samplesPerFrame;
+                for (int i = 0; i < samplesPerFrame; i++)
+                    m_decodeBuffer[outputOffset + i] = m_codec2DecodePcm[i] / 32768.0f;
+            }
+
+            decodedValueCount = requiredValues;
+            float[] decoded = new float[decodedValueCount];
+            Buffer.BlockCopy(m_decodeBuffer, 0, decoded, 0, decodedValueCount * sizeof(float));
+            return decoded;
+        }
+
+        public static bool TryGetCodec2SamplesPerFrame(Codec2Settings settings, out int samplesPerFrame)
+        {
+            samplesPerFrame = 0;
+            try
+            {
+                using (Thetis.codec2.Codec2 codec2 = new Thetis.codec2.Codec2(getCodec2Mode(settings)))
+                {
+                    samplesPerFrame = codec2.SamplesPerFrame;
+                    return samplesPerFrame > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetCodec2BytesPerFrame(Codec2Settings settings, out int bytesPerFrame)
+        {
+            bytesPerFrame = 0;
+            try
+            {
+                using (Thetis.codec2.Codec2 codec2 = new Thetis.codec2.Codec2(getCodec2Mode(settings)))
+                {
+                    bytesPerFrame = codec2.BytesPerFrame;
+                    return bytesPerFrame > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetCodec2BitsPerFrame(Codec2Settings settings, out int bitsPerFrame)
+        {
+            bitsPerFrame = 0;
+            try
+            {
+                using (Thetis.codec2.Codec2 codec2 = new Thetis.codec2.Codec2(getCodec2Mode(settings)))
+                {
+                    bitsPerFrame = codec2.BitsPerFrame;
+                    return bitsPerFrame > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetCodec2SpareBitIndex(Codec2Settings settings, out int spareBitIndex)
+        {
+            spareBitIndex = -1;
+            try
+            {
+                using (Thetis.codec2.Codec2 codec2 = new Thetis.codec2.Codec2(getCodec2Mode(settings)))
+                {
+                    applyCodec2Settings(codec2, settings);
+                    spareBitIndex = codec2.GetSpareBitIndex();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool TryParseApplication(string value, out OpusApplicationMode mode)
@@ -322,6 +531,121 @@ namespace Thetis
                 default:
                     return "auto";
             }
+        }
+
+        public static bool TryParseCodec2Mode(string value, out int mode)
+        {
+            mode = DefaultCodec2Mode;
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            switch (value.Trim().ToLowerInvariant())
+            {
+                case "3200":
+                case "codec2_3200":
+                case "mode3200":
+                    mode = Thetis.codec2.Codec2.Mode3200;
+                    return true;
+                case "2400":
+                case "codec2_2400":
+                case "mode2400":
+                    mode = Thetis.codec2.Codec2.Mode2400;
+                    return true;
+                case "1600":
+                case "codec2_1600":
+                case "mode1600":
+                    mode = Thetis.codec2.Codec2.Mode1600;
+                    return true;
+                case "1400":
+                case "codec2_1400":
+                case "mode1400":
+                    mode = Thetis.codec2.Codec2.Mode1400;
+                    return true;
+                case "1300":
+                case "codec2_1300":
+                case "mode1300":
+                    mode = Thetis.codec2.Codec2.Mode1300;
+                    return true;
+                case "1200":
+                case "codec2_1200":
+                case "mode1200":
+                    mode = Thetis.codec2.Codec2.Mode1200;
+                    return true;
+                case "700c":
+                case "codec2_700c":
+                case "mode700c":
+                    mode = Thetis.codec2.Codec2.Mode700C;
+                    return true;
+                default:
+                    if (int.TryParse(value, out int numericMode) && IsValidCodec2Mode(numericMode))
+                    {
+                        mode = numericMode;
+                        return true;
+                    }
+                    return false;
+            }
+        }
+
+        public static bool IsValidCodec2Mode(int mode)
+        {
+            switch (mode)
+            {
+                case Thetis.codec2.Codec2.Mode3200:
+                case Thetis.codec2.Codec2.Mode2400:
+                case Thetis.codec2.Codec2.Mode1600:
+                case Thetis.codec2.Codec2.Mode1400:
+                case Thetis.codec2.Codec2.Mode1300:
+                case Thetis.codec2.Codec2.Mode1200:
+                case Thetis.codec2.Codec2.Mode700C:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static string GetCodec2ModeString(int mode)
+        {
+            switch (mode)
+            {
+                case Thetis.codec2.Codec2.Mode3200:
+                    return "3200";
+                case Thetis.codec2.Codec2.Mode2400:
+                    return "2400";
+                case Thetis.codec2.Codec2.Mode1600:
+                    return "1600";
+                case Thetis.codec2.Codec2.Mode1400:
+                    return "1400";
+                case Thetis.codec2.Codec2.Mode1300:
+                    return "1300";
+                case Thetis.codec2.Codec2.Mode1200:
+                    return "1200";
+                case Thetis.codec2.Codec2.Mode700C:
+                    return "700c";
+                default:
+                    return mode.ToString();
+            }
+        }
+
+        public static Codec2Settings CopyCodec2Settings(Codec2Settings settings)
+        {
+            Codec2Settings copy = new Codec2Settings();
+            if (settings == null)
+                return copy;
+
+            copy.Mode = settings.Mode;
+            copy.Gray = settings.Gray;
+            copy.GrayConfigured = settings.GrayConfigured;
+            copy.DecodeBer = settings.DecodeBer;
+            copy.LpcPostFilter = settings.LpcPostFilter;
+            copy.LpcPostFilterBassBoost = settings.LpcPostFilterBassBoost;
+            copy.LpcPostFilterBeta = settings.LpcPostFilterBeta;
+            copy.LpcPostFilterGamma = settings.LpcPostFilterGamma;
+            copy.LpcPostFilterConfigured = settings.LpcPostFilterConfigured;
+            copy.Mode700CPostFilter = settings.Mode700CPostFilter;
+            copy.Mode700CPostFilterConfigured = settings.Mode700CPostFilterConfigured;
+            copy.Mode700CEq = settings.Mode700CEq;
+            copy.Mode700CEqConfigured = settings.Mode700CEqConfigured;
+            return copy;
         }
 
         private void ensureEncoder(int sampleRate, int channels, OpusSettings settings)
@@ -503,6 +827,123 @@ namespace Thetis
             if (estimatedBytes < 128) estimatedBytes = 128;
             if (estimatedBytes > 4096) estimatedBytes = 4096;
             return estimatedBytes;
+        }
+
+        private static short floatToInt16(float sample)
+        {
+            if (float.IsNaN(sample) || float.IsInfinity(sample))
+                return 0;
+
+            if (sample >= 1.0f)
+                return short.MaxValue;
+
+            if (sample <= -1.0f)
+                return short.MinValue;
+
+            return (short)Math.Round(sample * 32767.0f);
+        }
+
+        private static int getCodec2Mode(Codec2Settings settings)
+        {
+            if (settings == null || !IsValidCodec2Mode(settings.Mode))
+                return DefaultCodec2Mode;
+
+            return settings.Mode;
+        }
+
+        private static bool sameCodec2Settings(Codec2Settings a, Codec2Settings b)
+        {
+            if (a == null || b == null)
+                return false;
+
+            return a.Mode == b.Mode &&
+                   a.Gray == b.Gray &&
+                   a.GrayConfigured == b.GrayConfigured &&
+                   Math.Abs(a.DecodeBer - b.DecodeBer) < 0.000001f &&
+                   a.LpcPostFilter == b.LpcPostFilter &&
+                   a.LpcPostFilterBassBoost == b.LpcPostFilterBassBoost &&
+                   Math.Abs(a.LpcPostFilterBeta - b.LpcPostFilterBeta) < 0.000001f &&
+                   Math.Abs(a.LpcPostFilterGamma - b.LpcPostFilterGamma) < 0.000001f &&
+                   a.LpcPostFilterConfigured == b.LpcPostFilterConfigured &&
+                   a.Mode700CPostFilter == b.Mode700CPostFilter &&
+                   a.Mode700CPostFilterConfigured == b.Mode700CPostFilterConfigured &&
+                   a.Mode700CEq == b.Mode700CEq &&
+                   a.Mode700CEqConfigured == b.Mode700CEqConfigured;
+        }
+
+        private static void applyCodec2Settings(Thetis.codec2.Codec2 codec2, Codec2Settings settings)
+        {
+            if (codec2 == null || settings == null)
+                return;
+
+            if (settings.GrayConfigured)
+                codec2.SetNaturalOrGray(settings.Gray);
+
+            if (settings.LpcPostFilterConfigured)
+                codec2.SetLpcPostFilter(settings.LpcPostFilter, settings.LpcPostFilterBassBoost, settings.LpcPostFilterBeta, settings.LpcPostFilterGamma);
+
+            if (settings.Mode == Thetis.codec2.Codec2.Mode700C)
+            {
+                if (settings.Mode700CPostFilterConfigured)
+                    codec2.Set700CPostFilter(settings.Mode700CPostFilter);
+
+                if (settings.Mode700CEqConfigured)
+                    codec2.Set700CEq(settings.Mode700CEq);
+            }
+        }
+
+        private void ensureCodec2Encoder(Codec2Settings settings)
+        {
+            if (settings == null)
+                settings = new Codec2Settings();
+
+            if (m_codec2Encoder == null || !sameCodec2Settings(m_codec2EncoderSettings, settings))
+            {
+                resetCodec2Encoder();
+                m_codec2Encoder = new Thetis.codec2.Codec2(getCodec2Mode(settings));
+                applyCodec2Settings(m_codec2Encoder, settings);
+                m_codec2EncoderSettings = CopyCodec2Settings(settings);
+            }
+        }
+
+        private void ensureCodec2Decoder(Codec2Settings settings)
+        {
+            if (settings == null)
+                settings = new Codec2Settings();
+
+            if (m_codec2Decoder == null || !sameCodec2Settings(m_codec2DecoderSettings, settings))
+            {
+                resetCodec2Decoder();
+                m_codec2Decoder = new Thetis.codec2.Codec2(getCodec2Mode(settings));
+                applyCodec2Settings(m_codec2Decoder, settings);
+                m_codec2DecoderSettings = CopyCodec2Settings(settings);
+            }
+        }
+
+        private void resetCodec2Encoder()
+        {
+            if (m_codec2Encoder != null)
+            {
+                m_codec2Encoder.Dispose();
+                m_codec2Encoder = null;
+            }
+
+            m_codec2EncoderSettings = null;
+            m_codec2EncodePcm = null;
+            m_codec2EncodeBuffer = null;
+        }
+
+        private void resetCodec2Decoder()
+        {
+            if (m_codec2Decoder != null)
+            {
+                m_codec2Decoder.Dispose();
+                m_codec2Decoder = null;
+            }
+
+            m_codec2DecoderSettings = null;
+            m_codec2DecodePcm = null;
+            m_codec2DecodeFrameBytes = null;
         }
 
         private void resetEncoder()

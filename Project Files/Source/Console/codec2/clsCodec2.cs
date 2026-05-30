@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Thetis.codec2
 {
@@ -26,6 +22,7 @@ namespace Thetis.codec2
             if (_codec2_state == IntPtr.Zero)
                 throw new InvalidOperationException("codec2_create failed.");
 
+            Mode = mode;
             SamplesPerFrame = Codec2Native.codec2_samples_per_frame(_codec2_state);
             BitsPerFrame = Codec2Native.codec2_bits_per_frame(_codec2_state);
             BytesPerFrame = Codec2Native.codec2_bytes_per_frame(_codec2_state);
@@ -35,6 +32,8 @@ namespace Thetis.codec2
         {
             dispose(false);
         }
+
+        public int Mode { get; private set; }
 
         public int SamplesPerFrame { get; private set; }
 
@@ -97,6 +96,11 @@ namespace Thetis.codec2
 
         public void Decode(byte[] bytes, short[] speech_out)
         {
+            Decode(bytes, speech_out, 0.0f);
+        }
+
+        public void Decode(byte[] bytes, short[] speech_out, float ber_est)
+        {
             throwIfDisposed();
 
             if (bytes == null)
@@ -111,7 +115,53 @@ namespace Thetis.codec2
             if (speech_out.Length != SamplesPerFrame)
                 throw new ArgumentException("speech_out must contain exactly " + SamplesPerFrame + " samples.", "speech_out");
 
+            if (ber_est > 0.0f)
+                Codec2Native.codec2_decode_ber(_codec2_state, speech_out, bytes, ber_est);
+            else
             Codec2Native.codec2_decode(_codec2_state, speech_out, bytes);
+        }
+
+        public void SetLpcPostFilter(bool enable, bool bass_boost, float beta, float gamma)
+        {
+            throwIfDisposed();
+            Codec2Native.codec2_set_lpc_post_filter(_codec2_state, enable ? 1 : 0, bass_boost ? 1 : 0, beta, gamma);
+        }
+
+        public int GetSpareBitIndex()
+        {
+            throwIfDisposed();
+            return Codec2Native.codec2_get_spare_bit_index(_codec2_state);
+        }
+
+        public void SetNaturalOrGray(bool gray)
+        {
+            throwIfDisposed();
+            Codec2Native.codec2_set_natural_or_gray(_codec2_state, gray ? 1 : 0);
+        }
+
+        public float GetEnergy(byte[] bits)
+        {
+            throwIfDisposed();
+
+            if (bits == null)
+                throw new ArgumentNullException("bits");
+
+            if (bits.Length < BytesPerFrame)
+                throw new ArgumentException("bits must be at least " + BytesPerFrame + " bytes.", "bits");
+
+            return Codec2Native.codec2_get_energy(_codec2_state, bits);
+        }
+
+        public void Set700CPostFilter(bool enabled)
+        {
+            throwIfDisposed();
+            Codec2Native.codec2_700c_post_filter(_codec2_state, enabled);
+        }
+
+        public void Set700CEq(bool enabled)
+        {
+            throwIfDisposed();
+            Codec2Native.codec2_700c_eq(_codec2_state, enabled);
         }
 
         public void Dispose()
