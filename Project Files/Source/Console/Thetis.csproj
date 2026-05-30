@@ -1342,6 +1342,9 @@ copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
 copy /Y "..\..\..\lib\NR_Algorithms_x64\rnnoise_weights_small.bin" "$(ProjectDir)$(OutDir)"
 copy /Y "..\..\..\lib\NR_Algorithms_x64\rnnoise_weights_large.bin" "$(ProjectDir)$(OutDir)"
 copy /Y "..\..\..\Source\packages\SkiaSharp.NativeAssets.Win32.3.119.4\runtimes\win-x64\native\libSkiaSharp.dll" "$(ProjectDir)$(OutDir)"
+copy /Y "..\..\..\lib\codec2\libcodec2.dll" "$(ProjectDir)$(OutDir)"
+copy /Y "..\..\..\lib\codec2\libgcc_s_seh-1.dll" "$(ProjectDir)$(OutDir)"
+
 </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

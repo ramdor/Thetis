@@ -720,6 +720,12 @@ namespace Thetis
             public bool NormOneHz;
             public float MinDbm;
             public float MaxDbm;
+            public double ZoomSlider;
+            public double PanSlider;
+            public bool HasZoomCentreFrequency;
+            public bool ZoomCentreTracksReceiverCentre;
+            public double ZoomCentreFrequencyHz;
+            public double ZoomCentreOffsetHz;
             public int LastDataIndex;
             public float[] PixelBuffer;
             public clsDisplayCompression.Settings DisplayCompressionSettings;
@@ -765,6 +771,7 @@ namespace Thetis
         private bool m_bWebSocket = false;
         private Thread m_VFODataThread = null;
         private Thread m_sendThread = null;
+        private Thread m_displayThread = null;
         private TCPIPtciServer m_server = null;
         private int m_nRateLimit;
         private LinkedList<VFOData> m_vfoDataList = new LinkedList<VFOData>();
@@ -782,6 +789,7 @@ namespace Thetis
         private const int MAX_TX_AUDIO_QUEUE_BLOCKS = 64;
         private const int MAX_TX_AUDIO_QUEUE_COMPLEX_SAMPLES = 96000;
         private readonly AutoResetEvent m_outboundFrameEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent m_displayFrameEvent = new AutoResetEvent(false);
         private readonly HashSet<int> m_iqStreamEnabled = new HashSet<int>();
         private readonly HashSet<int> m_audioStreamEnabled = new HashSet<int>();
         private readonly Queue<TCIQueuedTxAudio> m_txAudioQueue = new Queue<TCIQueuedTxAudio>();
@@ -809,6 +817,9 @@ namespace Thetis
         private bool m_txUsesTCIAudio = false;
         private bool m_tciPttActive = false;
         private int m_txQueuedComplexSamples = 0;
+        private int m_audioReconfigurationDepth = 0;
+        private bool m_audioResetPending = false;
+        private bool m_txAudioClearPending = false;
         private bool m_seenModernTxAudioNegotiation = false;
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
         private clsSpectrumProcessor m_spectrumProcessor = null;
@@ -836,6 +847,7 @@ namespace Thetis
         private void spectrumProcessorFrameAvailable()
         {
             m_outboundFrameEvent.Set();
+            m_displayFrameEvent.Set();
         }
         private Console consoleThreadSafe
         {
@@ -1162,6 +1174,7 @@ namespace Thetis
         {
             if (m_disconnected) return;
             sendCTUN(rx - 1, enabled);
+            updateDisplayZoomCentreTrackingMode(rx - 1);
         }
         public void VFOSyncChanged(bool enabled)
         {
@@ -1549,6 +1562,11 @@ namespace Thetis
                 m_sendThread.Priority = ThreadPriority.AboveNormal;
                 m_sendThread.Start();
 
+                m_displayThread = new Thread(new ThreadStart(DisplayThreadProc));
+                m_displayThread.Name = "TCI display stream Thread";
+                m_displayThread.Priority = ThreadPriority.BelowNormal;
+                m_displayThread.Start();
+
                 m_VFODataThread = new Thread(new ThreadStart(VFOdata));
                 m_VFODataThread.Priority = ThreadPriority.Normal;
                 m_VFODataThread.Start();
@@ -1828,14 +1846,6 @@ namespace Thetis
         {
             while (true)
             {
-                try
-                {
-                    serviceDisplayStreams();
-                }
-                catch
-                {
-                }
-
                 TCIOutboundFrame outboundFrame = null;
 
                 bool hasFrame = false;
@@ -1878,10 +1888,39 @@ namespace Thetis
             }
         }
 
+        private void DisplayThreadProc()
+        {
+            while (!m_stopClient && !m_disconnected)
+            {
+                m_displayFrameEvent.WaitOne(20);
+
+                if (m_stopClient || m_disconnected)
+                    break;
+
+                bool hasUrgentFrames;
+                lock (m_objOutboundLock)
+                {
+                    hasUrgentFrames = m_outboundUrgentFrames.Count > 0;
+                }
+
+                if (!hasUrgentFrames)
+                {
+                    try
+                    {
+                        serviceDisplayStreams();
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
         private void abortSocketTransport()
         {
             m_stopClient = true;
             m_outboundFrameEvent.Set();
+            m_displayFrameEvent.Set();
 
             lock (m_objStreamLock)
             {
@@ -2231,6 +2270,65 @@ namespace Thetis
         private void sendDisplayPixels(int receiver, int pixels)
         {
             sendTextFrame("display_pixels:" + receiver.ToString() + "," + pixels.ToString() + ";");
+        }
+        private void sendDisplayZoom(int receiver, double zoomSlider)
+        {
+            sendTextFrame("display_zoom:" + receiver.ToString() + "," + zoomSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
+        }
+        private void sendDisplayPan(int receiver, double panSlider)
+        {
+            sendTextFrame("display_pan:" + receiver.ToString() + "," + panSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
+        }
+        private void sendDisplayZoomCentre(int receiver, double frequencyHz)
+        {
+            sendTextFrame("display_zoom_centre:" + receiver.ToString() + "," + frequencyHz.ToString("F0", CultureInfo.InvariantCulture) + ";");
+        }
+        private double getDisplayReceiverCentreFrequencyHz(int receiver)
+        {
+            Console console = consoleThreadSafe;
+            if (console == null) return 0.0;
+
+            double frequencyMHz = 0.0;
+            if (receiver == 0)
+                frequencyMHz = console.CentreFrequency;
+            else if (receiver == 1)
+                frequencyMHz = console.CentreRX2Frequency;
+
+            return frequencyMHz * 1000000.0 + console.GetDSPcwPitchShiftToZero(receiver + 1);
+        }
+        private void updateDisplayZoomCentreTrackingMode(int receiver)
+        {
+            double frequencyHz = 0.0;
+            double panSlider = 0.5;
+            bool updated = false;
+
+            lock (m_objStreamLock)
+            {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || !subscription.HasZoomCentreFrequency || m_spectrumProcessor == null) return;
+
+                double centreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
+                bool zoomCentreTracksReceiverCentre = true;
+                frequencyHz = centreFrequencyHz + subscription.ZoomCentreOffsetHz;
+
+                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
+
+                double zoomSlider;
+                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
+                subscription.ZoomSlider = zoomSlider;
+                subscription.PanSlider = panSlider;
+                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
+                subscription.ZoomCentreFrequencyHz = frequencyHz;
+                subscription.ZoomCentreOffsetHz = frequencyHz - centreFrequencyHz;
+                subscription.LastDataIndex = 0;
+                resetDisplayCompressionState(subscription);
+                updated = true;
+            }
+
+            if (updated)
+            {
+                sendDisplayZoomCentre(receiver, frequencyHz);
+                sendDisplayPan(receiver, panSlider);
+            }
         }
         private void sendDisplayDeltaMode(int receiver, bool enabled)
         {
@@ -3214,6 +3312,7 @@ namespace Thetis
 
                 m_stopClient = true;
                 m_outboundFrameEvent.Set();
+                m_displayFrameEvent.Set();
                 m_client.Close();
 
                 if (m_sendThread != null)
@@ -3225,6 +3324,17 @@ namespace Thetis
                         m_sendThread.Abort();
                     }
                     m_sendThread = null;
+                }
+
+                if (m_displayThread != null)
+                {
+                    m_displayThread.Join(100);
+
+                    if (m_displayThread.IsAlive)
+                    {
+                        m_displayThread.Abort();
+                    }
+                    m_displayThread = null;
                 }
 
                 if (m_spectrumProcessor != null)
@@ -5578,6 +5688,12 @@ namespace Thetis
                     case "audio_codec":
                         handleAudioCodec(args);
                         break;
+                    case "audio_reconfigure_begin":
+                        handleAudioReconfigureBegin(args);
+                        break;
+                    case "audio_reconfigure_end":
+                        handleAudioReconfigureEnd(args);
+                        break;
                     case "iq_start":
                         handleIQStart(args, true);
                         break;
@@ -5599,6 +5715,16 @@ namespace Thetis
                     case "display_pixels":
                         handleDisplayPixels(args);
                         break;
+                    case "display_zoom":
+                        handleDisplayZoom(args);
+                        break;
+                    case "display_pan":
+                        handleDisplayPan(args);
+                        break;
+                    case "display_zoom_centre":
+                    case "display_zoom_center":
+                        handleDisplayZoomCentre(args);
+                        break;
                     case "display_delta_mode":
                         handleDisplayDeltaMode(args);
                         break;
@@ -5606,19 +5732,12 @@ namespace Thetis
                         handleDisplayBlockDeltaMode(args);
                         break;
                     case "display_accuracy_mode":
-                    case "display_accuracymode":
-                    case "accuracymode":
                         handleDisplayAccuracyMode(args);
                         break;
                     case "display_adaptive_blocks":
-                    case "display_adaptiveblocks":
-                    case "adaptiveblocks":
                         handleDisplayAdaptiveBlocks(args);
                         break;
                     case "display_keyframe_interval":
-                    case "display_keyframe":
-                    case "keyframe":
-                    case "keyframee":
                         handleDisplayKeyFrameInterval(args);
                         break;
                     case "display_quant_bits":
@@ -5977,6 +6096,86 @@ namespace Thetis
             m_audioCompression.Reset();
         }
 
+        private void beginAudioReconfiguration()
+        {
+            lock (m_objStreamLock)
+            {
+                m_audioReconfigurationDepth++;
+            }
+        }
+
+        private void endAudioReconfiguration()
+        {
+            bool resetAudio;
+            bool clearTxAudio;
+
+            lock (m_objStreamLock)
+            {
+                if (m_audioReconfigurationDepth > 0)
+                    m_audioReconfigurationDepth--;
+
+                if (m_audioReconfigurationDepth != 0)
+                    return;
+
+                resetAudio = m_audioResetPending;
+                clearTxAudio = m_txAudioClearPending;
+                m_audioResetPending = false;
+                m_txAudioClearPending = false;
+            }
+
+            if (resetAudio)
+                clearRxAudioStreamState();
+
+            if (clearTxAudio)
+                clearQueuedTxAudio();
+        }
+
+        private void requestAudioCompressionReset()
+        {
+            bool deferReset;
+
+            lock (m_objStreamLock)
+            {
+                deferReset = m_audioReconfigurationDepth > 0;
+                if (deferReset)
+                    m_audioResetPending = true;
+            }
+
+            if (!deferReset)
+                resetAudioCompressionState();
+        }
+
+        private void requestAudioStreamResetAndTxClear()
+        {
+            bool deferReset;
+
+            lock (m_objStreamLock)
+            {
+                deferReset = m_audioReconfigurationDepth > 0;
+                if (deferReset)
+                {
+                    m_audioResetPending = true;
+                    m_txAudioClearPending = true;
+                }
+            }
+
+            if (!deferReset)
+            {
+                clearRxAudioStreamState();
+                clearQueuedTxAudio();
+            }
+        }
+
+        private void handleAudioReconfigureBegin(string[] args)
+        {
+            beginAudioReconfiguration();
+        }
+
+        private void handleAudioReconfigureEnd(string[] args)
+        {
+            endAudioReconfiguration();
+        }
+
         private clsAudioCompression.OpusSettings copyAudioOpusSettingsLocked()
         {
             return new clsAudioCompression.OpusSettings()
@@ -6289,7 +6488,7 @@ namespace Thetis
         {
             lock (m_objStreamLock)
             {
-                return m_audioStreamEnabled.Contains(receiver);
+                return m_audioReconfigurationDepth == 0 && m_audioStreamEnabled.Contains(receiver);
             }
         }
 
@@ -6723,9 +6922,7 @@ namespace Thetis
             }
 
             if (rateChanged)
-                clearRxAudioStreamState();
-            if (rateChanged)
-                clearQueuedTxAudio();
+                requestAudioStreamResetAndTxClear();
 
             sendAudioSampleRate(audioSampleRate);
             if (samplesChanged)
@@ -6897,8 +7094,7 @@ namespace Thetis
                 audioSampleRate = m_audioSampleRate;
             }
 
-            clearRxAudioStreamState();
-            clearQueuedTxAudio();
+            requestAudioStreamResetAndTxClear();
             if (rateChanged)
                 sendAudioSampleRate(audioSampleRate);
             sendAudioCodec(codec);
@@ -6918,7 +7114,7 @@ namespace Thetis
                 m_audioOpusSettings.Application = application;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusApplication(application);
         }
 
@@ -6933,7 +7129,7 @@ namespace Thetis
                 m_audioOpusSettings.Signal = signal;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusSignal(signal);
         }
 
@@ -6948,7 +7144,7 @@ namespace Thetis
                 m_audioOpusSettings.Bandwidth = bandwidth;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusBandwidth(bandwidth);
         }
 
@@ -6964,7 +7160,7 @@ namespace Thetis
                 m_audioOpusSettings.Bitrate = bitrate;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusBitrate(bitrate);
         }
 
@@ -6979,7 +7175,7 @@ namespace Thetis
                 m_audioOpusSettings.UseVbr = enabled;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusVbr(enabled);
         }
 
@@ -6994,7 +7190,7 @@ namespace Thetis
                 m_audioOpusSettings.UseConstrainedVbr = enabled;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusCvbr(enabled);
         }
 
@@ -7010,7 +7206,7 @@ namespace Thetis
                 m_audioOpusSettings.Complexity = complexity;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusComplexity(complexity);
         }
 
@@ -7025,7 +7221,7 @@ namespace Thetis
                 m_audioOpusSettings.UseFec = enabled;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusFec(enabled);
         }
 
@@ -7040,7 +7236,7 @@ namespace Thetis
                 m_audioOpusSettings.UseDtx = enabled;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusDtx(enabled);
         }
 
@@ -7056,7 +7252,7 @@ namespace Thetis
                 m_audioOpusSettings.PacketLossPercent = percent;
             }
 
-            resetAudioCompressionState();
+            requestAudioCompressionReset();
             sendAudioOpusPacketLoss(percent);
         }
 
@@ -7076,8 +7272,7 @@ namespace Thetis
                 audioStreamSamples = m_audioStreamSamples;
             }
 
-            clearRxAudioStreamState();
-            clearQueuedTxAudio();
+            requestAudioStreamResetAndTxClear();
             sendAudioOpusFrameMs(normalizedFrameMs);
             sendAudioStreamSamples(audioStreamSamples);
         }
@@ -7146,8 +7341,7 @@ namespace Thetis
                 sampleType = getPublishedAudioSampleTypeLocked();
                 m_seenModernTxAudioNegotiation = true;
             }
-            clearRxAudioStreamState();
-            clearQueuedTxAudio();
+            requestAudioStreamResetAndTxClear();
             if (rateChanged)
                 sendAudioSampleRate(audioSampleRate);
             sendAudioCodec(m_audioCodec);
@@ -7169,8 +7363,7 @@ namespace Thetis
 
                 m_seenModernTxAudioNegotiation = true;
             }
-            clearRxAudioStreamState();
-            clearQueuedTxAudio();
+            requestAudioStreamResetAndTxClear();
             sendAudioStreamChannels(m_audioStreamChannels);
         }
 
@@ -7218,8 +7411,7 @@ namespace Thetis
                     audioStreamSamples = m_audioStreamSamples;
                 }
             }
-            clearRxAudioStreamState();
-            clearQueuedTxAudio();
+            requestAudioStreamResetAndTxClear();
             sendAudioStreamSamples(audioStreamSamples);
             if (m_audioCodec == TCIAudioCodec.OPUS)
                 sendAudioOpusFrameMs(m_audioOpusSettings.FrameMs);
@@ -7289,6 +7481,18 @@ namespace Thetis
             if (averageTimeMs < 1.0f) return 1.0f;
             if (averageTimeMs > 9999.0f) return 9999.0f;
             return averageTimeMs;
+        }
+        private static double clampDisplayViewportValue(double value, double fallback)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value)) return fallback;
+            if (value < 0.0) return 0.0;
+            if (value > 1.0) return 1.0;
+            return value;
+        }
+
+        private static bool isDisplayFullyZoomedOut(double zoomSlider)
+        {
+            return Math.Abs(zoomSlider) < 0.000001;
         }
         private static bool tryParseDisplayBool(string value, out bool result)
         {
@@ -7390,6 +7594,15 @@ namespace Thetis
                 clsSpectrumProcessor processor = ensureSpectrumProcessor();
                 if (processor == null) return;
 
+                TCIDisplaySubscription subscription;
+                bool existingSubscription = m_displaySubscriptions.TryGetValue(receiver, out subscription);
+                double zoomSlider = existingSubscription ? subscription.ZoomSlider : 0.0;
+                double panSlider = existingSubscription ? subscription.PanSlider : 0.5;
+                bool hasZoomCentreFrequency = existingSubscription && subscription.HasZoomCentreFrequency;
+                bool zoomCentreTracksReceiverCentre = hasZoomCentreFrequency;
+                double zoomCentreFrequencyHz = hasZoomCentreFrequency ? subscription.ZoomCentreFrequencyHz : 0.0;
+                double zoomCentreOffsetHz = hasZoomCentreFrequency ? subscription.ZoomCentreOffsetHz : 0.0;
+
                 if (!processor.AddReceiver(receiver, pixels, frameRate, fftSize))
                 {
                     processor.SetReceiverPixelResolution(receiver, pixels);
@@ -7405,9 +7618,17 @@ namespace Thetis
                 processor.SetReceiverAverageMode(receiver, averageMode);
                 processor.SetReceiverAverageTimeMs(receiver, averageTimeMs);
                 processor.SetReceiverNormOneHzPan(receiver, normOneHz);
+                processor.SetReceiverPanSlider(receiver, panSlider);
+                processor.SetReceiverZoomSlider(receiver, zoomSlider);
+                if (hasZoomCentreFrequency)
+                {
+                    double processorZoomCentreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver) + zoomCentreOffsetHz;
+                    processor.SetReceiverZoomCentreFrequency(receiver, processorZoomCentreFrequencyHz, zoomCentreTracksReceiverCentre);
+                    zoomCentreFrequencyHz = processorZoomCentreFrequencyHz;
+                }
+                processor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
 
-                TCIDisplaySubscription subscription;
-                if (!m_displaySubscriptions.TryGetValue(receiver, out subscription))
+                if (!existingSubscription)
                 {
                     subscription = new TCIDisplaySubscription();
                     subscription.DisplayCompressionSettings = new clsDisplayCompression.Settings();
@@ -7425,6 +7646,12 @@ namespace Thetis
                 subscription.NormOneHz = normOneHz;
                 subscription.MinDbm = minDbm;
                 subscription.MaxDbm = maxDbm;
+                subscription.ZoomSlider = zoomSlider;
+                subscription.PanSlider = panSlider;
+                subscription.HasZoomCentreFrequency = hasZoomCentreFrequency;
+                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
+                subscription.ZoomCentreFrequencyHz = zoomCentreFrequencyHz;
+                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
                 subscription.LastDataIndex = 0;
                 subscription.PixelBuffer = null;
                 ensureDisplayCompressionSettings(subscription);
@@ -7474,6 +7701,85 @@ namespace Thetis
             }
 
             sendDisplayPixels(receiver, pixels);
+        }
+        private void handleDisplayZoom(string[] args)
+        {
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double zoomSlider)) return;
+            zoomSlider = clampDisplayViewportValue(zoomSlider, 0.0);
+            double panSlider = 0.5;
+
+            lock (m_objStreamLock)
+            {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                if (!m_spectrumProcessor.SetReceiverZoomSlider(receiver, zoomSlider)) return;
+                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
+                subscription.ZoomSlider = zoomSlider;
+                subscription.PanSlider = panSlider;
+                subscription.LastDataIndex = 0;
+                resetDisplayCompressionState(subscription);
+            }
+
+            sendDisplayZoom(receiver, zoomSlider);
+            sendDisplayPan(receiver, panSlider);
+        }
+        private void handleDisplayPan(string[] args)
+        {
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double panSlider)) return;
+            panSlider = clampDisplayViewportValue(panSlider, 0.5);
+            double zoomSlider = 0.0;
+
+            lock (m_objStreamLock)
+            {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                if (!m_spectrumProcessor.SetReceiverPanSlider(receiver, panSlider)) return;
+                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
+                subscription.ZoomSlider = zoomSlider;
+                subscription.PanSlider = panSlider;
+                if (!isDisplayFullyZoomedOut(zoomSlider))
+                {
+                subscription.HasZoomCentreFrequency = false;
+                subscription.ZoomCentreTracksReceiverCentre = false;
+                subscription.ZoomCentreFrequencyHz = 0.0;
+                subscription.ZoomCentreOffsetHz = 0.0;
+                }
+                subscription.LastDataIndex = 0;
+                resetDisplayCompressionState(subscription);
+            }
+
+            sendDisplayPan(receiver, panSlider);
+        }
+        private void handleDisplayZoomCentre(string[] args)
+        {
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
+            if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
+            double zoomSlider = 0.0;
+            double panSlider = 0.5;
+
+            lock (m_objStreamLock)
+            {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                bool zoomCentreTracksReceiverCentre = true;
+                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
+                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
+                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
+                subscription.ZoomSlider = zoomSlider;
+                subscription.PanSlider = panSlider;
+                subscription.HasZoomCentreFrequency = true;
+                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
+                subscription.ZoomCentreFrequencyHz = frequencyHz;
+                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
+                subscription.LastDataIndex = 0;
+                resetDisplayCompressionState(subscription);
+            }
+
+            sendDisplayZoomCentre(receiver, frequencyHz);
+            sendDisplayPan(receiver, panSlider);
         }
         private void handleDisplayFrameRate(string[] args)
         {
