@@ -55,6 +55,8 @@ namespace Thetis
             Transmitter = 1
         }
 
+        public event Action FrameAvailable;
+
         private const int DefaultPixels = 1024;
         private const int DefaultFrameRate = 15;
         private const int DefaultMaxFftSize = 262144;
@@ -497,15 +499,19 @@ namespace Thetis
             {
                 SpectrumEndpoint[] endpoints = GetEndpointArray();
                 long nowTicks = DateTime.UtcNow.Ticks;
-                bool didWork = false;
+                //bool didWork = false;
+                Action frameAvailable = FrameAvailable;
 
                 for (int i = 0; i < endpoints.Length; i++)
                 {
                     if (endpoints[i].ProcessFrame(nowTicks))
-                        didWork = true;
+                    {
+                        //didWork = true;
+                        frameAvailable?.Invoke();
+                    }
                 }
 
-                Thread.Sleep(didWork ? 1 : 10);
+                Thread.Sleep(1);// didWork ? 1 : 6);
             }
         }
 
@@ -974,20 +980,26 @@ namespace Thetis
                             SpecHPSDRDLL.GetPixels(displayId, 0, ptr, ref flag);
                     }
 
-                    if (flag != 1) return false;
-
-                    float offset = GetPixelOffset(displayId);
-                    if (offset != 0.0f)
+                    if (flag == 1)
                     {
-                        for (int i = 0; i < _pixels; i++)
-                            _workingPixels[i] += offset;
+                        float offset = GetPixelOffset(displayId);
+                        if (offset != 0.0f)
+                        {
+                            for (int i = 0; i < _pixels; i++)
+                                _workingPixels[i] += offset;
+                        }
+
+                        float[] temp = _latestPixels;
+                        _latestPixels = _workingPixels;
+                        _workingPixels = temp;
+
+                        _hasData = true;
+                    }
+                    else if (!_hasData)
+                    {
+                        return false;
                     }
 
-                    float[] temp = _latestPixels;
-                    _latestPixels = _workingPixels;
-                    _workingPixels = temp;
-
-                    _hasData = true;
                     _dataIndex++;
                     if (_dataIndex >= DataIndexWrap) _dataIndex = 1;
 

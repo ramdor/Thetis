@@ -696,6 +696,11 @@ namespace Thetis
 
         private const int SOCKET_READ_TIMEOUT_MS = 250;
         private const int SOCKET_READ_BUFFER_SIZE = 8192;
+        private const int DISPLAY_BLOCK_DELTA_MARKER = 8;
+        private const int DISPLAY_BLOCK_DELTA_BLOCK_SIZE = 64;
+        private const int DISPLAY_BLOCK_DELTA_MIN_SAVING_PERCENT = 5;
+        private const int DISPLAY_BLOCK_DELTA_RAW_MODE = 0;
+        private const int DISPLAY_BLOCK_DELTA_UNCHANGED_MODE = 1;
 
         private sealed class TCIOutboundFrame
         {
@@ -815,6 +820,7 @@ namespace Thetis
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
         private clsSpectrumProcessor m_spectrumProcessor = null;
         private bool m_displayDeltaMode = false;
+        private bool m_displayBlockDeltaMode = false;
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
@@ -835,6 +841,10 @@ namespace Thetis
         ~TCPIPtciSocketListener()
         {
             StopSocketListener();
+        }
+        private void spectrumProcessorFrameAvailable()
+        {
+            m_outboundFrameEvent.Set();
         }
         private Console consoleThreadSafe
         {
@@ -1834,14 +1844,16 @@ namespace Thetis
                 catch
                 {
                 }
+
                 TCIOutboundFrame outboundFrame = null;
 
+                bool hasFrame = false;
                 lock (m_objOutboundLock)
                 {
-                    tryDequeueNextOutboundFrameLocked(out outboundFrame);
+                    hasFrame = tryDequeueNextOutboundFrameLocked(out outboundFrame);
                 }
 
-                if (outboundFrame == null)
+                if (!hasFrame)
                 {
                     if (m_stopClient)
                     {
@@ -2232,6 +2244,10 @@ namespace Thetis
         private void sendDisplayDeltaMode(bool enabled)
         {
             sendTextFrame("display_delta_mode:" + enabled.ToString().ToLowerInvariant() + ";");
+        }
+        private void sendDisplayBlockDeltaMode(bool enabled)
+        {
+            sendTextFrame("display_block_delta_mode:" + enabled.ToString().ToLowerInvariant() + ";");
         }
         private void sendDisplayFrameRate(int receiver, int frameRate)
         {
@@ -3206,6 +3222,7 @@ namespace Thetis
 
                 if (m_spectrumProcessor != null)
                 {
+                    m_spectrumProcessor.FrameAvailable -= spectrumProcessorFrameAvailable;
                     m_spectrumProcessor.Dispose();
                     m_spectrumProcessor = null;
                 }
@@ -4729,9 +4746,11 @@ namespace Thetis
                     switch (rx)
                     {
                         case 0:
+                            consoleThreadSafe.SelectRX1VarFilter(false, true);
                             consoleThreadSafe.UpdateRX1Filters(low, high);
                             break;
                         case 1:
+                            consoleThreadSafe.SelectRX2VarFilter(false, true);
                             consoleThreadSafe.UpdateRX2Filters(low, high);
                             break;
                     }
@@ -5576,6 +5595,9 @@ namespace Thetis
                     case "display_delta_mode":
                         handleDisplayDeltaMode(args);
                         break;
+                    case "display_block_delta_mode":
+                        handleDisplayBlockDeltaMode(args);
+                        break;
                     case "display_framerate":
                         handleDisplayFrameRate(args);
                         break;
@@ -5978,7 +6000,7 @@ namespace Thetis
             buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
         }
 
-        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload, int displayDeltaBits = 0, int displayPayloadLength = 0)
+        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload, int displayDeltaBits = 0, int displayPayloadLength = 0, int displayBlockSize = 0, int displayBlockCount = 0)
         {
             int samplePayloadLength = samplePayload != null ? samplePayload.Length : 0;
             byte[] payload = new byte[64 + samplePayloadLength];
@@ -5997,6 +6019,13 @@ namespace Thetis
             {
                 payload[56] = (byte)displayDeltaBits;
                 writeUInt32(payload, 57, (uint)displayPayloadLength);
+
+                if (displayDeltaBits == DISPLAY_BLOCK_DELTA_MARKER)
+                {
+                    payload[61] = (byte)displayBlockSize;
+                    payload[62] = (byte)(displayBlockCount & 0xFF);
+                    payload[63] = (byte)((displayBlockCount >> 8) & 0xFF);
+                }
             }
 
             if (samplePayloadLength > 0)
@@ -6880,7 +6909,7 @@ namespace Thetis
             if (!int.TryParse(args[0], out int bitrate))
                 return;
 
-            bitrate = Math.Max(6000, Math.Min(510000, bitrate));
+            bitrate = Math.Max(6000, Math.Min(512000, bitrate));
             lock (m_objStreamLock)
             {
                 m_audioOpusSettings.Bitrate = bitrate;
@@ -7235,7 +7264,11 @@ namespace Thetis
         private clsSpectrumProcessor ensureSpectrumProcessor()
         {
             if (m_spectrumProcessor == null && _console != null)
+            {
                 m_spectrumProcessor = new clsSpectrumProcessor(_console);
+                m_spectrumProcessor.FrameAvailable += spectrumProcessorFrameAvailable;
+            }
+
             return m_spectrumProcessor;
         }
         private bool tryGetDisplaySubscription(int receiver, out TCIDisplaySubscription subscription)
@@ -7355,6 +7388,7 @@ namespace Thetis
 
                 if (m_spectrumProcessor != null && m_displaySubscriptions.Count == 0)
                 {
+                    m_spectrumProcessor.FrameAvailable -= spectrumProcessorFrameAvailable;
                     m_spectrumProcessor.Dispose();
                     m_spectrumProcessor = null;
                 }
@@ -7535,10 +7569,27 @@ namespace Thetis
             lock (m_objStreamLock)
             {
                 m_displayDeltaMode = enabled;
+                if (!enabled)
+                    m_displayBlockDeltaMode = false;
                 resetDisplayDeltaState();
             }
 
             sendDisplayDeltaMode(enabled);
+        }
+        private void handleDisplayBlockDeltaMode(string[] args)
+        {
+            if (args.Length != 1) return;
+            if (!bool.TryParse(args[0], out bool enabled)) return;
+
+            lock (m_objStreamLock)
+            {
+                m_displayBlockDeltaMode = enabled;
+                if (enabled)
+                    m_displayDeltaMode = true;
+                resetDisplayDeltaState();
+            }
+
+            sendDisplayBlockDeltaMode(enabled);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static byte quantizeDisplayValue(float value, float minDbm, float maxDbm)
@@ -7570,26 +7621,111 @@ namespace Thetis
             int totalBits = pixelCount * bitsPerDelta;
             int totalBytes = (totalBits + 7) / 8;
             byte[] payload = new byte[totalBytes];
+            packDisplayDeltaBlock(currentFrame, previousFrame, 0, pixelCount, bitsPerDelta, payload, 0);
+            return payload;
+        }
+        private static void packDisplayDeltaBlock(byte[] currentFrame, byte[] previousFrame, int startIndex, int pixelCount, int bitsPerDelta, byte[] payload, int payloadOffset)
+        {
             int bias = (1 << (bitsPerDelta - 1)) - 1;
             int bitOffset = 0;
 
             for (int i = 0; i < pixelCount; i++)
             {
-                int delta = currentFrame[i] - previousFrame[i];
+                int sourceIndex = startIndex + i;
+                int delta = currentFrame[sourceIndex] - previousFrame[sourceIndex];
                 int packedValue = delta + bias;
 
                 for (int bitIndex = bitsPerDelta - 1; bitIndex >= 0; bitIndex--)
                 {
                     int bit = (packedValue >> bitIndex) & 1;
-                    int byteIndex = bitOffset >> 3;
+                    int byteIndex = payloadOffset + (bitOffset >> 3);
                     int bitInByte = 7 - (bitOffset & 7);
                     if (bit != 0)
                         payload[byteIndex] = (byte)(payload[byteIndex] | (byte)(1 << bitInByte));
                     bitOffset++;
                 }
             }
+        }
+        private static int getDisplayBlockDeltaMode(byte[] currentFrame, byte[] previousFrame, int startIndex, int pixelCount)
+        {
+            int maxAbsoluteDelta = 0;
+
+            for (int i = 0; i < pixelCount; i++)
+            {
+                int sourceIndex = startIndex + i;
+                int absoluteDelta = currentFrame[sourceIndex] - previousFrame[sourceIndex];
+                if (absoluteDelta < 0)
+                    absoluteDelta = -absoluteDelta;
+
+                if (absoluteDelta > maxAbsoluteDelta)
+                    maxAbsoluteDelta = absoluteDelta;
+
+                if (maxAbsoluteDelta >= 64)
+                    return DISPLAY_BLOCK_DELTA_RAW_MODE;
+            }
+
+            if (maxAbsoluteDelta == 0)
+                return DISPLAY_BLOCK_DELTA_UNCHANGED_MODE;
+
+            return getDisplayDeltaBits(maxAbsoluteDelta);
+        }
+        private static byte[] buildDisplayBlockDeltaPayload(byte[] currentFrame, byte[] previousFrame, int pixelCount, int blockSize, out int blockCount)
+        {
+            blockCount = 0;
+            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || blockSize <= 0)
+                return null;
+
+            blockCount = (pixelCount + blockSize - 1) / blockSize;
+            int[] blockModes = new int[blockCount];
+            int payloadLength = blockCount;
+
+            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+            {
+                int startIndex = blockIndex * blockSize;
+                int blockPixelCount = Math.Min(blockSize, pixelCount - startIndex);
+                int blockMode = getDisplayBlockDeltaMode(currentFrame, previousFrame, startIndex, blockPixelCount);
+                blockModes[blockIndex] = blockMode;
+
+                if (blockMode == DISPLAY_BLOCK_DELTA_RAW_MODE)
+                    payloadLength += blockPixelCount;
+                else if (blockMode >= 2 && blockMode <= 7)
+                    payloadLength += ((blockPixelCount * blockMode) + 7) / 8;
+            }
+
+            byte[] payload = new byte[payloadLength];
+            int payloadOffset = 0;
+
+            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+                payload[payloadOffset++] = (byte)blockModes[blockIndex];
+
+            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+            {
+                int startIndex = blockIndex * blockSize;
+                int blockPixelCount = Math.Min(blockSize, pixelCount - startIndex);
+                int blockMode = blockModes[blockIndex];
+
+                if (blockMode == DISPLAY_BLOCK_DELTA_RAW_MODE)
+                {
+                    Buffer.BlockCopy(currentFrame, startIndex, payload, payloadOffset, blockPixelCount);
+                    payloadOffset += blockPixelCount;
+                }
+                else if (blockMode >= 2 && blockMode <= 7)
+                {
+                    int blockPayloadLength = ((blockPixelCount * blockMode) + 7) / 8;
+                    packDisplayDeltaBlock(currentFrame, previousFrame, startIndex, blockPixelCount, blockMode, payload, payloadOffset);
+                    payloadOffset += blockPayloadLength;
+                }
+            }
 
             return payload;
+        }
+        private static bool isDisplayBlockDeltaWorthSending(int blockPayloadLength, int pixelCount)
+        {
+            if (blockPayloadLength <= 0 || pixelCount <= 0)
+                return false;
+
+            int minimumSaving = Math.Max(1, (pixelCount * DISPLAY_BLOCK_DELTA_MIN_SAVING_PERCENT) / 100);
+            return blockPayloadLength <= pixelCount - minimumSaving;
         }
         private void serviceDisplayStreams()
         {
@@ -7631,11 +7767,6 @@ namespace Thetis
                         int maxAbsoluteDelta = 0;
                         for (int i = 0; i < pixelCount; i++)
                         {
-                            //int absoluteDelta = Math.Abs(encoded[i] - subscription.LastSentFrame[i]);
-
-                            //if (absoluteDelta > maxAbsoluteDelta)
-                            //    maxAbsoluteDelta = absoluteDelta;
-
                             int absoluteDelta = encoded[i] - subscription.LastSentFrame[i];
                             if (absoluteDelta < 0)
                                 absoluteDelta = -absoluteDelta;
@@ -7644,16 +7775,26 @@ namespace Thetis
                                 maxAbsoluteDelta = absoluteDelta;
 
                             if (maxAbsoluteDelta >= 64)
-                            {
                                 break;
                             }
-                        }
 
                         int bitsPerDelta = maxAbsoluteDelta >= 64 ? 0 : getDisplayDeltaBits(maxAbsoluteDelta);
+                        byte[] deltaPayload = null;
                         if (bitsPerDelta > 0)
+                            deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
+
+                        int blockCount = 0;
+                        byte[] blockDeltaPayload = m_displayBlockDeltaMode ? buildDisplayBlockDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, DISPLAY_BLOCK_DELTA_BLOCK_SIZE, out blockCount) : null;
+
+                        if (blockDeltaPayload != null &&
+                            isDisplayBlockDeltaWorthSending(blockDeltaPayload.Length, pixelCount) &&
+                            (deltaPayload == null || blockDeltaPayload.Length < deltaPayload.Length))
                         {
-                            byte[] deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
-                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload != null ? deltaPayload.Length : 0);
+                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, blockDeltaPayload, DISPLAY_BLOCK_DELTA_MARKER, blockDeltaPayload.Length, DISPLAY_BLOCK_DELTA_BLOCK_SIZE, blockCount);
+                        }
+                        else if (deltaPayload != null)
+                        {
+                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload.Length);
                         }
                         else
                         {
