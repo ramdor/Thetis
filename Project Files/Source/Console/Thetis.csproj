@@ -453,6 +453,7 @@
     <Compile Include="clsDBMan.cs" />
     <Compile Include="clsDiscord.cs" />
     <Compile Include="clsDiscoveredRadioPicker.cs" />
+    <Compile Include="clsDisplayCompression.cs" />
     <Compile Include="clsDPISafeTools.cs" />
     <Compile Include="clsFlagAtlas.cs" />
     <Compile Include="clsHardwareSpecific.cs" />

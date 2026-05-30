@@ -323,7 +323,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 
 namespace Thetis
 {
@@ -347,9 +346,7 @@ namespace Thetis
         RX_AUDIO_STREAM = 1,
         TX_AUDIO_STREAM = 2,
         TX_CHRONO = 3,
-        LINEOUT_STREAM = 4,
-        DISPLAY_STREAM = 10,
-        DISPLAY_DELTA_STREAM = 11
+        LINEOUT_STREAM = 4
     }
 
     internal enum TCISampleType : uint
@@ -696,12 +693,6 @@ namespace Thetis
 
         private const int SOCKET_READ_TIMEOUT_MS = 250;
         private const int SOCKET_READ_BUFFER_SIZE = 8192;
-        private const int DISPLAY_BLOCK_DELTA_MARKER = 8;
-        private const int DISPLAY_BLOCK_DELTA_BLOCK_SIZE = 64;
-        private const int DISPLAY_BLOCK_DELTA_MIN_SAVING_PERCENT = 5;
-        private const int DISPLAY_BLOCK_DELTA_RAW_MODE = 0;
-        private const int DISPLAY_BLOCK_DELTA_UNCHANGED_MODE = 1;
-
         private sealed class TCIOutboundFrame
         {
             public byte[] Frame;
@@ -731,7 +722,8 @@ namespace Thetis
             public float MaxDbm;
             public int LastDataIndex;
             public float[] PixelBuffer;
-            public byte[] LastSentFrame;
+            public clsDisplayCompression.Settings DisplayCompressionSettings;
+            public clsDisplayCompression.State DisplayCompressionState;
         }
 
         //
@@ -805,6 +797,7 @@ namespace Thetis
         private readonly Dictionary<int, TCIDisplaySubscription> m_displaySubscriptions = new Dictionary<int, TCIDisplaySubscription>();
         private readonly clsAudioCompression m_audioCompression = new clsAudioCompression();
         private readonly clsAudioCompression.OpusSettings m_audioOpusSettings = new clsAudioCompression.OpusSettings();
+        private readonly clsDisplayCompression m_displayCompression = new clsDisplayCompression();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
         private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
@@ -819,8 +812,6 @@ namespace Thetis
         private bool m_seenModernTxAudioNegotiation = false;
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
         private clsSpectrumProcessor m_spectrumProcessor = null;
-        private bool m_displayDeltaMode = false;
-        private bool m_displayBlockDeltaMode = false;
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
@@ -2241,13 +2232,29 @@ namespace Thetis
         {
             sendTextFrame("display_pixels:" + receiver.ToString() + "," + pixels.ToString() + ";");
         }
-        private void sendDisplayDeltaMode(bool enabled)
+        private void sendDisplayDeltaMode(int receiver, bool enabled)
         {
-            sendTextFrame("display_delta_mode:" + enabled.ToString().ToLowerInvariant() + ";");
+            sendTextFrame("display_delta_mode:" + receiver.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";");
         }
-        private void sendDisplayBlockDeltaMode(bool enabled)
+        private void sendDisplayBlockDeltaMode(int receiver, bool enabled)
         {
-            sendTextFrame("display_block_delta_mode:" + enabled.ToString().ToLowerInvariant() + ";");
+            sendTextFrame("display_block_delta_mode:" + receiver.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";");
+        }
+        private void sendDisplayAccuracyMode(int receiver, int mode)
+        {
+            sendTextFrame("display_accuracy_mode:" + receiver.ToString() + "," + mode.ToString() + ";");
+        }
+        private void sendDisplayAdaptiveBlocks(int receiver, bool enabled)
+        {
+            sendTextFrame("display_adaptive_blocks:" + receiver.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";");
+        }
+        private void sendDisplayKeyFrameInterval(int receiver, int intervalFrames)
+        {
+            sendTextFrame("display_keyframe_interval:" + receiver.ToString() + "," + intervalFrames.ToString() + ";");
+        }
+        private void sendDisplayQuantBits(int receiver, int quantizationBits)
+        {
+            sendTextFrame("display_quant_bits:" + receiver.ToString() + "," + quantizationBits.ToString() + ";");
         }
         private void sendDisplayFrameRate(int receiver, int frameRate)
         {
@@ -5598,6 +5605,25 @@ namespace Thetis
                     case "display_block_delta_mode":
                         handleDisplayBlockDeltaMode(args);
                         break;
+                    case "display_accuracy_mode":
+                    case "display_accuracymode":
+                    case "accuracymode":
+                        handleDisplayAccuracyMode(args);
+                        break;
+                    case "display_adaptive_blocks":
+                    case "display_adaptiveblocks":
+                    case "adaptiveblocks":
+                        handleDisplayAdaptiveBlocks(args);
+                        break;
+                    case "display_keyframe_interval":
+                    case "display_keyframe":
+                    case "keyframe":
+                    case "keyframee":
+                        handleDisplayKeyFrameInterval(args);
+                        break;
+                    case "display_quant_bits":
+                        handleDisplayQuantBits(args);
+                        break;
                     case "display_framerate":
                         handleDisplayFrameRate(args);
                         break;
@@ -5992,6 +6018,12 @@ namespace Thetis
             }
         }
 
+        private static void writeUInt16(byte[] buffer, int offset, ushort value)
+        {
+            buffer[offset] = (byte)(value & 0xFF);
+            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
+        }
+
         private static void writeUInt32(byte[] buffer, int offset, uint value)
         {
             buffer[offset] = (byte)(value & 0xFF);
@@ -6000,7 +6032,7 @@ namespace Thetis
             buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
         }
 
-        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload, int displayDeltaBits = 0, int displayPayloadLength = 0, int displayBlockSize = 0, int displayBlockCount = 0)
+        private byte[] buildStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int length, TCIStreamType streamType, int channels, byte[] samplePayload)
         {
             int samplePayloadLength = samplePayload != null ? samplePayload.Length : 0;
             byte[] payload = new byte[64 + samplePayloadLength];
@@ -6015,24 +6047,41 @@ namespace Thetis
             writeUInt32(payload, offset, (uint)streamType); offset += 4;
             writeUInt32(payload, offset, (uint)channels); offset += 4;
 
-            if (streamType == TCIStreamType.DISPLAY_DELTA_STREAM)
-            {
-                payload[56] = (byte)displayDeltaBits;
-                writeUInt32(payload, 57, (uint)displayPayloadLength);
-
-                if (displayDeltaBits == DISPLAY_BLOCK_DELTA_MARKER)
-                {
-                    payload[61] = (byte)displayBlockSize;
-                    payload[62] = (byte)(displayBlockCount & 0xFF);
-                    payload[63] = (byte)((displayBlockCount >> 8) & 0xFF);
-                }
-            }
-
             if (samplePayloadLength > 0)
                 Buffer.BlockCopy(samplePayload, 0, payload, 64, samplePayloadLength);
 
             return payload;
         }
+        private byte[] buildCompactDisplayStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int channels, clsDisplayCompression.Result displayResult)
+        {
+            if (displayResult == null)
+                return null;
+
+            byte[] samplePayload = displayResult.SamplePayload ?? Array.Empty<byte>();
+            int samplePayloadLength = samplePayload.Length;
+            byte[] payload = new byte[clsDisplayCompression.DisplayCompactHeaderLength + samplePayloadLength];
+
+            payload[0] = clsDisplayCompression.DisplayCompactMagic0;
+            payload[1] = clsDisplayCompression.DisplayCompactMagic1;
+            payload[2] = clsDisplayCompression.DisplayCompactVersion;
+            payload[3] = (byte)displayResult.Kind;
+            payload[4] = (byte)receiver;
+            payload[5] = (byte)sampleType;
+            payload[6] = (byte)channels;
+            payload[7] = (byte)displayResult.QuantizationBits;
+            payload[8] = (byte)displayResult.DeltaBits;
+            payload[9] = (byte)displayResult.BlockSize;
+            writeUInt16(payload, 10, (ushort)displayResult.BlockCount);
+            writeUInt32(payload, 12, (uint)sampleRate);
+            writeUInt32(payload, 16, (uint)displayResult.LogicalLength);
+            writeUInt32(payload, 20, (uint)samplePayloadLength);
+
+            if (samplePayloadLength > 0)
+                Buffer.BlockCopy(samplePayload, 0, payload, clsDisplayCompression.DisplayCompactHeaderLength, samplePayloadLength);
+
+            return payload;
+        }
+
 
         private byte[] encodeSamples(float[] samples, TCISampleType sampleType)
         {
@@ -7277,13 +7326,21 @@ namespace Thetis
             if (receiver < 0 || receiver > 1) return false;
             return m_displaySubscriptions.TryGetValue(receiver, out subscription);
         }
-        private void resetDisplayDeltaState()
+        private clsDisplayCompression.Settings ensureDisplayCompressionSettings(TCIDisplaySubscription subscription)
         {
-            foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+            if (subscription.DisplayCompressionSettings == null)
+                subscription.DisplayCompressionSettings = new clsDisplayCompression.Settings();
+
+            return subscription.DisplayCompressionSettings;
+        }
+        private void resetDisplayCompressionState(TCIDisplaySubscription subscription)
             {
-                if (subscription != null)
-                    subscription.LastSentFrame = null;
-            }
+            if (subscription == null) return;
+
+            if (subscription.DisplayCompressionState == null)
+                subscription.DisplayCompressionState = new clsDisplayCompression.State();
+            else
+                subscription.DisplayCompressionState.Reset();
         }
         private void handleDisplayStart(string[] args)
         {
@@ -7353,6 +7410,7 @@ namespace Thetis
                 if (!m_displaySubscriptions.TryGetValue(receiver, out subscription))
                 {
                     subscription = new TCIDisplaySubscription();
+                    subscription.DisplayCompressionSettings = new clsDisplayCompression.Settings();
                     m_displaySubscriptions[receiver] = subscription;
                 }
 
@@ -7369,7 +7427,8 @@ namespace Thetis
                 subscription.MaxDbm = maxDbm;
                 subscription.LastDataIndex = 0;
                 subscription.PixelBuffer = null;
-                subscription.LastSentFrame = null;
+                ensureDisplayCompressionSettings(subscription);
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayStart(receiver, pixels, frameRate, fftSize, windowType, detectorType, averageMode, averageTimeMs, normOneHz, minDbm, maxDbm);
@@ -7411,7 +7470,7 @@ namespace Thetis
                 subscription.Pixels = pixels;
                 subscription.LastDataIndex = 0;
                 subscription.PixelBuffer = null;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayPixels(receiver, pixels);
@@ -7429,7 +7488,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverFrameRate(receiver, frameRate)) return;
                 subscription.FrameRate = frameRate;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayFrameRate(receiver, frameRate);
@@ -7447,7 +7506,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverFFTSize(receiver, fftSize)) return;
                 subscription.FFTSize = fftSize;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayFFTSize(receiver, fftSize);
@@ -7465,7 +7524,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverWindowType(receiver, windowType)) return;
                 subscription.WindowType = windowType;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayWindow(receiver, windowType);
@@ -7483,7 +7542,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverDetectorTypePan(receiver, detectorType)) return;
                 subscription.DetectorType = detectorType;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayDetector(receiver, detectorType);
@@ -7501,7 +7560,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverAverageMode(receiver, averageMode)) return;
                 subscription.AverageMode = averageMode;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayAveraging(receiver, averageMode);
@@ -7519,7 +7578,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverAverageTimeMs(receiver, averageTimeMs)) return;
                 subscription.AverageTimeMs = averageTimeMs;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayAverageTime(receiver, averageTimeMs);
@@ -7536,7 +7595,7 @@ namespace Thetis
                 if (!m_spectrumProcessor.SetReceiverNormOneHzPan(receiver, normOneHz)) return;
                 subscription.NormOneHz = normOneHz;
                 subscription.LastDataIndex = 0;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayOneHz(receiver, normOneHz);
@@ -7556,176 +7615,249 @@ namespace Thetis
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 subscription.MinDbm = minDbm;
                 subscription.MaxDbm = maxDbm;
-                subscription.LastSentFrame = null;
+                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayDbmRange(receiver, minDbm, maxDbm);
         }
         private void handleDisplayDeltaMode(string[] args)
         {
-            if (args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled)) return;
+            if (args.Length == 1)
+            {
+                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
+                List<int> receivers = new List<int>();
+
+                lock (m_objStreamLock)
+                {
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+                    {
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.DeltaMode = legacyEnabled;
+                        if (!legacyEnabled)
+                            settings.BlockDeltaMode = false;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
+                    }
+                }
+
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayDeltaMode(receivers[i], legacyEnabled);
+                return;
+            }
+
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!tryParseDisplayBool(args[1], out bool enabled)) return;
 
             lock (m_objStreamLock)
             {
-                m_displayDeltaMode = enabled;
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.DeltaMode = enabled;
                 if (!enabled)
-                    m_displayBlockDeltaMode = false;
-                resetDisplayDeltaState();
+                    settings.BlockDeltaMode = false;
+                resetDisplayCompressionState(subscription);
             }
 
-            sendDisplayDeltaMode(enabled);
+            sendDisplayDeltaMode(receiver, enabled);
         }
         private void handleDisplayBlockDeltaMode(string[] args)
         {
-            if (args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled)) return;
+            if (args.Length == 1)
+            {
+                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
+                List<int> receivers = new List<int>();
+
+                lock (m_objStreamLock)
+                {
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+                    {
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.BlockDeltaMode = legacyEnabled;
+                        if (legacyEnabled)
+                            settings.DeltaMode = true;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
+                    }
+                }
+
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayBlockDeltaMode(receivers[i], legacyEnabled);
+                return;
+            }
+
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!tryParseDisplayBool(args[1], out bool enabled)) return;
 
             lock (m_objStreamLock)
             {
-                m_displayBlockDeltaMode = enabled;
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.BlockDeltaMode = enabled;
                 if (enabled)
-                    m_displayDeltaMode = true;
-                resetDisplayDeltaState();
+                    settings.DeltaMode = true;
+                resetDisplayCompressionState(subscription);
             }
 
-            sendDisplayBlockDeltaMode(enabled);
+            sendDisplayBlockDeltaMode(receiver, enabled);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte quantizeDisplayValue(float value, float minDbm, float maxDbm)
+        private void handleDisplayAccuracyMode(string[] args)
         {
-            if (float.IsNaN(value) || float.IsInfinity(value) || value < minDbm) return 0;
-            if (value > maxDbm) return 255;
-
-            float normalized = (value - minDbm) / (maxDbm - minDbm);
-            int quantized = 1 + (int)Math.Round(normalized * 253.0f);
-            if (quantized < 1) quantized = 1;
-            if (quantized > 254) quantized = 254;
-            return (byte)quantized;
-        }
-        private static int getDisplayDeltaBits(int maxAbsoluteDelta)
-        {
-            if (maxAbsoluteDelta <= 1) return 2;
-            if (maxAbsoluteDelta <= 3) return 3;
-            if (maxAbsoluteDelta <= 7) return 4;
-            if (maxAbsoluteDelta <= 15) return 5;
-            if (maxAbsoluteDelta <= 31) return 6;
-            if (maxAbsoluteDelta <= 63) return 7;
-            return 0;
-        }
-        private static byte[] buildDisplayDeltaPayload(byte[] currentFrame, byte[] previousFrame, int pixelCount, int bitsPerDelta)
-        {
-            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || bitsPerDelta < 2 || bitsPerDelta > 7)
-                return null;
-
-            int totalBits = pixelCount * bitsPerDelta;
-            int totalBytes = (totalBits + 7) / 8;
-            byte[] payload = new byte[totalBytes];
-            packDisplayDeltaBlock(currentFrame, previousFrame, 0, pixelCount, bitsPerDelta, payload, 0);
-            return payload;
-        }
-        private static void packDisplayDeltaBlock(byte[] currentFrame, byte[] previousFrame, int startIndex, int pixelCount, int bitsPerDelta, byte[] payload, int payloadOffset)
-        {
-            int bias = (1 << (bitsPerDelta - 1)) - 1;
-            int bitOffset = 0;
-
-            for (int i = 0; i < pixelCount; i++)
+            if (args.Length == 1)
             {
-                int sourceIndex = startIndex + i;
-                int delta = currentFrame[sourceIndex] - previousFrame[sourceIndex];
-                int packedValue = delta + bias;
+                if (!int.TryParse(args[0], out int legacyMode)) return;
+                legacyMode = clsDisplayCompression.ClampAccuracyMode(legacyMode);
+                List<int> receivers = new List<int>();
 
-                for (int bitIndex = bitsPerDelta - 1; bitIndex >= 0; bitIndex--)
+                lock (m_objStreamLock)
                 {
-                    int bit = (packedValue >> bitIndex) & 1;
-                    int byteIndex = payloadOffset + (bitOffset >> 3);
-                    int bitInByte = 7 - (bitOffset & 7);
-                    if (bit != 0)
-                        payload[byteIndex] = (byte)(payload[byteIndex] | (byte)(1 << bitInByte));
-                    bitOffset++;
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+                    {
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.AccuracyMode = legacyMode;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
+        }
                 }
+
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayAccuracyMode(receivers[i], legacyMode);
+                return;
             }
-        }
-        private static int getDisplayBlockDeltaMode(byte[] currentFrame, byte[] previousFrame, int startIndex, int pixelCount)
+
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!int.TryParse(args[1], out int mode)) return;
+            mode = clsDisplayCompression.ClampAccuracyMode(mode);
+
+            lock (m_objStreamLock)
         {
-            int maxAbsoluteDelta = 0;
-
-            for (int i = 0; i < pixelCount; i++)
-            {
-                int sourceIndex = startIndex + i;
-                int absoluteDelta = currentFrame[sourceIndex] - previousFrame[sourceIndex];
-                if (absoluteDelta < 0)
-                    absoluteDelta = -absoluteDelta;
-
-                if (absoluteDelta > maxAbsoluteDelta)
-                    maxAbsoluteDelta = absoluteDelta;
-
-                if (maxAbsoluteDelta >= 64)
-                    return DISPLAY_BLOCK_DELTA_RAW_MODE;
-            }
-
-            if (maxAbsoluteDelta == 0)
-                return DISPLAY_BLOCK_DELTA_UNCHANGED_MODE;
-
-            return getDisplayDeltaBits(maxAbsoluteDelta);
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.AccuracyMode = mode;
+                resetDisplayCompressionState(subscription);
         }
-        private static byte[] buildDisplayBlockDeltaPayload(byte[] currentFrame, byte[] previousFrame, int pixelCount, int blockSize, out int blockCount)
+
+            sendDisplayAccuracyMode(receiver, mode);
+        }
+        private void handleDisplayAdaptiveBlocks(string[] args)
         {
-            blockCount = 0;
-            if (currentFrame == null || previousFrame == null || pixelCount <= 0 || blockSize <= 0)
-                return null;
+            if (args.Length == 1)
+        {
+                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
+                List<int> receivers = new List<int>();
 
-            blockCount = (pixelCount + blockSize - 1) / blockSize;
-            int[] blockModes = new int[blockCount];
-            int payloadLength = blockCount;
-
-            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+                lock (m_objStreamLock)
             {
-                int startIndex = blockIndex * blockSize;
-                int blockPixelCount = Math.Min(blockSize, pixelCount - startIndex);
-                int blockMode = getDisplayBlockDeltaMode(currentFrame, previousFrame, startIndex, blockPixelCount);
-                blockModes[blockIndex] = blockMode;
-
-                if (blockMode == DISPLAY_BLOCK_DELTA_RAW_MODE)
-                    payloadLength += blockPixelCount;
-                else if (blockMode >= 2 && blockMode <= 7)
-                    payloadLength += ((blockPixelCount * blockMode) + 7) / 8;
-            }
-
-            byte[] payload = new byte[payloadLength];
-            int payloadOffset = 0;
-
-            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
-                payload[payloadOffset++] = (byte)blockModes[blockIndex];
-
-            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
-            {
-                int startIndex = blockIndex * blockSize;
-                int blockPixelCount = Math.Min(blockSize, pixelCount - startIndex);
-                int blockMode = blockModes[blockIndex];
-
-                if (blockMode == DISPLAY_BLOCK_DELTA_RAW_MODE)
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
                 {
-                    Buffer.BlockCopy(currentFrame, startIndex, payload, payloadOffset, blockPixelCount);
-                    payloadOffset += blockPixelCount;
-                }
-                else if (blockMode >= 2 && blockMode <= 7)
-                {
-                    int blockPayloadLength = ((blockPixelCount * blockMode) + 7) / 8;
-                    packDisplayDeltaBlock(currentFrame, previousFrame, startIndex, blockPixelCount, blockMode, payload, payloadOffset);
-                    payloadOffset += blockPayloadLength;
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.AdaptiveBlocks = legacyEnabled;
+                        subscription.LastDataIndex = 0;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
                 }
             }
 
-            return payload;
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayAdaptiveBlocks(receivers[i], legacyEnabled);
+                return;
         }
-        private static bool isDisplayBlockDeltaWorthSending(int blockPayloadLength, int pixelCount)
-        {
-            if (blockPayloadLength <= 0 || pixelCount <= 0)
-                return false;
 
-            int minimumSaving = Math.Max(1, (pixelCount * DISPLAY_BLOCK_DELTA_MIN_SAVING_PERCENT) / 100);
-            return blockPayloadLength <= pixelCount - minimumSaving;
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!tryParseDisplayBool(args[1], out bool enabled)) return;
+
+            lock (m_objStreamLock)
+        {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.AdaptiveBlocks = enabled;
+                subscription.LastDataIndex = 0;
+                resetDisplayCompressionState(subscription);
+            }
+
+            sendDisplayAdaptiveBlocks(receiver, enabled);
+        }
+        private void handleDisplayKeyFrameInterval(string[] args)
+            {
+            if (args.Length == 1)
+            {
+                if (!int.TryParse(args[0], out int legacyIntervalFrames)) return;
+                legacyIntervalFrames = clsDisplayCompression.ClampKeyFrameIntervalFrames(legacyIntervalFrames);
+                List<int> receivers = new List<int>();
+
+                lock (m_objStreamLock)
+                {
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+                    {
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.KeyFrameIntervalFrames = legacyIntervalFrames;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
+                    }
+                }
+
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayKeyFrameInterval(receivers[i], legacyIntervalFrames);
+                return;
+            }
+
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!int.TryParse(args[1], out int intervalFrames)) return;
+            intervalFrames = clsDisplayCompression.ClampKeyFrameIntervalFrames(intervalFrames);
+
+            lock (m_objStreamLock)
+            {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.KeyFrameIntervalFrames = intervalFrames;
+                resetDisplayCompressionState(subscription);
+        }
+
+            sendDisplayKeyFrameInterval(receiver, intervalFrames);
+        }
+
+        private void handleDisplayQuantBits(string[] args)
+        {
+            if (args.Length == 1)
+            {
+                if (!int.TryParse(args[0], out int legacyQuantizationBits)) return;
+                legacyQuantizationBits = clsDisplayCompression.ClampQuantizationBits(legacyQuantizationBits);
+                List<int> receivers = new List<int>();
+
+                lock (m_objStreamLock)
+                {
+                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
+                {
+                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                        settings.QuantizationBits = legacyQuantizationBits;
+                        resetDisplayCompressionState(subscription);
+                        receivers.Add(subscription.Receiver);
+                }
+            }
+
+                for (int i = 0; i < receivers.Count; i++)
+                    sendDisplayQuantBits(receivers[i], legacyQuantizationBits);
+                return;
+        }
+
+            if (args.Length != 2) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!int.TryParse(args[1], out int quantizationBits)) return;
+            quantizationBits = clsDisplayCompression.ClampQuantizationBits(quantizationBits);
+
+            lock (m_objStreamLock)
+        {
+                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
+                clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
+                settings.QuantizationBits = quantizationBits;
+                resetDisplayCompressionState(subscription);
+            }
+
+            sendDisplayQuantBits(receiver, quantizationBits);
         }
         private void serviceDisplayStreams()
         {
@@ -7753,62 +7885,20 @@ namespace Thetis
                     if (dataIndex == 0 || dataIndex == subscription.LastDataIndex || pixelCount <= 0)
                         continue;
 
-                    byte[] encoded = new byte[pixelCount];
-                    for (int i = 0; i < pixelCount; i++)
-                        encoded[i] = quantizeDisplayValue(subscription.PixelBuffer[i], subscription.MinDbm, subscription.MaxDbm);
+                    if (subscription.DisplayCompressionState == null)
+                        subscription.DisplayCompressionState = new clsDisplayCompression.State();
 
                     int sampleRate = 0;
                     if (!m_spectrumProcessor.TryGetReceiverSampleRate(subscription.Receiver, out sampleRate) || sampleRate <= 0)
                         sampleRate = cmaster.GetInputRate(0, subscription.Receiver);
 
-                    byte[] payload;
-                    if (m_displayDeltaMode && subscription.LastSentFrame != null && subscription.LastSentFrame.Length == pixelCount)
-                    {
-                        int maxAbsoluteDelta = 0;
-                        for (int i = 0; i < pixelCount; i++)
-                        {
-                            int absoluteDelta = encoded[i] - subscription.LastSentFrame[i];
-                            if (absoluteDelta < 0)
-                                absoluteDelta = -absoluteDelta;
+                    clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
+                    clsDisplayCompression.Result displayResult = m_displayCompression.Encode(subscription.PixelBuffer, pixelCount, subscription.MinDbm, subscription.MaxDbm, displaySettings, subscription.DisplayCompressionState);
+                    if (displayResult == null)
+                        continue;
 
-                            if (absoluteDelta > maxAbsoluteDelta)
-                                maxAbsoluteDelta = absoluteDelta;
+                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, 1, displayResult);
 
-                            if (maxAbsoluteDelta >= 64)
-                                break;
-                            }
-
-                        int bitsPerDelta = maxAbsoluteDelta >= 64 ? 0 : getDisplayDeltaBits(maxAbsoluteDelta);
-                        byte[] deltaPayload = null;
-                        if (bitsPerDelta > 0)
-                            deltaPayload = buildDisplayDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, bitsPerDelta);
-
-                        int blockCount = 0;
-                        byte[] blockDeltaPayload = m_displayBlockDeltaMode ? buildDisplayBlockDeltaPayload(encoded, subscription.LastSentFrame, pixelCount, DISPLAY_BLOCK_DELTA_BLOCK_SIZE, out blockCount) : null;
-
-                        if (blockDeltaPayload != null &&
-                            isDisplayBlockDeltaWorthSending(blockDeltaPayload.Length, pixelCount) &&
-                            (deltaPayload == null || blockDeltaPayload.Length < deltaPayload.Length))
-                        {
-                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, blockDeltaPayload, DISPLAY_BLOCK_DELTA_MARKER, blockDeltaPayload.Length, DISPLAY_BLOCK_DELTA_BLOCK_SIZE, blockCount);
-                        }
-                        else if (deltaPayload != null)
-                        {
-                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_DELTA_STREAM, 1, deltaPayload, bitsPerDelta, deltaPayload.Length);
-                        }
-                        else
-                        {
-                            payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
-                        }
-                    }
-                    else
-                    {
-                        payload = buildStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, pixelCount, TCIStreamType.DISPLAY_STREAM, 1, encoded);
-                    }
-
-                    if (subscription.LastSentFrame == null || subscription.LastSentFrame.Length != pixelCount)
-                        subscription.LastSentFrame = new byte[pixelCount];
-                    Buffer.BlockCopy(encoded, 0, subscription.LastSentFrame, 0, pixelCount);
                     subscription.LastDataIndex = dataIndex;
 
                     if (payloads == null)
