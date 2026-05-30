@@ -357,7 +357,6 @@ namespace Thetis
         FLOAT32 = 3,
         UINT8 = 4,
         OPUS = 10,
-        CODEC2 = 11
     }
 
     internal sealed class TCIQueuedTxAudio
@@ -806,7 +805,6 @@ namespace Thetis
         private readonly Dictionary<int, TCIDisplaySubscription> m_displaySubscriptions = new Dictionary<int, TCIDisplaySubscription>();
         private readonly clsAudioCompression m_audioCompression = new clsAudioCompression();
         private readonly clsAudioCompression.OpusSettings m_audioOpusSettings = new clsAudioCompression.OpusSettings();
-        private readonly clsAudioCompression.Codec2Settings m_audioCodec2Settings = new clsAudioCompression.Codec2Settings();
         private readonly clsDisplayCompression m_displayCompression = new clsDisplayCompression();
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
@@ -2879,13 +2877,6 @@ namespace Thetis
             sendAudioOpusDtx(m_audioOpusSettings.UseDtx);
             sendAudioOpusPacketLoss(m_audioOpusSettings.PacketLossPercent);
             sendAudioOpusFrameMs(m_audioOpusSettings.FrameMs);
-
-            sendAudioCodec2Mode(m_audioCodec2Settings.Mode);
-            sendAudioCodec2Gray(m_audioCodec2Settings.Gray);
-            sendAudioCodec2DecodeBer(m_audioCodec2Settings.DecodeBer);
-            sendAudioCodec2LpcPostFilter(m_audioCodec2Settings.LpcPostFilter, m_audioCodec2Settings.LpcPostFilterBassBoost, m_audioCodec2Settings.LpcPostFilterBeta, m_audioCodec2Settings.LpcPostFilterGamma);
-            sendAudioCodec2700CPostFilter(m_audioCodec2Settings.Mode700CPostFilter);
-            sendAudioCodec2700CEq(m_audioCodec2Settings.Mode700CEq);
 
             sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
 
@@ -5817,25 +5808,7 @@ namespace Thetis
                         break;
                     case "audio_opus_frame_ms":
                         handleAudioOpusFrameMs(args);
-                        break;
-                    case "audio_codec2_mode":
-                        handleAudioCodec2Mode(args);
-                        break;
-                    case "audio_codec2_gray":
-                        handleAudioCodec2Gray(args);
-                        break;
-                    case "audio_codec2_decode_ber":
-                        handleAudioCodec2DecodeBer(args);
-                        break;
-                    case "audio_codec2_lpc_post_filter":
-                        handleAudioCodec2LpcPostFilter(args);
-                        break;
-                    case "audio_codec2_700c_post_filter":
-                        handleAudioCodec2700CPostFilter(args);
-                        break;
-                    case "audio_codec2_700c_eq":
-                        handleAudioCodec2700CEq(args);
-                        break;
+                        break;                  
                     case "tx_stream_audio_buffering":
                         handleTxStreamAudioBuffering(args);
                         break;
@@ -6059,40 +6032,6 @@ namespace Thetis
                     case "audio_opus_frame_ms":
                         sendAudioOpusFrameMs(m_audioOpusSettings.FrameMs);
                         break;
-                    case "audio_codec2_mode":
-                        sendAudioCodec2Mode(m_audioCodec2Settings.Mode);
-                        break;
-                    case "audio_codec2_gray":
-                        sendAudioCodec2Gray(m_audioCodec2Settings.Gray);
-                        break;
-                    case "audio_codec2_decode_ber":
-                        sendAudioCodec2DecodeBer(m_audioCodec2Settings.DecodeBer);
-                        break;
-                    case "audio_codec2_lpc_post_filter":
-                        sendAudioCodec2LpcPostFilter(m_audioCodec2Settings.LpcPostFilter, m_audioCodec2Settings.LpcPostFilterBassBoost, m_audioCodec2Settings.LpcPostFilterBeta, m_audioCodec2Settings.LpcPostFilterGamma);
-                        break;
-                    case "audio_codec2_700c_post_filter":
-                        sendAudioCodec2700CPostFilter(m_audioCodec2Settings.Mode700CPostFilter);
-                        break;
-                    case "audio_codec2_700c_eq":
-                        sendAudioCodec2700CEq(m_audioCodec2Settings.Mode700CEq);
-                        break;
-                    case "audio_codec2_spare_bit_index":
-                        if (clsAudioCompression.TryGetCodec2SpareBitIndex(m_audioCodec2Settings, out int spareBitIndex))
-                            sendAudioCodec2SpareBitIndex(spareBitIndex);
-                        break;
-                    case "audio_codec2_bits_per_frame":
-                        if (clsAudioCompression.TryGetCodec2BitsPerFrame(m_audioCodec2Settings, out int bitsPerFrame))
-                            sendAudioCodec2BitsPerFrame(bitsPerFrame);
-                        break;
-                    case "audio_codec2_bytes_per_frame":
-                        if (clsAudioCompression.TryGetCodec2BytesPerFrame(m_audioCodec2Settings, out int bytesPerFrame))
-                            sendAudioCodec2BytesPerFrame(bytesPerFrame);
-                        break;
-                    case "audio_codec2_samples_per_frame":
-                        if (clsAudioCompression.TryGetCodec2SamplesPerFrame(m_audioCodec2Settings, out int samplesPerFrame))
-                            sendAudioCodec2SamplesPerFrame(samplesPerFrame);
-                        break;
                     case "tx_stream_audio_buffering":
                         sendTxStreamAudioBuffering(m_txStreamAudioBufferingMs);
                         break;
@@ -6150,50 +6089,7 @@ namespace Thetis
 
             frameMs = 20.0;
             return false;
-        }
-
-        private static bool isCodec2AudioSampleRate(int sampleRate)
-        {
-            return sampleRate == clsAudioCompression.Codec2SampleRate;
-        }
-
-        private int getCodec2AudioStreamSamples()
-        {
-            if (clsAudioCompression.TryGetCodec2SamplesPerFrame(m_audioCodec2Settings, out int samplesPerFrame))
-                return samplesPerFrame;
-
-            return m_audioStreamSamples;
-        }
-
-        private bool tryApplyCodec2AudioSettingsLocked(out bool rateChanged, out bool samplesChanged, out bool channelsChanged)
-        {
-            rateChanged = false;
-            samplesChanged = false;
-            channelsChanged = false;
-
-            if (!clsAudioCompression.TryGetCodec2SamplesPerFrame(m_audioCodec2Settings, out int codec2Samples))
-                return false;
-
-            if (m_audioSampleRate != clsAudioCompression.Codec2SampleRate)
-            {
-                m_audioSampleRate = clsAudioCompression.Codec2SampleRate;
-                rateChanged = true;
-            }
-
-            if (m_audioStreamSamples != codec2Samples)
-            {
-                m_audioStreamSamples = codec2Samples;
-                samplesChanged = true;
-            }
-
-            if (m_audioStreamChannels != 1)
-            {
-                m_audioStreamChannels = 1;
-                channelsChanged = true;
-            }
-
-            return true;
-        }
+        }     
 
         private void resetAudioCompressionState()
         {
@@ -6298,18 +6194,10 @@ namespace Thetis
             };
         }
 
-        private clsAudioCompression.Codec2Settings copyAudioCodec2SettingsLocked()
-        {
-            return clsAudioCompression.CopyCodec2Settings(m_audioCodec2Settings);
-        }
-
         private TCISampleType getPublishedAudioSampleTypeLocked()
         {
             if (m_audioCodec == TCIAudioCodec.OPUS)
                 return TCISampleType.OPUS;
-
-            if (m_audioCodec == TCIAudioCodec.CODEC2)
-                return TCISampleType.CODEC2;
 
             return m_audioSampleType;
         }
@@ -6320,7 +6208,6 @@ namespace Thetis
             {
                 case TCISampleType.UINT8:
                 case TCISampleType.OPUS:
-                case TCISampleType.CODEC2:
                     return 1;
                 case TCISampleType.INT16:
                     return 2;
@@ -6519,9 +6406,6 @@ namespace Thetis
                 case TCIAudioCodec.OPUS:
                     codecName = "opus";
                     break;
-                case TCIAudioCodec.CODEC2:
-                    codecName = "codec2";
-                    break;
                 case TCIAudioCodec.PCM:
                 default:
                     codecName = "pcm";
@@ -6606,56 +6490,6 @@ namespace Thetis
             sendTextFrame("audio_opus_frame_ms:" + frameMs.ToString("0.0##", CultureInfo.InvariantCulture) + ";");
         }
 
-        private void sendAudioCodec2Mode(int mode)
-        {
-            sendTextFrame("audio_codec2_mode:" + clsAudioCompression.GetCodec2ModeString(mode) + ";");
-        }
-
-        private void sendAudioCodec2Gray(bool enabled)
-        {
-            sendTextFrame("audio_codec2_gray:" + enabled.ToString().ToLowerInvariant() + ";");
-        }
-
-        private void sendAudioCodec2DecodeBer(float ber)
-        {
-            sendTextFrame("audio_codec2_decode_ber:" + ber.ToString("0.0######", CultureInfo.InvariantCulture) + ";");
-        }
-
-        private void sendAudioCodec2LpcPostFilter(bool enabled, bool bassBoost, float beta, float gamma)
-        {
-            sendTextFrame("audio_codec2_lpc_post_filter:" + enabled.ToString().ToLowerInvariant() + "," + bassBoost.ToString().ToLowerInvariant() + "," + beta.ToString("0.0######", CultureInfo.InvariantCulture) + "," + gamma.ToString("0.0######", CultureInfo.InvariantCulture) + ";");
-        }
-
-        private void sendAudioCodec2700CPostFilter(bool enabled)
-        {
-            sendTextFrame("audio_codec2_700c_post_filter:" + enabled.ToString().ToLowerInvariant() + ";");
-        }
-
-        private void sendAudioCodec2700CEq(bool enabled)
-        {
-            sendTextFrame("audio_codec2_700c_eq:" + enabled.ToString().ToLowerInvariant() + ";");
-        }
-
-        private void sendAudioCodec2SpareBitIndex(int index)
-        {
-            sendTextFrame("audio_codec2_spare_bit_index:" + index.ToString() + ";");
-        }
-
-        private void sendAudioCodec2BitsPerFrame(int bitsPerFrame)
-        {
-            sendTextFrame("audio_codec2_bits_per_frame:" + bitsPerFrame.ToString() + ";");
-        }
-
-        private void sendAudioCodec2BytesPerFrame(int bytesPerFrame)
-        {
-            sendTextFrame("audio_codec2_bytes_per_frame:" + bytesPerFrame.ToString() + ";");
-        }
-
-        private void sendAudioCodec2SamplesPerFrame(int samplesPerFrame)
-        {
-            sendTextFrame("audio_codec2_samples_per_frame:" + samplesPerFrame.ToString() + ";");
-        }
-
         private bool wantsIQStream(int receiver)
         {
             lock (m_objStreamLock)
@@ -6709,7 +6543,7 @@ namespace Thetis
             int packetSamples;
             int targetSampleRate;
             clsAudioCompression.OpusSettings opusSettings = null;
-            clsAudioCompression.Codec2Settings codec2Settings = null;
+
             lock (m_objStreamLock)
             {
                 codec = m_audioCodec;
@@ -6719,8 +6553,6 @@ namespace Thetis
                 targetSampleRate = m_audioSampleRate;
                 if (codec == TCIAudioCodec.OPUS)
                     opusSettings = copyAudioOpusSettingsLocked();
-                else if (codec == TCIAudioCodec.CODEC2)
-                    codec2Settings = copyAudioCodec2SettingsLocked();
             }
 
             lock (m_objRxAudioLock)
@@ -6781,12 +6613,6 @@ namespace Thetis
                         byte[] encoded = m_audioCompression.EncodeOpus(interleaved, packetSamples, sampleRate, channels, opusSettings, out int encodedBytes);
                         if (encodedBytes > 0)
                             sendBinaryFrame(buildStreamPayload(receiver, sampleRate, TCISampleType.OPUS, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, channels, encoded), true);
-                    }
-                    else if (codec == TCIAudioCodec.CODEC2)
-                    {
-                        byte[] encoded = m_audioCompression.EncodeCodec2(interleaved, packetSamples, channels, codec2Settings, out int encodedBytes);
-                        if (encodedBytes > 0)
-                            sendBinaryFrame(buildStreamPayload(receiver, clsAudioCompression.Codec2SampleRate, TCISampleType.CODEC2, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, 1, encoded), true);
                     }
                     else
                     {
@@ -6919,19 +6745,6 @@ namespace Thetis
                         opusSettings = copyAudioOpusSettingsLocked();
                     }
                     decoded = m_audioCompression.DecodeOpus(payload, dataOffset, actualDataBytes, sampleRate, channels, opusSettings, out decodedValueCount);
-                    if (decodedValueCount <= 0 || decoded == null || decoded.Length == 0)
-                        return;
-                }
-                else if (sampleType == TCISampleType.CODEC2)
-                {
-                    channels = 1;
-                    sampleRate = clsAudioCompression.Codec2SampleRate;
-                    clsAudioCompression.Codec2Settings codec2Settings;
-                    lock (m_objStreamLock)
-                    {
-                        codec2Settings = copyAudioCodec2SettingsLocked();
-                    }
-                    decoded = m_audioCompression.DecodeCodec2(payload, dataOffset, actualDataBytes, codec2Settings, out decodedValueCount);
                     if (decodedValueCount <= 0 || decoded == null || decoded.Length == 0)
                         return;
                 }
@@ -7073,8 +6886,6 @@ namespace Thetis
                 {
                     if (m_audioCodec == TCIAudioCodec.OPUS)
                         allowSampleRate = clsAudioCompression.IsSupportedSampleRate(sampleRate);
-                    else if (m_audioCodec == TCIAudioCodec.CODEC2)
-                        allowSampleRate = isCodec2AudioSampleRate(sampleRate);
                     else
                         allowSampleRate = isStandardTciAudioSampleRate(sampleRate);
                 }
@@ -7092,15 +6903,6 @@ namespace Thetis
                             if (m_audioStreamSamples != opusSamples)
                             {
                                 m_audioStreamSamples = opusSamples;
-                                samplesChanged = true;
-                            }
-                        }
-                        else if (m_audioCodec == TCIAudioCodec.CODEC2)
-                        {
-                            int codec2Samples = getCodec2AudioStreamSamples();
-                            if (m_audioStreamSamples != codec2Samples)
-                            {
-                                m_audioStreamSamples = codec2Samples;
                                 samplesChanged = true;
                             }
                         }
@@ -7265,9 +7067,6 @@ namespace Thetis
                 case "opus":
                     codec = TCIAudioCodec.OPUS;
                     break;
-                case "codec2":
-                    codec = TCIAudioCodec.CODEC2;
-                    break;
                 case "pcm":
                 default:
                     codec = TCIAudioCodec.PCM;
@@ -7285,8 +7084,6 @@ namespace Thetis
             lock (m_objStreamLock)
             {
                 TCIAudioCodec previousCodec = m_audioCodec;
-                if (codec == TCIAudioCodec.CODEC2 && !tryApplyCodec2AudioSettingsLocked(out rateChanged, out samplesChanged, out channelsChanged))
-                    codec = m_audioCodec;
 
                 m_audioCodec = codec;
                 codecChanged = previousCodec != m_audioCodec;
@@ -7299,7 +7096,7 @@ namespace Thetis
                         samplesChanged = true;
                     }
                 }
-                else if (m_audioCodec != TCIAudioCodec.CODEC2 && !m_audioStreamSamplesExplicitlySet)
+                else if (!m_audioStreamSamplesExplicitlySet)
                 {
                     if (!isStandardTciAudioSampleRate(m_audioSampleRate))
                     {
@@ -7507,156 +7304,6 @@ namespace Thetis
             sendAudioStreamSamples(audioStreamSamples);
         }
 
-        private void handleAudioCodec2Mode(string[] args)
-        {
-            if (args.Length != 1) return;
-            if (!clsAudioCompression.TryParseCodec2Mode(args[0], out int mode))
-                return;
-
-            int oldMode;
-            int audioStreamSamples;
-            int audioSampleRate;
-            int audioStreamChannels;
-            bool activeCodec2;
-            bool rateChanged = false;
-            bool samplesChanged = false;
-            bool channelsChanged = false;
-            lock (m_objStreamLock)
-            {
-                oldMode = m_audioCodec2Settings.Mode;
-                m_audioCodec2Settings.Mode = mode;
-                activeCodec2 = m_audioCodec == TCIAudioCodec.CODEC2;
-                if (activeCodec2 && !tryApplyCodec2AudioSettingsLocked(out rateChanged, out samplesChanged, out channelsChanged))
-                {
-                    m_audioCodec2Settings.Mode = oldMode;
-                    tryApplyCodec2AudioSettingsLocked(out rateChanged, out samplesChanged, out channelsChanged);
-                }
-                audioStreamSamples = m_audioStreamSamples;
-                audioSampleRate = m_audioSampleRate;
-                audioStreamChannels = m_audioStreamChannels;
-                mode = m_audioCodec2Settings.Mode;
-            }
-
-            if (activeCodec2)
-                requestAudioStreamResetAndTxClear();
-            else if (oldMode != mode)
-                requestAudioCompressionReset();
-
-            sendAudioCodec2Mode(mode);
-            if (activeCodec2)
-            {
-                if (rateChanged)
-                    sendAudioSampleRate(audioSampleRate);
-                if (channelsChanged)
-                    sendAudioStreamChannels(audioStreamChannels);
-                if (samplesChanged)
-                    sendAudioStreamSamples(audioStreamSamples);
-            }
-        }
-
-        private void handleAudioCodec2Gray(string[] args)
-        {
-            if (args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled))
-                return;
-
-            lock (m_objStreamLock)
-            {
-                m_audioCodec2Settings.Gray = enabled;
-                m_audioCodec2Settings.GrayConfigured = true;
-            }
-
-            requestAudioCompressionReset();
-            sendAudioCodec2Gray(enabled);
-        }
-
-        private void handleAudioCodec2DecodeBer(string[] args)
-        {
-            if (args.Length != 1) return;
-            if (!float.TryParse(args[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float ber))
-                return;
-
-            if (ber < 0.0f) ber = 0.0f;
-            if (ber > 1.0f) ber = 1.0f;
-
-            lock (m_objStreamLock)
-            {
-                m_audioCodec2Settings.DecodeBer = ber;
-            }
-
-            requestAudioCompressionReset();
-            sendAudioCodec2DecodeBer(ber);
-        }
-
-        private void handleAudioCodec2LpcPostFilter(string[] args)
-        {
-            if (args.Length < 1 || args.Length > 4) return;
-            if (!bool.TryParse(args[0], out bool enabled))
-                return;
-
-            bool bassBoost = false;
-            float beta = 0.2f;
-            float gamma = 0.5f;
-
-            if (args.Length >= 2 && !bool.TryParse(args[1], out bassBoost))
-                return;
-
-            if (args.Length >= 3 && !float.TryParse(args[2], NumberStyles.Float, CultureInfo.InvariantCulture, out beta))
-                return;
-
-            if (args.Length >= 4 && !float.TryParse(args[3], NumberStyles.Float, CultureInfo.InvariantCulture, out gamma))
-                return;
-
-            if (beta < 0.0f) beta = 0.0f;
-            if (beta > 1.0f) beta = 1.0f;
-            if (gamma < 0.0f) gamma = 0.0f;
-            if (gamma > 1.0f) gamma = 1.0f;
-
-            lock (m_objStreamLock)
-            {
-                m_audioCodec2Settings.LpcPostFilter = enabled;
-                m_audioCodec2Settings.LpcPostFilterBassBoost = bassBoost;
-                m_audioCodec2Settings.LpcPostFilterBeta = beta;
-                m_audioCodec2Settings.LpcPostFilterGamma = gamma;
-                m_audioCodec2Settings.LpcPostFilterConfigured = true;
-            }
-
-            requestAudioCompressionReset();
-            sendAudioCodec2LpcPostFilter(enabled, bassBoost, beta, gamma);
-        }
-
-        private void handleAudioCodec2700CPostFilter(string[] args)
-        {
-            if (args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled))
-                return;
-
-            lock (m_objStreamLock)
-            {
-                m_audioCodec2Settings.Mode700CPostFilter = enabled;
-                m_audioCodec2Settings.Mode700CPostFilterConfigured = true;
-            }
-
-            requestAudioCompressionReset();
-            sendAudioCodec2700CPostFilter(enabled);
-        }
-
-        private void handleAudioCodec2700CEq(string[] args)
-        {
-            if (args.Length != 1) return;
-            if (!bool.TryParse(args[0], out bool enabled))
-                return;
-
-            lock (m_objStreamLock)
-            {
-                m_audioCodec2Settings.Mode700CEq = enabled;
-                m_audioCodec2Settings.Mode700CEqConfigured = true;
-            }
-
-            requestAudioCompressionReset();
-            sendAudioCodec2700CEq(enabled);
-        }
-
         private void handleAudioStreamSampleType(string[] args)
         {
             if (args.Length != 1) return;
@@ -7674,10 +7321,6 @@ namespace Thetis
                 {
                     case "opus":
                         m_audioCodec = TCIAudioCodec.OPUS;
-                        break;
-                    case "codec2":
-                        if (tryApplyCodec2AudioSettingsLocked(out rateChanged, out samplesChanged, out channelsChanged))
-                            m_audioCodec = TCIAudioCodec.CODEC2;
                         break;
                     case "int16":
                         m_audioSampleType = TCISampleType.INT16;
@@ -7707,7 +7350,7 @@ namespace Thetis
                         samplesChanged = true;
                     }
                 }
-                else if (m_audioCodec != TCIAudioCodec.CODEC2 && !m_audioStreamSamplesExplicitlySet)
+                else if (!m_audioStreamSamplesExplicitlySet)
                 {
                     if (!isStandardTciAudioSampleRate(m_audioSampleRate))
                     {
@@ -7737,7 +7380,7 @@ namespace Thetis
             sendAudioStreamSampleType(sampleType);
             if (channelsChanged)
                 sendAudioStreamChannels(audioStreamChannels);
-            if (samplesChanged || audioCodec == TCIAudioCodec.OPUS || audioCodec == TCIAudioCodec.CODEC2)
+            if (samplesChanged || audioCodec == TCIAudioCodec.OPUS)
                 sendAudioStreamSamples(audioStreamSamples);
         }
 
@@ -7747,11 +7390,7 @@ namespace Thetis
             int audioStreamChannels;
             lock (m_objStreamLock)
             {
-                if (m_audioCodec == TCIAudioCodec.CODEC2)
-                {
-                    m_audioStreamChannels = 1;
-                }
-                else if (int.TryParse(args[0], out int channels))
+                if (int.TryParse(args[0], out int channels))
                 {
                     if (channels == 1 || channels == 2)
                         m_audioStreamChannels = channels;
@@ -7784,12 +7423,6 @@ namespace Thetis
                                 m_audioStreamSamplesExplicitlySet = true;
                                 m_seenModernTxAudioNegotiation = true;
                             }
-                        }
-                        else if (m_audioCodec == TCIAudioCodec.CODEC2)
-                        {
-                            m_audioStreamSamples = getCodec2AudioStreamSamples();
-                            m_audioStreamSamplesExplicitlySet = true;
-                            m_seenModernTxAudioNegotiation = true;
                         }
                         else
                         {
