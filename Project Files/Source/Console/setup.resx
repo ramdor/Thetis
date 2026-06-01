@@ -542,4 +542,13 @@ Transmit tab</value>
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
 </value>
   </data>
+  <data name="$this.ToolTip" xml:space="preserve">
+    <value>A TCI dds frequency that is outside the current hardware
+sample rate will also move the VFO to that DDS frequency.
+
+Fixes isse with JTDX and perhaps other HamLib based software
+where are large IF value after a DDS change causes issues.
+
+(default on)</value>
+  </data>
 </root>

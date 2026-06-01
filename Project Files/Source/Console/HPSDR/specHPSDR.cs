@@ -162,15 +162,16 @@ namespace Thetis
             }
         }
 
-        private bool _use_clip = true;
-        public bool UseClip
-        {
-            get { return _use_clip; }
-            set
-            {
-                _use_clip = value;
-            }
-        }
+        //private bool _use_clip = true;
+        //public bool UseClip
+        //{
+        //    get { return _use_clip; }
+        //    set
+        //    {
+        //        _use_clip = value;
+        //        if (update) initAnalyzer();
+        //    }
+        //}
 
         private int clip = 0;
         public int Clip
@@ -542,10 +543,10 @@ namespace Thetis
                         overlap = (int)Math.Max(0.0, Math.Ceiling(fft_size - (double)sample_rate / (double)frame_rate));
 
                         //clip is the number of bins to clip off each side of each sub-span
-                        if(_use_clip)
+                        //if(_use_clip)
                             clip = (int)Math.Floor(CLIP_FRACTION * fft_size);
-                        else
-                            clip = 0;
+                        //else
+                        //    clip = 0;
 
                         //the amount of frequency in each fft bin (for complex samples) is given by:
                         //   this is also equal to the interval width!
@@ -605,10 +606,12 @@ namespace Thetis
                 case 0:
                     Display.RXDisplayLow = _low_freq;
                     Display.RXDisplayHigh = _high_freq;
-                     break;
+                    Debug.Print($"SpecHPSDR: initAnalyzer: disp {disp}, low {_low_freq}, high {_high_freq}");
+                    break;
                 case 1:
                     Display.RX2DisplayLow = _low_freq;
                     Display.RX2DisplayHigh = _high_freq;
+                    Debug.Print($"SpecHPSDR: initAnalyzer: disp {disp}, low {_low_freq}, high {_high_freq}");
                     break;
                 case 2:
                 case 3:

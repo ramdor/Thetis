@@ -2410,20 +2410,22 @@ namespace Thetis
         private void addTCIDelegates()
         {
             if (_bTCIDelegatesAdded) return;
+            m_tcpTCIServer.DisplayStreamsActiveChanged += OnTCIDisplayStreamsActiveChanged;
             m_tcpTCIServer.ClientConnectedHandlers += OnTCIClientConnect;
             m_tcpTCIServer.ClientDisconnectedHandlers += OnTCIClientDisconnect;
             m_tcpTCIServer.ClientErrorHandlers += OnTCIClientError;
-            m_tcpTCIServer.ServerErrorHandlers += OnTCIServerError;
+            m_tcpTCIServer.ServerErrorHandlers += OnTCIServerError;            
             _bTCIDelegatesAdded = true;
         }
         private void removeTCIDelegates()
         {
             if (_bTCIDelegatesAdded)
             {
+                m_tcpTCIServer.DisplayStreamsActiveChanged -= OnTCIDisplayStreamsActiveChanged;
                 m_tcpTCIServer.ClientConnectedHandlers -= OnTCIClientConnect;
                 m_tcpTCIServer.ClientDisconnectedHandlers -= OnTCIClientDisconnect;
                 m_tcpTCIServer.ClientErrorHandlers -= OnTCIClientError;
-                m_tcpTCIServer.ServerErrorHandlers -= OnTCIServerError;
+                m_tcpTCIServer.ServerErrorHandlers -= OnTCIServerError;                
                 _bTCIDelegatesAdded = false;
             }
         }
@@ -2462,6 +2464,9 @@ namespace Thetis
                     if (m_tcpTCIServer != null)
                     {
                         m_tcpTCIServer.StopServer();
+
+                        OnTCIDisplayStreamsActiveChanged(0); // incase this didnt hapen for some reason
+
                         cmaster.TCIServer = null;
                     }
 
@@ -2489,9 +2494,13 @@ namespace Thetis
                 {
                     m_tcpTCIServer.CloseLog();
                     m_tcpTCIServer.StopServer();
+
+                    OnTCIDisplayStreamsActiveChanged(0); // incase this didnt hapen for some reason
+
                     cmaster.TCIServer = null;
                     removeTCIDelegates();
-                }
+                }                                
+                //
             }
             UpdateStatusBarStatusIcons(StatusBarIconGroup.TCI);
         }
@@ -19512,6 +19521,8 @@ namespace Thetis
             get { return ptbDisplayZoom.Value; }
             set
             {
+                if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
                 ptbDisplayZoom.Value = value;
                 ptbDisplayZoom_Scroll(this, EventArgs.Empty);
 
@@ -19526,6 +19537,8 @@ namespace Thetis
             get { return ptbDisplayPan.Value; }
             set
             {
+                if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
                 ptbDisplayPan.Value = value;
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
 
@@ -28287,7 +28300,7 @@ namespace Thetis
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
             if (bsf != null)
             {
-                bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
+                bsf.UpdateCurrentWithLastVisitedData(!_tci_display_stream_in_use, m_bIgnoreFrequencyDupes);
                 bsf.GenerateFilteredList(true);
             }
             //now save it all
@@ -31341,12 +31354,12 @@ namespace Thetis
 
             double passbandWidth = (Convert.ToDouble(Display.RX1FilterHigh) - Convert.ToDouble(Display.RX1FilterLow));
             double dispWidth = Convert.ToDouble(Display.RXDisplayHigh) - Convert.ToDouble(Display.RXDisplayLow);
-            double dispMargin = 0.05; // Margin from display edge to start scrolling - in fraction of total display width   
+            double dispMargin = _tci_display_stream_in_use ? 0.0 : 0.05; // Margin from display edge to start scrolling - in fraction of total display width   
 
             // Lock the display //-W2PA Don't freeze display if we are zoomed in too far to fit the passband
-            bool bCanFitInView = passbandWidth < (dispWidth * (1.0 - 2.0 * dispMargin));
+            bool bCanFitInView = _tci_display_stream_in_use || (passbandWidth < (dispWidth * (1.0 - 2.0 * dispMargin)));
 
-            bool bLimitToSpectral = m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx1_click_tune_drag) || !m_bLimitCTMouseOnly);
+            bool bLimitToSpectral = !_tci_display_stream_in_use && m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx1_click_tune_drag) || !m_bLimitCTMouseOnly);
 
             bool bRitOk = !_mox || (_mox && VFOBTX && RX2Enabled); //[2.10.1.0] MW0LGE we can apply rit
 
@@ -31364,7 +31377,7 @@ namespace Thetis
 
                 if (!m_bIgnoreLimitsForZTB) // MW0LGE_21k9
                 {
-                    if (!ClickTuneDrag)
+                    if (!_tci_display_stream_in_use && !ClickTuneDrag)
                     {
                         if (((-rx1_osc) - Lmargin) < Ldisp || ((-rx1_osc) + Hmargin) > Hdisp) // re-center if we've jumped far
                         {
@@ -31383,14 +31396,14 @@ namespace Thetis
                                 rx1_osc = 0.0;
                             }
                             else  // not a jump - more like tuning
-                            if (!bLimitToSpectral && (((-rx1_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
+                            if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx1_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
                             {
                                 double adjustFreq = Ldisp - ((-rx1_osc) - Lmargin);
                                 CentreFrequency -= adjustFreq * 1e-6;
                                 rx1_osc -= adjustFreq;
                             }
                             else
-                            if (!bLimitToSpectral && (((-rx1_osc) + Hmargin) > Hdisp))
+                            if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx1_osc) + Hmargin) > Hdisp))
                             {
                                 double adjustFreq = ((-rx1_osc) + Hmargin) - Hdisp;
                                 CentreFrequency += adjustFreq * 1e-6;
@@ -31404,14 +31417,15 @@ namespace Thetis
                     rx1_osc -= (int)udRIT.Value;
 
                 // check if we move outside sample area
-                bool bBelowLow = (-rx1_osc < (-(sample_rate_rx1 * 0.92) / 2) + Lmargin);
-                bool bAboveHigh = (-rx1_osc > ((sample_rate_rx1 * 0.92) / 2) - Hmargin);
+                float if_sample_margin = 0.92f;// _tci_display_stream_in_use ? 1f : 0.92f; // allow some margin, but prevent when in tci stream mode
+                bool bBelowLow = (-rx1_osc < (-(sample_rate_rx1 * if_sample_margin) / 2) + Lmargin);
+                bool bAboveHigh = (-rx1_osc > ((sample_rate_rx1 * if_sample_margin) / 2) - Hmargin);
 
                 if (bBelowLow || bAboveHigh)
                 {
                     double diff;
 
-                    diff = ((sample_rate_rx1 * 0.92) / 2) - Math.Abs(rx1_osc);
+                    diff = ((sample_rate_rx1 * if_sample_margin) / 2) - Math.Abs(rx1_osc);
                     diff = (-rx1_osc >= 0) ? -diff + Hmargin : diff - Lmargin;
 
                     freq -= diff * 1e-6;
@@ -32333,12 +32347,12 @@ namespace Thetis
 
             double passbandWidth = (Convert.ToDouble(Display.RX2FilterHigh) - Convert.ToDouble(Display.RX2FilterLow));
             double dispWidth = Convert.ToDouble(Display.RX2DisplayHigh) - Convert.ToDouble(Display.RX2DisplayLow);
-            double dispMargin = 0.05; // Margin from display edge to start scrolling - in fraction of total display width   
+            double dispMargin = _tci_display_stream_in_use ? 0.0 : 0.05; // Margin from display edge to start scrolling - in fraction of total display width   
 
             // Lock the display //-W2PA Don't freeze display if we are zoomed in too far to fit the passband
-            bool bCanFitInView = passbandWidth < (dispWidth * (1.0 - 2.0 * dispMargin));
+            bool bCanFitInView = _tci_display_stream_in_use || (passbandWidth < (dispWidth * (1.0 - 2.0 * dispMargin)));
 
-            bool bLimitToSpectral = m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx2_click_tune_drag) || !m_bLimitCTMouseOnly);
+            bool bLimitToSpectral = !_tci_display_stream_in_use && m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx2_click_tune_drag) || !m_bLimitCTMouseOnly);
 
             bool bRitOk = !_mox || (_mox && VFOATX && RX2Enabled); //[2.10.1.0] MW0LGE we can apply rit to rx2
 
@@ -32379,13 +32393,13 @@ namespace Thetis
                                     rx2_osc = 0.0;
                                 }
                                 else  // not a jump - more like tuning
-                                if (!bLimitToSpectral && (((-rx2_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
+                                if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx2_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
                                 {
                                     double adjustFreq = Ldisp - ((-rx2_osc) - Lmargin);
                                     CentreRX2Frequency -= adjustFreq * 1.0e-6;
                                     rx2_osc -= adjustFreq;
                                 }
-                                else if (!bLimitToSpectral && (((-rx2_osc) + Hmargin) > Hdisp))
+                                else if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx2_osc) + Hmargin) > Hdisp))
                                 {
                                     double adjustFreq = ((-rx2_osc) + Hmargin) - Hdisp;
                                     CentreRX2Frequency += adjustFreq * 1.0e-6;
@@ -32398,14 +32412,15 @@ namespace Thetis
                     if (chkRIT.Checked && VFOSync && bRitOk)
                         rx2_osc -= (int)udRIT.Value;
 
-                    bool bBelowLow = (-rx2_osc < (-(sample_rate_rx2 * 0.92) / 2) + Lmargin);
-                    bool bAboveHigh = (-rx2_osc > ((sample_rate_rx2 * 0.92) / 2) - Hmargin);
+                    float if_sample_margin = 0.92f;// _tci_display_stream_in_use ? 1f : 0.92f; // allow some margin, but prevent when in tci stream mode
+                    bool bBelowLow = (-rx2_osc < (-(sample_rate_rx2 * if_sample_margin) / 2) + Lmargin);
+                    bool bAboveHigh = (-rx2_osc > ((sample_rate_rx2 * if_sample_margin) / 2) - Hmargin);
 
                     if (bBelowLow || bAboveHigh)
                     {
                         double diff;
 
-                        diff = ((sample_rate_rx2 * 0.92) / 2) - Math.Abs(rx2_osc);
+                        diff = ((sample_rate_rx2 * if_sample_margin) / 2) - Math.Abs(rx2_osc);
                         diff = (-rx2_osc >= 0) ? -diff + Hmargin : diff - Lmargin;
 
                         freq -= diff * 1e-6;
@@ -32545,6 +32560,32 @@ namespace Thetis
             {
                 if (_mox)
                 {
+                    //this block refactored and should be used instead of the crazy coded block below
+                    //TODO after other issues resolved !!!!!!!!!!
+                    //if (HardwareSpecific.Hardware == HPSDRHW.Hermes ||
+                    //     HardwareSpecific.Hardware == HPSDRHW.HermesII ||
+                    //     HardwareSpecific.Hardware == HPSDRHW.HermesC10) //N1GP G2E added (HermesC10)
+                    //{
+                    //    if (chkVFOSplit.Checked)
+                    //    {
+                    //        if (_display_duplex && !PSState)
+                    //            Display.VFOASub = (long)(CentreFrequency * 1e6);
+                    //        else
+                    //            Display.VFOASub = (long)(freq * 1e6);
+                    //    }
+                    //    else if (_click_tune_display && PSState)
+                    //    {
+                    //        Display.VFOA = (long)(VFOAFreq * 1e6);
+                    //    }
+                    //    else
+                    //    {
+                    //        Display.VFOASub = (long)(VFOAFreq * 1e6);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    Display.VFOASub = (long)(freq * 1e6);
+                    //}
                     if (HardwareSpecific.Hardware == HPSDRHW.Hermes ||
                          HardwareSpecific.Hardware == HPSDRHW.HermesII ||
                          HardwareSpecific.Hardware == HPSDRHW.HermesC10) //N1GP G2E added (HermesC10)
@@ -33506,6 +33547,8 @@ namespace Thetis
         //
         private void ptbDisplayPan_Scroll(object sender, System.EventArgs e)
         {
+            if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
             specRX.GetSpecRX(0).PanSlider = (double)ptbDisplayPan.Value / 1000.0;
             specRX.GetSpecRX(1).PanSlider = (double)ptbDisplayPan.Value / 1000.0;
             specRX.GetSpecRX(cmaster.inid(1, 0)).PanSlider = (double)ptbDisplayPan.Value / 1000.0;
@@ -33520,6 +33563,8 @@ namespace Thetis
 
         private void btnDisplayPanCenter_Click(object sender, System.EventArgs e)
         {
+            if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
             double spur_tune_width = 200e6 / Math.Pow(2, 16);
 
             int width = Display.RXDisplayHigh - Display.RXDisplayLow;
@@ -33633,6 +33678,8 @@ namespace Thetis
 
         private void ptbDisplayZoom_Scroll(object sender, System.EventArgs e)
         {
+            if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
             double dOldZoomFactor = lastZoomFactor;//MW0LGE21d
 
             specRX.GetSpecRX(0).ZoomSlider = ((double)ptbDisplayZoom.Value - 10.0) / 230.0;
@@ -45414,7 +45461,7 @@ namespace Thetis
         {
             if (!BandStackManager.Ready) return;
 
-            bool bRet = bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
+            bool bRet = bsf.UpdateCurrentWithLastVisitedData(!_tci_display_stream_in_use, m_bIgnoreFrequencyDupes);
 
             if (bRet)
             {
@@ -45528,7 +45575,7 @@ namespace Thetis
             updateBandstackOverlay(1);
 
             if (m_bSetBandRunning) return;
-            if (!BandStackManager.Ready) return;
+            if (!BandStackManager.Ready || _tci_display_stream_in_use) return;
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
             if (bsf != null)
             {
@@ -45544,7 +45591,7 @@ namespace Thetis
             bool bRet = false;
             if (updateLastVisited)
             {
-                bRet = bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes); // store everything into current on current band filter // may return false if current is locked
+                bRet = bsf.UpdateCurrentWithLastVisitedData(!_tci_display_stream_in_use, m_bIgnoreFrequencyDupes); // store everything into current on current band filter // may return false if current is locked
             }
 
             if (bRet)
@@ -45614,7 +45661,7 @@ namespace Thetis
                         return;
                     }
 
-                    bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes); // store everything into current on current band filter                    
+                    bsf.UpdateCurrentWithLastVisitedData(!_tci_display_stream_in_use, m_bIgnoreFrequencyDupes); // store everything into current on current band filter                    
 
                     if (dir == 0)
                     {
@@ -45641,7 +45688,7 @@ namespace Thetis
                     BandStackFilter bsfOld = BandStackManager.GetFilter(RX1Band);
                     if (bsfOld != null)
                     {
-                        bsfOld.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
+                        bsfOld.UpdateCurrentWithLastVisitedData(!_tci_display_stream_in_use, m_bIgnoreFrequencyDupes);
                         bsfOld.GenerateFilteredList(true);
                     }
 
@@ -46232,6 +46279,8 @@ namespace Thetis
         }
         public void ZoomToBand(bool bStore)
         {
+            if (_tci_display_stream_in_use && !_ok_to_update_zoom_pan) return;
+
             int rx; // note, 0 indexed rx, rx1 = 0, rx2 = 1
             Band band;
             double centre;
@@ -53777,11 +53826,46 @@ namespace Thetis
         }
 
         // add a button to obtain this string, it is used by Database merge
+        // do not remove
         //private void buttonTS1_Click(object sender, EventArgs e)
         //{
         //    Debug.Print(StateListToBase64());
         //}
         //
+
+        //deal with zoom/pan etc limitation when remote display stream active. Wee need to fully zoom out, and prevent pan
+        private bool _tci_display_stream_in_use = false;
+        private bool _ok_to_update_zoom_pan = false;
+        private void OnTCIDisplayStreamsActiveChanged(int streams)
+        {
+            if (streams > 0 && !_tci_display_stream_in_use)
+            {
+                // prevent zoom/pan changes
+                // set zoom/pan to full out, and centre
+                // we need to prevent these from being changed from any source
+                // and also prevent any bandstack updates as most likely a client is going to be moving around
+                //// and remove spectrum clip, so client sees all
+                //specRX.GetSpecRX(cmaster.inid(0, 0)).UseClip = false; //rx1
+                //specRX.GetSpecRX(cmaster.inid(0, 1)).UseClip = false; //rx2
+                //specRX.GetSpecRX(cmaster.inid(1, 0)).UseClip = false; //tx
+
+                _tci_display_stream_in_use = true;
+                _ok_to_update_zoom_pan = true;
+                Zoom = 10;
+                Pan = 0;
+                _ok_to_update_zoom_pan = false;
+            }
+            else if (streams == 0 && _tci_display_stream_in_use)
+            {
+                // return to normal behaviour
+                //specRX.GetSpecRX(cmaster.inid(0, 0)).UseClip = true; //rx1
+                //specRX.GetSpecRX(cmaster.inid(0, 1)).UseClip = true; //rx2
+                //specRX.GetSpecRX(cmaster.inid(1, 0)).UseClip = true; //tx
+
+                _tci_display_stream_in_use = false;
+                _ok_to_update_zoom_pan = false;
+            }
+        }
     }
 
     public class DigiMode

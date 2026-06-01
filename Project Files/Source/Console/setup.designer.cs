@@ -3625,6 +3625,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkTCI_distant_dds = new System.Windows.Forms.CheckBoxTS();
             this.tbTCISpotBackPanel_alpha = new System.Windows.Forms.TrackBarTS();
             this.labelTS662 = new System.Windows.Forms.LabelTS();
             this.chkTCI_spot_flags = new System.Windows.Forms.CheckBoxTS();
@@ -3675,6 +3676,7 @@
             this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
             this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
             this.groupBoxTS16 = new System.Windows.Forms.GroupBoxTS();
+            this.chkN1mm_include_cw_shift = new System.Windows.Forms.CheckBoxTS();
             this.lblN1MM_ids_warning = new System.Windows.Forms.LabelTS();
             this.labelTS643 = new System.Windows.Forms.LabelTS();
             this.txtN1MM_ID_RX_2 = new System.Windows.Forms.TextBoxTS();
@@ -4496,7 +4498,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
-            this.chkN1mm_include_cw_shift = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -58107,6 +58108,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkTCI_distant_dds);
             this.grpTCIServer.Controls.Add(this.tbTCISpotBackPanel_alpha);
             this.grpTCIServer.Controls.Add(this.labelTS662);
             this.grpTCIServer.Controls.Add(this.chkTCI_spot_flags);
@@ -58149,6 +58151,23 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // chkTCI_distant_dds
+            // 
+            this.chkTCI_distant_dds.AutoSize = true;
+            this.chkTCI_distant_dds.Checked = true;
+            this.chkTCI_distant_dds.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTCI_distant_dds.Image = null;
+            this.chkTCI_distant_dds.Location = new System.Drawing.Point(243, 79);
+            this.chkTCI_distant_dds.Name = "chkTCI_distant_dds";
+            this.chkTCI_distant_dds.Size = new System.Drawing.Size(85, 30);
+            this.chkTCI_distant_dds.TabIndex = 118;
+            this.chkTCI_distant_dds.Text = "Distant DDS\r\nmoves VFO";
+            this.toolTip1.SetToolTip(this.chkTCI_distant_dds, "Disant DDS frequencies via TCI messages will\r\ncause the vfo to move if those DDS " +
+        "frequencies are\r\noutside the hardware sample range for the recevier.\r\n\r\n(default" +
+        " on)");
+            this.chkTCI_distant_dds.UseVisualStyleBackColor = true;
+            this.chkTCI_distant_dds.CheckedChanged += new System.EventHandler(this.chkTCI_distant_dds_CheckedChanged);
             // 
             // tbTCISpotBackPanel_alpha
             // 
@@ -58838,6 +58857,20 @@
             this.groupBoxTS16.TabIndex = 57;
             this.groupBoxTS16.TabStop = false;
             this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
+            // 
+            // chkN1mm_include_cw_shift
+            // 
+            this.chkN1mm_include_cw_shift.AutoSize = true;
+            this.chkN1mm_include_cw_shift.Image = null;
+            this.chkN1mm_include_cw_shift.Location = new System.Drawing.Point(22, 136);
+            this.chkN1mm_include_cw_shift.Name = "chkN1mm_include_cw_shift";
+            this.chkN1mm_include_cw_shift.Size = new System.Drawing.Size(104, 17);
+            this.chkN1mm_include_cw_shift.TabIndex = 76;
+            this.chkN1mm_include_cw_shift.Text = "Include CW shift";
+            this.toolTip1.SetToolTip(this.chkN1mm_include_cw_shift, "Include the cw frequency shift. This is not normally required but if frequency is" +
+        " off\r\ncompared to signal in N1MM spectrum then try enabling. (default off)");
+            this.chkN1mm_include_cw_shift.UseVisualStyleBackColor = true;
+            this.chkN1mm_include_cw_shift.CheckedChanged += new System.EventHandler(this.chkN1mm_include_cw_shift_CheckedChanged);
             // 
             // lblN1MM_ids_warning
             // 
@@ -71202,20 +71235,6 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
-            // chkN1mm_include_cw_shift
-            // 
-            this.chkN1mm_include_cw_shift.AutoSize = true;
-            this.chkN1mm_include_cw_shift.Image = null;
-            this.chkN1mm_include_cw_shift.Location = new System.Drawing.Point(22, 136);
-            this.chkN1mm_include_cw_shift.Name = "chkN1mm_include_cw_shift";
-            this.chkN1mm_include_cw_shift.Size = new System.Drawing.Size(104, 17);
-            this.chkN1mm_include_cw_shift.TabIndex = 76;
-            this.chkN1mm_include_cw_shift.Text = "Include CW shift";
-            this.toolTip1.SetToolTip(this.chkN1mm_include_cw_shift, "Include the cw frequency shift. This is not normally required but if frequency is" +
-        " off\r\ncompared to signal in N1MM spectrum then try enabling. (default off)");
-            this.chkN1mm_include_cw_shift.UseVisualStyleBackColor = true;
-            this.chkN1mm_include_cw_shift.CheckedChanged += new System.EventHandler(this.chkN1mm_include_cw_shift_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71240,6 +71259,7 @@
             this.MinimumSize = new System.Drawing.Size(760, 550);
             this.Name = "Setup";
             this.Text = "Setup";
+            this.toolTip1.SetToolTip(this, resources.GetString("$this.ToolTip"));
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Setup_Closing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Setup_KeyDown);
             tpAlexAntCtrl.ResumeLayout(false);
@@ -77114,5 +77134,6 @@
         private NumericUpDownTS nudRecording_monoPlaybackGain;
         private CheckBoxTS chkWaterfall_smear;
         private CheckBoxTS chkN1mm_include_cw_shift;
+        private CheckBoxTS chkTCI_distant_dds;
     }
 }

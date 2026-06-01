@@ -35486,6 +35486,10 @@ namespace Thetis
         {
             get { return chkEmulateExpertSDR3Protocol.Checked; }
         }
+        public bool DistantDDSMovesVfo
+        {
+            get { return chkTCI_distant_dds.Checked; }
+        }
         public bool TCIuseRX1vfoaForRX2vfoa
         {
             get { return chkUseRX1vfoaForRX2vfoa.Checked; }
@@ -37446,6 +37450,11 @@ namespace Thetis
         private void chkN1mm_include_cw_shift_CheckedChanged(object sender, EventArgs e)
         {
             N1MM.CWShiftEnable = chkN1mm_include_cw_shift.Checked;
+        }
+
+        private void chkTCI_distant_dds_CheckedChanged(object sender, EventArgs e)
+        {
+            if (console.TCIServer != null) console.TCIServer.DistantDDSMovesVFO = chkTCI_distant_dds.Checked;
         }
     }
 

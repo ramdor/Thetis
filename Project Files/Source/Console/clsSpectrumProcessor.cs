@@ -60,7 +60,7 @@ namespace Thetis
         private const int DefaultPixels = 1024;
         private const int DefaultFrameRate = 15;
         private const int DefaultMaxFftSize = 262144;
-        private const int DefaultSampleRate = 192000;
+        private const int DefaultSampleRate = 192000;        
         private const int DefaultFftSize = 4096;
         private const int DefaultWindowType = 4;
         private const int DefaultDetectorTypePan = 0;
@@ -389,7 +389,10 @@ namespace Thetis
         {
             return TryCopyLatestPixels(SpectrumSourceType.Receiver, receiverId, destination, out pixelCount, out dataIndex);
         }
-
+        public bool TryGetReceiverHzSpan(int receiverId, out int hzSpan)
+        {
+            return TryGetHzSpan(SpectrumSourceType.Receiver, receiverId, out hzSpan);
+        }
         public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
         {
             return TryGetSampleRate(SpectrumSourceType.Receiver, receiverId, out sampleRate);
@@ -421,11 +424,21 @@ namespace Thetis
                 pixelCount = 0;
                 dataIndex = 0;
                 return false;
-        }
+            }
 
             return endpoint.TryCopyLatestPixels(destination, out pixelCount, out dataIndex);
         }
+        private bool TryGetHzSpan(SpectrumSourceType sourceType, int sourceId, out int hzSpan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            {
+                hzSpan = 0;
+                return false;
+            }
 
+            return endpoint.TryGetHzSpan(out hzSpan);
+        }
         private bool TryGetViewport(SpectrumSourceType sourceType, int sourceId, out double zoomSlider, out double panSlider)
         {
             SpectrumEndpoint endpoint;
@@ -715,6 +728,8 @@ namespace Thetis
             private int _configuredSampleRate;
             private int _txConfiguredSampleRate;
             private int _fftSize;
+            private int _HzSpan;
+            private int _txHzSpan;
             private int _blockSize;
             private int _txBlockSize;
             private int _windowType;
@@ -745,8 +760,17 @@ namespace Thetis
                 _frameRate = frameRate;
                 _configuredSampleRate = templateSpec != null ? templateSpec.SampleRate : DefaultSampleRate;
                 SpecHPSDR txTemplateSpec = console.specRX != null ? console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
-                _txConfiguredSampleRate = txTemplateSpec != null ? txTemplateSpec.SampleRate : _configuredSampleRate;
+                _txConfiguredSampleRate = txTemplateSpec != null ? txTemplateSpec.SampleRate : _configuredSampleRate;                
                 _fftSize = NormalizeFftSize(fftSize);
+
+                int clip = templateSpec != null ? templateSpec.Clip : _fftSize;
+                float clip_ratio = clip / (float)_fftSize;
+                _HzSpan = _configuredSampleRate - ((int)Math.Floor(_configuredSampleRate * clip_ratio) * 2);
+
+                clip = templateSpec != null ? txTemplateSpec.Clip : _fftSize;
+                clip_ratio = clip / (float)_fftSize;
+                _txHzSpan = _txConfiguredSampleRate - ((int)Math.Floor(_txConfiguredSampleRate * clip_ratio) * 2);
+
                 _blockSize = templateSpec != null ? templateSpec.BlockSize : ResolveDefaultBlockSize(_configuredSampleRate);
                 _txBlockSize = txTemplateSpec != null ? txTemplateSpec.BlockSize : ResolveDefaultBlockSize(_txConfiguredSampleRate);
                 _windowType = templateSpec != null ? templateSpec.WindowType : DefaultWindowType;
@@ -794,7 +818,6 @@ namespace Thetis
                 cmaster.RunAnalyzer(_displayId, 1);
                 cmaster.RunAnalyzer(_txDisplayId, 1);
             }
-
             public bool MatchesReceiverEvent(int rx)
             {
                 return (_sourceId + 1) == rx;
@@ -1089,7 +1112,6 @@ namespace Thetis
                     return _hasData;
                 }
             }
-
             public bool TryCopyLatestPixels(float[] destination, out int pixelCount, out int dataIndex)
             {
                 if (destination == null) throw new ArgumentNullException(nameof(destination));
@@ -1142,7 +1164,14 @@ namespace Thetis
                     return !_shutdown;
                 }
             }
-
+            public bool TryGetHzSpan(out int hzSpan)
+            {
+                lock (_syncRoot)
+                {
+                    hzSpan = _HzSpan;
+                    return !_shutdown;
+                }
+            }
             public void Shutdown()
             {
                 lock (_syncRoot)
@@ -1301,7 +1330,7 @@ namespace Thetis
                 spec.NormOneHzPan = _normOneHzPan;
                 spec.ZoomSlider = _zoomSlider;
                 spec.PanSlider = GetEffectivePanSliderLocked();
-                spec.UseClip = false;
+                //spec.UseClip = false;
                 spec.Update = true;
                 spec.initAnalyzer();
             }

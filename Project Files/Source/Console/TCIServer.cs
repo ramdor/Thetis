@@ -3158,10 +3158,19 @@ namespace Thetis
         {
             if (Interlocked.Exchange(ref m_disconnectNotified, 1) != 0) return;
 
+            bool displayStreamsRemoved = false;
+            lock (m_objStreamLock)
+            {
+                displayStreamsRemoved = m_displaySubscriptions.Count > 0;
+                m_displaySubscriptions.Clear();
+            }
+
             try
             {
                 TCPIPtciServer target = server != null ? server : m_server;
                 target?.OnSocketListenerDisconnected(this);
+                if (displayStreamsRemoved)
+                    target?.OnDisplayStreamsActiveChanged();
             }
             catch { }
         }
@@ -4090,7 +4099,15 @@ namespace Thetis
                 }
             }
         }
+        private bool isDDSoutsideHWSampleRate(int rx, double dds, double centre_freq)
+        {
+            if (rx < 0 || rx >= m_hwSampleRate.Length) return false;
 
+            double sample_rate = m_hwSampleRate[rx];
+            double half_sample_rate = (sample_rate / 2.0) / 1000000.0;
+
+            return Math.Abs(dds - centre_freq) > half_sample_rate;
+        }
         private void handleDDS(string[] args)
         {
             int rx = 0;
@@ -4107,15 +4124,22 @@ namespace Thetis
                     double dds = ddsLong / 1e6;
 
                     //[2.10.3.16]MW0LGE changes here to fix issue with dds causing multiple IF messages
-                    //also, a dds when ctun is off will cause direct frequency change to the dds
-                    //this can be followed by an if message if necessary
+                    //also, a DDS when ctun is off will cause direct frequency change to the dds, updating the vfo
+                    //also, if dds is outside current H/W sample range, then update vfo to dds
+                    //this can be followed by an IF message if necessary
+                    bool consider_outside = m_server != null && m_server.DistantDDSMovesVFO;
                     if (rx == 0)
                     {
+                        double oldCF = consoleThreadSafe.CentreFrequency;
                         consoleThreadSafe.CentreFrequency = dds;
-                        if (consoleThreadSafe.ClickTuneDisplay)
-                            consoleThreadSafe.VFOAFreq = consoleThreadSafe.VFOAFreq;
-                        else
+                        if (!consoleThreadSafe.ClickTuneDisplay || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF)))
+                        {
                             consoleThreadSafe.VFOAFreq = dds;
+                        }
+                        else
+                        {
+                            consoleThreadSafe.VFOAFreq = consoleThreadSafe.VFOAFreq;
+                        }
                         //double c = dds - consoleThreadSafe.CentreFrequency;
                         //c = Math.Round(c, 6);
                         //consoleThreadSafe.CentreFrequency = dds;
@@ -4123,11 +4147,16 @@ namespace Thetis
                     }
                     else if (rx == 1)
                     {
+                        double oldCF = consoleThreadSafe.CentreRX2Frequency;
                         consoleThreadSafe.CentreRX2Frequency = dds;
-                        if (consoleThreadSafe.ClickTuneRX2Display)
-                            consoleThreadSafe.VFOBFreq = consoleThreadSafe.VFOBFreq;
-                        else
+                        if (!consoleThreadSafe.ClickTuneRX2Display || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF)))
+                        {
                             consoleThreadSafe.VFOBFreq = dds;
+                        }
+                        else
+                        {
+                            consoleThreadSafe.VFOBFreq = consoleThreadSafe.VFOBFreq;
+                        }
                         //double c = dds - consoleThreadSafe.CentreRX2Frequency;
                         //c = Math.Round(c, 6);
                         //consoleThreadSafe.CentreRX2Frequency = dds;
@@ -6254,7 +6283,7 @@ namespace Thetis
 
             return payload;
         }
-        private byte[] buildCompactDisplayStreamPayload(int receiver, int sampleRate, TCISampleType sampleType, int channels, clsDisplayCompression.Result displayResult)
+        private byte[] buildCompactDisplayStreamPayload(int receiver, int hzSpan, TCISampleType sampleType, int channels, clsDisplayCompression.Result displayResult)
         {
             if (displayResult == null)
                 return null;
@@ -6274,7 +6303,7 @@ namespace Thetis
             payload[8] = (byte)displayResult.DeltaBits;
             payload[9] = (byte)displayResult.BlockSize;
             writeUInt16(payload, 10, (ushort)displayResult.BlockCount);
-            writeUInt32(payload, 12, (uint)sampleRate);
+            writeUInt32(payload, 12, (uint)hzSpan);
             writeUInt32(payload, 16, (uint)displayResult.LogicalLength);
             writeUInt32(payload, 20, (uint)samplePayloadLength);
 
@@ -6517,6 +6546,15 @@ namespace Thetis
             lock (m_objStreamLock)
             {
                 return m_iqStreamEnabled.Count > 0 || m_audioStreamEnabled.Count > 0;
+            }
+        }
+
+        internal int ActiveDisplayStreamCount()
+        {
+            lock (m_objStreamLock)
+            {
+                if (!IsReadyForStreaming()) return 0;
+                return m_displaySubscriptions.Count;
             }
         }
 
@@ -7629,6 +7667,8 @@ namespace Thetis
             maxDbm = clampDisplayDbm(maxDbm);
             if (maxDbm <= minDbm) maxDbm = minDbm + 1.0f;
 
+            bool displayStreamAdded = false;
+
             lock (m_objStreamLock)
             {
                 clsSpectrumProcessor processor = ensureSpectrumProcessor();
@@ -7673,6 +7713,7 @@ namespace Thetis
                     subscription = new TCIDisplaySubscription();
                     subscription.DisplayCompressionSettings = new clsDisplayCompression.Settings();
                     m_displaySubscriptions[receiver] = subscription;
+                    displayStreamAdded = true;
                 }
 
                 subscription.Receiver = receiver;
@@ -7699,18 +7740,22 @@ namespace Thetis
             }
 
             sendDisplayStart(receiver, pixels, frameRate, fftSize, windowType, detectorType, averageMode, averageTimeMs, normOneHz, minDbm, maxDbm);
+            if (displayStreamAdded)
+                m_server?.OnDisplayStreamsActiveChanged();
         }
         private void handleDisplayStop(string[] args)
         {
             if (args.Length != 1) return;
             if (!int.TryParse(args[0], out int receiver)) return;
 
+            bool displayStreamRemoved = false;
+
             lock (m_objStreamLock)
             {
                 if (m_spectrumProcessor != null)
                     m_spectrumProcessor.RemoveReceiver(receiver);
 
-                m_displaySubscriptions.Remove(receiver);
+                displayStreamRemoved = m_displaySubscriptions.Remove(receiver);
 
                 if (m_spectrumProcessor != null && m_displaySubscriptions.Count == 0)
                 {
@@ -7721,6 +7766,8 @@ namespace Thetis
             }
 
             sendDisplayStop(receiver);
+            if (displayStreamRemoved)
+                m_server?.OnDisplayStreamsActiveChanged();
         }
         private void handleDisplayPixels(string[] args)
         {
@@ -8234,16 +8281,16 @@ namespace Thetis
                     if (subscription.DisplayCompressionState == null)
                         subscription.DisplayCompressionState = new clsDisplayCompression.State();
 
-                    int sampleRate = 0;
-                    if (!m_spectrumProcessor.TryGetReceiverSampleRate(subscription.Receiver, out sampleRate) || sampleRate <= 0)
-                        sampleRate = cmaster.GetInputRate(0, subscription.Receiver);
+                    int hzSpan = 0;
+                    if (!m_spectrumProcessor.TryGetReceiverHzSpan(subscription.Receiver, out hzSpan))
+                        continue;
 
                     clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
                     clsDisplayCompression.Result displayResult = m_displayCompression.Encode(subscription.PixelBuffer, pixelCount, subscription.MinDbm, subscription.MaxDbm, displaySettings, subscription.DisplayCompressionState);
                     if (displayResult == null)
                         continue;
 
-                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, sampleRate, TCISampleType.UINT8, 1, displayResult);
+                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzSpan, TCISampleType.UINT8, 1, displayResult);
 
                     subscription.LastDataIndex = dataIndex;
 
@@ -8364,6 +8411,7 @@ namespace Thetis
         public ClientDisconnected ClientDisconnectedHandlers;
         public ClientError ClientErrorHandlers;
         public ServerError ServerErrorHandlers;
+        public event Action<int> DisplayStreamsActiveChanged;
         //
 
         private Console _console;
@@ -8386,6 +8434,7 @@ namespace Thetis
         private int m_nRateLimit = 0;
         private bool m_bEmulateSunSDR2Pro = false;
         private bool m_bEmulateExpertSDR3Protocol = true;
+        private bool m_bDistantDDSMovesVFO = true;
         private bool m_bIQSwap = true;
         private bool m_bAlwaysStreamIQ = false;
         private TCITxStereoInputMode m_txStereoInputMode = TCITxStereoInputMode.Both;
@@ -8514,6 +8563,11 @@ namespace Thetis
             get { return m_bEmulateExpertSDR3Protocol; }
             set { m_bEmulateExpertSDR3Protocol = value; }
         }
+        public bool DistantDDSMovesVFO
+        {
+            get { return m_bDistantDDSMovesVFO; }
+            set { m_bDistantDDSMovesVFO = value; }
+        }
         public bool IQSwap
         {
             get { return m_bIQSwap; }
@@ -8554,6 +8608,8 @@ namespace Thetis
                     m_bEmulateSunSDR2Pro = c.SetupForm.EmulateSunSDR2Pro;
                     m_bEmulateExpertSDR3Protocol = c.SetupForm.EmulateExpertSDR3Protocol;
 
+                    m_bDistantDDSMovesVFO = c.SetupForm.DistantDDSMovesVfo;
+
                     _spot_force = c.SetupForm.CWSpotForce;
 
                     m_bIQSwap = c.SetupForm.TCISwapIQ;
@@ -8573,6 +8629,8 @@ namespace Thetis
 
                     m_bEmulateSunSDR2Pro = false;
                     m_bEmulateExpertSDR3Protocol = false;
+
+                    m_bDistantDDSMovesVFO = true;
 
                     _spot_force = TCICWSpotForce.DEFAULT;
 
@@ -9888,6 +9946,35 @@ namespace Thetis
                 }
             }
         }
+        private int getActiveDisplayStreamCount()
+        {
+            int activeDisplayStreamCount = 0;
+
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return 0;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    if (socketListener == null) continue;
+
+                    activeDisplayStreamCount += socketListener.ActiveDisplayStreamCount();
+                }
+            }
+
+            return activeDisplayStreamCount;
+        }
+
+        public bool IsAnyDisplayStreamActive()
+        {
+            return getActiveDisplayStreamCount() > 0;
+        }
+
+        internal void OnDisplayStreamsActiveChanged()
+        {
+            DisplayStreamsActiveChanged?.Invoke(getActiveDisplayStreamCount());
+        }
+
         internal void RefreshStreamRunState()
         {
             bool run = false;

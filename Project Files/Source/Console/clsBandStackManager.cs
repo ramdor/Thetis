@@ -363,7 +363,7 @@ namespace Thetis
 
             return bRet;
         }
-        public bool UpdateCurrentWithLastVisitedData(bool bCheckForFreqDupe = false)
+        public bool UpdateCurrentWithLastVisitedData(bool include_zoom = true, bool bCheckForFreqDupe = false)
         {
             bool bRet = false;
             if (m_nCurrentlySelectedIndex < 0 || m_nCurrentlySelectedIndex > m_lstFilteredList.Count - 1) return bRet;
@@ -398,8 +398,11 @@ namespace Thetis
             bse.Filter = m_lastVisited.Filter;
             bse.Mode = m_lastVisited.Mode;
             bse.SubMode = m_lastVisited.SubMode;
-            bse.ZoomFactor = m_lastVisited.ZoomFactor;
-            bse.ZoomSlider = m_lastVisited.ZoomSlider;
+            if (include_zoom)
+            {
+                bse.ZoomFactor = m_lastVisited.ZoomFactor;
+                bse.ZoomSlider = m_lastVisited.ZoomSlider;
+            }
 
             // remove from main list
             int n = BandStackManager.IndexFromGUID(bse.GUID);
