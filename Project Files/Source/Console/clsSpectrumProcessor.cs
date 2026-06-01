@@ -49,11 +49,8 @@ namespace Thetis
 {
     public sealed class clsSpectrumProcessor : IDisposable
     {
-        private enum SpectrumSourceType
-        {
-            Receiver = 0,
-            Transmitter = 1
-        }
+        private const int ReceiverAnalyzerType = 0;
+        private const int TransmitterAnalyzerType = 1;
 
         public event Action FrameAvailable;
 
@@ -72,7 +69,7 @@ namespace Thetis
 
         private readonly Console _console;
         private readonly object _endpointsLock = new object();
-        private readonly Dictionary<string, SpectrumEndpoint> _endpoints;
+        private readonly Dictionary<int, SpectrumEndpoint> _endpoints;
         private readonly Thread _workerThread;
         private volatile SpectrumEndpoint[] _endpointSnapshot;
 
@@ -84,7 +81,7 @@ namespace Thetis
             if (console == null) throw new ArgumentNullException(nameof(console));
 
             _console = console;
-            _endpoints = new Dictionary<string, SpectrumEndpoint>(StringComparer.OrdinalIgnoreCase);
+            _endpoints = new Dictionary<int, SpectrumEndpoint>();
             _endpointSnapshot = Array.Empty<SpectrumEndpoint>();
             _workerRunning = true;
 
@@ -101,33 +98,25 @@ namespace Thetis
 
         public bool AddReceiver(int receiverId, int pixels, int frameRate, int fftSize)
         {
-            return AddSource(SpectrumSourceType.Receiver, receiverId, pixels, frameRate, fftSize);
-        }
-
-        private bool AddSource(SpectrumSourceType sourceType, int sourceId, int pixels, int frameRate, int fftSize)
-        {
             ThrowIfDisposed();
-            ValidateSourceId(sourceId);
+            ValidateReceiverId(receiverId);
 
             pixels = ClampInt(pixels, 64, 32768);
             frameRate = ClampInt(frameRate, 1, 120);
             fftSize = NormalizeFftSize(fftSize);
 
-            SpectrumSourceType endpointType = NormalizeEndpointSourceType(sourceType);
-            string key = MakeSourceKey(endpointType, sourceId);
-            SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(sourceId) : null;
-
-            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, sourceId, pixels, frameRate, fftSize, templateSpec);
+            SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(receiverId) : null;
+            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, receiverId, pixels, frameRate, fftSize, templateSpec);
 
             lock (_endpointsLock)
             {
-                if (_endpoints.ContainsKey(key))
+                if (_endpoints.ContainsKey(receiverId))
                 {
                     endpoint.Shutdown();
                     return false;
                 }
 
-                _endpoints.Add(key, endpoint);
+                _endpoints.Add(receiverId, endpoint);
                 UpdateEndpointSnapshotLocked();
             }
 
@@ -136,14 +125,8 @@ namespace Thetis
 
         public bool RemoveReceiver(int receiverId)
         {
-            return RemoveSource(SpectrumSourceType.Receiver, receiverId);
-        }
-
-        private bool RemoveSource(SpectrumSourceType sourceType, int sourceId)
-        {
             SpectrumEndpoint endpoint;
-
-            if (!TryDetachEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryDetachReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.Shutdown();
             return true;
@@ -164,25 +147,20 @@ namespace Thetis
                 endpoints[i].Shutdown();
         }
 
-        private bool ContainsSource(SpectrumSourceType sourceType, int sourceId)
+        private bool ContainsReceiver(int receiverId)
         {
-            ValidateSourceId(sourceId);
+            ValidateReceiverId(receiverId);
 
             lock (_endpointsLock)
             {
-                return _endpoints.ContainsKey(MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId));
+                return _endpoints.ContainsKey(receiverId);
             }
         }
 
         public bool SetReceiverPixelResolution(int receiverId, int pixels)
         {
-            return SetPixelResolution(SpectrumSourceType.Receiver, receiverId, pixels);
-        }
-
-        private bool SetPixelResolution(SpectrumSourceType sourceType, int sourceId, int pixels)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetPixels(ClampInt(pixels, 64, 32768));
             return true;
@@ -190,13 +168,8 @@ namespace Thetis
 
         public bool SetReceiverFrameRate(int receiverId, int frameRate)
         {
-            return SetFrameRate(SpectrumSourceType.Receiver, receiverId, frameRate);
-        }
-
-        private bool SetFrameRate(SpectrumSourceType sourceType, int sourceId, int frameRate)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetFrameRate(ClampInt(frameRate, 1, 120));
             return true;
@@ -204,13 +177,8 @@ namespace Thetis
 
         public bool SetReceiverFFTSize(int receiverId, int fftSize)
         {
-            return SetFFTSize(SpectrumSourceType.Receiver, receiverId, fftSize);
-        }
-
-        private bool SetFFTSize(SpectrumSourceType sourceType, int sourceId, int fftSize)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetFFTSize(NormalizeFftSize(fftSize));
             return true;
@@ -218,13 +186,8 @@ namespace Thetis
 
         public bool SetReceiverWindowType(int receiverId, int windowType)
         {
-            return SetWindowType(SpectrumSourceType.Receiver, receiverId, windowType);
-        }
-
-        private bool SetWindowType(SpectrumSourceType sourceType, int sourceId, int windowType)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetWindowType(ClampInt(windowType, 0, 6));
             return true;
@@ -232,13 +195,8 @@ namespace Thetis
 
         public bool SetReceiverDetectorTypePan(int receiverId, int detectorTypePan)
         {
-            return SetDetectorTypePan(SpectrumSourceType.Receiver, receiverId, detectorTypePan);
-        }
-
-        private bool SetDetectorTypePan(SpectrumSourceType sourceType, int sourceId, int detectorTypePan)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetDetectorTypePan(ClampInt(detectorTypePan, 0, 4));
             return true;
@@ -246,13 +204,8 @@ namespace Thetis
 
         public bool SetReceiverAverageMode(int receiverId, int averageMode)
         {
-            return SetAverageMode(SpectrumSourceType.Receiver, receiverId, averageMode);
-        }
-
-        private bool SetAverageMode(SpectrumSourceType sourceType, int sourceId, int averageMode)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetAverageMode(ClampInt(averageMode, 0, 3));
             return true;
@@ -260,13 +213,8 @@ namespace Thetis
 
         public bool SetReceiverAverageTimeMs(int receiverId, double averageTimeMs)
         {
-            return SetAverageTimeMs(SpectrumSourceType.Receiver, receiverId, averageTimeMs);
-        }
-
-        private bool SetAverageTimeMs(SpectrumSourceType sourceType, int sourceId, double averageTimeMs)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetAverageTauSeconds(Math.Max(0.001, Math.Min(9.999, averageTimeMs * 0.001)));
             return true;
@@ -274,13 +222,8 @@ namespace Thetis
 
         public bool SetReceiverNormOneHzPan(int receiverId, bool normOneHzPan)
         {
-            return SetNormOneHzPan(SpectrumSourceType.Receiver, receiverId, normOneHzPan);
-        }
-
-        private bool SetNormOneHzPan(SpectrumSourceType sourceType, int sourceId, bool normOneHzPan)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetNormOneHzPan(normOneHzPan);
             return true;
@@ -288,13 +231,8 @@ namespace Thetis
 
         public bool SetReceiverSampleRate(int receiverId, int sampleRate)
         {
-            return SetSampleRate(SpectrumSourceType.Receiver, receiverId, sampleRate);
-        }
-
-        private bool SetSampleRate(SpectrumSourceType sourceType, int sourceId, int sampleRate)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetSampleRate(ValidateSampleRate(sampleRate));
             return true;
@@ -302,13 +240,8 @@ namespace Thetis
 
         public bool SetReceiverZoomSlider(int receiverId, double zoomSlider)
         {
-            return SetZoomSlider(SpectrumSourceType.Receiver, receiverId, zoomSlider);
-        }
-
-        private bool SetZoomSlider(SpectrumSourceType sourceType, int sourceId, double zoomSlider)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetZoomSlider(ClampZoomSlider(zoomSlider));
             return true;
@@ -316,13 +249,8 @@ namespace Thetis
 
         public bool SetReceiverPanSlider(int receiverId, double panSlider)
         {
-            return SetPanSlider(SpectrumSourceType.Receiver, receiverId, panSlider);
-        }
-
-        private bool SetPanSlider(SpectrumSourceType sourceType, int sourceId, double panSlider)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetPanSlider(ClampPanSlider(panSlider));
             return true;
@@ -330,13 +258,8 @@ namespace Thetis
 
         public bool SetReceiverZoomCentreFrequency(int receiverId, double frequencyHz, bool trackReceiverCentre = false)
         {
-            return SetZoomCentreFrequency(SpectrumSourceType.Receiver, receiverId, frequencyHz, trackReceiverCentre);
-        }
-
-        private bool SetZoomCentreFrequency(SpectrumSourceType sourceType, int sourceId, double frequencyHz, bool trackReceiverCentre)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetZoomCentreFrequency(frequencyHz, trackReceiverCentre);
             return true;
@@ -344,23 +267,13 @@ namespace Thetis
 
         public bool CentreReceiverPan(int receiverId)
         {
-            return CentrePan(SpectrumSourceType.Receiver, receiverId);
-        }
-
-        private bool CentrePan(SpectrumSourceType sourceType, int sourceId)
-        {
-            return SetPanSlider(sourceType, sourceId, 0.5);
+            return SetReceiverPanSlider(receiverId, 0.5);
         }
 
         public bool SetReceiverEnabled(int receiverId, bool enabled)
         {
-            return SetEnabled(SpectrumSourceType.Receiver, receiverId, enabled);
-        }
-
-        private bool SetEnabled(SpectrumSourceType sourceType, int sourceId, bool enabled)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.SetEnabled(enabled);
             return true;
@@ -368,13 +281,8 @@ namespace Thetis
 
         public bool ResetReceiverBuffers(int receiverId)
         {
-            return ResetBuffers(SpectrumSourceType.Receiver, receiverId);
-        }
-
-        private bool ResetBuffers(SpectrumSourceType sourceType, int sourceId)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint)) return false;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
 
             endpoint.ResetBuffers();
             return true;
@@ -382,31 +290,8 @@ namespace Thetis
 
         public bool TryGetReceiverPixels(int receiverId, out float[] pixels, out int dataIndex)
         {
-            return TryGetLatestPixels(SpectrumSourceType.Receiver, receiverId, out pixels, out dataIndex);
-        }
-
-        public bool TryCopyReceiverPixels(int receiverId, float[] destination, out int pixelCount, out int dataIndex)
-        {
-            return TryCopyLatestPixels(SpectrumSourceType.Receiver, receiverId, destination, out pixelCount, out dataIndex);
-        }
-        public bool TryGetReceiverHzSpan(int receiverId, out int hzSpan)
-        {
-            return TryGetHzSpan(SpectrumSourceType.Receiver, receiverId, out hzSpan);
-        }
-        public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
-        {
-            return TryGetSampleRate(SpectrumSourceType.Receiver, receiverId, out sampleRate);
-        }
-
-        public bool TryGetReceiverViewport(int receiverId, out double zoomSlider, out double panSlider)
-        {
-            return TryGetViewport(SpectrumSourceType.Receiver, receiverId, out zoomSlider, out panSlider);
-        }
-
-        private bool TryGetLatestPixels(SpectrumSourceType sourceType, int sourceId, out float[] pixels, out int dataIndex)
-        {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
             {
                 pixels = null;
                 dataIndex = 0;
@@ -416,10 +301,10 @@ namespace Thetis
             return endpoint.TryGetLatestPixels(out pixels, out dataIndex);
         }
 
-        private bool TryCopyLatestPixels(SpectrumSourceType sourceType, int sourceId, float[] destination, out int pixelCount, out int dataIndex)
+        public bool TryCopyReceiverPixels(int receiverId, float[] destination, out int pixelCount, out int dataIndex)
         {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
             {
                 pixelCount = 0;
                 dataIndex = 0;
@@ -428,10 +313,11 @@ namespace Thetis
 
             return endpoint.TryCopyLatestPixels(destination, out pixelCount, out dataIndex);
         }
-        private bool TryGetHzSpan(SpectrumSourceType sourceType, int sourceId, out int hzSpan)
+
+        public bool TryGetReceiverHzSpan(int receiverId, out int hzSpan)
         {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
             {
                 hzSpan = 0;
                 return false;
@@ -439,10 +325,23 @@ namespace Thetis
 
             return endpoint.TryGetHzSpan(out hzSpan);
         }
-        private bool TryGetViewport(SpectrumSourceType sourceType, int sourceId, out double zoomSlider, out double panSlider)
+
+        public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
         {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                sampleRate = 0;
+                return false;
+            }
+
+            return endpoint.TryGetSampleRate(out sampleRate);
+        }
+
+        public bool TryGetReceiverViewport(int receiverId, out double zoomSlider, out double panSlider)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
             {
                 zoomSlider = 0.0;
                 panSlider = 0.5;
@@ -452,22 +351,10 @@ namespace Thetis
             return endpoint.TryGetViewport(out zoomSlider, out panSlider);
         }
 
-        private bool TryGetSampleRate(SpectrumSourceType sourceType, int sourceId, out int sampleRate)
+        private bool TryGetReceiverFFTSize(int receiverId, out int fftSize)
         {
             SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
-            {
-                sampleRate = 0;
-                return false;
-            }
-
-            return endpoint.TryGetSampleRate(out sampleRate);
-        }
-
-        private bool TryGetFFTSize(SpectrumSourceType sourceType, int sourceId, out int fftSize)
-        {
-            SpectrumEndpoint endpoint;
-            if (!TryGetEndpoint(sourceType, sourceId, out endpoint))
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
             {
                 fftSize = 0;
                 return false;
@@ -493,20 +380,20 @@ namespace Thetis
             return false;
         }
 
-        public Form ShowReceiverTestForm(int receiverId, float? min_dBm = null, float? max_dBm = null)
+        private bool IsReceiverShowingTransmitter(int receiverId)
         {
-            return ShowTestForm(SpectrumSourceType.Receiver, receiverId, min_dBm, max_dBm);
+            return IsReceiverInLocalMox(receiverId) && !_console.DisplayDuplex;
         }
 
-        private Form ShowTestForm(SpectrumSourceType sourceType, int sourceId, float? min_dBm = null, float? max_dBm = null)
+        public Form ShowReceiverTestForm(int receiverId, float? min_dBm = null, float? max_dBm = null)
         {
             ThrowIfDisposed();
-            ValidateSourceId(sourceId);
+            ValidateReceiverId(receiverId);
 
-            if (!ContainsSource(sourceType, sourceId))
-                AddSource(sourceType, sourceId, DefaultPixels, DefaultFrameRate, DefaultFftSize);
+            if (!ContainsReceiver(receiverId))
+                AddReceiver(receiverId, DefaultPixels, DefaultFrameRate, DefaultFftSize);
 
-            SpectrumTestForm form = new SpectrumTestForm(this, sourceType, sourceId, min_dBm, max_dBm);
+            SpectrumTestForm form = new SpectrumTestForm(this, receiverId, min_dBm, max_dBm);
             form.Show();
             return form;
         }
@@ -598,29 +485,28 @@ namespace Thetis
             return _endpointSnapshot;
         }
 
-        private bool TryGetEndpoint(SpectrumSourceType sourceType, int sourceId, out SpectrumEndpoint endpoint)
+        private bool TryGetReceiverEndpoint(int receiverId, out SpectrumEndpoint endpoint)
         {
             endpoint = null;
-            if (sourceId < 0) return false;
+            if (receiverId < 0) return false;
 
             lock (_endpointsLock)
             {
-                return _endpoints.TryGetValue(MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId), out endpoint);
+                return _endpoints.TryGetValue(receiverId, out endpoint);
             }
         }
 
-        private bool TryDetachEndpoint(SpectrumSourceType sourceType, int sourceId, out SpectrumEndpoint endpoint)
+        private bool TryDetachReceiverEndpoint(int receiverId, out SpectrumEndpoint endpoint)
         {
             endpoint = null;
-            if (sourceId < 0) return false;
+            if (receiverId < 0) return false;
 
             lock (_endpointsLock)
             {
-                string key = MakeSourceKey(NormalizeEndpointSourceType(sourceType), sourceId);
-                if (!_endpoints.TryGetValue(key, out endpoint))
+                if (!_endpoints.TryGetValue(receiverId, out endpoint))
                     return false;
 
-                _endpoints.Remove(key);
+                _endpoints.Remove(receiverId);
                 UpdateEndpointSnapshotLocked();
                 return true;
             }
@@ -644,19 +530,9 @@ namespace Thetis
             if (_disposed) throw new ObjectDisposedException(GetType().Name);
         }
 
-        private static SpectrumSourceType NormalizeEndpointSourceType(SpectrumSourceType sourceType)
+        private static void ValidateReceiverId(int receiverId)
         {
-            return SpectrumSourceType.Receiver;
-        }
-
-        private static string MakeSourceKey(SpectrumSourceType sourceType, int sourceId)
-        {
-            return (sourceType == SpectrumSourceType.Receiver ? "R:" : "T:") + sourceId.ToString();
-        }
-
-        private static void ValidateSourceId(int sourceId)
-        {
-            if (sourceId < 0) throw new ArgumentOutOfRangeException(nameof(sourceId), "sourceId must be zero or greater.");
+            if (receiverId < 0) throw new ArgumentOutOfRangeException(nameof(receiverId), "receiverId must be zero or greater.");
         }
 
         private static int ClampInt(int value, int minimum, int maximum)
@@ -714,7 +590,7 @@ namespace Thetis
             private const double ViewportEpsilon = 0.000001;
             private readonly object _syncRoot = new object();
             private readonly Console _console;
-            private readonly int _sourceId;
+            private readonly int _receiverId;
             private readonly int _displayId;
             private readonly int _txDisplayId;
             private readonly int _maxFftSize;
@@ -752,10 +628,10 @@ namespace Thetis
             private int _dataIndex;
             private long _nextReadUtcTicks;
 
-            public SpectrumEndpoint(Console console, int sourceId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec)
+            public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec)
             {
                 _console = console;
-                _sourceId = sourceId;
+                _receiverId = receiverId;
                 _pixels = pixels;
                 _frameRate = frameRate;
                 _configuredSampleRate = templateSpec != null ? templateSpec.SampleRate : DefaultSampleRate;
@@ -793,15 +669,15 @@ namespace Thetis
                 EnsurePixelBuffersLocked(_pixels);
                 ClearPixelBuffersLocked();
 
-                _displayId = cmaster.AllocAnalyzer((int)SpectrumSourceType.Receiver, _sourceId, _maxFftSize);
+                _displayId = cmaster.AllocAnalyzer(ReceiverAnalyzerType, _receiverId, _maxFftSize);
                 if (_displayId < 0)
-                    throw new InvalidOperationException("Unable to allocate analyzer for source type " + SpectrumSourceType.Receiver.ToString() + " id " + _sourceId.ToString() + ".");
+                    throw new InvalidOperationException("Unable to allocate receiver analyzer for receiver id " + _receiverId.ToString() + ".");
 
-                _txDisplayId = cmaster.AllocAnalyzer((int)SpectrumSourceType.Transmitter, 0, _maxFftSize);
+                _txDisplayId = cmaster.AllocAnalyzer(TransmitterAnalyzerType, 0, _maxFftSize);
                 if (_txDisplayId < 0)
                 {
                     try { cmaster.FreeAnalyzer(_displayId); } catch { }
-                    throw new InvalidOperationException("Unable to allocate analyzer for source type " + SpectrumSourceType.Transmitter.ToString() + " id 0.");
+                    throw new InvalidOperationException("Unable to allocate transmitter analyzer.");
                 }
 
                 _spec = new SpecHPSDR(_displayId)
@@ -820,7 +696,7 @@ namespace Thetis
             }
             public bool MatchesReceiverEvent(int rx)
             {
-                return (_sourceId + 1) == rx;
+                return (_receiverId + 1) == rx;
             }
 
             public void SetPixels(int pixels)
@@ -1232,12 +1108,12 @@ namespace Thetis
             private double GetReceiverCentreFrequencyHz()
             {
                 double frequencyMHz = 0.0;
-                if (_sourceId == 0)
+                if (_receiverId == 0)
                     frequencyMHz = _console.CentreFrequency;
-                else if (_sourceId == 1)
+                else if (_receiverId == 1)
                     frequencyMHz = _console.CentreRX2Frequency;
 
-                return frequencyMHz * 1000000.0 + _console.GetDSPcwPitchShiftToZero(_sourceId + 1);
+                return frequencyMHz * 1000000.0 + _console.GetDSPcwPitchShiftToZero(_receiverId + 1);
             }
 
             private double GetEffectivePanSliderLocked()
@@ -1369,7 +1245,7 @@ namespace Thetis
                 if (displayId == _txDisplayId)
                     return Display.TXDisplayCalOffset;
 
-                return _sourceId == 1 ? Display.RX2OffsetWithDup : Display.RX1OffsetWithDup;
+                return _receiverId == 1 ? Display.RX2OffsetWithDup : Display.RX1OffsetWithDup;
             }
 
             private bool IsReceiverInLocalMox()
@@ -1377,10 +1253,10 @@ namespace Thetis
                 if (!Display.MOX)
                     return false;
 
-                if (_sourceId == 0)
+                if (_receiverId == 0)
                     return !_console.VFOBTX || (_console.VFOBTX && !_console.RX2Enabled);
 
-                if (_sourceId == 1)
+                if (_receiverId == 1)
                     return _console.VFOBTX && _console.RX2Enabled;
 
                 return false;
@@ -1403,12 +1279,6 @@ namespace Thetis
                 _txConfiguredSampleRate = sampleRate;
                 _txBlockSize = blockSize;
                 RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
-            }
-
-            private int GetTransmitterSampleRate()
-            {
-                SyncTransmitterSettingsLocked();
-                return _txConfiguredSampleRate;
             }
 
             private void EnsurePixelBuffersLocked(int pixels)
@@ -1456,28 +1326,26 @@ namespace Thetis
         private sealed class SpectrumTestForm : Form
         {
             private readonly clsSpectrumProcessor _processor;
-            private readonly SpectrumSourceType _sourceType;
-            private readonly int _sourceId;
+            private readonly int _receiverId;
             private readonly float? _minDbm;
             private readonly float? _maxDbm;
             private readonly SpectrumGraphPanel _graphPanel;
             private readonly System.Windows.Forms.Timer _refreshTimer;
 
-            public SpectrumTestForm(clsSpectrumProcessor processor, SpectrumSourceType sourceType, int sourceId, float? minDbm, float? maxDbm)
+            public SpectrumTestForm(clsSpectrumProcessor processor, int receiverId, float? minDbm, float? maxDbm)
             {
                 _processor = processor;
-                _sourceType = sourceType;
-                _sourceId = sourceId;
+                _receiverId = receiverId;
                 _minDbm = minDbm;
                 _maxDbm = maxDbm;
 
-                Text = BuildTitle(sourceType, sourceId, _minDbm, _maxDbm);
+                Text = BuildTitle(receiverId, _minDbm, _maxDbm);
                 StartPosition = FormStartPosition.CenterScreen;
                 Size = new Size(900, 450);
                 MinimumSize = new Size(320, 200);
                 BackColor = Color.FromArgb(18, 18, 18);
 
-                _graphPanel = new SpectrumGraphPanel(_processor, _sourceType, _sourceId, _minDbm, _maxDbm)
+                _graphPanel = new SpectrumGraphPanel(_processor, _receiverId, _minDbm, _maxDbm)
                 {
                     Dock = DockStyle.Fill
                 };
@@ -1494,16 +1362,13 @@ namespace Thetis
                 FormClosed += SpectrumTestForm_FormClosed;
             }
 
-            private static string BuildTitle(SpectrumSourceType sourceType, int sourceId, float? minDbm, float? maxDbm)
+            private static string BuildTitle(int receiverId, float? minDbm, float? maxDbm)
             {
                 string suffix = string.Empty;
                 if (minDbm.HasValue && maxDbm.HasValue && maxDbm.Value > minDbm.Value)
                     suffix = " [" + minDbm.Value.ToString("F0") + " to " + maxDbm.Value.ToString("F0") + " dBm]";
 
-                if (sourceType == SpectrumSourceType.Receiver)
-                    return "Spectrum Test - RX" + (sourceId + 1).ToString() + suffix;
-
-                return "Spectrum Test - TX" + sourceId.ToString() + suffix;
+                return "Spectrum Test - RX" + (receiverId + 1).ToString() + suffix;
             }
 
             private void RefreshTimer_Tick(object sender, EventArgs e)
@@ -1521,8 +1386,7 @@ namespace Thetis
         private sealed class SpectrumGraphPanel : Panel
         {
             private readonly clsSpectrumProcessor _processor;
-            private readonly SpectrumSourceType _sourceType;
-            private readonly int _sourceId;
+            private readonly int _receiverId;
             private readonly float? _fixedMinDbm;
             private readonly float? _fixedMaxDbm;
             private readonly Pen _tracePen;
@@ -1531,13 +1395,11 @@ namespace Thetis
             private readonly Brush _backgroundBrush;
             private readonly Font _font;
             private float[] _pixelBuffer;
-            private PointF[] _pointBuffer;
 
-            public SpectrumGraphPanel(clsSpectrumProcessor processor, SpectrumSourceType sourceType, int sourceId, float? fixedMinDbm, float? fixedMaxDbm)
+            public SpectrumGraphPanel(clsSpectrumProcessor processor, int receiverId, float? fixedMinDbm, float? fixedMaxDbm)
             {
                 _processor = processor;
-                _sourceType = sourceType;
-                _sourceId = sourceId;
+                _receiverId = receiverId;
                 _fixedMinDbm = fixedMinDbm;
                 _fixedMaxDbm = fixedMaxDbm;
 
@@ -1550,7 +1412,6 @@ namespace Thetis
                 _backgroundBrush = new SolidBrush(Color.FromArgb(18, 18, 18));
                 _font = new Font("Segoe UI", 9f, FontStyle.Regular);
                 _pixelBuffer = new float[DefaultPixels];
-                _pointBuffer = new PointF[DefaultPixels];
             }
 
             protected override void Dispose(bool disposing)
@@ -1703,16 +1564,16 @@ namespace Thetis
                     return;
                 }
 
-                string sourceText = _sourceType == SpectrumSourceType.Receiver
-                    ? "RX" + (_sourceId + 1).ToString()
-                    : "TX" + _sourceId.ToString();
+                string sourceText = _processor.IsReceiverShowingTransmitter(_receiverId)
+                    ? "TX"
+                    : "RX" + (_receiverId + 1).ToString();
                 double zoomSlider;
                 double panSlider;
-                bool hasViewport = _processor.TryGetViewport(_sourceType, _sourceId, out zoomSlider, out panSlider);
+                bool hasViewport = _processor.TryGetReceiverViewport(_receiverId, out zoomSlider, out panSlider);
                 int sampleRate;
-                bool hasSampleRate = _processor.TryGetSampleRate(_sourceType, _sourceId, out sampleRate);
+                bool hasSampleRate = _processor.TryGetReceiverSampleRate(_receiverId, out sampleRate);
                 int fftSize;
-                bool hasFftSize = _processor.TryGetFFTSize(_sourceType, _sourceId, out fftSize);
+                bool hasFftSize = _processor.TryGetReceiverFFTSize(_receiverId, out fftSize);
 
                 string info = sourceText +
                     "  Pixels=" + pixelCount.ToString() +
@@ -1765,20 +1626,7 @@ namespace Thetis
 
             private bool TryCopyPixelsWithBuffer(float[] destination, out int pixelCount, out int dataIndex)
             {
-                if (_sourceType == SpectrumSourceType.Transmitter && !_processor.IsReceiverInLocalMox(_sourceId))
-                {
-                    pixelCount = 0;
-                    dataIndex = 0;
-                    return false;
-                }
-
-                return _processor.TryCopyReceiverPixels(_sourceId, destination, out pixelCount, out dataIndex);
-            }
-
-            private void EnsurePointBuffer(int pixelCount)
-            {
-                if (_pointBuffer == null || _pointBuffer.Length != pixelCount)
-                    _pointBuffer = new PointF[pixelCount];
+                return _processor.TryCopyReceiverPixels(_receiverId, destination, out pixelCount, out dataIndex);
             }
 
             private void DrawGrid(Graphics g, Rectangle plotRect)
