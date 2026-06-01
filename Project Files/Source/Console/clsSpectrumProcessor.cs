@@ -767,7 +767,7 @@ namespace Thetis
                 float clip_ratio = clip / (float)_fftSize;
                 _HzSpan = _configuredSampleRate - ((int)Math.Floor(_configuredSampleRate * clip_ratio) * 2);
 
-                clip = templateSpec != null ? txTemplateSpec.Clip : _fftSize;
+                clip = txTemplateSpec != null ? txTemplateSpec.Clip : _fftSize;
                 clip_ratio = clip / (float)_fftSize;
                 _txHzSpan = _txConfiguredSampleRate - ((int)Math.Floor(_txConfiguredSampleRate * clip_ratio) * 2);
 
@@ -1168,7 +1168,15 @@ namespace Thetis
             {
                 lock (_syncRoot)
                 {
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
                     hzSpan = _HzSpan;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        hzSpan = _txHzSpan;
+                    }
                     return !_shutdown;
                 }
             }
@@ -1333,6 +1341,10 @@ namespace Thetis
                 //spec.UseClip = false;
                 spec.Update = true;
                 spec.initAnalyzer();
+                if (spec == _spec)
+                    _HzSpan = spec.HighFreq - spec.LowFreq;
+                else if (spec == _txSpec)
+                    _txHzSpan = spec.HighFreq - spec.LowFreq;
             }
 
             private static int ResolveDefaultBlockSize(int sampleRate)
