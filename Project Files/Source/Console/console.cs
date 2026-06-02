@@ -18330,6 +18330,46 @@ namespace Thetis
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
             }
         }
+        public void MoveSpectrum(int rx, double freq, bool changeVFO = false)
+        {
+            // used by tciserver
+            if (rx < 1 || rx > 2) return;
+
+            bool old_state;
+
+            switch (rx)
+            {
+                case 1:
+                    old_state = rx1_spectrum_tune_drag;
+                    rx1_spectrum_tune_drag = true;
+                    CentreFrequency = freq;
+                    if (changeVFO)
+                    {
+                        VFOAFreq = freq;
+                    }
+                    else
+                    {
+                        txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                    }
+                    rx1_spectrum_tune_drag = old_state;
+                    break;
+                case 2:
+                    if (!RX2Enabled) return;
+                    old_state = rx2_spectrum_tune_drag;
+                    rx2_spectrum_tune_drag = true;
+                    CentreRX2Frequency = freq;
+                    if (changeVFO)
+                    {
+                        VFOBFreq = freq;
+                    }
+                    else
+                    {
+                        txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                    }
+                    rx2_spectrum_tune_drag = old_state;
+                    break;
+            }
+        }
         public bool VFOASubInUse
         {
             get { return rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked); }
@@ -31396,14 +31436,14 @@ namespace Thetis
                                 rx1_osc = 0.0;
                             }
                             else  // not a jump - more like tuning
-                            if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx1_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
+                            if (!bLimitToSpectral && (((-rx1_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
                             {
                                 double adjustFreq = Ldisp - ((-rx1_osc) - Lmargin);
                                 CentreFrequency -= adjustFreq * 1e-6;
                                 rx1_osc -= adjustFreq;
                             }
                             else
-                            if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx1_osc) + Hmargin) > Hdisp))
+                            if (!bLimitToSpectral && (((-rx1_osc) + Hmargin) > Hdisp))
                             {
                                 double adjustFreq = ((-rx1_osc) + Hmargin) - Hdisp;
                                 CentreFrequency += adjustFreq * 1e-6;
@@ -32393,13 +32433,13 @@ namespace Thetis
                                     rx2_osc = 0.0;
                                 }
                                 else  // not a jump - more like tuning
-                                if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx2_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
+                                if (!bLimitToSpectral && (((-rx2_osc) - Lmargin) < Ldisp)) // scroll the spectrum display smoothly at the edge and keep going
                                 {
                                     double adjustFreq = Ldisp - ((-rx2_osc) - Lmargin);
                                     CentreRX2Frequency -= adjustFreq * 1.0e-6;
                                     rx2_osc -= adjustFreq;
                                 }
-                                else if (!_tci_display_stream_in_use && !bLimitToSpectral && (((-rx2_osc) + Hmargin) > Hdisp))
+                                else if (!bLimitToSpectral && (((-rx2_osc) + Hmargin) > Hdisp))
                                 {
                                     double adjustFreq = ((-rx2_osc) + Hmargin) - Hdisp;
                                     CentreRX2Frequency += adjustFreq * 1.0e-6;

@@ -4132,14 +4132,9 @@ namespace Thetis
                     {
                         double oldCF = consoleThreadSafe.CentreFrequency;
                         consoleThreadSafe.CentreFrequency = dds;
-                        if (!consoleThreadSafe.ClickTuneDisplay || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF)))
-                        {
-                            consoleThreadSafe.VFOAFreq = dds;
-                        }
-                        else
-                        {
-                            consoleThreadSafe.VFOAFreq = consoleThreadSafe.VFOAFreq;
-                        }
+                        bool outsideDDS = !consoleThreadSafe.ClickTuneDisplay || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF));
+                        consoleThreadSafe.MoveSpectrum(1, dds, outsideDDS);
+
                         //double c = dds - consoleThreadSafe.CentreFrequency;
                         //c = Math.Round(c, 6);
                         //consoleThreadSafe.CentreFrequency = dds;
@@ -4149,14 +4144,9 @@ namespace Thetis
                     {
                         double oldCF = consoleThreadSafe.CentreRX2Frequency;
                         consoleThreadSafe.CentreRX2Frequency = dds;
-                        if (!consoleThreadSafe.ClickTuneRX2Display || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF)))
-                        {
-                            consoleThreadSafe.VFOBFreq = dds;
-                        }
-                        else
-                        {
-                            consoleThreadSafe.VFOBFreq = consoleThreadSafe.VFOBFreq;
-                        }
+                        bool outsideDDS = !consoleThreadSafe.ClickTuneRX2Display || (consider_outside && isDDSoutsideHWSampleRate(rx, dds, oldCF));
+                        consoleThreadSafe.MoveSpectrum(2, dds, outsideDDS);
+
                         //double c = dds - consoleThreadSafe.CentreRX2Frequency;
                         //c = Math.Round(c, 6);
                         //consoleThreadSafe.CentreRX2Frequency = dds;
