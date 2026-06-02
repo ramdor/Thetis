@@ -1564,7 +1564,7 @@ namespace Thetis
 
                 m_displayThread = new Thread(new ThreadStart(DisplayThreadProc));
                 m_displayThread.Name = "TCI display stream Thread";
-                m_displayThread.Priority = ThreadPriority.BelowNormal;
+                m_displayThread.Priority = ThreadPriority.Normal;
                 m_displayThread.Start();
 
                 m_VFODataThread = new Thread(new ThreadStart(VFOdata));

@@ -91,7 +91,7 @@ namespace Thetis
             {
                 Name = "Spectrum Processor Thread",
                 IsBackground = true,
-                Priority = ThreadPriority.BelowNormal
+                Priority = ThreadPriority.Normal
             };
             _workerThread.Start();
         }
@@ -414,24 +414,95 @@ namespace Thetis
 
         private void RunWorker()
         {
+            HiPerfTimer scheduleTimer = new HiPerfTimer();
+            HiPerfTimer loopTimer = new HiPerfTimer();
+            HiPerfTimer sleepTimer = new HiPerfTimer();
+            double fractionalMilliseconds = 0.0;
+            double sleepOverrunMilliseconds = 0.0;
+
+            scheduleTimer.Start();
+
             while (_workerRunning)
             {
+                loopTimer.Reset();
+
                 SpectrumEndpoint[] endpoints = GetEndpointArray();
-                long nowTicks = DateTime.UtcNow.Ticks;
-                //bool didWork = false;
+                long nowTicks = GetHiPerfTimerTicks(scheduleTimer);
                 Action frameAvailable = FrameAvailable;
 
                 for (int i = 0; i < endpoints.Length; i++)
                 {
                     if (endpoints[i].ProcessFrame(nowTicks))
                     {
-                        //didWork = true;
                         frameAvailable?.Invoke();
                     }
                 }
 
-                Thread.Sleep(1);// didWork ? 1 : 6);
+                nowTicks = GetHiPerfTimerTicks(scheduleTimer);
+                double delayMilliseconds = GetWorkerDelayMilliseconds(endpoints, nowTicks);
+                delayMilliseconds = delayMilliseconds - loopTimer.ElapsedMsec - sleepOverrunMilliseconds;
+
+                if (delayMilliseconds < 0.0)
+                {
+                    delayMilliseconds = 0.0;
+                    fractionalMilliseconds = 0.0;
+                }
+
+                int integerDelayMilliseconds = (int)delayMilliseconds;
+                fractionalMilliseconds += delayMilliseconds - integerDelayMilliseconds;
+                int integerFractionMilliseconds = (int)fractionalMilliseconds;
+                fractionalMilliseconds -= integerFractionMilliseconds;
+                int requestedSleepMilliseconds = integerDelayMilliseconds + integerFractionMilliseconds;
+                sleepOverrunMilliseconds = 0.0;
+
+                if (requestedSleepMilliseconds > 0)
+                {
+                    sleepTimer.Reset();
+                    Thread.Sleep(requestedSleepMilliseconds);
+                    sleepOverrunMilliseconds = sleepTimer.ElapsedMsec - requestedSleepMilliseconds;
+                }
+                else if (fractionalMilliseconds > 0.0)
+                {
+                    sleepTimer.Reset();
+                    while (_workerRunning && sleepTimer.ElapsedMsec <= fractionalMilliseconds) ;
+                    fractionalMilliseconds = sleepTimer.ElapsedMsec - fractionalMilliseconds;
             }
+        }
+        }
+
+        private static long GetHiPerfTimerTicks(HiPerfTimer timer)
+        {
+            return (long)(timer.ElapsedMsec * TimeSpan.TicksPerMillisecond);
+        }
+
+        private static double GetWorkerDelayMilliseconds(SpectrumEndpoint[] endpoints, long nowTicks)
+        {
+            if (endpoints == null || endpoints.Length == 0)
+            {
+                return 20.0;
+            }
+
+            double minimumDelayMilliseconds = double.PositiveInfinity;
+            for (int i = 0; i < endpoints.Length; i++)
+            {
+                double delayMilliseconds = endpoints[i].GetFrameDelayMilliseconds(nowTicks);
+                if (delayMilliseconds < minimumDelayMilliseconds)
+                {
+                    minimumDelayMilliseconds = delayMilliseconds;
+                }
+            }
+
+            if (double.IsPositiveInfinity(minimumDelayMilliseconds))
+            {
+                return 20.0;
+            }
+
+            if (minimumDelayMilliseconds > 20.0)
+            {
+                return 20.0;
+            }
+
+            return minimumDelayMilliseconds;
         }
 
         private void SubscribeDelegates()
@@ -627,6 +698,8 @@ namespace Thetis
             private bool _shutdown;
             private int _dataIndex;
             private long _nextReadUtcTicks;
+
+            private const long SchedulingToleranceTicks = TimeSpan.TicksPerMillisecond * 2;
 
             public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec)
             {
@@ -932,14 +1005,43 @@ namespace Thetis
                 }
             }
 
+            public double GetFrameDelayMilliseconds(long nowUtcTicks)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || !_enabled) return double.PositiveInfinity;
+                    if (_nextReadUtcTicks <= 0) return 0.0;
+
+                    long delayTicks = _nextReadUtcTicks - SchedulingToleranceTicks - nowUtcTicks;
+                    if (delayTicks <= 0) return 0.0;
+
+                    return delayTicks / (double)TimeSpan.TicksPerMillisecond;
+                }
+            }
+
             public bool ProcessFrame(long nowUtcTicks)
             {
                 lock (_syncRoot)
                 {
                     if (_shutdown || !_enabled) return false;
-                    if (nowUtcTicks < _nextReadUtcTicks) return false;
 
-                    _nextReadUtcTicks = nowUtcTicks + (TimeSpan.TicksPerSecond / Math.Max(1, _frameRate));
+                    long frameIntervalTicks = TimeSpan.TicksPerSecond / Math.Max(1, _frameRate);
+                    if (_nextReadUtcTicks <= 0)
+                    {
+                        _nextReadUtcTicks = nowUtcTicks;
+                    }
+                    else if (nowUtcTicks + SchedulingToleranceTicks < _nextReadUtcTicks)
+                    {
+                        return false;
+                    }
+
+                    long nextReadUtcTicks = _nextReadUtcTicks + frameIntervalTicks;
+                    if (nextReadUtcTicks <= nowUtcTicks)
+                    {
+                        nextReadUtcTicks = nowUtcTicks + frameIntervalTicks;
+                    }
+
+                    _nextReadUtcTicks = nextReadUtcTicks;
 
                     int flag = 0;
                     int displayId = ResolveReadDisplayId();
