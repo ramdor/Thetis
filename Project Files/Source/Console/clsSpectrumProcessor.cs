@@ -970,6 +970,14 @@ namespace Thetis
                 {
                     if (_shutdown) return;
 
+                    if (_hasZoomCentreFrequency && _zoomCentreTracksReceiverCentre)
+                    {
+                        double centreHz = GetReceiverCentreFrequencyHz();
+                        _zoomCentreFrequencyHz = centreHz + _zoomCentreOffsetHz;
+                        _nextReadUtcTicks = 0;
+                        return;
+                    }
+
                     if (_hasZoomCentreFrequency)
                         RefreshLocked();
                     else

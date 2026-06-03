@@ -5743,7 +5743,6 @@ namespace Thetis
                         handleDisplayPan(args);
                         break;
                     case "display_zoom_centre":
-                    case "display_zoom_center":
                         handleDisplayZoomCentre(args);
                         break;
                     case "display_delta_mode":
@@ -7637,34 +7636,18 @@ namespace Thetis
         }
         private void handleDisplayStart(string[] args)
         {
-            if (args.Length != 6 && args.Length != 11) return;
+            if (args.Length != 11) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int pixels)) return;
             if (!int.TryParse(args[2], out int frameRate)) return;
             if (!int.TryParse(args[3], out int fftSize)) return;
-            int windowType = 4;
-            int detectorType = 0;
-            int averageMode = 0;
-            float averageTimeMs = 120.0f;
-            bool normOneHz = false;
-            float minDbm;
-            float maxDbm;
-
-            if (args.Length == 11)
-            {
-                if (!int.TryParse(args[4], out windowType)) return;
-                if (!int.TryParse(args[5], out detectorType)) return;
-                if (!int.TryParse(args[6], out averageMode)) return;
-                if (!float.TryParse(args[7], NumberStyles.Float, CultureInfo.InvariantCulture, out averageTimeMs)) return;
-                if (!tryParseDisplayBool(args[8], out normOneHz)) return;
-                if (!float.TryParse(args[9], NumberStyles.Float, CultureInfo.InvariantCulture, out minDbm)) return;
-                if (!float.TryParse(args[10], NumberStyles.Float, CultureInfo.InvariantCulture, out maxDbm)) return;
-            }
-            else
-            {
-                if (!float.TryParse(args[4], NumberStyles.Float, CultureInfo.InvariantCulture, out minDbm)) return;
-                if (!float.TryParse(args[5], NumberStyles.Float, CultureInfo.InvariantCulture, out maxDbm)) return;
-            }
+            if (!int.TryParse(args[4], out int windowType)) return;
+            if (!int.TryParse(args[5], out int detectorType)) return;
+            if (!int.TryParse(args[6], out int averageMode)) return;
+            if (!float.TryParse(args[7], NumberStyles.Float, CultureInfo.InvariantCulture, out float averageTimeMs)) return;
+            if (!tryParseDisplayBool(args[8], out bool normOneHz)) return;
+            if (!float.TryParse(args[9], NumberStyles.Float, CultureInfo.InvariantCulture, out float minDbm)) return;
+            if (!float.TryParse(args[10], NumberStyles.Float, CultureInfo.InvariantCulture, out float maxDbm)) return;
             if (receiver < 0 || receiver > 1) return;
 
             pixels = clampDisplayPixels(pixels);
@@ -8018,29 +8001,6 @@ namespace Thetis
         }
         private void handleDisplayDeltaMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.DeltaMode = legacyEnabled;
-                        if (!legacyEnabled)
-                            settings.BlockDeltaMode = false;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayDeltaMode(receivers[i], legacyEnabled);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
@@ -8059,29 +8019,6 @@ namespace Thetis
         }
         private void handleDisplayBlockDeltaMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.BlockDeltaMode = legacyEnabled;
-                        if (legacyEnabled)
-                            settings.DeltaMode = true;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayBlockDeltaMode(receivers[i], legacyEnabled);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
@@ -8100,73 +8037,29 @@ namespace Thetis
         }
         private void handleDisplayAccuracyMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyMode)) return;
-                legacyMode = clsDisplayCompression.ClampAccuracyMode(legacyMode);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.AccuracyMode = legacyMode;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-        }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayAccuracyMode(receivers[i], legacyMode);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int mode)) return;
             mode = clsDisplayCompression.ClampAccuracyMode(mode);
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.AccuracyMode = mode;
                 resetDisplayCompressionState(subscription);
-        }
+            }
 
             sendDisplayAccuracyMode(receiver, mode);
         }
         private void handleDisplayAdaptiveBlocks(string[] args)
         {
-            if (args.Length == 1)
-        {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-            {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.AdaptiveBlocks = legacyEnabled;
-                        subscription.LastDataIndex = 0;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                }
-            }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayAdaptiveBlocks(receivers[i], legacyEnabled);
-                return;
-        }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.AdaptiveBlocks = enabled;
@@ -8177,29 +8070,7 @@ namespace Thetis
             sendDisplayAdaptiveBlocks(receiver, enabled);
         }
         private void handleDisplayKeyFrameInterval(string[] args)
-            {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyIntervalFrames)) return;
-                legacyIntervalFrames = clsDisplayCompression.ClampKeyFrameIntervalFrames(legacyIntervalFrames);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.KeyFrameIntervalFrames = legacyIntervalFrames;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayKeyFrameInterval(receivers[i], legacyIntervalFrames);
-                return;
-            }
-
+        {
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int intervalFrames)) return;
@@ -8211,42 +8082,20 @@ namespace Thetis
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.KeyFrameIntervalFrames = intervalFrames;
                 resetDisplayCompressionState(subscription);
-        }
+            }
 
             sendDisplayKeyFrameInterval(receiver, intervalFrames);
         }
 
         private void handleDisplayQuantBits(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyQuantizationBits)) return;
-                legacyQuantizationBits = clsDisplayCompression.ClampQuantizationBits(legacyQuantizationBits);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.QuantizationBits = legacyQuantizationBits;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                }
-            }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayQuantBits(receivers[i], legacyQuantizationBits);
-                return;
-        }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int quantizationBits)) return;
             quantizationBits = clsDisplayCompression.ClampQuantizationBits(quantizationBits);
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.QuantizationBits = quantizationBits;

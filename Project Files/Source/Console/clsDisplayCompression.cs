@@ -119,7 +119,7 @@ namespace Thetis
             byte[] previousFrame = state.LastSentFrame;
             bool hasPreviousFrame = previousFrame != null && previousFrame.Length == pixelCount;
             bool forceKeyFrame = !settings.DeltaMode || !hasPreviousFrame || shouldSendKeyFrame(settings, state);
-            int accuracyThreshold = getAccuracyThreshold(settings.AccuracyMode);
+            int accuracyThreshold = getAccuracyThreshold(settings.AccuracyMode, minDbm, maxDbm, quantizationBits);
 
             if (hasPreviousFrame && accuracyThreshold > 0)
                 applyAccuracyThreshold(state.EncodedFrame, previousFrame, pixelCount, accuracyThreshold);
@@ -203,7 +203,7 @@ namespace Thetis
         internal static int ClampAccuracyMode(int mode)
         {
             if (mode < 0) return 0;
-            if (mode > 2) return 2;
+            if (mode > 5) return 5;
             return mode;
         }
 
@@ -256,17 +256,30 @@ namespace Thetis
             return intervalFrames > 0 && state.FramesSinceKeyFrame >= intervalFrames;
         }
 
-        private static int getAccuracyThreshold(int accuracyMode)
+        private static int getAccuracyThreshold(int accuracyMode, float minDbm, float maxDbm, int quantizationBits)
         {
-            switch (ClampAccuracyMode(accuracyMode))
-            {
-                case 1:
-                    return 1;
-                case 2:
-                    return 2;
-                default:
-                    return 0;
-            }
+            int mode = ClampAccuracyMode(accuracyMode);
+            if (mode == 5)
+                return getAutoAccuracyThreshold(minDbm, maxDbm, quantizationBits);
+
+            return mode;
+        }
+
+        private static int getAutoAccuracyThreshold(float minDbm, float maxDbm, int quantizationBits)
+        {
+            float dbmSpan = maxDbm - minDbm;
+            if (float.IsNaN(dbmSpan) || float.IsInfinity(dbmSpan) || dbmSpan <= 0.0f)
+                return 1;
+
+            int maxValue = (1 << ClampQuantizationBits(quantizationBits)) - 1;
+            float dbmPerStep = dbmSpan / (maxValue - 2);
+            if (dbmPerStep <= 0.0f)
+                return 1;
+
+            int threshold = (int)Math.Round(0.5f / dbmPerStep);
+            if (threshold < 1) return 1;
+            if (threshold > 4) return 4;
+            return threshold;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
