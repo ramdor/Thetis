@@ -727,6 +727,7 @@ namespace Thetis
             public double ZoomCentreFrequencyHz;
             public double ZoomCentreOffsetHz;
             public int LastDataIndex;
+            public int LastHzLeft;
             public int LastHzSpan;
             public float[] PixelBuffer;
             public clsDisplayCompression.Settings DisplayCompressionSettings;
@@ -7631,6 +7632,7 @@ namespace Thetis
             else
                 subscription.DisplayCompressionState.Reset();
 
+            subscription.LastHzLeft = 0;
             subscription.LastHzSpan = 0;
         }
         private void handleDisplayStart(string[] args)
@@ -8298,7 +8300,7 @@ namespace Thetis
                     if (!m_spectrumProcessor.TryGetReceiverHzSpan(subscription.Receiver, out hzSpan))
                         continue;
 
-                    if (subscription.LastHzSpan != 0 && subscription.LastHzSpan != hzSpan)
+                    if (subscription.LastHzSpan != 0 && (subscription.LastHzSpan != hzSpan || subscription.LastHzLeft != hzLeft))
                         resetDisplayCompressionState(subscription);
 
                     clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
@@ -8309,6 +8311,7 @@ namespace Thetis
                     byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzLeft, hzSpan, displayResult);
 
                     subscription.LastDataIndex = dataIndex;
+                    subscription.LastHzLeft = hzLeft;
                     subscription.LastHzSpan = hzSpan;
 
                     if (payloads == null)
