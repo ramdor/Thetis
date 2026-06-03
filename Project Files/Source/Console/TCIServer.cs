@@ -2281,6 +2281,27 @@ namespace Thetis
         {
             sendTextFrame("display_pan:" + receiver.ToString() + "," + panSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
         }
+        private bool isDisplayReceiverInLocalMox(int receiver)
+        {
+            Console console = consoleThreadSafe;
+            if (console == null) return false;
+            if (!Display.MOX) return false;
+
+            if (receiver == 0)
+                return !console.VFOBTX || (console.VFOBTX && !console.RX2Enabled);
+
+            if (receiver == 1)
+                return console.VFOBTX && console.RX2Enabled;
+
+            return false;
+        }
+        private bool isDisplayReceiverShowingTransmitter(int receiver)
+        {
+            Console console = consoleThreadSafe;
+            if (console == null) return false;
+
+            return isDisplayReceiverInLocalMox(receiver) && !console.DisplayDuplex;
+        }
         private double getDisplayReceiverCentreFrequencyHz(int receiver)
         {
             Console console = consoleThreadSafe;
@@ -7789,6 +7810,8 @@ namespace Thetis
             lock (m_objStreamLock)
             {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                if (isDisplayReceiverShowingTransmitter(receiver))
+                    frequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
                 bool zoomCentreTracksReceiverCentre = true;
                 double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
                 if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
