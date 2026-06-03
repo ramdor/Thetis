@@ -2273,17 +2273,13 @@ namespace Thetis
         {
             sendTextFrame("display_pixels:" + receiver.ToString() + "," + pixels.ToString() + ";");
         }
-        private void sendDisplayZoom(int receiver, double zoomSlider)
+        private void sendDisplayZoom(int receiver, double zoomSlider, double frequencyHz)
         {
-            sendTextFrame("display_zoom:" + receiver.ToString() + "," + zoomSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
+            sendTextFrame("display_zoom:" + receiver.ToString() + "," + zoomSlider.ToString("F6", CultureInfo.InvariantCulture) + "," + frequencyHz.ToString("F0", CultureInfo.InvariantCulture) + ";");
         }
         private void sendDisplayPan(int receiver, double panSlider)
         {
             sendTextFrame("display_pan:" + receiver.ToString() + "," + panSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
-        }
-        private void sendDisplayZoomCentre(int receiver, double frequencyHz)
-        {
-            sendTextFrame("display_zoom_centre:" + receiver.ToString() + "," + frequencyHz.ToString("F0", CultureInfo.InvariantCulture) + ";");
         }
         private double getDisplayReceiverCentreFrequencyHz(int receiver)
         {
@@ -2301,6 +2297,7 @@ namespace Thetis
         private void updateDisplayZoomCentreTrackingMode(int receiver)
         {
             double frequencyHz = 0.0;
+            double zoomSlider = 0.0;
             double panSlider = 0.5;
             bool updated = false;
 
@@ -2314,7 +2311,6 @@ namespace Thetis
 
                 if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
 
-                double zoomSlider;
                 m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
                 subscription.ZoomSlider = zoomSlider;
                 subscription.PanSlider = panSlider;
@@ -2328,7 +2324,7 @@ namespace Thetis
 
             if (updated)
             {
-                sendDisplayZoomCentre(receiver, frequencyHz);
+                sendDisplayZoom(receiver, zoomSlider, frequencyHz);
                 sendDisplayPan(receiver, panSlider);
             }
         }
@@ -5742,9 +5738,6 @@ namespace Thetis
                     case "display_pan":
                         handleDisplayPan(args);
                         break;
-                    case "display_zoom_centre":
-                        handleDisplayZoomCentre(args);
-                        break;
                     case "display_delta_mode":
                         handleDisplayDeltaMode(args);
                         break;
@@ -7785,24 +7778,33 @@ namespace Thetis
         }
         private void handleDisplayZoom(string[] args)
         {
-            if (args.Length != 2) return;
+            if (args.Length != 3) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double zoomSlider)) return;
+            if (!double.TryParse(args[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
+            if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
             zoomSlider = clampDisplayViewportValue(zoomSlider, 0.0);
             double panSlider = 0.5;
 
             lock (m_objStreamLock)
             {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                bool zoomCentreTracksReceiverCentre = true;
+                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
+                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
                 if (!m_spectrumProcessor.SetReceiverZoomSlider(receiver, zoomSlider)) return;
                 m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
                 subscription.ZoomSlider = zoomSlider;
                 subscription.PanSlider = panSlider;
+                subscription.HasZoomCentreFrequency = true;
+                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
+                subscription.ZoomCentreFrequencyHz = frequencyHz;
+                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
                 subscription.LastDataIndex = 0;
                 resetDisplayCompressionState(subscription);
             }
 
-            sendDisplayZoom(receiver, zoomSlider);
+            sendDisplayZoom(receiver, zoomSlider, frequencyHz);
             sendDisplayPan(receiver, panSlider);
         }
         private void handleDisplayPan(string[] args)
@@ -7832,27 +7834,6 @@ namespace Thetis
             }
 
             sendDisplayPan(receiver, panSlider);
-        }
-        private void handleDisplayZoomCentre(string[] args)
-        {
-            if (args.Length != 2) return;
-            if (!int.TryParse(args[0], out int receiver)) return;
-            if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
-            if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
-
-            lock (m_objStreamLock)
-            {
-                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
-                bool zoomCentreTracksReceiverCentre = true;
-                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
-                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
-                subscription.HasZoomCentreFrequency = true;
-                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
-                subscription.ZoomCentreFrequencyHz = frequencyHz;
-                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
-            }
-
-            sendDisplayZoomCentre(receiver, frequencyHz);
         }
         private void handleDisplayFrameRate(string[] args)
         {
