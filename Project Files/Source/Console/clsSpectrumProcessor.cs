@@ -106,7 +106,8 @@ namespace Thetis
             fftSize = NormalizeFftSize(fftSize);
 
             SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(receiverId) : null;
-            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, receiverId, pixels, frameRate, fftSize, templateSpec);
+            SpecHPSDR txTemplateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
+            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, receiverId, pixels, frameRate, fftSize, templateSpec, txTemplateSpec);
 
             lock (_endpointsLock)
             {
@@ -325,7 +326,17 @@ namespace Thetis
 
             return endpoint.TryGetHzSpan(out hzSpan);
         }
+        public bool TryGetReceiverHzLeft(int receiverId, out int hzLeft)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                hzLeft = 0;
+                return false;
+            }
 
+            return endpoint.TryGetHzLeft(out hzLeft);
+        }
         public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
         {
             SpectrumEndpoint endpoint;
@@ -677,6 +688,8 @@ namespace Thetis
             private int _fftSize;
             private int _HzSpan;
             private int _txHzSpan;
+            private int _HzLeft;
+            private int _txHzLeft;
             private int _blockSize;
             private int _txBlockSize;
             private int _windowType;
@@ -701,24 +714,31 @@ namespace Thetis
 
             private const long SchedulingToleranceTicks = TimeSpan.TicksPerMillisecond * 2;
 
-            public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec)
+            public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec, SpecHPSDR txTemplateSpec)
             {
                 _console = console;
                 _receiverId = receiverId;
                 _pixels = pixels;
                 _frameRate = frameRate;
                 _configuredSampleRate = templateSpec != null ? templateSpec.SampleRate : DefaultSampleRate;
-                SpecHPSDR txTemplateSpec = console.specRX != null ? console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
                 _txConfiguredSampleRate = txTemplateSpec != null ? txTemplateSpec.SampleRate : _configuredSampleRate;                
                 _fftSize = NormalizeFftSize(fftSize);
 
-                int clip = templateSpec != null ? templateSpec.Clip : _fftSize;
-                float clip_ratio = clip / (float)_fftSize;
-                _HzSpan = _configuredSampleRate - ((int)Math.Floor(_configuredSampleRate * clip_ratio) * 2);
+                //int clip = templateSpec != null ? templateSpec.Clip : _fftSize;
+                //float clip_ratio = clip / (float)_fftSize;
+                //_HzSpan = _configuredSampleRate - ((int)Math.Floor(_configuredSampleRate * clip_ratio) * 2);
 
-                clip = txTemplateSpec != null ? txTemplateSpec.Clip : _fftSize;
-                clip_ratio = clip / (float)_fftSize;
-                _txHzSpan = _txConfiguredSampleRate - ((int)Math.Floor(_txConfiguredSampleRate * clip_ratio) * 2);
+                //clip = txTemplateSpec != null ? txTemplateSpec.Clip : _fftSize;
+                //clip_ratio = clip / (float)_fftSize;
+                //_txHzSpan = _txConfiguredSampleRate - ((int)Math.Floor(_txConfiguredSampleRate * clip_ratio) * 2);
+
+                _HzLeft = templateSpec != null ? templateSpec.LowFreq : 0;
+                int hzRight = templateSpec != null ? templateSpec.HighFreq : 0;
+                _txHzLeft = txTemplateSpec != null ? txTemplateSpec.LowFreq : 0;
+                int txHzRight = txTemplateSpec != null ? txTemplateSpec.HighFreq : 0;
+
+                _HzSpan = hzRight - _HzLeft;
+                _txHzSpan = txHzRight - _txHzLeft;
 
                 _blockSize = templateSpec != null ? templateSpec.BlockSize : ResolveDefaultBlockSize(_configuredSampleRate);
                 _txBlockSize = txTemplateSpec != null ? txTemplateSpec.BlockSize : ResolveDefaultBlockSize(_txConfiguredSampleRate);
@@ -888,7 +908,6 @@ namespace Thetis
                 {
                     if (_shutdown) return;
 
-                    bool changed = Math.Abs(_zoomSlider - zoomSlider) >= ViewportEpsilon;
                     _zoomSlider = zoomSlider;
                     _spec.ZoomSlider = _zoomSlider;
                     _txSpec.ZoomSlider = _zoomSlider;
@@ -901,7 +920,14 @@ namespace Thetis
                         _panSlider = 0.5;
                         ApplyPanToAnalyzersLocked();
                     }
-                    if (changed) _nextReadUtcTicks = 0;
+
+                    _HzLeft = _spec.LowFreq;
+                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
+
+                    _txHzLeft = _txSpec.LowFreq;
+                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
+
+                    _nextReadUtcTicks = 0;
                 }
             }
 
@@ -926,6 +952,13 @@ namespace Thetis
                     _hasZoomCentreFrequency = false;
                     _panSlider = panSlider;
                     ApplyPanToAnalyzersLocked();
+
+                    _HzLeft = _spec.LowFreq;
+                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
+
+                    _txHzLeft = _txSpec.LowFreq;
+                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
+
                     _nextReadUtcTicks = 0;
                 }
             }
@@ -1158,6 +1191,22 @@ namespace Thetis
                     return !_shutdown;
                 }
             }
+            public bool TryGetHzLeft(out int hzLeft)
+            {
+                lock (_syncRoot)
+                {
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
+                        hzLeft = _HzLeft;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        hzLeft = _txHzLeft;
+                    }
+                    return !_shutdown;
+                }
+            }
             public void Shutdown()
             {
                 lock (_syncRoot)
@@ -1320,9 +1369,15 @@ namespace Thetis
                 spec.Update = true;
                 spec.initAnalyzer();
                 if (spec == _spec)
+                {
+                    _HzLeft = spec.LowFreq;
                     _HzSpan = spec.HighFreq - spec.LowFreq;
+                }
                 else if (spec == _txSpec)
+                {
+                    _txHzLeft = spec.LowFreq;
                     _txHzSpan = spec.HighFreq - spec.LowFreq;
+                }
             }
 
             private static int ResolveDefaultBlockSize(int sampleRate)

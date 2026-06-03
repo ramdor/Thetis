@@ -6274,7 +6274,7 @@ namespace Thetis
 
             return payload;
         }
-        private byte[] buildCompactDisplayStreamPayload(int receiver, int hzSpan, clsDisplayCompression.Result displayResult)
+        private byte[] buildCompactDisplayStreamPayload(int receiver, int hzLeft, int hzSpan, clsDisplayCompression.Result displayResult)
         {
             if (displayResult == null)
                 return null;
@@ -6284,7 +6284,7 @@ namespace Thetis
             int headerLength = clsDisplayCompression.DisplayCompactHeaderLength;
 
             if (displayResult.Kind == clsDisplayCompression.PayloadKind.Raw)
-                headerLength += 9;
+                headerLength += 13;
             else if (displayResult.Kind == clsDisplayCompression.PayloadKind.Delta || displayResult.Kind == clsDisplayCompression.PayloadKind.BlockDelta)
                 headerLength += 1;
 
@@ -6301,6 +6301,7 @@ namespace Thetis
             if (displayResult.Kind == clsDisplayCompression.PayloadKind.Raw)
             {
                 payload[offset++] = (byte)displayResult.QuantizationBits;
+                writeUInt32(payload, offset, (uint)hzLeft); offset += 4;
                 writeUInt32(payload, offset, (uint)hzSpan); offset += 4;
                 writeUInt32(payload, offset, (uint)displayResult.LogicalLength); offset += 4;
             }
@@ -8289,6 +8290,10 @@ namespace Thetis
                     if (subscription.DisplayCompressionState == null)
                         subscription.DisplayCompressionState = new clsDisplayCompression.State();
 
+                    int hzLeft = 0;
+                    if (!m_spectrumProcessor.TryGetReceiverHzLeft(subscription.Receiver, out hzLeft))
+                        continue;
+
                     int hzSpan = 0;
                     if (!m_spectrumProcessor.TryGetReceiverHzSpan(subscription.Receiver, out hzSpan))
                         continue;
@@ -8301,7 +8306,7 @@ namespace Thetis
                     if (displayResult == null)
                         continue;
 
-                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzSpan, displayResult);
+                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzLeft, hzSpan, displayResult);
 
                     subscription.LastDataIndex = dataIndex;
                     subscription.LastHzSpan = hzSpan;
