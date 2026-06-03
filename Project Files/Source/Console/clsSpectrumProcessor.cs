@@ -909,25 +909,7 @@ namespace Thetis
                     if (_shutdown) return;
 
                     _zoomSlider = zoomSlider;
-                    _spec.ZoomSlider = _zoomSlider;
-                    _txSpec.ZoomSlider = _zoomSlider;
-                    if (_hasZoomCentreFrequency)
-                    {
-                        ApplyZoomCentreFrequencyLocked();
-                    }
-                    else if (IsZoomFullyOut(_zoomSlider))
-                    {
-                        _panSlider = 0.5;
-                        ApplyPanToAnalyzersLocked();
-                    }
-
-                    _HzLeft = _spec.LowFreq;
-                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
-
-                    _txHzLeft = _txSpec.LowFreq;
-                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
-
-                    _nextReadUtcTicks = 0;
+                    RefreshLocked();
                 }
             }
 
@@ -942,8 +924,7 @@ namespace Thetis
                         if (Math.Abs(_panSlider - 0.5) < ViewportEpsilon) return;
 
                         _panSlider = 0.5;
-                        ApplyPanToAnalyzersLocked();
-                        _nextReadUtcTicks = 0;
+                        RefreshLocked();
                         return;
                     }
 
@@ -951,15 +932,7 @@ namespace Thetis
 
                     _hasZoomCentreFrequency = false;
                     _panSlider = panSlider;
-                    ApplyPanToAnalyzersLocked();
-
-                    _HzLeft = _spec.LowFreq;
-                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
-
-                    _txHzLeft = _txSpec.LowFreq;
-                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
-
-                    _nextReadUtcTicks = 0;
+                    RefreshLocked();
                 }
             }
 
@@ -975,7 +948,7 @@ namespace Thetis
                     _zoomCentreFrequencyHz = frequencyHz;
                     _zoomCentreOffsetHz = frequencyHz - centreHz;
                     UpdateZoomCentreAnchorPositionLocked();
-                    _nextReadUtcTicks = 0;
+                    RefreshLocked();
                 }
             }
 
@@ -999,8 +972,9 @@ namespace Thetis
                     if (_shutdown) return;
 
                     if (_hasZoomCentreFrequency)
-                        ApplyZoomCentreFrequencyLocked();
-                    _nextReadUtcTicks = 0;
+                        RefreshLocked();
+                    else
+                        _nextReadUtcTicks = 0;
                 }
             }
 
@@ -1225,28 +1199,25 @@ namespace Thetis
                 }
             }
 
-            private void ApplyZoomCentreFrequencyLocked()
-            {
-                double centreHz = GetReceiverCentreFrequencyHz();
-                double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
-                if (_zoomCentreTracksReceiverCentre)
-                    _zoomCentreFrequencyHz = centreHz + _zoomCentreOffsetHz;
-
-                if (IsZoomFullyOut(_zoomSlider))
-                {
-                    _panSlider = 0.5;
-                    ApplyPanToAnalyzersLocked();
-                    return;
-                }
-
-                _panSlider = CalculatePanForCentreOffset(_configuredSampleRate, _fftSize, _zoomSlider, offsetHz, _zoomCentreAnchorPosition);
-                ApplyPanToAnalyzersLocked();
-            }
-
             private void UpdateZoomCentreAnchorPositionLocked()
             {
                 double centreHz = GetReceiverCentreFrequencyHz();
                 double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
+                int hzLeft = _HzLeft;
+                int hzSpan = _HzSpan;
+
+                if (ResolveReadDisplayId() == _txDisplayId)
+                {
+                    hzLeft = _txHzLeft;
+                    hzSpan = _txHzSpan;
+                }
+
+                if (hzSpan > 0)
+                {
+                    _zoomCentreAnchorPosition = ClampPanSlider((offsetHz - hzLeft) / hzSpan);
+                    return;
+                }
+
                 _zoomCentreAnchorPosition = CalculatePositionForCentreOffset(_configuredSampleRate, _fftSize, _zoomSlider, GetEffectivePanSliderLocked(), offsetHz);
             }
 
@@ -1270,15 +1241,6 @@ namespace Thetis
             private double GetEffectivePanSliderLocked()
             {
                 return IsZoomFullyOut(_zoomSlider) ? 0.5 : _panSlider;
-            }
-
-            private void ApplyPanToAnalyzersLocked()
-            {
-                double panSlider = GetEffectivePanSliderLocked();
-                if (Math.Abs(_spec.PanSlider - panSlider) >= ViewportEpsilon)
-                    _spec.PanSlider = panSlider;
-                if (Math.Abs(_txSpec.PanSlider - panSlider) >= ViewportEpsilon)
-                    _txSpec.PanSlider = panSlider;
             }
 
             private static bool IsZoomFullyOut(double zoomSlider)
@@ -1320,6 +1282,43 @@ namespace Thetis
                 double panWidth = intervals - width;
                 double leftOffsetIntervals = -intervals / 2.0 + ClampPanSlider(panSlider) * panWidth;
                 return ClampPanSlider((centreOffsetHz / binWidth - leftOffsetIntervals) / width);
+            }
+
+            private void CorrectZoomCentrePanFromAnalyzerLocked(SpecHPSDR spec, int sampleRate, double centreOffsetHz, double anchorPosition)
+            {
+                if (spec == null || sampleRate <= 0 || _fftSize <= 0) return;
+
+                double binWidth = (double)sampleRate / (double)_fftSize;
+                int binsPerSubspan = _fftSize - 1;
+                double intervals = (double)(binsPerSubspan - 1);
+                if (intervals <= 0.0 || binWidth <= 0.0) return;
+
+                double zoom = Math.Log10(9.0 * ClampZoomSlider(_zoomSlider) + 1.0);
+                double width = intervals * (1.0 - (1.0 - 1.0 / 100.0) * zoom);
+                double panWidth = intervals - width;
+                double panHzWidth = panWidth * binWidth;
+                if (panHzWidth <= 0.0) return;
+
+                double anchor = ClampPanSlider(anchorPosition);
+                double correctionLimitHz = Math.Max(0.5, binWidth * 0.5);
+
+                for (int iteration = 0; iteration < 3; iteration++)
+                {
+                    int span = spec.HighFreq - spec.LowFreq;
+                    if (span <= 0) return;
+
+                    double targetLeftHz = centreOffsetHz - anchor * span;
+                    double correctionHz = targetLeftHz - spec.LowFreq;
+                    if (Math.Abs(correctionHz) <= correctionLimitHz) return;
+
+                    double correctedPanSlider = ClampPanSlider(_panSlider + correctionHz / panHzWidth);
+                    if (Math.Abs(correctedPanSlider - _panSlider) < ViewportEpsilon) return;
+
+                    _panSlider = correctedPanSlider;
+                    spec.PanSlider = GetEffectivePanSliderLocked();
+                    spec.Update = true;
+                    spec.initAnalyzer();
+                }
             }
 
             private void RefreshLocked()
@@ -1368,6 +1367,14 @@ namespace Thetis
                 //spec.UseClip = false;
                 spec.Update = true;
                 spec.initAnalyzer();
+
+                if (spec == _spec && _hasZoomCentreFrequency && !IsZoomFullyOut(_zoomSlider))
+                {
+                    double centreHz = GetReceiverCentreFrequencyHz();
+                    double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
+                    CorrectZoomCentrePanFromAnalyzerLocked(spec, sampleRate, offsetHz, _zoomCentreAnchorPosition);
+                }
+
                 if (spec == _spec)
                 {
                     _HzLeft = spec.LowFreq;

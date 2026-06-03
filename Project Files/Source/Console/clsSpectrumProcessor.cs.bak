@@ -1,0 +1,1808 @@
+/*  clsSpectrumProcessor.cs
+
+This file is part of a program that implements a Software-Defined Radio.
+
+This code/file can be found on GitHub : https://github.com/ramdor/Thetis
+
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+The author can be reached by email at
+
+mw0lge@grange-lane.co.uk
+*/
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
+using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
+
+namespace Thetis
+{
+    public sealed class clsSpectrumProcessor : IDisposable
+    {
+        private const int ReceiverAnalyzerType = 0;
+        private const int TransmitterAnalyzerType = 1;
+
+        public event Action FrameAvailable;
+
+        private const int DefaultPixels = 1024;
+        private const int DefaultFrameRate = 15;
+        private const int DefaultMaxFftSize = 262144;
+        private const int DefaultSampleRate = 192000;        
+        private const int DefaultFftSize = 4096;
+        private const int DefaultWindowType = 4;
+        private const int DefaultDetectorTypePan = 0;
+        private const int DefaultAverageMode = 0;
+        private const double DefaultAverageTau = 0.12;
+        private const float EmptyPixelValue = -200.0f;
+        private const int DataIndexWrap = 1000000000;
+        private static readonly ArrayPool<float> PixelArrayPool = ArrayPool<float>.Shared;
+
+        private readonly Console _console;
+        private readonly object _endpointsLock = new object();
+        private readonly Dictionary<int, SpectrumEndpoint> _endpoints;
+        private readonly Thread _workerThread;
+        private volatile SpectrumEndpoint[] _endpointSnapshot;
+
+        private volatile bool _workerRunning;
+        private bool _disposed;
+
+        public clsSpectrumProcessor(Console console)
+        {
+            if (console == null) throw new ArgumentNullException(nameof(console));
+
+            _console = console;
+            _endpoints = new Dictionary<int, SpectrumEndpoint>();
+            _endpointSnapshot = Array.Empty<SpectrumEndpoint>();
+            _workerRunning = true;
+
+            SubscribeDelegates();
+
+            _workerThread = new Thread(RunWorker)
+            {
+                Name = "Spectrum Processor Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
+            _workerThread.Start();
+        }
+
+        public bool AddReceiver(int receiverId, int pixels, int frameRate, int fftSize)
+        {
+            ThrowIfDisposed();
+            ValidateReceiverId(receiverId);
+
+            pixels = ClampInt(pixels, 64, 32768);
+            frameRate = ClampInt(frameRate, 1, 120);
+            fftSize = NormalizeFftSize(fftSize);
+
+            SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(receiverId) : null;
+            SpecHPSDR txTemplateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
+            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, receiverId, pixels, frameRate, fftSize, templateSpec, txTemplateSpec);
+
+            lock (_endpointsLock)
+            {
+                if (_endpoints.ContainsKey(receiverId))
+                {
+                    endpoint.Shutdown();
+                    return false;
+                }
+
+                _endpoints.Add(receiverId, endpoint);
+                UpdateEndpointSnapshotLocked();
+            }
+
+            return true;
+        }
+
+        public bool RemoveReceiver(int receiverId)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryDetachReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.Shutdown();
+            return true;
+        }
+
+        public void Clear()
+        {
+            SpectrumEndpoint[] endpoints;
+
+            lock (_endpointsLock)
+            {
+                endpoints = _endpointSnapshot;
+                _endpoints.Clear();
+                _endpointSnapshot = Array.Empty<SpectrumEndpoint>();
+            }
+
+            for (int i = 0; i < endpoints.Length; i++)
+                endpoints[i].Shutdown();
+        }
+
+        private bool ContainsReceiver(int receiverId)
+        {
+            ValidateReceiverId(receiverId);
+
+            lock (_endpointsLock)
+            {
+                return _endpoints.ContainsKey(receiverId);
+            }
+        }
+
+        public bool SetReceiverPixelResolution(int receiverId, int pixels)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetPixels(ClampInt(pixels, 64, 32768));
+            return true;
+        }
+
+        public bool SetReceiverFrameRate(int receiverId, int frameRate)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetFrameRate(ClampInt(frameRate, 1, 120));
+            return true;
+        }
+
+        public bool SetReceiverFFTSize(int receiverId, int fftSize)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetFFTSize(NormalizeFftSize(fftSize));
+            return true;
+        }
+
+        public bool SetReceiverWindowType(int receiverId, int windowType)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetWindowType(ClampInt(windowType, 0, 6));
+            return true;
+        }
+
+        public bool SetReceiverDetectorTypePan(int receiverId, int detectorTypePan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetDetectorTypePan(ClampInt(detectorTypePan, 0, 4));
+            return true;
+        }
+
+        public bool SetReceiverAverageMode(int receiverId, int averageMode)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetAverageMode(ClampInt(averageMode, 0, 3));
+            return true;
+        }
+
+        public bool SetReceiverAverageTimeMs(int receiverId, double averageTimeMs)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetAverageTauSeconds(Math.Max(0.001, Math.Min(9.999, averageTimeMs * 0.001)));
+            return true;
+        }
+
+        public bool SetReceiverNormOneHzPan(int receiverId, bool normOneHzPan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetNormOneHzPan(normOneHzPan);
+            return true;
+        }
+
+        public bool SetReceiverSampleRate(int receiverId, int sampleRate)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetSampleRate(ValidateSampleRate(sampleRate));
+            return true;
+        }
+
+        public bool SetReceiverZoomSlider(int receiverId, double zoomSlider)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetZoomSlider(ClampZoomSlider(zoomSlider));
+            return true;
+        }
+
+        public bool SetReceiverPanSlider(int receiverId, double panSlider)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetPanSlider(ClampPanSlider(panSlider));
+            return true;
+        }
+
+        public bool SetReceiverZoomCentreFrequency(int receiverId, double frequencyHz, bool trackReceiverCentre = false)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetZoomCentreFrequency(frequencyHz, trackReceiverCentre);
+            return true;
+        }
+
+        public bool CentreReceiverPan(int receiverId)
+        {
+            return SetReceiverPanSlider(receiverId, 0.5);
+        }
+
+        public bool SetReceiverEnabled(int receiverId, bool enabled)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.SetEnabled(enabled);
+            return true;
+        }
+
+        public bool ResetReceiverBuffers(int receiverId)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint)) return false;
+
+            endpoint.ResetBuffers();
+            return true;
+        }
+
+        public bool TryGetReceiverPixels(int receiverId, out float[] pixels, out int dataIndex)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                pixels = null;
+                dataIndex = 0;
+                return false;
+            }
+
+            return endpoint.TryGetLatestPixels(out pixels, out dataIndex);
+        }
+
+        public bool TryCopyReceiverPixels(int receiverId, float[] destination, out int pixelCount, out int dataIndex)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                pixelCount = 0;
+                dataIndex = 0;
+                return false;
+            }
+
+            return endpoint.TryCopyLatestPixels(destination, out pixelCount, out dataIndex);
+        }
+
+        public bool TryGetReceiverHzSpan(int receiverId, out int hzSpan)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                hzSpan = 0;
+                return false;
+            }
+
+            return endpoint.TryGetHzSpan(out hzSpan);
+        }
+        public bool TryGetReceiverHzLeft(int receiverId, out int hzLeft)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                hzLeft = 0;
+                return false;
+            }
+
+            return endpoint.TryGetHzLeft(out hzLeft);
+        }
+        public bool TryGetReceiverSampleRate(int receiverId, out int sampleRate)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                sampleRate = 0;
+                return false;
+            }
+
+            return endpoint.TryGetSampleRate(out sampleRate);
+        }
+
+        public bool TryGetReceiverViewport(int receiverId, out double zoomSlider, out double panSlider)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                zoomSlider = 0.0;
+                panSlider = 0.5;
+                return false;
+            }
+
+            return endpoint.TryGetViewport(out zoomSlider, out panSlider);
+        }
+
+        private bool TryGetReceiverFFTSize(int receiverId, out int fftSize)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                fftSize = 0;
+                return false;
+            }
+
+            return endpoint.TryGetFFTSize(out fftSize);
+        }
+
+        private bool IsReceiverInLocalMox(int receiverId)
+        {
+            if (receiverId < 0)
+                return false;
+
+            if (!Display.MOX)
+                return false;
+
+            if (receiverId == 0)
+                return !_console.VFOBTX || (_console.VFOBTX && !_console.RX2Enabled);
+
+            if (receiverId == 1)
+                return _console.VFOBTX && _console.RX2Enabled;
+
+            return false;
+        }
+
+        private bool IsReceiverShowingTransmitter(int receiverId)
+        {
+            return IsReceiverInLocalMox(receiverId) && !_console.DisplayDuplex;
+        }
+
+        public Form ShowReceiverTestForm(int receiverId, float? min_dBm = null, float? max_dBm = null)
+        {
+            ThrowIfDisposed();
+            ValidateReceiverId(receiverId);
+
+            if (!ContainsReceiver(receiverId))
+                AddReceiver(receiverId, DefaultPixels, DefaultFrameRate, DefaultFftSize);
+
+            SpectrumTestForm form = new SpectrumTestForm(this, receiverId, min_dBm, max_dBm);
+            form.Show();
+            return form;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            _disposed = true;
+            _workerRunning = false;
+
+            if (_workerThread != null && _workerThread.IsAlive)
+                _workerThread.Join(250);
+
+            UnsubscribeDelegates();
+            Clear();
+        }
+
+        private void RunWorker()
+        {
+            HiPerfTimer scheduleTimer = new HiPerfTimer();
+            HiPerfTimer loopTimer = new HiPerfTimer();
+            HiPerfTimer sleepTimer = new HiPerfTimer();
+            double fractionalMilliseconds = 0.0;
+            double sleepOverrunMilliseconds = 0.0;
+
+            scheduleTimer.Start();
+
+            while (_workerRunning)
+            {
+                loopTimer.Reset();
+
+                SpectrumEndpoint[] endpoints = GetEndpointArray();
+                long nowTicks = GetHiPerfTimerTicks(scheduleTimer);
+                Action frameAvailable = FrameAvailable;
+
+                for (int i = 0; i < endpoints.Length; i++)
+                {
+                    if (endpoints[i].ProcessFrame(nowTicks))
+                    {
+                        frameAvailable?.Invoke();
+                    }
+                }
+
+                nowTicks = GetHiPerfTimerTicks(scheduleTimer);
+                double delayMilliseconds = GetWorkerDelayMilliseconds(endpoints, nowTicks);
+                delayMilliseconds = delayMilliseconds - loopTimer.ElapsedMsec - sleepOverrunMilliseconds;
+
+                if (delayMilliseconds < 0.0)
+                {
+                    delayMilliseconds = 0.0;
+                    fractionalMilliseconds = 0.0;
+                }
+
+                int integerDelayMilliseconds = (int)delayMilliseconds;
+                fractionalMilliseconds += delayMilliseconds - integerDelayMilliseconds;
+                int integerFractionMilliseconds = (int)fractionalMilliseconds;
+                fractionalMilliseconds -= integerFractionMilliseconds;
+                int requestedSleepMilliseconds = integerDelayMilliseconds + integerFractionMilliseconds;
+                sleepOverrunMilliseconds = 0.0;
+
+                if (requestedSleepMilliseconds > 0)
+                {
+                    sleepTimer.Reset();
+                    Thread.Sleep(requestedSleepMilliseconds);
+                    sleepOverrunMilliseconds = sleepTimer.ElapsedMsec - requestedSleepMilliseconds;
+                }
+                else if (fractionalMilliseconds > 0.0)
+                {
+                    sleepTimer.Reset();
+                    while (_workerRunning && sleepTimer.ElapsedMsec <= fractionalMilliseconds) ;
+                    fractionalMilliseconds = sleepTimer.ElapsedMsec - fractionalMilliseconds;
+            }
+        }
+        }
+
+        private static long GetHiPerfTimerTicks(HiPerfTimer timer)
+        {
+            return (long)(timer.ElapsedMsec * TimeSpan.TicksPerMillisecond);
+        }
+
+        private static double GetWorkerDelayMilliseconds(SpectrumEndpoint[] endpoints, long nowTicks)
+        {
+            if (endpoints == null || endpoints.Length == 0)
+            {
+                return 20.0;
+            }
+
+            double minimumDelayMilliseconds = double.PositiveInfinity;
+            for (int i = 0; i < endpoints.Length; i++)
+            {
+                double delayMilliseconds = endpoints[i].GetFrameDelayMilliseconds(nowTicks);
+                if (delayMilliseconds < minimumDelayMilliseconds)
+                {
+                    minimumDelayMilliseconds = delayMilliseconds;
+                }
+            }
+
+            if (double.IsPositiveInfinity(minimumDelayMilliseconds))
+            {
+                return 20.0;
+            }
+
+            if (minimumDelayMilliseconds > 20.0)
+            {
+                return 20.0;
+            }
+
+            return minimumDelayMilliseconds;
+        }
+
+        private void SubscribeDelegates()
+        {
+            _console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
+            _console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
+            _console.PowerChangeHanders += OnPowerChanged;
+        }
+
+        private void UnsubscribeDelegates()
+        {
+            _console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
+            _console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
+            _console.PowerChangeHanders -= OnPowerChanged;
+        }
+
+        private void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
+        {
+            SpectrumEndpoint[] endpoints = GetEndpointArray();
+
+            for (int i = 0; i < endpoints.Length; i++)
+            {
+                if (endpoints[i].MatchesReceiverEvent(rx))
+                    endpoints[i].SyncFrequencies();
+            }
+        }
+
+        private void OnHWSampleRateChanged(int rx, int oldRate, int newRate)
+        {
+            SpectrumEndpoint[] endpoints = GetEndpointArray();
+            int sampleRate = ValidateSampleRate(newRate);
+
+            for (int i = 0; i < endpoints.Length; i++)
+            {
+                if (endpoints[i].MatchesReceiverEvent(rx))
+                    endpoints[i].SetSampleRate(sampleRate);
+            }
+        }
+
+        private void OnPowerChanged(bool oldPower, bool newPower)
+        {
+            if (!oldPower || newPower) return;
+
+            SpectrumEndpoint[] endpoints = GetEndpointArray();
+            for (int i = 0; i < endpoints.Length; i++)
+                endpoints[i].ClearData();
+        }
+
+        private SpectrumEndpoint[] GetEndpointArray()
+        {
+            return _endpointSnapshot;
+        }
+
+        private bool TryGetReceiverEndpoint(int receiverId, out SpectrumEndpoint endpoint)
+        {
+            endpoint = null;
+            if (receiverId < 0) return false;
+
+            lock (_endpointsLock)
+            {
+                return _endpoints.TryGetValue(receiverId, out endpoint);
+            }
+        }
+
+        private bool TryDetachReceiverEndpoint(int receiverId, out SpectrumEndpoint endpoint)
+        {
+            endpoint = null;
+            if (receiverId < 0) return false;
+
+            lock (_endpointsLock)
+            {
+                if (!_endpoints.TryGetValue(receiverId, out endpoint))
+                    return false;
+
+                _endpoints.Remove(receiverId);
+                UpdateEndpointSnapshotLocked();
+                return true;
+            }
+        }
+
+        private void UpdateEndpointSnapshotLocked()
+        {
+            if (_endpoints.Count == 0)
+            {
+                _endpointSnapshot = Array.Empty<SpectrumEndpoint>();
+                return;
+            }
+
+            SpectrumEndpoint[] endpoints = new SpectrumEndpoint[_endpoints.Count];
+            _endpoints.Values.CopyTo(endpoints, 0);
+            _endpointSnapshot = endpoints;
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().Name);
+        }
+
+        private static void ValidateReceiverId(int receiverId)
+        {
+            if (receiverId < 0) throw new ArgumentOutOfRangeException(nameof(receiverId), "receiverId must be zero or greater.");
+        }
+
+        private static int ClampInt(int value, int minimum, int maximum)
+        {
+            if (value < minimum) return minimum;
+            if (value > maximum) return maximum;
+            return value;
+        }
+
+        private static int ValidateSampleRate(int sampleRate)
+        {
+            if (sampleRate <= 0)
+                throw new ArgumentOutOfRangeException(nameof(sampleRate), "sampleRate must be greater than zero.");
+
+            return sampleRate;
+        }
+
+        private static double ClampZoomSlider(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value)) return 0.0;
+            if (value < 0.0) return 0.0;
+            if (value > 1.0) return 1.0;
+            return value;
+        }
+
+        private static double ClampPanSlider(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value)) return 0.5;
+            if (value < 0.0) return 0.0;
+            if (value > 1.0) return 1.0;
+            return value;
+        }
+
+        private static int NormalizeFftSize(int fftSize)
+        {
+            int clamped = ClampInt(fftSize, DefaultFftSize, DefaultMaxFftSize);
+            int best = DefaultFftSize;
+            int bestDistance = Math.Abs(clamped - best);
+
+            for (int value = DefaultFftSize << 1; value <= DefaultMaxFftSize; value <<= 1)
+        {
+                int distance = Math.Abs(clamped - value);
+                if (distance < bestDistance)
+                {
+                    best = value;
+                    bestDistance = distance;
+                }
+            }
+
+            return best;
+        }
+
+        private sealed class SpectrumEndpoint
+        {
+            private const double ViewportEpsilon = 0.000001;
+            private readonly object _syncRoot = new object();
+            private readonly Console _console;
+            private readonly int _receiverId;
+            private readonly int _displayId;
+            private readonly int _txDisplayId;
+            private readonly int _maxFftSize;
+            private readonly SpecHPSDR _spec;
+            private readonly SpecHPSDR _txSpec;
+
+            private float[] _latestPixels;
+            private float[] _workingPixels;
+            private int _pixels;
+            private int _frameRate;
+            private int _configuredSampleRate;
+            private int _txConfiguredSampleRate;
+            private int _fftSize;
+            private int _HzSpan;
+            private int _txHzSpan;
+            private int _HzLeft;
+            private int _txHzLeft;
+            private int _blockSize;
+            private int _txBlockSize;
+            private int _windowType;
+            private int _detectorTypePan;
+            private int _averageMode;
+            private double _averageTau;
+            private bool _averageOn;
+            private bool _peakOn;
+            private bool _normOneHzPan;
+            private double _zoomSlider;
+            private double _panSlider;
+            private bool _hasZoomCentreFrequency;
+            private bool _zoomCentreTracksReceiverCentre;
+            private double _zoomCentreFrequencyHz;
+            private double _zoomCentreOffsetHz;
+            private double _zoomCentreAnchorPosition;
+            private bool _enabled;
+            private bool _hasData;
+            private bool _shutdown;
+            private int _dataIndex;
+            private long _nextReadUtcTicks;
+
+            private const long SchedulingToleranceTicks = TimeSpan.TicksPerMillisecond * 2;
+
+            public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec, SpecHPSDR txTemplateSpec)
+            {
+                _console = console;
+                _receiverId = receiverId;
+                _pixels = pixels;
+                _frameRate = frameRate;
+                _configuredSampleRate = templateSpec != null ? templateSpec.SampleRate : DefaultSampleRate;
+                _txConfiguredSampleRate = txTemplateSpec != null ? txTemplateSpec.SampleRate : _configuredSampleRate;                
+                _fftSize = NormalizeFftSize(fftSize);
+
+                //int clip = templateSpec != null ? templateSpec.Clip : _fftSize;
+                //float clip_ratio = clip / (float)_fftSize;
+                //_HzSpan = _configuredSampleRate - ((int)Math.Floor(_configuredSampleRate * clip_ratio) * 2);
+
+                //clip = txTemplateSpec != null ? txTemplateSpec.Clip : _fftSize;
+                //clip_ratio = clip / (float)_fftSize;
+                //_txHzSpan = _txConfiguredSampleRate - ((int)Math.Floor(_txConfiguredSampleRate * clip_ratio) * 2);
+
+                _HzLeft = templateSpec != null ? templateSpec.LowFreq : 0;
+                int hzRight = templateSpec != null ? templateSpec.HighFreq : 0;
+                _txHzLeft = txTemplateSpec != null ? txTemplateSpec.LowFreq : 0;
+                int txHzRight = txTemplateSpec != null ? txTemplateSpec.HighFreq : 0;
+
+                _HzSpan = hzRight - _HzLeft;
+                _txHzSpan = txHzRight - _txHzLeft;
+
+                _blockSize = templateSpec != null ? templateSpec.BlockSize : ResolveDefaultBlockSize(_configuredSampleRate);
+                _txBlockSize = txTemplateSpec != null ? txTemplateSpec.BlockSize : ResolveDefaultBlockSize(_txConfiguredSampleRate);
+                _windowType = templateSpec != null ? templateSpec.WindowType : DefaultWindowType;
+                _detectorTypePan = templateSpec != null ? templateSpec.DetTypePan : DefaultDetectorTypePan;
+                _averageMode = templateSpec != null ? templateSpec.AverageMode : DefaultAverageMode;
+                _averageTau = templateSpec != null ? templateSpec.AvTau : DefaultAverageTau;
+                _averageOn = templateSpec != null && templateSpec.AverageOn;
+                _peakOn = templateSpec != null && templateSpec.PeakOn;
+                _normOneHzPan = templateSpec != null && templateSpec.NormOneHzPan;
+                _zoomSlider = 0.0;
+                _panSlider = 0.5;
+                _hasZoomCentreFrequency = false;
+                _zoomCentreTracksReceiverCentre = false;
+                _zoomCentreFrequencyHz = 0.0;
+                _zoomCentreOffsetHz = 0.0;
+                _zoomCentreAnchorPosition = 0.5;
+                _maxFftSize = DefaultMaxFftSize;
+                _enabled = true;
+
+                EnsurePixelBuffersLocked(_pixels);
+                ClearPixelBuffersLocked();
+
+                _displayId = cmaster.AllocAnalyzer(ReceiverAnalyzerType, _receiverId, _maxFftSize);
+                if (_displayId < 0)
+                    throw new InvalidOperationException("Unable to allocate receiver analyzer for receiver id " + _receiverId.ToString() + ".");
+
+                _txDisplayId = cmaster.AllocAnalyzer(TransmitterAnalyzerType, 0, _maxFftSize);
+                if (_txDisplayId < 0)
+                {
+                    try { cmaster.FreeAnalyzer(_displayId); } catch { }
+                    throw new InvalidOperationException("Unable to allocate transmitter analyzer.");
+                }
+
+                _spec = new SpecHPSDR(_displayId)
+                {
+                    Update = false
+                };
+
+                _txSpec = new SpecHPSDR(_txDisplayId)
+                {
+                    Update = false
+                };
+
+                Refresh();
+                cmaster.RunAnalyzer(_displayId, 1);
+                cmaster.RunAnalyzer(_txDisplayId, 1);
+            }
+            public bool MatchesReceiverEvent(int rx)
+            {
+                return (_receiverId + 1) == rx;
+            }
+
+            public void SetPixels(int pixels)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || pixels == _pixels) return;
+
+                    _pixels = pixels;
+                    ClearPixelBuffersLocked();
+
+                    _spec.Pixels = _pixels;
+                    _spec.resetPixelBuffers();
+                    _txSpec.Pixels = _pixels;
+                    _txSpec.resetPixelBuffers();
+                    _hasData = false;
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SetFrameRate(int frameRate)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || frameRate == _frameRate) return;
+
+                    _frameRate = frameRate;
+                    _spec.FrameRate = _frameRate;
+                    _txSpec.FrameRate = _frameRate;
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SetFFTSize(int fftSize)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || fftSize == _fftSize) return;
+
+                    _fftSize = fftSize;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetWindowType(int windowType)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || windowType == _windowType) return;
+
+                    _windowType = windowType;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetDetectorTypePan(int detectorTypePan)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || detectorTypePan == _detectorTypePan) return;
+
+                    _detectorTypePan = detectorTypePan;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetAverageMode(int averageMode)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || averageMode == _averageMode) return;
+
+                    _averageMode = averageMode;
+                    _averageOn = averageMode != 0;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetAverageTauSeconds(double averageTau)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || Math.Abs(_averageTau - averageTau) < 0.000001) return;
+
+                    _averageTau = averageTau;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetNormOneHzPan(bool normOneHzPan)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || normOneHzPan == _normOneHzPan) return;
+
+                    _normOneHzPan = normOneHzPan;
+                    RefreshLocked();
+                }
+            }
+
+            public void SetSampleRate(int sampleRate)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || sampleRate == _configuredSampleRate) return;
+
+                    _configuredSampleRate = sampleRate;
+                    _blockSize = ResolveDefaultBlockSize(_configuredSampleRate);
+                    RefreshLocked();
+                }
+            }
+
+            public void SetZoomSlider(double zoomSlider)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    _zoomSlider = zoomSlider;
+                    _spec.ZoomSlider = _zoomSlider;
+                    _txSpec.ZoomSlider = _zoomSlider;
+                    if (_hasZoomCentreFrequency)
+                    {
+                        ApplyZoomCentreFrequencyLocked();
+                    }
+                    else if (IsZoomFullyOut(_zoomSlider))
+                    {
+                        _panSlider = 0.5;
+                        ApplyPanToAnalyzersLocked();
+                    }
+
+                    _HzLeft = _spec.LowFreq;
+                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
+
+                    _txHzLeft = _txSpec.LowFreq;
+                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
+
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SetPanSlider(double panSlider)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    if (IsZoomFullyOut(_zoomSlider))
+                    {
+                        if (Math.Abs(_panSlider - 0.5) < ViewportEpsilon) return;
+
+                        _panSlider = 0.5;
+                        ApplyPanToAnalyzersLocked();
+                        _nextReadUtcTicks = 0;
+                        return;
+                    }
+
+                    if (Math.Abs(_panSlider - panSlider) < ViewportEpsilon && !_hasZoomCentreFrequency) return;
+
+                    _hasZoomCentreFrequency = false;
+                    _panSlider = panSlider;
+                    ApplyPanToAnalyzersLocked();
+
+                    _HzLeft = _spec.LowFreq;
+                    _HzSpan = _spec.HighFreq - _spec.LowFreq;
+
+                    _txHzLeft = _txSpec.LowFreq;
+                    _txHzSpan = _txSpec.HighFreq - _txSpec.LowFreq;
+
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SetZoomCentreFrequency(double frequencyHz, bool trackReceiverCentre)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    double centreHz = GetReceiverCentreFrequencyHz();
+                    _hasZoomCentreFrequency = true;
+                    _zoomCentreTracksReceiverCentre = trackReceiverCentre;
+                    _zoomCentreFrequencyHz = frequencyHz;
+                    _zoomCentreOffsetHz = frequencyHz - centreHz;
+                    UpdateZoomCentreAnchorPositionLocked();
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SetEnabled(bool enabled)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || enabled == _enabled) return;
+
+                    _enabled = enabled;
+                    cmaster.RunAnalyzer(_displayId, _enabled ? 1 : 0);
+                    cmaster.RunAnalyzer(_txDisplayId, _enabled ? 1 : 0);
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void SyncFrequencies()
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    if (_hasZoomCentreFrequency)
+                        ApplyZoomCentreFrequencyLocked();
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void Refresh()
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    RefreshLocked();
+                }
+            }
+
+            public void ResetBuffers()
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    _spec.resetPixelBuffers();
+                    _txSpec.resetPixelBuffers();
+                    ClearPixelBuffersLocked();
+                    _hasData = false;
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void ClearData()
+            {
+                lock (_syncRoot)
+                {
+                    ClearPixelBuffersLocked();
+                    _hasData = false;
+                    _nextReadUtcTicks = 0;
+                }
+            }
+
+            public double GetFrameDelayMilliseconds(long nowUtcTicks)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || !_enabled) return double.PositiveInfinity;
+                    if (_nextReadUtcTicks <= 0) return 0.0;
+
+                    long delayTicks = _nextReadUtcTicks - SchedulingToleranceTicks - nowUtcTicks;
+                    if (delayTicks <= 0) return 0.0;
+
+                    return delayTicks / (double)TimeSpan.TicksPerMillisecond;
+                }
+            }
+
+            public bool ProcessFrame(long nowUtcTicks)
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown || !_enabled) return false;
+
+                    long frameIntervalTicks = TimeSpan.TicksPerSecond / Math.Max(1, _frameRate);
+                    if (_nextReadUtcTicks <= 0)
+                    {
+                        _nextReadUtcTicks = nowUtcTicks;
+                    }
+                    else if (nowUtcTicks + SchedulingToleranceTicks < _nextReadUtcTicks)
+                    {
+                        return false;
+                    }
+
+                    long nextReadUtcTicks = _nextReadUtcTicks + frameIntervalTicks;
+                    if (nextReadUtcTicks <= nowUtcTicks)
+                    {
+                        nextReadUtcTicks = nowUtcTicks + frameIntervalTicks;
+                    }
+
+                    _nextReadUtcTicks = nextReadUtcTicks;
+
+                    int flag = 0;
+                    int displayId = ResolveReadDisplayId();
+                    if (displayId == _txDisplayId)
+                        SyncTransmitterSettingsLocked();
+                    unsafe
+                    {
+                        fixed (float* ptr = &_workingPixels[0])
+                            SpecHPSDRDLL.GetPixels(displayId, 0, ptr, ref flag);
+                    }
+
+                    if (flag == 1)
+                    {
+                        float offset = GetPixelOffset(displayId);
+                        if (offset != 0.0f)
+                        {
+                            for (int i = 0; i < _pixels; i++)
+                                _workingPixels[i] += offset;
+                        }
+
+                        float[] temp = _latestPixels;
+                        _latestPixels = _workingPixels;
+                        _workingPixels = temp;
+
+                        _hasData = true;
+                    }
+                    else if (!_hasData)
+                    {
+                        return false;
+                    }
+
+                    _dataIndex++;
+                    if (_dataIndex >= DataIndexWrap) _dataIndex = 1;
+
+                    return true;
+                }
+            }
+
+            public bool TryGetLatestPixels(out float[] pixels, out int dataIndex)
+            {
+                lock (_syncRoot)
+                {
+                    pixels = new float[_pixels];
+                    Buffer.BlockCopy(_latestPixels, 0, pixels, 0, _pixels * sizeof(float));
+                    dataIndex = _dataIndex;
+                    return _hasData;
+                }
+            }
+            public bool TryCopyLatestPixels(float[] destination, out int pixelCount, out int dataIndex)
+            {
+                if (destination == null) throw new ArgumentNullException(nameof(destination));
+
+                lock (_syncRoot)
+                {
+                    pixelCount = _pixels;
+                    dataIndex = _dataIndex;
+
+                    if (destination.Length < _pixels)
+                        return false;
+
+                    Buffer.BlockCopy(_latestPixels, 0, destination, 0, _pixels * sizeof(float));
+                    return _hasData;
+                }
+            }
+
+            public bool TryGetViewport(out double zoomSlider, out double panSlider)
+            {
+                lock (_syncRoot)
+                {
+                    zoomSlider = _zoomSlider;
+                    panSlider = GetEffectivePanSliderLocked();
+                    return !_shutdown;
+                }
+            }
+
+            public bool TryGetSampleRate(out int sampleRate)
+            {
+                lock (_syncRoot)
+                {
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
+                        sampleRate = _configuredSampleRate;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        sampleRate = _txConfiguredSampleRate;
+                    }
+                    return !_shutdown;
+                }
+            }
+
+            public bool TryGetFFTSize(out int fftSize)
+            {
+                lock (_syncRoot)
+                {
+                    fftSize = _fftSize;
+                    return !_shutdown;
+                }
+            }
+            public bool TryGetHzSpan(out int hzSpan)
+            {
+                lock (_syncRoot)
+                {
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
+                    hzSpan = _HzSpan;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        hzSpan = _txHzSpan;
+                    }
+                    return !_shutdown;
+                }
+            }
+            public bool TryGetHzLeft(out int hzLeft)
+            {
+                lock (_syncRoot)
+                {
+                    if (ResolveReadDisplayId() == _displayId)
+                    {
+                        hzLeft = _HzLeft;
+                    }
+                    else
+                    {
+                        SyncTransmitterSettingsLocked();
+                        hzLeft = _txHzLeft;
+                    }
+                    return !_shutdown;
+                }
+            }
+            public void Shutdown()
+            {
+                lock (_syncRoot)
+                {
+                    if (_shutdown) return;
+
+                    _shutdown = true;
+                    _enabled = false;
+
+                    try { cmaster.RunAnalyzer(_displayId, 0); } catch { }
+                    try { cmaster.RunAnalyzer(_txDisplayId, 0); } catch { }
+                    try { cmaster.FreeAnalyzer(_displayId); } catch { }
+                    try { cmaster.FreeAnalyzer(_txDisplayId); } catch { }
+                    ReturnPixelBuffer(ref _latestPixels);
+                    ReturnPixelBuffer(ref _workingPixels);
+                }
+            }
+
+            private void ApplyZoomCentreFrequencyLocked()
+            {
+                double centreHz = GetReceiverCentreFrequencyHz();
+                double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
+                if (_zoomCentreTracksReceiverCentre)
+                    _zoomCentreFrequencyHz = centreHz + _zoomCentreOffsetHz;
+
+                if (IsZoomFullyOut(_zoomSlider))
+                {
+                    _panSlider = 0.5;
+                    ApplyPanToAnalyzersLocked();
+                    return;
+                }
+
+                _panSlider = CalculatePanForCentreOffset(_configuredSampleRate, _fftSize, _zoomSlider, offsetHz, _zoomCentreAnchorPosition);
+                ApplyPanToAnalyzersLocked();
+            }
+
+            private void UpdateZoomCentreAnchorPositionLocked()
+            {
+                double centreHz = GetReceiverCentreFrequencyHz();
+                double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
+                _zoomCentreAnchorPosition = CalculatePositionForCentreOffset(_configuredSampleRate, _fftSize, _zoomSlider, GetEffectivePanSliderLocked(), offsetHz);
+            }
+
+            private double GetZoomCentreOffsetHzLocked(double centreHz)
+            {
+                if (_zoomCentreTracksReceiverCentre) return _zoomCentreOffsetHz;
+                return _zoomCentreFrequencyHz - centreHz;
+            }
+
+            private double GetReceiverCentreFrequencyHz()
+            {
+                double frequencyMHz = 0.0;
+                if (_receiverId == 0)
+                    frequencyMHz = _console.CentreFrequency;
+                else if (_receiverId == 1)
+                    frequencyMHz = _console.CentreRX2Frequency;
+
+                return frequencyMHz * 1000000.0 + _console.GetDSPcwPitchShiftToZero(_receiverId + 1);
+            }
+
+            private double GetEffectivePanSliderLocked()
+            {
+                return IsZoomFullyOut(_zoomSlider) ? 0.5 : _panSlider;
+            }
+
+            private void ApplyPanToAnalyzersLocked()
+            {
+                double panSlider = GetEffectivePanSliderLocked();
+                if (Math.Abs(_spec.PanSlider - panSlider) >= ViewportEpsilon)
+                    _spec.PanSlider = panSlider;
+                if (Math.Abs(_txSpec.PanSlider - panSlider) >= ViewportEpsilon)
+                    _txSpec.PanSlider = panSlider;
+            }
+
+            private static bool IsZoomFullyOut(double zoomSlider)
+            {
+                return Math.Abs(ClampZoomSlider(zoomSlider)) < ViewportEpsilon;
+            }
+
+            private static double CalculatePanForCentreOffset(int sampleRate, int fftSize, double zoomSlider, double centreOffsetHz, double anchorPosition)
+            {
+                if (sampleRate <= 0 || fftSize <= 0) return 0.5;
+
+                double binWidth = (double)sampleRate / (double)fftSize;
+                int binsPerSubspan = fftSize - 1;
+                double intervals = (double)(binsPerSubspan - 1);
+                if (intervals <= 0.0 || binWidth <= 0.0) return 0.5;
+
+                double zoom = Math.Log10(9.0 * ClampZoomSlider(zoomSlider) + 1.0);
+                double width = intervals * (1.0 - (1.0 - 1.0 / 100.0) * zoom);
+                double panWidth = intervals - width;
+                if (panWidth <= 0.0) return 0.5;
+
+                double anchor = ClampPanSlider(anchorPosition);
+                return ClampPanSlider((centreOffsetHz / binWidth + intervals / 2.0 - anchor * width) / panWidth);
+            }
+
+            private static double CalculatePositionForCentreOffset(int sampleRate, int fftSize, double zoomSlider, double panSlider, double centreOffsetHz)
+            {
+                if (sampleRate <= 0 || fftSize <= 0) return 0.5;
+
+                double binWidth = (double)sampleRate / (double)fftSize;
+                int binsPerSubspan = fftSize - 1;
+                double intervals = (double)(binsPerSubspan - 1);
+                if (intervals <= 0.0 || binWidth <= 0.0) return 0.5;
+
+                double zoom = Math.Log10(9.0 * ClampZoomSlider(zoomSlider) + 1.0);
+                double width = intervals * (1.0 - (1.0 - 1.0 / 100.0) * zoom);
+                if (width <= 0.0) return 0.5;
+
+                double panWidth = intervals - width;
+                double leftOffsetIntervals = -intervals / 2.0 + ClampPanSlider(panSlider) * panWidth;
+                return ClampPanSlider((centreOffsetHz / binWidth - leftOffsetIntervals) / width);
+            }
+
+            private void RefreshLocked()
+            {
+                if (_hasZoomCentreFrequency)
+                {
+                    double centreHz = GetReceiverCentreFrequencyHz();
+                    double offsetHz = GetZoomCentreOffsetHzLocked(centreHz);
+                    if (_zoomCentreTracksReceiverCentre)
+                        _zoomCentreFrequencyHz = centreHz + _zoomCentreOffsetHz;
+
+                    if (IsZoomFullyOut(_zoomSlider))
+                        _panSlider = 0.5;
+                    else
+                        _panSlider = CalculatePanForCentreOffset(_configuredSampleRate, _fftSize, _zoomSlider, offsetHz, _zoomCentreAnchorPosition);
+                }
+                else if (IsZoomFullyOut(_zoomSlider))
+                {
+                    _panSlider = 0.5;
+                }
+
+                RefreshDisplaySpecLocked(_spec, _configuredSampleRate, _blockSize);
+                RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
+                _nextReadUtcTicks = 0;
+            }
+
+            private void RefreshDisplaySpecLocked(SpecHPSDR spec, int sampleRate, int blockSize)
+            {
+                spec.Update = false;
+                spec.PixelOut = 1;
+                spec.IgnoreFrequencyOffset = true;
+                spec.FrameRate = _frameRate;
+                spec.Pixels = _pixels;
+                spec.DetTypePan = _detectorTypePan;
+                spec.AvTau = _averageTau;
+                spec.FFTSize = Math.Min(_fftSize, _maxFftSize);
+                spec.BlockSize = blockSize;
+                spec.SampleRate = sampleRate;
+                spec.WindowType = _windowType;
+                spec.AverageMode = _averageMode;
+                spec.AverageOn = _averageOn;
+                spec.PeakOn = _peakOn;
+                spec.NormOneHzPan = _normOneHzPan;
+                spec.ZoomSlider = _zoomSlider;
+                spec.PanSlider = GetEffectivePanSliderLocked();
+                //spec.UseClip = false;
+                spec.Update = true;
+                spec.initAnalyzer();
+                if (spec == _spec)
+                {
+                    _HzLeft = spec.LowFreq;
+                    _HzSpan = spec.HighFreq - spec.LowFreq;
+                }
+                else if (spec == _txSpec)
+                {
+                    _txHzLeft = spec.LowFreq;
+                    _txHzSpan = spec.HighFreq - spec.LowFreq;
+                }
+            }
+
+            private static int ResolveDefaultBlockSize(int sampleRate)
+            {
+                int blockSize = cmaster.GetBuffSize(sampleRate);
+                return blockSize > 0 ? blockSize : 2048;
+            }
+
+            private int ResolveReadDisplayId()
+            {
+                if (!IsReceiverInLocalMox())
+                    return _displayId;
+
+                if (_console.DisplayDuplex)
+                    return _displayId;
+
+                return _txDisplayId;
+            }
+
+            private float GetPixelOffset(int displayId)
+            {
+                if (displayId == _txDisplayId)
+                    return Display.TXDisplayCalOffset;
+
+                return _receiverId == 1 ? Display.RX2OffsetWithDup : Display.RX1OffsetWithDup;
+            }
+
+            private bool IsReceiverInLocalMox()
+            {
+                if (!Display.MOX)
+                    return false;
+
+                if (_receiverId == 0)
+                    return !_console.VFOBTX || (_console.VFOBTX && !_console.RX2Enabled);
+
+                if (_receiverId == 1)
+                    return _console.VFOBTX && _console.RX2Enabled;
+
+                return false;
+            }
+
+            private void SyncTransmitterSettingsLocked()
+            {
+                if (_console.specRX == null)
+                    return;
+
+                SpecHPSDR spec = _console.specRX.GetSpecRX(cmaster.inid(1, 0));
+                if (spec == null)
+                    return;
+
+                int sampleRate = spec.SampleRate > 0 ? spec.SampleRate : _txConfiguredSampleRate;
+                int blockSize = spec.BlockSize > 0 ? spec.BlockSize : ResolveDefaultBlockSize(sampleRate);
+                if (sampleRate == _txConfiguredSampleRate && blockSize == _txBlockSize)
+                    return;
+
+                _txConfiguredSampleRate = sampleRate;
+                _txBlockSize = blockSize;
+                RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
+            }
+
+            private void EnsurePixelBuffersLocked(int pixels)
+            {
+                if (_latestPixels == null || _latestPixels.Length < pixels)
+                {
+                    ReturnPixelBuffer(ref _latestPixels);
+                    _latestPixels = RentPixelBuffer(pixels);
+                }
+
+                if (_workingPixels == null || _workingPixels.Length < pixels)
+            {
+                    ReturnPixelBuffer(ref _workingPixels);
+                    _workingPixels = RentPixelBuffer(pixels);
+                }
+            }
+
+            private void ClearPixelBuffersLocked()
+            {
+                EnsurePixelBuffersLocked(_pixels);
+                FillPixelBuffer(_latestPixels, _pixels);
+                FillPixelBuffer(_workingPixels, _pixels);
+            }
+
+            private static float[] RentPixelBuffer(int pixels)
+            {
+                return PixelArrayPool.Rent(pixels);
+            }
+
+            private static void ReturnPixelBuffer(ref float[] buffer)
+            {
+                if (buffer == null) return;
+
+                PixelArrayPool.Return(buffer, false);
+                buffer = null;
+            }
+
+            private static void FillPixelBuffer(float[] data, int pixels)
+            {
+                for (int i = 0; i < pixels; i++)
+                    data[i] = EmptyPixelValue;
+            }
+        }
+
+        private sealed class SpectrumTestForm : Form
+        {
+            private readonly clsSpectrumProcessor _processor;
+            private readonly int _receiverId;
+            private readonly float? _minDbm;
+            private readonly float? _maxDbm;
+            private readonly SpectrumGraphPanel _graphPanel;
+            private readonly System.Windows.Forms.Timer _refreshTimer;
+
+            public SpectrumTestForm(clsSpectrumProcessor processor, int receiverId, float? minDbm, float? maxDbm)
+            {
+                _processor = processor;
+                _receiverId = receiverId;
+                _minDbm = minDbm;
+                _maxDbm = maxDbm;
+
+                Text = BuildTitle(receiverId, _minDbm, _maxDbm);
+                StartPosition = FormStartPosition.CenterScreen;
+                Size = new Size(900, 450);
+                MinimumSize = new Size(320, 200);
+                BackColor = Color.FromArgb(18, 18, 18);
+
+                _graphPanel = new SpectrumGraphPanel(_processor, _receiverId, _minDbm, _maxDbm)
+                {
+                    Dock = DockStyle.Fill
+                };
+
+                Controls.Add(_graphPanel);
+
+                _refreshTimer = new System.Windows.Forms.Timer
+                {
+                    Interval = 50
+                };
+                _refreshTimer.Tick += RefreshTimer_Tick;
+                _refreshTimer.Start();
+
+                FormClosed += SpectrumTestForm_FormClosed;
+            }
+
+            private static string BuildTitle(int receiverId, float? minDbm, float? maxDbm)
+            {
+                string suffix = string.Empty;
+                if (minDbm.HasValue && maxDbm.HasValue && maxDbm.Value > minDbm.Value)
+                    suffix = " [" + minDbm.Value.ToString("F0") + " to " + maxDbm.Value.ToString("F0") + " dBm]";
+
+                return "Spectrum Test - RX" + (receiverId + 1).ToString() + suffix;
+            }
+
+            private void RefreshTimer_Tick(object sender, EventArgs e)
+            {
+                _graphPanel.Invalidate();
+            }
+
+            private void SpectrumTestForm_FormClosed(object sender, FormClosedEventArgs e)
+            {
+                _refreshTimer.Stop();
+                _refreshTimer.Dispose();
+            }
+        }
+
+        private sealed class SpectrumGraphPanel : Panel
+        {
+            private readonly clsSpectrumProcessor _processor;
+            private readonly int _receiverId;
+            private readonly float? _fixedMinDbm;
+            private readonly float? _fixedMaxDbm;
+            private readonly Pen _tracePen;
+            private readonly Pen _gridPen;
+            private readonly Brush _textBrush;
+            private readonly Brush _backgroundBrush;
+            private readonly Font _font;
+            private float[] _pixelBuffer;
+
+            public SpectrumGraphPanel(clsSpectrumProcessor processor, int receiverId, float? fixedMinDbm, float? fixedMaxDbm)
+            {
+                _processor = processor;
+                _receiverId = receiverId;
+                _fixedMinDbm = fixedMinDbm;
+                _fixedMaxDbm = fixedMaxDbm;
+
+                DoubleBuffered = true;
+                ResizeRedraw = true;
+
+                _tracePen = new Pen(Color.LimeGreen, 1.5f);
+                _gridPen = new Pen(Color.FromArgb(45, 90, 90, 90), 1f);
+                _textBrush = Brushes.Gainsboro;
+                _backgroundBrush = new SolidBrush(Color.FromArgb(18, 18, 18));
+                _font = new Font("Segoe UI", 9f, FontStyle.Regular);
+                _pixelBuffer = new float[DefaultPixels];
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    _tracePen.Dispose();
+                    _gridPen.Dispose();
+                    _backgroundBrush.Dispose();
+                    _font.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
+
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                base.OnPaint(e);
+
+                Graphics g = e.Graphics;
+                g.Clear(Color.FromArgb(18, 18, 18));
+
+                Rectangle plotRect = ClientRectangle;
+                plotRect.Inflate(-12, -12);
+
+                if (plotRect.Width < 10 || plotRect.Height < 10)
+                    return;
+
+                DrawGrid(g, plotRect);
+
+                float[] pixels = _pixelBuffer;
+                int pixelCount;
+                int dataIndex;
+                bool hasData = TryCopyPixels(out pixels, out pixelCount, out dataIndex);
+                if (!hasData || pixels == null || pixelCount < 2)
+                {
+                    g.DrawString("Waiting for pixel data...", _font, _textBrush, plotRect.Left, plotRect.Top);
+                    return;
+                }
+
+                float min = float.MaxValue;
+                float max = float.MinValue;
+
+                for (int i = 0; i < pixelCount; i++)
+                {
+                    if (pixels[i] < min) min = pixels[i];
+                    if (pixels[i] > max) max = pixels[i];
+                }
+
+                if (min == float.MaxValue || max == float.MinValue)
+                {
+                    g.DrawString("No valid dBm data.", _font, _textBrush, plotRect.Left, plotRect.Top);
+                    return;
+                }
+
+                float plotMin = min;
+                float plotMax = max;
+                bool fixedScale = _fixedMinDbm.HasValue && _fixedMaxDbm.HasValue && _fixedMaxDbm.Value > _fixedMinDbm.Value;
+                if (fixedScale)
+                {
+                    plotMin = _fixedMinDbm.Value;
+                    plotMax = _fixedMaxDbm.Value;
+                }
+
+                if (Math.Abs(plotMax - plotMin) < 0.001f)
+                {
+                    plotMax += 1.0f;
+                    plotMin -= 1.0f;
+                }
+
+                float width = plotRect.Width - 1f;
+                float height = plotRect.Height - 1f;
+                float range = plotMax - plotMin;
+                PointF[] segment = new PointF[pixelCount * 2];
+                int segmentCount = 0;
+                bool hasVisibleData = false;
+                bool previousValid = false;
+                float previousSample = 0f;
+                float previousX = 0f;
+
+                for (int i = 0; i < pixelCount; i++)
+                {
+                    float sample = pixels[i];
+                    float x = plotRect.Left + (width * i / (pixelCount - 1f));
+                    bool currentValid = sample >= plotMin;
+
+                    if (currentValid)
+                    {
+                        if (previousValid)
+                        {
+                            float normalized = (sample - plotMin) / range;
+                            if (normalized > 1f) normalized = 1f;
+                            float y = plotRect.Bottom - (normalized * height);
+                            segment[segmentCount++] = new PointF(x, y);
+                        }
+                        else
+                        {
+                            if (i > 0)
+                            {
+                                float delta = sample - previousSample;
+                                float ratio = Math.Abs(delta) < 0.000001f ? 0f : (plotMin - previousSample) / delta;
+                                if (ratio < 0f) ratio = 0f;
+                                if (ratio > 1f) ratio = 1f;
+                                float startX = previousX + ((x - previousX) * ratio);
+                                segment[segmentCount++] = new PointF(startX, plotRect.Bottom);
+                            }
+
+                            float normalized = (sample - plotMin) / range;
+                            if (normalized > 1f) normalized = 1f;
+                            float y = plotRect.Bottom - (normalized * height);
+                            segment[segmentCount++] = new PointF(x, y);
+                        }
+
+                        hasVisibleData = true;
+                    }
+                    else if (previousValid)
+                    {
+                        float delta = sample - previousSample;
+                        float ratio = Math.Abs(delta) < 0.000001f ? 0f : (plotMin - previousSample) / delta;
+                        if (ratio < 0f) ratio = 0f;
+                        if (ratio > 1f) ratio = 1f;
+                        float endX = previousX + ((x - previousX) * ratio);
+                        segment[segmentCount++] = new PointF(endX, plotRect.Bottom);
+
+                        if (segmentCount > 1)
+                        {
+                            PointF[] line = new PointF[segmentCount];
+                            Array.Copy(segment, line, segmentCount);
+                            g.DrawLines(_tracePen, line);
+                        }
+
+                        segmentCount = 0;
+                    }
+
+                    previousValid = currentValid;
+                    previousSample = sample;
+                    previousX = x;
+                }
+
+                if (segmentCount > 1)
+                {
+                    PointF[] line = new PointF[segmentCount];
+                    Array.Copy(segment, line, segmentCount);
+                    g.DrawLines(_tracePen, line);
+                }
+
+                if (!hasVisibleData)
+                {
+                    g.DrawString("No visible dBm data.", _font, _textBrush, plotRect.Left, plotRect.Top);
+                    return;
+                }
+
+                string sourceText = _processor.IsReceiverShowingTransmitter(_receiverId)
+                    ? "TX"
+                    : "RX" + (_receiverId + 1).ToString();
+                double zoomSlider;
+                double panSlider;
+                bool hasViewport = _processor.TryGetReceiverViewport(_receiverId, out zoomSlider, out panSlider);
+                int sampleRate;
+                bool hasSampleRate = _processor.TryGetReceiverSampleRate(_receiverId, out sampleRate);
+                int fftSize;
+                bool hasFftSize = _processor.TryGetReceiverFFTSize(_receiverId, out fftSize);
+
+                string info = sourceText +
+                    "  Pixels=" + pixelCount.ToString() +
+                    "  Frame=" + dataIndex.ToString() +
+                    "  Min=" + min.ToString("F1") +
+                    " dBm  Max=" + max.ToString("F1") + " dBm";
+
+                if (hasViewport)
+                {
+                    info += "  Zoom=" + zoomSlider.ToString("F3") +
+                        "  Pan=" + panSlider.ToString("F3");
+                }
+
+                if (hasSampleRate)
+                {
+                    info += "  SR=" + sampleRate.ToString();
+                }
+
+                if (hasFftSize)
+                {
+                    info += "  FFT=" + fftSize.ToString();
+                }
+
+                if (fixedScale)
+                {
+                    info += "  Scale=" + plotMin.ToString("F1") + " to " + plotMax.ToString("F1") + " dBm";
+                }
+
+                SizeF textSize = g.MeasureString(info, _font);
+                RectangleF textRect = new RectangleF(plotRect.Left, plotRect.Top, Math.Min(textSize.Width + 8f, plotRect.Width), textSize.Height + 4f);
+                g.FillRectangle(_backgroundBrush, textRect);
+                g.DrawString(info, _font, _textBrush, plotRect.Left + 2, plotRect.Top + 2);
+            }
+
+            private bool TryCopyPixels(out float[] pixels, out int pixelCount, out int dataIndex)
+            {
+                if (_pixelBuffer == null)
+                    _pixelBuffer = new float[DefaultPixels];
+
+                bool hasData = TryCopyPixelsWithBuffer(_pixelBuffer, out pixelCount, out dataIndex);
+                if (pixelCount > _pixelBuffer.Length)
+                {
+                    _pixelBuffer = new float[pixelCount];
+                    hasData = TryCopyPixelsWithBuffer(_pixelBuffer, out pixelCount, out dataIndex);
+                }
+
+                pixels = _pixelBuffer;
+                return hasData;
+            }
+
+            private bool TryCopyPixelsWithBuffer(float[] destination, out int pixelCount, out int dataIndex)
+            {
+                return _processor.TryCopyReceiverPixels(_receiverId, destination, out pixelCount, out dataIndex);
+            }
+
+            private void DrawGrid(Graphics g, Rectangle plotRect)
+            {
+                const int verticalDivisions = 8;
+                const int horizontalDivisions = 6;
+
+                for (int i = 0; i <= verticalDivisions; i++)
+                {
+                    float x = plotRect.Left + (plotRect.Width * i / (float)verticalDivisions);
+                    g.DrawLine(_gridPen, x, plotRect.Top, x, plotRect.Bottom);
+                }
+
+                for (int i = 0; i <= horizontalDivisions; i++)
+                {
+                    float y = plotRect.Top + (plotRect.Height * i / (float)horizontalDivisions);
+                    g.DrawLine(_gridPen, plotRect.Left, y, plotRect.Right, y);
+                }
+            }
+        }
+    }
+}
