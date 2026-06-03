@@ -7856,8 +7856,6 @@ namespace Thetis
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
             if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
-            double zoomSlider = 0.0;
-            double panSlider = 0.5;
 
             lock (m_objStreamLock)
             {
@@ -7865,19 +7863,13 @@ namespace Thetis
                 bool zoomCentreTracksReceiverCentre = true;
                 double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
                 if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
-                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
-                subscription.ZoomSlider = zoomSlider;
-                subscription.PanSlider = panSlider;
                 subscription.HasZoomCentreFrequency = true;
                 subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
                 subscription.ZoomCentreFrequencyHz = frequencyHz;
                 subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
-                subscription.LastDataIndex = 0;
-                resetDisplayCompressionState(subscription);
             }
 
             sendDisplayZoomCentre(receiver, frequencyHz);
-            sendDisplayPan(receiver, panSlider);
         }
         private void handleDisplayFrameRate(string[] args)
         {

@@ -948,7 +948,6 @@ namespace Thetis
                     _zoomCentreFrequencyHz = frequencyHz;
                     _zoomCentreOffsetHz = frequencyHz - centreHz;
                     UpdateZoomCentreAnchorPositionLocked();
-                    RefreshLocked();
                 }
             }
 
