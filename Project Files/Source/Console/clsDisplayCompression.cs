@@ -47,7 +47,7 @@ namespace Thetis
     {
         internal const int DisplayBlockDeltaMarker = 8;
         internal const int DisplayUseLastFrameMarker = 9;
-        internal const int DisplayCompactHeaderLength = 24;
+        internal const int DisplayCompactHeaderLength = 5;
         internal const byte DisplayCompactMagic0 = 84; // T
         internal const byte DisplayCompactMagic1 = 68; // D
         internal const byte DisplayCompactVersion = 1; // 1  ... TCI Display v1

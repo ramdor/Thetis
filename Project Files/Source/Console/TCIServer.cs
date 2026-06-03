@@ -727,6 +727,7 @@ namespace Thetis
             public double ZoomCentreFrequencyHz;
             public double ZoomCentreOffsetHz;
             public int LastDataIndex;
+            public int LastHzSpan;
             public float[] PixelBuffer;
             public clsDisplayCompression.Settings DisplayCompressionSettings;
             public clsDisplayCompression.State DisplayCompressionState;
@@ -6273,32 +6274,47 @@ namespace Thetis
 
             return payload;
         }
-        private byte[] buildCompactDisplayStreamPayload(int receiver, int hzSpan, TCISampleType sampleType, int channels, clsDisplayCompression.Result displayResult)
+        private byte[] buildCompactDisplayStreamPayload(int receiver, int hzSpan, clsDisplayCompression.Result displayResult)
         {
             if (displayResult == null)
                 return null;
 
             byte[] samplePayload = displayResult.SamplePayload ?? Array.Empty<byte>();
             int samplePayloadLength = samplePayload.Length;
-            byte[] payload = new byte[clsDisplayCompression.DisplayCompactHeaderLength + samplePayloadLength];
+            int headerLength = clsDisplayCompression.DisplayCompactHeaderLength;
+
+            if (displayResult.Kind == clsDisplayCompression.PayloadKind.Raw)
+                headerLength += 9;
+            else if (displayResult.Kind == clsDisplayCompression.PayloadKind.Delta || displayResult.Kind == clsDisplayCompression.PayloadKind.BlockDelta)
+                headerLength += 1;
+
+            byte[] payload = new byte[headerLength + samplePayloadLength];
 
             payload[0] = clsDisplayCompression.DisplayCompactMagic0;
             payload[1] = clsDisplayCompression.DisplayCompactMagic1;
             payload[2] = clsDisplayCompression.DisplayCompactVersion;
             payload[3] = (byte)displayResult.Kind;
             payload[4] = (byte)receiver;
-            payload[5] = (byte)sampleType;
-            payload[6] = (byte)channels;
-            payload[7] = (byte)displayResult.QuantizationBits;
-            payload[8] = (byte)displayResult.DeltaBits;
-            payload[9] = (byte)displayResult.BlockSize;
-            writeUInt16(payload, 10, (ushort)displayResult.BlockCount);
-            writeUInt32(payload, 12, (uint)hzSpan);
-            writeUInt32(payload, 16, (uint)displayResult.LogicalLength);
-            writeUInt32(payload, 20, (uint)samplePayloadLength);
+
+            int offset = clsDisplayCompression.DisplayCompactHeaderLength;
+
+            if (displayResult.Kind == clsDisplayCompression.PayloadKind.Raw)
+            {
+                payload[offset++] = (byte)displayResult.QuantizationBits;
+                writeUInt32(payload, offset, (uint)hzSpan); offset += 4;
+                writeUInt32(payload, offset, (uint)displayResult.LogicalLength); offset += 4;
+            }
+            else if (displayResult.Kind == clsDisplayCompression.PayloadKind.Delta)
+            {
+                payload[offset++] = (byte)displayResult.DeltaBits;
+            }
+            else if (displayResult.Kind == clsDisplayCompression.PayloadKind.BlockDelta)
+            {
+                payload[offset++] = (byte)displayResult.BlockSize;
+            }
 
             if (samplePayloadLength > 0)
-                Buffer.BlockCopy(samplePayload, 0, payload, clsDisplayCompression.DisplayCompactHeaderLength, samplePayloadLength);
+                Buffer.BlockCopy(samplePayload, 0, payload, headerLength, samplePayloadLength);
 
             return payload;
         }
@@ -7613,6 +7629,8 @@ namespace Thetis
                 subscription.DisplayCompressionState = new clsDisplayCompression.State();
             else
                 subscription.DisplayCompressionState.Reset();
+
+            subscription.LastHzSpan = 0;
         }
         private void handleDisplayStart(string[] args)
         {
@@ -8275,14 +8293,18 @@ namespace Thetis
                     if (!m_spectrumProcessor.TryGetReceiverHzSpan(subscription.Receiver, out hzSpan))
                         continue;
 
+                    if (subscription.LastHzSpan != 0 && subscription.LastHzSpan != hzSpan)
+                        resetDisplayCompressionState(subscription);
+
                     clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
                     clsDisplayCompression.Result displayResult = m_displayCompression.Encode(subscription.PixelBuffer, pixelCount, subscription.MinDbm, subscription.MaxDbm, displaySettings, subscription.DisplayCompressionState);
                     if (displayResult == null)
                         continue;
 
-                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzSpan, TCISampleType.UINT8, 1, displayResult);
+                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzSpan, displayResult);
 
                     subscription.LastDataIndex = dataIndex;
+                    subscription.LastHzSpan = hzSpan;
 
                     if (payloads == null)
                         payloads = new List<byte[]>();
