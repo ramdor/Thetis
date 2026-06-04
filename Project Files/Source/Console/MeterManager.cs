@@ -172,8 +172,6 @@ namespace Thetis
 
         ADC_MAX_MAG = 73,
 
-        NF = 74, // noise floor
-
         LAST
     }
 

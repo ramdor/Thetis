@@ -467,6 +467,7 @@ namespace Thetis
             public double Signal = -200.0;
             public double AvgSignal = -200.0;
             public double PeakBinSignal = -200.0;
+            public double NoiseFloor = -200.0;
             public bool Updated = false;
         }
 
@@ -581,6 +582,7 @@ namespace Thetis
                     case Reading.AVG_SIGNAL_STRENGTH:
                     case Reading.SIGNAL_MAX_BIN:
                     case Reading.SIGNAL_STRENGTH:
+                    case Reading.NF:
                         {
                             int rx = receiver - 1;
                             if (rx < 0 || rx > 1) return false;
@@ -597,7 +599,7 @@ namespace Thetis
             }
         }
 
-        public void SetRxChannelReading(int receiver, int channel, double signal, double avg_signal, double peak_bin_signal)
+        public void SetRxChannelReading(int receiver, int channel, double signal, double avg_signal, double peak_bin_signal, double noise_floor)
         {
             lock (_lock)
             {
@@ -607,6 +609,7 @@ namespace Thetis
                 state.Signal = signal;
                 state.AvgSignal = avg_signal;
                 state.PeakBinSignal = peak_bin_signal;
+                state.NoiseFloor = noise_floor;
                 state.Updated = true;
             }
         }
@@ -623,13 +626,14 @@ namespace Thetis
             }
         }
 
-        public bool TryGetRxChannelReadingForSend(int receiver, int channel, out double signal, out double avg_signal, out double peak_bin_signal)
+        public bool TryGetRxChannelReadingForSend(int receiver, int channel, out double signal, out double avg_signal, out double peak_bin_signal, out double noise_floor)
         {
             lock (_lock)
             {
                 signal = -200.0;
                 avg_signal = -200.0;
                 peak_bin_signal = -200.0;
+                noise_floor = -200.0;
                 if (!_rxSensorsEnabled) return false;
                 if (receiver < 0 || receiver > 1 || channel < 0 || channel > 1) return false;
 
@@ -639,6 +643,7 @@ namespace Thetis
                 signal = state.Signal;
                 avg_signal = state.AvgSignal;
                 peak_bin_signal = state.PeakBinSignal;
+                noise_floor = state.NoiseFloor;
                 return true;
             }
         }
@@ -727,6 +732,7 @@ namespace Thetis
             public double ZoomCentreFrequencyHz;
             public double ZoomCentreOffsetHz;
             public int LastDataIndex;
+            public int LastHzLeft;
             public int LastHzSpan;
             public float[] PixelBuffer;
             public clsDisplayCompression.Settings DisplayCompressionSettings;
@@ -953,9 +959,10 @@ namespace Thetis
             int receiver = rx - 1;
             if (receiver < 0 || receiver > 1) return;
 
-            if (readings.TryGetValue(Reading.SIGNAL_STRENGTH, out float signal) && readings.TryGetValue(Reading.AVG_SIGNAL_STRENGTH, out float avg_signal) && readings.TryGetValue(Reading.SIGNAL_MAX_BIN, out float peak_bin_signal))
+            if (readings.TryGetValue(Reading.SIGNAL_STRENGTH, out float signal) && readings.TryGetValue(Reading.AVG_SIGNAL_STRENGTH, out float avg_signal) && readings.TryGetValue(Reading.SIGNAL_MAX_BIN, out float peak_bin_signal)
+                && readings.TryGetValue(Reading.NF, out float nf))
             {
-                m_sensorManager.SetRxChannelReading(receiver, 0, signal, avg_signal, peak_bin_signal);
+                m_sensorManager.SetRxChannelReading(receiver, 0, signal, avg_signal, peak_bin_signal, nf);
             }
         }
 
@@ -2272,17 +2279,34 @@ namespace Thetis
         {
             sendTextFrame("display_pixels:" + receiver.ToString() + "," + pixels.ToString() + ";");
         }
-        private void sendDisplayZoom(int receiver, double zoomSlider)
+        private void sendDisplayZoom(int receiver, double zoomSlider, double frequencyHz)
         {
-            sendTextFrame("display_zoom:" + receiver.ToString() + "," + zoomSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
+            sendTextFrame("display_zoom:" + receiver.ToString() + "," + zoomSlider.ToString("F6", CultureInfo.InvariantCulture) + "," + frequencyHz.ToString("F0", CultureInfo.InvariantCulture) + ";");
         }
         private void sendDisplayPan(int receiver, double panSlider)
         {
             sendTextFrame("display_pan:" + receiver.ToString() + "," + panSlider.ToString("F6", CultureInfo.InvariantCulture) + ";");
         }
-        private void sendDisplayZoomCentre(int receiver, double frequencyHz)
+        private bool isDisplayReceiverInLocalMox(int receiver)
         {
-            sendTextFrame("display_zoom_centre:" + receiver.ToString() + "," + frequencyHz.ToString("F0", CultureInfo.InvariantCulture) + ";");
+            Console console = consoleThreadSafe;
+            if (console == null) return false;
+            if (!Display.MOX) return false;
+
+            if (receiver == 0)
+                return !console.VFOBTX || (console.VFOBTX && !console.RX2Enabled);
+
+            if (receiver == 1)
+                return console.VFOBTX && console.RX2Enabled;
+
+            return false;
+        }
+        private bool isDisplayReceiverShowingTransmitter(int receiver)
+        {
+            Console console = consoleThreadSafe;
+            if (console == null) return false;
+
+            return isDisplayReceiverInLocalMox(receiver) && !console.DisplayDuplex;
         }
         private double getDisplayReceiverCentreFrequencyHz(int receiver)
         {
@@ -2300,6 +2324,7 @@ namespace Thetis
         private void updateDisplayZoomCentreTrackingMode(int receiver)
         {
             double frequencyHz = 0.0;
+            double zoomSlider = 0.0;
             double panSlider = 0.5;
             bool updated = false;
 
@@ -2313,7 +2338,6 @@ namespace Thetis
 
                 if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
 
-                double zoomSlider;
                 m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
                 subscription.ZoomSlider = zoomSlider;
                 subscription.PanSlider = panSlider;
@@ -2327,7 +2351,7 @@ namespace Thetis
 
             if (updated)
             {
-                sendDisplayZoomCentre(receiver, frequencyHz);
+                sendDisplayZoom(receiver, zoomSlider, frequencyHz);
                 sendDisplayPan(receiver, panSlider);
             }
         }
@@ -2599,10 +2623,10 @@ namespace Thetis
         {
             sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
-        private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm)
+        private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm, double noiseFloor)
         {
             sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
-            sendTextFrame("rx_channel_sensors_ex:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
+            sendTextFrame("rx_channel_sensors_ex:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + noiseFloor.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
         private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
         {
@@ -2980,23 +3004,23 @@ namespace Thetis
             catch
             { }
 
-            if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig))
+            if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig, out double rx1Main_noise_floor))
             {
                 sendRxSensors(0, rx1Main_sig);
-                sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig);
+                sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig, rx1Main_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(0, 0);
             }
 
-            if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig))
+            if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig, out double rx1Sub_noise_floor))
             {
-                sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig);
+                sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig, rx1Sub_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(0, 1);
             }
 
-            if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig))
+            if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig, out double rx2Miain_noise_floor))
             {
                 sendRxSensors(1, rx2Main_sig);
-                sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig);
+                sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig, rx2Miain_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(1, 0);
             }
         }
@@ -4960,6 +4984,20 @@ namespace Thetis
 
             setRxSensorsEnabled(enabled, intervalMs, enabled);
         }
+        private void handleRxSensorsEnableEx(string[] args)
+        {
+            if (args == null || args.Length < 3 || args.Length > 4) return;
+            if (!int.TryParse(args[0], out int receiver)) return;
+            if (!int.TryParse(args[1], out int channel)) return;
+            if (!bool.TryParse(args[2], out bool enabled)) return;
+            if (receiver < 0 || receiver > 1 || channel < 0 || channel > 1) return;
+
+            int intervalMs = m_sensorManager.RxIntervalMs;
+            if (args.Length == 4 && !int.TryParse(args[3], out intervalMs))
+                return;
+
+            setRxChannelSensorsExEnabled(receiver, channel, enabled, intervalMs, enabled);
+        }
         private void handleTxSensorsEnable(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -5740,10 +5778,6 @@ namespace Thetis
                         break;
                     case "display_pan":
                         handleDisplayPan(args);
-                        break;
-                    case "display_zoom_centre":
-                    case "display_zoom_center":
-                        handleDisplayZoomCentre(args);
                         break;
                     case "display_delta_mode":
                         handleDisplayDeltaMode(args);
@@ -7631,38 +7665,23 @@ namespace Thetis
             else
                 subscription.DisplayCompressionState.Reset();
 
+            subscription.LastHzLeft = 0;
             subscription.LastHzSpan = 0;
         }
         private void handleDisplayStart(string[] args)
         {
-            if (args.Length != 6 && args.Length != 11) return;
+            if (args.Length != 11) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int pixels)) return;
             if (!int.TryParse(args[2], out int frameRate)) return;
             if (!int.TryParse(args[3], out int fftSize)) return;
-            int windowType = 4;
-            int detectorType = 0;
-            int averageMode = 0;
-            float averageTimeMs = 120.0f;
-            bool normOneHz = false;
-            float minDbm;
-            float maxDbm;
-
-            if (args.Length == 11)
-            {
-                if (!int.TryParse(args[4], out windowType)) return;
-                if (!int.TryParse(args[5], out detectorType)) return;
-                if (!int.TryParse(args[6], out averageMode)) return;
-                if (!float.TryParse(args[7], NumberStyles.Float, CultureInfo.InvariantCulture, out averageTimeMs)) return;
-                if (!tryParseDisplayBool(args[8], out normOneHz)) return;
-                if (!float.TryParse(args[9], NumberStyles.Float, CultureInfo.InvariantCulture, out minDbm)) return;
-                if (!float.TryParse(args[10], NumberStyles.Float, CultureInfo.InvariantCulture, out maxDbm)) return;
-            }
-            else
-            {
-                if (!float.TryParse(args[4], NumberStyles.Float, CultureInfo.InvariantCulture, out minDbm)) return;
-                if (!float.TryParse(args[5], NumberStyles.Float, CultureInfo.InvariantCulture, out maxDbm)) return;
-            }
+            if (!int.TryParse(args[4], out int windowType)) return;
+            if (!int.TryParse(args[5], out int detectorType)) return;
+            if (!int.TryParse(args[6], out int averageMode)) return;
+            if (!float.TryParse(args[7], NumberStyles.Float, CultureInfo.InvariantCulture, out float averageTimeMs)) return;
+            if (!tryParseDisplayBool(args[8], out bool normOneHz)) return;
+            if (!float.TryParse(args[9], NumberStyles.Float, CultureInfo.InvariantCulture, out float minDbm)) return;
+            if (!float.TryParse(args[10], NumberStyles.Float, CultureInfo.InvariantCulture, out float maxDbm)) return;
             if (receiver < 0 || receiver > 1) return;
 
             pixels = clampDisplayPixels(pixels);
@@ -7800,24 +7819,35 @@ namespace Thetis
         }
         private void handleDisplayZoom(string[] args)
         {
-            if (args.Length != 2) return;
+            if (args.Length != 3) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double zoomSlider)) return;
+            if (!double.TryParse(args[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
+            if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
             zoomSlider = clampDisplayViewportValue(zoomSlider, 0.0);
             double panSlider = 0.5;
 
             lock (m_objStreamLock)
             {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
+                if (isDisplayReceiverShowingTransmitter(receiver))
+                    frequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
+                bool zoomCentreTracksReceiverCentre = true;
+                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
+                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
                 if (!m_spectrumProcessor.SetReceiverZoomSlider(receiver, zoomSlider)) return;
                 m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
                 subscription.ZoomSlider = zoomSlider;
                 subscription.PanSlider = panSlider;
+                subscription.HasZoomCentreFrequency = true;
+                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
+                subscription.ZoomCentreFrequencyHz = frequencyHz;
+                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
                 subscription.LastDataIndex = 0;
                 resetDisplayCompressionState(subscription);
             }
 
-            sendDisplayZoom(receiver, zoomSlider);
+            sendDisplayZoom(receiver, zoomSlider, frequencyHz);
             sendDisplayPan(receiver, panSlider);
         }
         private void handleDisplayPan(string[] args)
@@ -7846,35 +7876,6 @@ namespace Thetis
                 resetDisplayCompressionState(subscription);
             }
 
-            sendDisplayPan(receiver, panSlider);
-        }
-        private void handleDisplayZoomCentre(string[] args)
-        {
-            if (args.Length != 2) return;
-            if (!int.TryParse(args[0], out int receiver)) return;
-            if (!double.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double frequencyHz)) return;
-            if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
-            double zoomSlider = 0.0;
-            double panSlider = 0.5;
-
-            lock (m_objStreamLock)
-            {
-                if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
-                bool zoomCentreTracksReceiverCentre = true;
-                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
-                if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
-                m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
-                subscription.ZoomSlider = zoomSlider;
-                subscription.PanSlider = panSlider;
-                subscription.HasZoomCentreFrequency = true;
-                subscription.ZoomCentreTracksReceiverCentre = zoomCentreTracksReceiverCentre;
-                subscription.ZoomCentreFrequencyHz = frequencyHz;
-                subscription.ZoomCentreOffsetHz = zoomCentreOffsetHz;
-                subscription.LastDataIndex = 0;
-                resetDisplayCompressionState(subscription);
-            }
-
-            sendDisplayZoomCentre(receiver, frequencyHz);
             sendDisplayPan(receiver, panSlider);
         }
         private void handleDisplayFrameRate(string[] args)
@@ -8024,29 +8025,6 @@ namespace Thetis
         }
         private void handleDisplayDeltaMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.DeltaMode = legacyEnabled;
-                        if (!legacyEnabled)
-                            settings.BlockDeltaMode = false;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayDeltaMode(receivers[i], legacyEnabled);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
@@ -8065,29 +8043,6 @@ namespace Thetis
         }
         private void handleDisplayBlockDeltaMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.BlockDeltaMode = legacyEnabled;
-                        if (legacyEnabled)
-                            settings.DeltaMode = true;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayBlockDeltaMode(receivers[i], legacyEnabled);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
@@ -8106,73 +8061,29 @@ namespace Thetis
         }
         private void handleDisplayAccuracyMode(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyMode)) return;
-                legacyMode = clsDisplayCompression.ClampAccuracyMode(legacyMode);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.AccuracyMode = legacyMode;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-        }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayAccuracyMode(receivers[i], legacyMode);
-                return;
-            }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int mode)) return;
             mode = clsDisplayCompression.ClampAccuracyMode(mode);
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.AccuracyMode = mode;
                 resetDisplayCompressionState(subscription);
-        }
+            }
 
             sendDisplayAccuracyMode(receiver, mode);
         }
         private void handleDisplayAdaptiveBlocks(string[] args)
         {
-            if (args.Length == 1)
-        {
-                if (!tryParseDisplayBool(args[0], out bool legacyEnabled)) return;
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-            {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.AdaptiveBlocks = legacyEnabled;
-                        subscription.LastDataIndex = 0;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                }
-            }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayAdaptiveBlocks(receivers[i], legacyEnabled);
-                return;
-        }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!tryParseDisplayBool(args[1], out bool enabled)) return;
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.AdaptiveBlocks = enabled;
@@ -8183,29 +8094,7 @@ namespace Thetis
             sendDisplayAdaptiveBlocks(receiver, enabled);
         }
         private void handleDisplayKeyFrameInterval(string[] args)
-            {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyIntervalFrames)) return;
-                legacyIntervalFrames = clsDisplayCompression.ClampKeyFrameIntervalFrames(legacyIntervalFrames);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                    {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.KeyFrameIntervalFrames = legacyIntervalFrames;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                    }
-                }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayKeyFrameInterval(receivers[i], legacyIntervalFrames);
-                return;
-            }
-
+        {
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int intervalFrames)) return;
@@ -8217,42 +8106,20 @@ namespace Thetis
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.KeyFrameIntervalFrames = intervalFrames;
                 resetDisplayCompressionState(subscription);
-        }
+            }
 
             sendDisplayKeyFrameInterval(receiver, intervalFrames);
         }
 
         private void handleDisplayQuantBits(string[] args)
         {
-            if (args.Length == 1)
-            {
-                if (!int.TryParse(args[0], out int legacyQuantizationBits)) return;
-                legacyQuantizationBits = clsDisplayCompression.ClampQuantizationBits(legacyQuantizationBits);
-                List<int> receivers = new List<int>();
-
-                lock (m_objStreamLock)
-                {
-                    foreach (TCIDisplaySubscription subscription in m_displaySubscriptions.Values)
-                {
-                        clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
-                        settings.QuantizationBits = legacyQuantizationBits;
-                        resetDisplayCompressionState(subscription);
-                        receivers.Add(subscription.Receiver);
-                }
-            }
-
-                for (int i = 0; i < receivers.Count; i++)
-                    sendDisplayQuantBits(receivers[i], legacyQuantizationBits);
-                return;
-        }
-
             if (args.Length != 2) return;
             if (!int.TryParse(args[0], out int receiver)) return;
             if (!int.TryParse(args[1], out int quantizationBits)) return;
             quantizationBits = clsDisplayCompression.ClampQuantizationBits(quantizationBits);
 
             lock (m_objStreamLock)
-        {
+            {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription)) return;
                 clsDisplayCompression.Settings settings = ensureDisplayCompressionSettings(subscription);
                 settings.QuantizationBits = quantizationBits;
@@ -8298,7 +8165,7 @@ namespace Thetis
                     if (!m_spectrumProcessor.TryGetReceiverHzSpan(subscription.Receiver, out hzSpan))
                         continue;
 
-                    if (subscription.LastHzSpan != 0 && subscription.LastHzSpan != hzSpan)
+                    if (subscription.LastHzSpan != 0 && (subscription.LastHzSpan != hzSpan || subscription.LastHzLeft != hzLeft))
                         resetDisplayCompressionState(subscription);
 
                     clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
@@ -8309,6 +8176,7 @@ namespace Thetis
                     byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzLeft, hzSpan, displayResult);
 
                     subscription.LastDataIndex = dataIndex;
+                    subscription.LastHzLeft = hzLeft;
                     subscription.LastHzSpan = hzSpan;
 
                     if (payloads == null)
