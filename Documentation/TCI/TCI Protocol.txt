@@ -1,0 +1,1903 @@
+ Public Documentations                         TCI Protocol
+                                                Ver. 2.0
+
+Series: Expert Electronics’ products external integration capabilities and
+APIs
+12 January 2024
+
+
+Proprietary Notice
+
+
+Confidentiality
+
+All information contained in this document is for open public use. It is provided for the purpose
+of technical information for 3rd party vendors or individuals, who wish to integrate their
+software/hardware with Expert Electronics’ products.
+
+
+Obligations and Conditions
+
+Copyright (c) 2023 "Expert Group" LLC, Taganrog
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+(the "Software"), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so, subject to the
+following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial
+portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         Point of contact
+
+Name:          "Expert Group" LLC
+Tel:           +7 (8634) 43-13-01                Email:      info@sunsdr.com
+               347927, Russia, Rostov region, Taganrog,
+Address:
+               Polyakovskoe schosse, 16-3, ABK-1, off. 408
+Website:       https://eesdr.com/en/
+
+
+         Document Control
+
+ TCI version     Comment                                                  Date           ExpertSDR3
+                 New Commands:
+                 AUDIO_STREAM_SAMPLE_TYPE
+                 AUDIO_STREAM_CHANNELS
+                 AUDIO_STREAM_SAMPLES
+                 DIGL_OFFSET                                                   29 July
+       1.9                                                                                 0.13.0
+                 DIGU_OFFSET                                                   2022
+
+                 TX_STREAM_AUDIO_BUFFERING
+                 Other changes:
+                 Several important updates in the "Working with audio
+                 streams via TCI" section 3.4.
+                 New commands:                                                 31 May
+       1.9.1                                                                                1.0.4
+                  KEYER                                                       2023
+                 Changes in commands:
+                  VFO_LOCK
+                  RX_CHANNEL_SENSORS                                                       1.0.7
+       2.0                                                                12 Jan 2024
+                 Other changes:
+                    Updated TRX command
+
+
+
+
+TCI Protocol – Expert Eelectronics                                                                    2
+       Contents
+
+       1     Introduction                                                 4
+             1.1   Document Scope                                         4
+             1.2   Document Purpose                                       4
+             1.3   Document Audience                                      4
+             1.4   Context                                                4
+       2     Updates and Changes in this version                          5
+             2.1   Updated commands                                       5
+             2.2   New Commands                                           5
+             2.3   Other changes                                          5
+       3     General Overview                                             6
+             3.1 Interface Description                                    6
+             3.2 Working in CW mode                                       6
+             3.2.1 CW macro                                               7
+             3.2.2 CW message                                             8
+             3.3 Types of TCI commands                                    9
+             3.4 Working with audio streams via TC                        9
+             3.5 Particularities of TCI server operation in ExpertSDR3    11
+             3.6 Conclusion                                               11
+       4     TCI Commands List                                           12
+             4.1   Initialization Commands                                12
+             4.2   Bidirectional Control Commands                         14
+             4.3   Unidirectional Control Commands                       29
+             4.4   Notification Commands                                 36
+             4.5   New Commands in this version                          40
+       Appendix A. Glossary of Technical Terms                           41
+
+
+
+
+TCI Protocol – Expert Eelectronics                                             3
+1          Introduction
+1.1        Document Scope
+           TCI (Transceiver Control Interface) is a network interface for control, data transfer and
+           synchronization between transceiver/receiver, contest loggers, digital mode software,
+           skimmers and other software, as well as external power amplifiers, bandpass filter units,
+           antenna switches, radio controllers and other devices.
+           This document is a living document and will be updated and validated every time when TCI
+           protocol is updated.
+
+1.2        Document Purpose
+           This document describes the TCI protocol, what it’s for and how to use it.
+
+1.3        Document Audience
+           The target audience of this document is programmers who implement TCI protocol in their
+           programs and devices.
+
+1.4        Context
+           TCI was created as a modern alternative to the outdated COM port and audio cable
+           interfaces, it uses a full duplex web socket protocol that runs on top of a TCP connection
+           and serves for server-client communications, providing cross-platform connectivity.
+           Transceiver works as a server, all other software and devices as clients. The server and
+           clients can be inside the same computer (program-server, hardware log, etc.-clients)
+           and/or in separate physical devices connected through the local network (classical
+           transceiver, power amplifier, antenna switch, FFT unit, etc.).
+
+           The TCI interface contains basic transceiver control commands (similar to CAT system),
+           receives CW macros from clients and broadcasts them, outputs transceiver IQ stream to
+           clients, receives spots from skimmers and Internet clusters, receives/outputs audio signal to
+           work in digital modes.
+
+           The TCI uses an extensible architecture and can be supplemented with new functions and
+           commands, while keeping the old ones operational. Thus, the TCI interface can be extended
+           and supplemented to meet the specific needs of any software manufacturer and/or device
+           manufacturer (receivers, transceivers, power amplifiers, switches, etc.). The presence of a
+           device identifier allows the manufacturers of transceivers and receivers to switch to the TCI
+           interface while maintaining the device model designation. The extensibility of the TCI
+           interface allows you to create an individual set of commands and functions for each device
+           model, while maintaining the basic command set inherent to all transceivers.
+
+           Expert Electronics advocates universal unification of data exchange between devices and
+           software by creating the TCI interface for this purpose. Modern transceivers and software
+           must communicate using one protocol - the TCI protocol.
+
+
+
+
+    TCI Protocol – Expert Eelectronics                                                                     4
+2       Updates and Changes in this version
+2.1     Updated commands
+           TRX
+
+2.2     New Commands
+           VFO_LOCK
+           RX_CHANNEL_SENSORS
+
+2.3     Other changes
+
+
+
+
+ TCI Protocol – Expert Eelectronics           5
+3       General Overview
+3.1     Interface Description
+        Any command represents an ASCII string that contains a command name and a list of
+        arguments corresponding to this command. There are reserved characters that cannot be
+        included in the command name and command arguments.
+        List of reserved characters: «:», «,», «;».
+        Command structure:
+        1. Name of the command;
+        2. Separating character between command name and arguments «:»;
+        3. Separating character between arguments «,»;
+        4. End of the command character «;».
+        If a command has no arguments, an end of command symbol is placed after the command
+        name. If the command is invalid, it is ignored. The case of letters does not matter.
+        The ExpertSDR3 program acts as a server, which can have several client connections at the
+        same time, they will be synchronized with each other by the server. When connecting to the
+        ExpertSDR3, the client receives the current status of the ExpertSDR3, first sending
+        initialization commands, then parameters to set the status, such as frequency, modulation,
+        etc.
+        When a parameter change occurs in the ExpertSDR3 (server) program, the server notifies
+        all connected clients, i.e., clients do not need to poll the server constantly, any change of
+        state will be sent in time to all clients. If the client sends a new state, the server will set it to
+        itself, as well as send it to all clients, that is, the server acts as a synchronizer. All clients
+        connected to the server will be automatically synchronized. This way of work allows to
+        minimize network load, reducing traffic.
+        The TCI protocol implements the transmission of receiver IQ stream to clients, which is
+        necessary for the work of special skimmer software, they automatically find the station and
+        decode it throughout the band, and it also allows you to record radio signals in the file.
+        TCI is also used to transmit audio signals of the receiver to clients and to receive audio signals
+        from clients, i.e., the client can transmit audio signals to ExpertSDR3 for radio transmission.
+        The audio stream exchange is designed to work with digital modes, where encoding and
+        decoding is performed by third-party software, as well as in voice modes, where audio macros
+        can be broadcasted, which is very much in demand in contest loggers.
+        When working in contests, it is important to record all on the air operation, for this purpose
+        the audio stream from the line-output is sent to all clients. The resulting audio stream can be
+        recorded to a file or played back with a PC sound card.
+
+
+
+3.2     Working in CW mode
+        Through the TCI protocol CW can be generated from string commands. The commands are
+        divided into two types:
+        1. CW Macros;
+        2. CW Message.
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                             6
+3.2.1   CW macro
+        A CW macro is a set of characters that has no rules, but still can include commands to
+        change the CW speed and or to send CW abbreviations. CW macros can be used in CW
+        terminal mode.
+
+
+        The command to send a macro has the form: cw_macros:arg1,arg2;
+        arg1 - is the periodic number of the software transceiver;
+        arg2 - text message.
+        Example: cw_macros:0,TU RA6LH 599;
+
+
+        To put a CW abbreviation into the text (to combine several letters together), you should
+        put the characters between the vertical brackets, for example:
+        TEXT |SK| TEXT.
+        To change the CW speed within a text, "<" decreases the speed, and ">" increases the
+        speed respectively. The speed step is 5 wpm, for example:
+        ANY TEXT > TEXT+5WPM >>TEXT+15WPM
+
+
+        To pass the string «+5wpmTU -5wpmRA6LH +10wpm599 004 SK» the command would
+        have the form:
+        cw_macros:0,>TU >599 004 |SK|;
+
+
+        As text commands may contain characters which are reserved by the protocol, they are
+        replaced by other characters and converted back in the TCI server:
+        1. The character «:» is replaced with «^»;
+        2. The character «,» is replaced with «~»;
+        3. The character «;» is replaced with «*».
+
+
+        When transmitting macros, it is possible to operate in terminal mode, i.e. the transceiver
+        remains in transmission after the macro transmission is completed until terminal mode is
+        disabled. The following command enables/disables the terminal mode:
+
+            cw_terminal:true; - enable;
+            cw_terminal:false; - disable.
+
+        In terminal mode, a command is sent to the client as soon as the last letter in the queue
+        start to be transmitted: cw_macros_empty;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                  7
+       If the terminal mode is disabled during macro playback, the transceiver will automatically
+       switch to receive mode when the macro is finished.
+
+
+
+3.2.2 CW message
+       A CW message is a special command that has a more complex structure and consists of
+       three parts:
+
+       1. The prefix is the text before the callsign;
+       2. The callsign;
+       3. The suffix is the text after the callsign.
+
+
+       The command sends a CW message and offers the possibility of repeating the callsign:
+       cw_msg:arg1,arg2,arg3,arg4;
+
+           arg1 - is the number of the software transceiver
+           arg2 - prefix
+           arg3 - callsign
+           arg4 - suffix
+
+       To pass the string «TU RA6LH 599 004» the command would have the form:
+       cw_msg:0,TU,RA6LH,599 004;
+
+
+       If the callsign is to be repeated twice «TU RA6LH RA6LH 599 004», the command will have
+       the form:
+       cw_msg:0,TU,RA6LH$2,599 004;
+
+       When a CW message is already sent to TCI but the callsign is not sent yet, the callsign can
+       be corrected using the command:
+       cw_msg:arg1;
+
+
+       An example of a callsign correction sequence:
+       1. cw_msg:0,_,RA6$2,599 004;
+       2. cw_msg:RA6L;
+       3. cw_msg:RA6LH;
+
+
+       If editing of the callsign was performed after the callsign transmission was completed, the
+       callsign correction command is ignored. The process of editing the callsign is performed
+       for characters that have not yet been transmitted. After the transmission of the callsign is
+       completed, a command is sent by the TCI server to the client, containing the final version of
+       the callsign transmitted:
+       callsign_send:RA6LH;
+
+
+
+TCI Protocol – Expert Eelectronics                                                                     8
+        The transmission of CW macros or messages can be immediately stopped with the
+        command:
+        cw_macros_stop;
+
+3.3     Types of TCI commands
+        Several types of commands are provided in the protocol:
+
+            Initialization commands;
+            Bi-directional control commands;
+            Unidirectional control commands;
+            Notification Commands.
+
+        Initialization commands are sent to the client upon connection, they inform the client of the
+        basic device parameters such as operating frequency range, supported modes, etc.
+
+        Bi-directional control commands are needed to control the basic parameters of the device
+        and ExpertSDR3. Since the commands are bidirectional, the server will synchronize the
+        parameters of all connected clients.
+
+        Unidirectional control commands are used to control parameters unique to each client, such
+        as enabling audio streaming, sending spots to be displayed on an ExpertSDR3 panorama,
+        etc.
+        Notification commands are sent to clients at some intervals, these can be readings from
+        various sensors and signal meters.
+
+3.4     Working with audio streams via TC
+        Thanks to the WebSocket protocol, commands and audio streams are separated, commands
+        are transmitted as strings and audio streams are transmitted as byte streams. Audio streams
+        are transmitted in blocks of bytes, a block has a header and a data field.
+        Structure of a block in С language:
+        struct Stream
+        {
+        uint32_t receiver;            // receiver number
+        uint32_t sample_rate;         // sampling rate
+        uint32_t format;              // sample type determined in StreamType
+        uint32_t codec;               // compression algorithm (not implemented), always 0
+        uint32_t crc;                 // checksum (not implemented), always 0
+        uint32_t length;              // number of samples
+        uint32_t type;                // stream type
+        uint32_t channels;            // number of channels
+        uint32_t reserv[8];           // reserved
+        uint8_t data[16384];          // samples
+        };
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                     9
+       The flow type is defined by an enumeration:
+       enum StreamType
+       {
+       IQ_STREAM = 0,                // Receiver IQ signal stream
+       RX_AUDIO_STREAM = 1,          // Receiver audio stream
+       TX_AUDIO_STREAM = 2,          // Audio stream for transmitter
+       TX_CHRONO = 3,                // Time marker flow for audio signal transmission
+       LINEOUT_STREAM = 4            // Linear audio output audio stream
+       }
+       enum SampleType
+       {
+       INT16 = 0,             // 16-bit integral character type
+       INT24 = 1,             // 24-bit integral character type
+       INT32 = 2,             // 32-bit integral character type
+       FLOAT32 = 3,           // 32-bit type with a floating point
+       }
+
+
+       After connection, the client can enable receiving the IQ stream with the IQ_START
+       command, after sending this command ExpertSDR3 starts sending the IQ stream. In the
+       Stream.length field specified the number of real samples indicated in the uint8_t data[]
+       field, since the these are complex samples, so the number of complex samples should be
+       calculated as Stream.length/Stream.channels.
+
+       The receiver audio stream completely duplicates the IQ stream, but the difference is that
+       you can control certain parameters, such as:
+
+           Channels number
+           Samples format
+           Number of samples sent in a single packet
+
+       When DIGL/DIGU modes are selected, a complex signal will be transmitted if the number of
+       channels is 2, but if the number of channels is 1 then it’s going to be a real signal. Audio
+       stream of the Line Out duplicates the regular audio stream, but you cannot change its
+       parameters.
+       Sending an audio stream to a transmitter has certain peculiarities: ExpertSDR3 sends a
+       TX_CHRONO timestamp that notifies the client to send an audio signal marked as
+       TX_AUDIO_STREAM with the specified number of samples in the Stream.length. Timestamps
+       are sent without waiting for a response from the client. If the signal is not ready to be sent to
+       ExpertSDR3, the client may not send a response or may send a signal with zero counts, which
+       corresponds to no signal - this option is preferable.
+       There are changes in the Stream structure in comparison to the version 1.8, but binary
+       compatibility is consistent, all programs which support TCI 1.8 will work with TCI 1.9 as well.
+
+
+
+
+TCI Protocol – Expert Eelectronics                                                                         10
+3.5     Particularities of TCI server operation in ExpertSDR3
+        Server syncs all the clients connected to it – this is a difficult task, that is why there are certain
+        particularities in TCI server operation, which you need to consider developing your client
+        software.
+        There are a lot of commands and the list grows with each new ExpertSDR3 version, but it
+        doesn’t prevent effective sync process between clients. The correct hierarchy is the basics,
+        which definitely defines master and slave software. If several clients will try to change the
+        same parameter at the same time, the priority is behind the first one, but the highest priority
+        is behind the ExpertSDR3. Even if a certain client controls some parameter, ExpertSDR3
+        operator will always be able to take control of this.
+        It’s important to know, that in ExpertSDR3 we’ve implemented saving of certain parameters
+        by band and mode. When a band has been changed all clients get new parameters in a certain
+        sequence. For example, if a client sets frequency, which is different from the current band,
+        ExpertSDR3 will set this frequency and change the band, then ExpertSDR3 will reinstate the
+        settings saved for this band and send them to connected clients. When ExpertSDR3 initiates
+        a change of any parameter, it monopolizes it for 200 ms and clients can’t change it for this
+        time period. The same rule is applied if one of the clients controls a parameter. At this
+        moment other clients can only get notified about the change, but cannot control it until 200
+        ms will pass after the moment the first client stopped changing this parameter.
+        CW macros operation also has its own peculiarities, since it was designed especially for
+        contests, but of course you can use them in your everyday operation. There are two
+        commands for sending a text message via CW in TCI. The first and simplest is the
+        CW_MACROS command, it just sends a text on the air. During the transmission of the CW
+        macros, you can add more macros in line so all of them will be transmitted on the air in their
+        turn. The second command is CW_MSG, it has a more complicated structure, prefix, callsign
+        and suffix. Until the callsign is fully transmitted on the air it can be edited, but if during the
+        transmission of such message you’ll send another CW_MSG with prefix, callsign and suffix,
+        then the current transmission will stop and the new one will start immediately. If during the
+        transmission of the CW_MSG you’ll send CW_MACROS it will be added in line after the
+        active transmission. If during the transmission of the CW_MACROS you’ll send CW_MSG,
+        it immediately stops the transmission of CW macros and starts transmission of message,
+        because message has a higher priority.
+
+
+
+3.6     Conclusion
+        The TCI protocol is constantly evolving. With the release of each new version of ExpertSDR3,
+        the number of commands expands to increase the functionality of the programs and devices
+        connected to ExpertSDR3.
+        The development team always listens to the opinion of ExpertSDR3 users. We try to make
+        our product user-friendly both for software developers, allowing them to spend less time on
+        integration of their programs and devices, and for common users, who are interested not in
+        technical aspects but in convenience and ease of use.
+        Each of you can contribute to the development of the program. Your suggestions, wishes
+        and comments will help us to make ExpertSDR3 better.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                              11
+4         TCI Commands List
+4.1       Initialization Commands
+VFO_LIMITS               Device operating frequency range.
+
+Reply                    VFO_LIMITS:arg1,arg2;                arg1 — lower frequency limit, Hz.
+
+Type                     Initialization
+                                                              arg2 — top frequency limit, Hz.
+
+Example                  VFO_LIMITS:10000,30000000;
+
+
+
+IF_LIMITS                Frequency limit values of the IF filter (for VFOA only).
+
+Reply                    IF_LIMITS:arg1,arg2;                 arg1 — lower frequency limit, Hz.
+
+Type                     Initialization
+                                                              arg2 — top frequency limit, Hz.
+
+Example                  IF_LIMITS:-48000,48000;
+
+Note                     Sent when you connect a device or change the sample rate.
+
+
+
+TRX_COUNT                Number of receivers (transceivers) in the radio.
+
+Reply                    TRX_COUNT:arg1;                      arg1 — number of
+                                                              receivers/transceivers (physical or
+Type                     Initialization                       software).
+
+
+Example                  TRX_COUNT:2;
+
+
+
+CHANNEL_COUNT            Number of receiving channels in one receiver (A/B/C).
+
+Reply                    CHANNEL_COUNT:arg1;                  arg1 — number of receive channels.
+
+Type                     Initialization
+
+Example                  CHANNEL_COUNT:2;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                 12
+DEVICE                   Device Name.
+
+Reply                    DEVICE:arg1;                          arg1 — device name.
+
+Type                     Initialization
+
+Example                  DEVICE:SunSDR2DX;
+
+
+
+RECEIVE_ONLY             Identifies the device as a receiver or transceiver.
+
+Reply                    RECEIVE_ONLY:arg1;                    arg1 — receiver only (true),
+                                                               transceiver (false).
+Type                     Initialization
+
+Example                  RECEIVE_ONLY:true;
+
+
+
+MODULATIONS_LIST         List of supported modulations.
+
+Reply                    MODULATIONS_LIST:arg1,arg2, … ,argN;                  The modulation is
+                                                                               conveyed by the name.
+Type                     Initialization
+
+Example                  MODULATIONS_LIST:AM,LSB,USB,FM;
+
+
+
+PROTOCOL                 TCI protocol version.
+
+Reply                    PROTOCOL:arg1,arg2;                                   arg1 — program name.
+
+Type                     Initialization
+                                                                               аrg2 — version of the
+                                                                               protocol.
+Example                  PROTOCOL:ExpertSDR3,1.9;
+
+
+
+READY                    Sent after the initialization commands.
+
+Reply                    READY;
+
+Type                     Initialization
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                    13
+4.2         Bidirectional Control Commands
+START                        Device start
+
+Set                          START;
+
+Type                         Bidirectional control
+
+Example                      START;
+
+
+
+STOP                         Device stop
+
+Set                          STOP;
+
+Type                         Bidirectional control
+
+Example                      STOP;
+
+
+
+DDS                          Receiver center frequency control
+
+Set                          DDS:arg1,arg2;                      arg1 — receiver periodic number;
+
+Read                         DDS:arg1;
+                                                                 arg2 — tuning frequency, Hz.
+
+Reply                        DDS:arg1,arg2;
+
+Type                         Bidirectional control
+
+Example                      DDS:0;
+                             DDS:0,7100000;
+
+
+
+IF                           Frequency control of the IF tuning filter within a panorama
+
+Set                          IF:arg1,arg2,arg3;                  arg1 — receiver periodic number;
+
+Read                         IF:arg1,arg2;
+                                                                 arg2 — channel number (A / B);
+
+Reply                        IF:arg1,arg2,arg3;
+
+
+
+
+     TCI Protocol – Expert Eelectronics                                                             14
+Type                     Bidirectional control               arg3 — tuning frequency, Hz.
+
+Example                  IF:0,1;
+                         IF:0,1,12500;
+                         IF:0,1,-17550;
+
+
+
+VFO                      Receiver frequency control
+
+Set                      VFO:arg1,arg2,arg3;                 arg1 — receiver periodic number;
+
+Read                     VFO:arg1,arg2;
+                                                             arg2 — channel number (A/B);
+
+Reply                    VFO:arg1,arg2,arg3;
+                                                             arg3 — tuning frequency, Hz.
+Type                     Bidirectional control
+
+Example                  VFO:0,1,7100000;
+                         VFO:1,0,14250000;
+                         VFO:0,1;
+
+
+
+MODULATION               Switching modes
+
+Set                      MODULATION:arg1,arg2;               arg1 — receiver periodic number;
+
+Read                     MODULATION:arg1;
+                                                             arg2 — mode (string).
+
+Reply                    MODULATION:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  MODULATION:0,LSB;
+                         MODULATION:1;
+                         MODULATION:1,NFM;
+
+Note                     A list of supported modes is sent to the client when connecting to
+                         ExpertSDR3.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                             15
+TRX                      Switching RX/TX modes
+
+Set                      TRX:arg1,arg2,arg3;                   arg1 — transceiver periodic number;
+
+Read                     TRX:arg1;
+                                                               arg2 — status indicator (enable –
+                                                               true, disable – false).
+Reply                    TRX:arg1,arg2;
+
+Type                     Bidirectional control                 arg3 — signal source (optional)
+                                                               tci - take signal from TCI audio
+Example                  TRX:0,true;                           stream.
+                         TRX:0,true,tci;                       mic1 - take signal from Mic1
+                         TRX:0,false;                          mic2 - take signal from Mic2
+                         TRX:0,true,micpc;                     micPC - take signal from MicPC
+                         TRX:0,true,ecoder2;                   ecoder2 – take signal from
+                                                               E-Coder2
+                         TRX:0,true,mic2;
+                                                               If an argument is absent, the signal is
+                         TRX:1;
+                                                               taken from the microphone.
+
+Note                     The signal for transmitting is always taken from the microphone selected
+                         in the ExpertSDR3. If a third-party software connected via TCI wants to
+                         transmit its audio signal, you must specify the third argument - TCI. This
+                         works if the TCI audio stream is enabled, otherwise the microphone signal
+                         is taken.
+                         If you must specify a certain input for the transmition, select one of the
+                         mic inputs. If TCI is not specified, then enabling the TCI audio stream is
+                         not required.
+
+
+
+TUNE                     Switching between receive and Tune modes
+
+Set                      TUNE:arg1,arg2;                       arg1 — transceiver periodic number;
+
+Read                     TUNE:arg1;
+                                                               arg2 — status indicator (enable –
+                                                               true, disable – false).
+Reply                    TUNE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  TUNE:0,true;
+                         TUNE:0,false;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                      16
+                         TUNE:1;
+
+
+
+DRIVE                    Output power control
+
+Set                      DRIVE:arg1,arg2;                    arg1 — transceiver periodic number;
+
+Read                     DRIVE:arg1;
+                                                             arg2 — output power value from 0
+                                                             to 100.
+Reply                    DRIVE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  DRIVE:0,30;
+                         DRIVE:0,75;
+                         DRIVE:1;
+
+
+
+TUNE_DRIVE               Output power control in Tune mode
+
+Set                      TUNE_DRIVE:arg1,arg2;               arg1 — transceiver periodic number;
+
+Read                     TUNE_DRIVE:arg1;
+                                                             arg2 — output power value from 0
+                                                             to 100.
+Reply                    TUNE_DRIVE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  TUNE_DRIVE:0,30;
+                         TUNE_DRIVE:0,75;
+                         TUNE_DRIVE:1;
+
+
+
+RIT_ENABLE               Enable RIT
+
+Set                      RIT_ENABLE:arg1,arg2;               arg1 — receiver periodic number;
+
+Read                     RIT_ENABLE:arg1;
+                                                             arg2 — status indicator (enable –
+                                                             true, disable – false).
+Reply                    RIT_ENABLE:arg1,arg2;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                17
+Type                     Bidirectional control
+
+Example                  RIT_ENABLE:0,true;
+                         RIT_ENABLE:1;
+
+
+
+
+XIT_ENABLE               Enable XIT
+
+Set                      XIT_ENABLE:arg1,arg2;     arg1 — transceiver periodic number;
+
+Read                     XIT_ENABLE:arg1;
+                                                   arg2 — status indicator (enable –
+                                                   true, disable – false).
+Reply                    XIT_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  XIT_ENABLE:0,true;
+                         XIT_ENABLE:1;
+
+
+
+SPLIT_ENABLE             Enable Split operation
+
+Set                      SPLIT_ENABLE:arg1,arg2;   arg1 — transceiver periodic number;
+
+Read                     SPLIT_ENABLE:arg1;
+                                                   arg2 — status indicator (enable –
+                                                   true, disable – false).
+Reply                    SPLIT_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  SPLIT_ENABLE:0,true;
+                         SPLIT_ENABLE:1;
+
+
+
+RIT_OFFSET               Adjust RIT offset
+
+Set                      RIT_OFFSET:arg1,arg2;     arg1 — receiver periodic number;
+
+Read                     RIT_OFFSET:arg1;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                      18
+Reply                    RIT_OFFSET:arg1,arg2;               arg2 — offset frequency, Hz.
+
+Type                     Bidirectional control
+
+Example                  RIT_OFFSET:0,500;
+                         RIT_OFFSET:1;
+
+
+
+XIT_OFFSET               Adjust XIT offset
+
+Set                      XIT_OFFSET:arg1,arg2;               arg1 — transceiver periodic number;
+
+Read                     XIT_OFFSET:arg1;
+                                                             arg2 — offset frequency, Hz.
+
+Reply                    XIT_OFFSET:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  XIT_OFFSET:0,-350;
+                         XIT_OFFSET:1;
+
+
+
+RX_CHANNEL_ENABLE            Enable additional receive channel (VFO B)
+
+Set                          RX_CHANNEL_ENABLE:arg1,arg2,arg3;           arg1 — receiver periodic
+                                                                         number;
+Read                         RX_CHANNEL_ENABLE:arg1,arg2;
+                                                                         arg2 — channel periodic
+Reply                        RX_CHANNEL_ENABLE:arg1,arg2;                number.
+
+Type                         Bidirectional control
+                                                                         arg3 — status indicator
+                                                                         (enable – true, disable –
+Example                      RX_CHANNEL_ENABLE:0,1,true;
+                                                                         false).
+                             RX_CHANNEL_ENABLE:0,1;
+
+Note                         Channel (VFO) A is always on, only channel (VFO) B can be
+                             controlled.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                  19
+RX_FILTER_BAND           Adjust RX filter width
+
+Set                      RX_FILTER_BAND:arg1,arg2,arg3;    arg1 — receiver periodic number.
+
+Read                     RX_FILTER_BAND:arg1;
+                                                           arg2 — lower frequency limit, Hz.
+
+Reply                    RX_FILTER_BAND:arg1,arg2,arg3;
+                                                           arg3 — top frequency limit, Hz.
+Type                     Bidirectional control
+
+Example                  RX_FILTER_BAND:0,30,2700;
+                         RX_FILTER_BAND:1,-2900,-70;
+                         RX_FILTER_BAND:0;
+
+
+
+CW_MACROS_SPEED            Control CW macros speed (WPM)
+
+Set                        CW_MACROS_SPEED:arg1;          arg1 — CW speed, WPM.
+
+Read                       CW_MACROS_SPEED;
+
+Reply                      CW_MACROS_SPEED:arg1;
+
+Type                       Bidirectional control
+
+Example                    CW_MACROS_SPEED:42;
+                           CW_MACROS_SPEED;
+
+
+
+CW_MACROS_DELAY            CW macros TX delay
+
+Set                        CW_MACROS_DELAY:arg1;          arg1 — delay before the start of CW
+                                                          transmission, ms.
+Read                       CW_MACROS_DELAY;
+
+Reply                      CW_MACROS_DELAY:arg1;
+
+Type                       Bidirectional control
+
+Example                    CW_MACROS_DELAY:100;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                             20
+                           CW_MACROS_DELAY;
+
+Note                       Adjust the delay between the moment you’ve initiated TXing and when
+                           you actually TX.
+
+
+
+CW_KEYER_SPEED           Control CW keyer speed (WPM)
+
+Set                      CW_KEYER_SPEED:arg1;                arg1 — CW speed, WPM.
+
+Type                     Bidirectional control
+
+Example                  CW_KEYER_SPEED:35;
+                         CW_KEYER_SPEED:42;
+
+Note                     Sent only by TCI client.
+
+
+
+VOLUME                   Main volume control
+
+Set                      VOLUME:arg1;                        arg1 — volume value, dB.
+
+Read                     VOLUME;
+                                                             The range of values is from -60 to 0
+                                                             dB, at a value of -60 dB there is no
+Reply                    VOLUME:arg1;                        sound.
+
+Type                     Bidirectional control
+
+Example                  VOLUME:-12;
+                         VOLUME;
+
+
+
+MUTE                     Mute – disable/enable main volume
+
+Set                      MUTE:arg1;                          arg1 — status indicator (enable –
+                                                             true, disable – false).
+Read                     MUTE;
+
+Reply                    MUTE:arg1;
+
+Type                     Bidirectional control
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                 21
+Example                  MUTE:true;
+                         MUTE:false;
+                         MUTE;
+
+
+
+RX_MUTE                  Mute a certain receiver
+
+Set                      RX_MUTE:arg1,arg2;                 arg1 — receiver periodic number.
+
+Read                     RX_MUTE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_MUTE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_MUTE:0,true;
+                         RX_MUTE:1,false;
+                         RX_MUTE:0;
+
+
+
+RX_VOLUME                Volume control for each channel (VFO) in a software receiver
+
+Set                      RX_VOLUME:arg1,arg2,arg3;          arg1 — receiver periodic number.
+
+Read                     RX_VOLUME:arg1,arg2;
+                                                            arg2 — channel periodic number.
+
+Reply                    RX_VOLUME:arg1,arg2,arg3;
+                                                            arg3 — volume level, dB.
+Type                     Bidirectional control
+                                                            The range of values is from -60 to 0
+Example                  RX_VOLUME:0,1,-6;                  dB, at a value of -60 dB there is no
+                         RX_VOLUME:0,0;                     sound.
+
+
+
+RX_BALANCE               Volume balance for each channel (VFO) in a software receiver
+
+Set                      RX_BALANCE:arg1,arg2,arg3;         arg1 — receiver periodic number.
+
+Read                     RX_BALANCE:arg1,arg2;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                22
+Reply                    RX_BALANCE:arg1,arg2,arg3;          arg2 — channel periodic number.
+
+Type                     Bidirectional control
+                                                             arg3 — volume level, dB.
+
+Example                  RX_BALANCE:0,1,-6;
+                         RX_BALANCE:0,0,12;                  Volume level, dB (-40…40).
+                                                             Negative values decrease volume in
+                         RX_BALANCE:0,1;                     left channel, but the right channel
+                                                             stays the same. Positive values do the
+                                                             opposite.
+
+
+
+MON_VOLUME               Control monitor volume in TX mode
+
+Set                      MON_VOLUME:arg1;                    arg1 — volume value, dB.
+
+Read                     MON_VOLUME;
+                                                             The range of values is from -60 to 0
+                                                             dB, at a value of -60 dB there is no
+Reply                    MON_VOLUME:arg1;                    sound.
+
+Type                     Bidirectional control
+
+Example                  MON_VOLUME:-12;
+                         MON_VOLUME;
+
+
+
+MON_ENABLE               Enable/disable monitoring in TX mode
+
+Set                      MON_ENABLE:arg1;                    arg1 — status indicator (enable –
+                                                             true, disable – false).
+Read                     MON_ENABLE;
+
+Reply                    MON_ENABLE:arg1;
+
+Type                     Bidirectional control
+
+Example                  MON_ENABLE:true;
+                         MON_ENABLE:false;
+                         MON_ENABLE;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                   23
+AGC_MODE                 Control receiver AGC mode
+
+Set                      AGC_MODE:arg1,arg2;               arg1 — receiver periodic number.
+
+Read                     AGC_MODE:arg1;
+                                                           arg2 — operation mode.
+
+Reply                    AGC_MODE:arg1,arg2;
+                                                           List of supported modes:
+Type                     Bidirectional control                normal;
+                                                              fast;
+Example                  AGC_MODE:0,normal;                   off.
+                         AGC_MODE:1;
+
+
+
+AGC_GAIN                 Control receiver AGC gain
+
+Set                      AGC_GAIN:arg1,arg2;               arg1 — receiver periodic number.
+
+Read                     AGC_GAIN:arg1;
+                                                           arg2 — gain value, dB.
+
+Reply                    AGC_GAIN:arg1,arg2;
+                                                           The range of values is from -20 to
+Type                     Bidirectional control             120 dB.
+
+Example                  AGC_GAIN:0,87;
+                         AGC_GAIN:1;
+
+
+
+RX_NB_ENABLE             Enable/disable receiver Noise Blanker (NB) which removes impulse
+                         interferences
+
+Set                      RX_NB_ENABLE:arg1,arg2;           arg1 — receiver periodic number.
+
+Read                     RX_NB_ENABLE:arg1;
+                                                           arg2 — status indicator (enable –
+                                                           true, disable – false).
+Reply                    RX_NB_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_NB_ENABLE:0,true;
+                         RX_NB_ENABLE:1;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                             24
+RX_NB_PARAM              Adjust Noise Blanker (NB) parameters
+
+Set                      RX_NB_PARAM:arg1,arg2,arg3;        arg1 — receiver periodic number.
+
+Read                     RX_NB_PARAM:arg1;
+                                                            arg2 - triggering threshold, value
+                                                            range: 1 ... 100.
+Reply                    RX_NB_PARAM:arg1,arg2,arg3;
+
+Type                     Bidirectional control              arg3 - pulse duration, value range: 1
+                                                            ... 300.
+Example                  RX_NB_PARAM:0,70,25;
+                         RX_NB_PARAM:1;
+
+
+
+RX_BIN_ENABLE            Enable/disable pseudo stereo (binaural - BIN)
+
+Set                      RX_BIN_ENABLE:arg1,arg2;           arg1 — receiver periodic number.
+
+Read                     RX_BIN_ENABLE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_BIN_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_BIN_ENABLE:0,true;
+                         RX_BIN_ENABLE:1;
+
+
+
+RX_NR_ENABLE             Enable/disable Noise Reduction (NR) filter which removes constant noise
+                         from audio signal
+
+Set                      RX_NR_ENABLE:arg1,arg2;            arg1 — receiver periodic number.
+
+Read                     RX_NR_ENABLE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_NR_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_NR_ENABLE:0,true;
+                         RX_NR_ENABLE:1;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                 25
+RX_ANC_ENABLE            Enable/disable Adaptive Noise Cancellation (ANC) processor which
+                         emphasizes voice signal over noise of the receiver
+
+Set                      RX_ANC_ENABLE:arg1,arg2;           arg1 — receiver periodic number.
+
+Read                     RX_ANC_ENABLE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_ANC_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_ANC_ENABLE:0,true;
+                         RX_ANC_ENABLE:1;
+
+
+
+RX_ANF_ENABLE            Enable/disable Automatic Notch Filter which removes tone signals from
+                         audio signal
+
+Set                      RX_ANF_ENABLE:arg1,arg2;           arg1 — receiver periodic number.
+
+Read                     RX_ANF_ENABLE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_ANF_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_ANF_ENABLE:0,true;
+                         RX_ANF_ENABLE:1;
+
+
+
+RX_APF_ENABLE            Enable/disable Analog Peak Filter which changes AFC that voice sounds
+                         more prominent over noises
+
+Set                      RX_APF_ENABLE:arg1,arg2;           arg1 — receiver periodic number.
+
+Read                     RX_APF_ENABLE:arg1;
+                                                            arg2 — status indicator (enable –
+                                                            true, disable – false).
+Reply                    RX_APF_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                              26
+Example                  RX_APF_ENABLE:0,true;
+                         RX_APF_ENABLE:1;
+
+
+
+RX_DSE_ENABLE            Enable/disable Digital Surround Effect for CW signals, it provides space
+                         orientation of the CW signals in the filter bandwidth, depending on their
+                         position in the filter
+
+Set                      RX_DSE_ENABLE:arg1,arg2;             arg1 — receiver periodic number.
+
+Read                     RX_DSE_ENABLE:arg1;
+                                                              arg2 — status indicator (enable –
+                                                              true, disable – false).
+Reply                    RX_DSE_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_DSE_ENABLE:0,true;
+                         RX_DSE_ENABLE:1;
+
+
+
+RX_NF_ENABLE             Enable/disable Notch Filters (NF) module
+
+Set                      RX_NF_ENABLE:arg1,arg2;              arg1 — receiver periodic number.
+
+Read                     RX_NF_ENABLE:arg1;
+                                                              arg2 — status indicator (enable –
+                                                              true, disable – false).
+Reply                    RX_NF_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  RX_NF_ENABLE:0,true;
+                         RX_NF_ENABLE:1;
+
+
+
+LOCK                     Tuning frequency lock
+
+Set                      LOCK:arg1,arg2;                      arg1 — receiver periodic number.
+
+Read                     LOCK:arg1;
+                                                              arg2 — status indicator (enable –
+                                                              true, disable – false).
+Reply                    LOCK:arg1,arg2;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                  27
+Type                     Bidirectional control
+
+Example                  LOCK:0,true;
+                         LOCK:1;
+
+
+
+SQL_ENABLE               Enable/disable squelch
+
+Set                      SQL_ENABLE:arg1,arg2;             arg1 — receiver periodic number.
+
+Read                     SQL_ENABLE:arg1;
+                                                           arg2 — status indicator (enable –
+                                                           true, disable – false).
+Reply                    SQL_ENABLE:arg1,arg2;
+
+Type                     Bidirectional control
+
+Example                  SQL_ENABLE:0,true;
+                         SQL_ENABLE:1;
+
+
+
+SQL_LEVEL                Adjust squelch threshold
+
+Set                      SQL_LEVEL:arg1,arg2;              arg1 — receiver periodic number.
+
+Read                     SQL_LEVEL:arg1;
+                                                           arg2 — triggering threshold, dB.
+
+Reply                    SQL_LEVEL:arg1,arg2;
+                                                           The range of values is from -140 to 0
+Type                     Bidirectional control             dB.
+
+Example                  SQL_LEVEL:0,-83;
+                         SQL_LEVEL:1;
+
+
+
+DIGL_OFFSET              Adjust the frequency offset for DIGL mode
+
+Set                      DIGL_OFFSET:arg1;                 arg1 — offset frequency, Hz.
+
+Read                     DIGL_OFFSET;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                28
+Reply                    DIGL_OFFSET:arg1;                    The range of values is from 0 Hz up
+                                                              to 4 kHz.
+Type                     Bidirectional control
+
+Example                  DIGL_OFFSET:1500;
+                         DIGL_OFFSET;
+
+
+
+DIGU_OFFSET              Adjust the frequency offset for DIGU mode
+
+Set                      DIGU_OFFSET:arg1;                    arg1 — offset frequency, Hz.
+
+Read                     DIGU_OFFSET;
+                                                              The range of values is from 0 Hz up
+                                                              to 4 kHz.
+Reply                    DIGU_OFFSET:arg1;
+
+Type                     Bidirectional control
+
+Example                  DIGU_OFFSET:2200;
+                         DIGU_OFFSET;
+
+
+
+4.3       Unidirectional Control Commands
+TX_ENABLE                Informs clients that TX is enabled or disabled for current transceiver
+
+Reply                    TX_ENABLE:arg1,arg2;                   arg1 — transceiver periodic number;
+
+Type                     Unidirectional control
+                                                                arg2 — transmission allowed (true)
+                                                                / transmission denied (false).
+Example                  TX_ENABLE:0,true;
+
+Note                     Sent to the client when connected and when the band is changed, in case
+                         transmitter permission was changed.
+
+
+
+CW_MACROS_SPEED_UP CW macros speed increase (WPM)
+
+Set                           CW_MACROS_SPEED_UP:arg1;            arg1 — the number of WPM by
+                                                                  which to increase the CW speed.
+Type                          Unidirectional control
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                   29
+Example                       CW_MACROS_SPEED_UP:7;
+                              CW_MACROS_SPEED_UP:2;
+
+Type                          Sent only by the TCI client.
+
+
+
+CW_MACROS_SPEE           CW macros speed decrease (WPM)
+D_DOWN
+
+Set                      CW_MACROS_SPEED_DOWN:arg1; arg1 — the number of WPM by
+                                                    which to decrease the CW speed.
+Type                     Unidirectional control
+
+Example                  CW_MACROS_SPEED_DOWN:7;
+                         CW_MACROS_SPEED_DOWN:2;
+
+Type                     Sent only by the TCI client.
+
+
+
+SPOT                     Spot transfer for display on panorama
+
+Set                      SPOT:arg1,arg2,arg3,arg4,arg5;      arg1 - callsign.
+                                                             arg2 - mode type.
+Type                     Unidirectional control
+                                                             arg3 - frequency, Hz.
+
+Example                  SPOT:RN6LHF,CW,7100000,167          arg4 - ARGB color.
+                         11680,ANY_TEXT;                     arg5 - additional text.
+
+Note                     Sent only by the TCI client.
+
+
+
+SPOT_DELETE              Delete spot
+
+Set                      SPOT_DELETE:arg1;                   arg1 — callsign.
+
+Type                     Unidirectional control
+
+Example                  SPOT_DELETE:RN6LHF;
+
+Note                     Sent only by the TCI client.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                    30
+IQ_SAMPLERATE            IQ stream sample rate
+
+Set                      IQ_SAMPLERATE:arg1;            arg1 — sample rate, (Hz).
+
+Reply                    IQ_SAMPLERATE:arg1;
+                                                        Supported Sample rates:
+                                                        48/96/192/384 kHz
+Type                     Unidirectional control
+
+Example                  IQ_SAMPLERATE:48000;
+
+Note                     Sent only by the TCI client.
+
+
+
+AUDIO_SAMPLERATE         LF audio stream sample rate
+
+Set                      AUDIO_SAMPLERATE:arg1;         arg1 — sample rate, (Hz).
+
+Reply                    AUDIO_SAMPLERATE:arg1;
+                                                        Supported Sample rates:
+                                                        8/12/24/48 kHz
+Type                     Unidirectional control
+
+Example                  AUDIO_SAMPLERATE:12000;
+
+Note                     Sent only by the TCI client.
+
+
+
+IQ_START                 Start IQ stream
+
+Set                      IQ_START:arg1;                 arg1 — receiver periodic number.
+
+Type                     Unidirectional control
+
+Example                  IQ_START:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+IQ_STOP                  Stop IQ stream
+
+Set                      IQ_STOP:arg1;                  arg1 — receiver periodic number.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                        31
+Type                     Unidirectional control
+
+Example                  IQ_STOP:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+AUDIO_START              Start LF audio stream
+
+Set                      AUDIO_START:arg1;                  arg1 — receiver periodic number.
+
+Type                     Unidirectional control
+
+Example                  AUDIO_START:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+AUDIO_STOP               Stop LF audio stream
+
+Set                      AUDIO_STOP:arg1;                   arg1 — receiver periodic number.
+
+Type                     Unidirectional control
+
+Example                  AUDIO_STOP:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+LINE_OUT_START           Start audio stream from Line Out
+
+Set                      LINE_OUT_START:arg1;               arg1 — receiver periodic number.
+
+Type                     Unidirectional control
+
+Example                  LINE_OUT_START:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                            32
+LINE_OUT_STOP            Stop audio stream from Line Out
+
+Set                      LINE_OUT_STOP:arg1;                 arg1 — receiver periodic number.
+
+Type                     Unidirectional control
+
+Example                  LINE_OUT_STOP:0;
+
+Note                     Sent only by the TCI client.
+
+
+
+LINE_OUT_RECORDE Start recording of the audio stream from Line Out
+R_START
+
+Set                      LINE_OUT_RECORDER_START:a arg1 — receiver periodic number.
+                         rg1,arg2;
+
+Type                     Unidirectional control              arg2 — maximum recording time
+                                                             (not more than 300 sec).
+Example                  LINE_OUT_RECORDER_START:
+                         0,250;
+
+Note                     Sent only by the TCI client.
+                         When the set recording time expires the recording is deleted, to save the
+                         recording into a file, send the LINE_OUT_RECORDER_SAVE command.
+
+
+
+LINE_OUT_RECORDE Save audio stream recording from Line Out into a file
+R_SAVE
+
+Set                      LINE_OUT_RECORDER_SAVE:arg1,arg2;            arg1 — receiver periodic
+                                                                      number.
+Type                     Unidirectional control
+
+                                                                      arg2 — full name of the file.
+Example                  LINE_OUT_RECORDER_SAVE:0,home/u
+                         ser_name/record_dir/file_name.wav;
+
+
+                         LINE_OUT_RECORDER_SAVE:0,home/u
+                         ser_name/record_dir/file_name.mp3;
+
+
+                         LINE_OUT_RECORDER_SAVE:0,D|\reco
+                         rd_dir\file_name.mp3;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                   33
+Note                      Sent only by the TCI client.
+                          Supported recording formats: WAVE and MP3.
+                          For Windows OS the path contains the forbidden character ":", it is
+                          replaced by "|", also you can use forward and backslash in the path to the
+                          file.
+
+
+
+LINE_OUT_RECORDE Stop audio stream recording from Line Out and delete the recording
+R_BREAK
+
+Set                       LINE_OUT_RECORDER_BREAK:arg1;            arg1 — receiver periodic number.
+
+Type                      Unidirectional control
+
+Example                   LINE_OUT_RECORDER_BREAK:0;
+
+Note                      Sent only by the TCI client.
+
+
+
+SPOT_CLEAR                Delete all spots from panorama
+
+Set                       SPOT_CLEAR;
+
+Type                      Unidirectional control
+
+Example                   SPOT_CLEAR;
+
+Note                      Sent only by the TCI client.
+
+
+
+AUDIO_STREAM_SA           Set sample format for audio stream
+MPLE_TYPE
+
+Install                   AUDIO_STREAM_SAMPLE_TYPE:arg1;               arg1 — sample format
+                                                                       identifier
+Type                      Unidirectional control                       Supported formats:
+                                                                          int16
+Example                   AUDIO_STREAM_SAMPLE_TYPE:int24;                 int24
+                          AUDIO_STREAM_SAMPLE_TYPE:float32;               int32
+                                                                          float32
+
+Addendum                  Being sent only by the client.
+
+
+
+
+  TCI Protocol – Expert Eelectronics                                                                   34
+                          By default, sample format is float32.
+
+
+
+AUDIO_STREAM_CH           Set the number of channels for an audio stream
+ANNELS
+
+Install                   AUDIO_STREAM_CHANNELS:arg1; arg1 — channels number
+
+Type                      Unidirectional control
+                                                                  Supported 1 or 2 channels.
+
+Example                   AUDIO_STREAM_CHANNELS:1;
+                          AUDIO_STREAM_CHANNELS:2;
+
+Addendum                  Being sent only by the client.
+                          By default, the number of channels equals 2.
+
+
+
+AUDIO_STREAM_SA           Set the amount of samples sent in a single packet
+MPLES
+
+Install                   AUDIO_STREAM_CHANNELS:arg1;              arg1 — sample amount indicated
+                                                                   in a Stream.length field.
+Type                      Unidirectional control
+                                                                   The value can vary from 100 up to
+Example                   AUDIO_STREAM_SAMPLES:200;                2048 samples.
+                          AUDIO_STREAM_SAMPLES:512;
+
+Addendum                  Being sent only by the client.
+                          For every sample rate value there is a default sample amount (indicated in
+                          Stream.length):
+                          Sample rate 48 kHz - 2048 samples
+                          Sample rate 24 kHz - 1024 samples
+                          Sample rate 12 kHz - 512 samples
+                          Sample rate 8 kHz - 256 samples
+                          After you set the sample amount this value will be applied to every sample
+                          rate.
+                          It is recommended to set the sample amount so that the length of
+                          playback duration is not less than 10 ms, otherwise the signal which is
+                          going to be transmitted may be corrupted.
+                          Recommended minimal sample amount:
+
+
+
+
+  TCI Protocol – Expert Eelectronics                                                                   35
+                         48 kHz - 512 samples
+                         24 kHz - 256 samples
+                         12 kHz - 128 samples
+                         8 kHz - 100 samples
+
+
+
+TX_STREAM_AUDIO_          Set buffering timeout for TX signal
+BUFFERING
+
+Set                       TX_STREAM_AUDIO_BUFFERING:arg1;              arg1 — buffering timeout, ms
+
+Read                      Unidirectional control
+                                                                       The range of values is from
+                                                                       50 up to 500.
+Reply                     TX_STREAM_AUDIO_BUFFERING:150;
+                          TX_STREAM_AUDIO_BUFFERING:270;
+
+Type                      Being sent only by the client.
+                          Default value is 50 ms.
+
+
+
+4.4       Notification Commands
+CLICKED_ON_SPOT          Informs about click on the spot on the ExpertSDR3 panorama
+                         (Legacy command)
+
+Set                      CLICKED_ON_SPOT:arg1,arg2;             arg1 — callsign.
+
+Type                     Unidirectional control
+                                                                arg2 — frequency, Hz.
+
+Example                  CLICKED_ON_SPOT:RN6LHF,71
+                         47500;
+
+Note                     Sent only by the TCI server.
+
+
+
+RX_CLICKED_ON_SPOT Informs about click on the spot on the ExpertSDR3 panorama
+
+Set                          RX_CLICKED_ON_SPOT:arg1, arg1 — receiver periodic number
+                             arg2,arg3,arg4;
+
+Type                         Unidirectional control             arg2 — channel periodic number
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                   36
+Example                      RX_CLICKED_ON_SPOT:0,1,          (A/B).
+                             RN6LHF,7147500;
+
+                                                              arg3 — callsign
+
+
+                                                              arg4 — frequency, Hz
+
+
+
+Note                         Sent only by the TCI server.
+
+
+
+TX_FOOTSWITCH            Informs about PTT footswitch state
+
+Set                      TX_FOOTCWITCH:arg1,arg2;             arg1 — transceiver periodic number
+
+Type                     Unidirectional control
+                                                              arg2 — footswitch state (pressed -
+                                                              true, not pressed - false)
+Example                  TX_FOOTCWITCH:0,true;
+
+Note                     Sent only by the TCI server.
+
+
+
+TX_FREQUENCY             Informs about current transmitter frequency
+
+Set                      TX_FREQUENCY:arg1;                   arg1 — transmission frequency, Hz
+
+Type                     Unidirectional control
+
+Example                  TX_FREQUENCY:7140000;
+
+Note                     Sent only by the TCI server.
+
+
+
+APP_FOCUS                Informs about the state of the ExpertSDR3 window (in focus or not)
+
+Set                      APP_FOCUS:arg1;                      arg1 — focus state
+                                                              (in focus - true, out of focus - false)
+Type                     Unidirectional control
+
+Example                  APP_FOCUS:true;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                     37
+Note                     Sent only by the TCI server.
+
+
+
+SET_IN_FOCUS             Make the main ExpertSDR3 window active (in focus)
+
+Set                      SET_IN_FOCUS;
+
+Type                     Unidirectional control
+
+Example                  APP_FOCUS:true;
+
+Note                     Sent only by the TCI client.
+
+
+
+KEYER                    Informs about CW Key state (not automatic)
+
+Set                      KEYER:arg1,arg2;                   arg1 – transceiver periodic number
+
+Type                     Unidirectional control
+                                                            arg2 – CW key state (pressed -true,
+                                                            not pressed – false)
+Example                  KEYER:0,true;
+
+                                                            arg3 – length of the previous
+                                                            character, in ms
+
+Note                     Sent only by the TCI client.
+                         This command was modified for better operation with RadioSync. The
+                         main purpose of this command is to send CW macros via COM-port,
+                         preserving the length of dots and dashes.
+                         Operation algorithm:
+                         After the first instance of pressing the straight CW key TCI Client sends
+                         this command: keyer:0,true,0; into ExpertSDR3, which initiates the
+                         transmission of CW character. At that moment TCI Client starts the timer,
+                         then when you release the CW straight key, TCI Client determines the
+                         time difference and send this command for example: keyer:0,false,142;
+                         where the third argument is the time interval – length of the character.
+                         This system was created to make sure that CW core in the firmware always
+                         knows the exact time to play the character. Every following press and
+                         release of the key is accompanied with the determination of the time
+                         interval, which helps to keep it in constant check and minimize the
+                         “drunken sailor” effect.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                  38
+RX_SENSORS_ENABLE            Enable informing about signal level in RX filter bandwidth
+
+Set                          RX_SENSORS_ENABLE:arg1,arg2;          arg1 – status indicator (enable –
+                                                                   true, disable – false)
+Type                         Unidirectional control
+                                                                   arg2 – sending interval, ms (30-
+Example                      RX_SENSORS_ENABLE:true;               1000 ms, optional)
+                             RX_SENSORS_ENABLE:true,200;
+
+Note                         Sent only by the TCI client.
+
+
+
+TX_SENSORS_ENABLE Enable informing about TX signal parameters
+
+Set                        TX_SENSORS_ENABLE:arg1,arg2;           arg1 – status indicator (enable –
+                                                                  true, disable – false)
+Type                       Unidirectional control
+                                                                  arg2 – sending interval, ms (30-
+Example                    TX_SENSORS_ENABLE:true;                1000 ms, optional)
+                           TX_SENSORS_ENABLE:true,200;
+
+Addendum                   Sent only by the TCI client.
+
+
+
+RX_SENSORS               Informs about signal level in RX filter bandwidth
+
+Set                      RX_SENSORS:arg1,arg2;                arg1 – receiver periodic number
+
+Type                     Unidirectional control
+                                                              arg2 – signal level, dBm
+Example                  RX_SENSORS:0, -71.5;
+                         RX_SENSORS:1,-112.7;
+
+Addendum                 Sent only by the TCI server.
+                         This command is obsolete and considered deprecated. It was replaced
+                         with RX_CHANNEL_SENSORS.
+
+
+
+TX_SENSORS               Informs about TX signal parameters
+
+Set                      TX_SENSORS:arg1,arg2,arg3,arg        arg1 - transceiver periodic number
+                         4,arg5;
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                    39
+Type                     Unidirectional control               arg2 - microphone signal level, dBm
+                                                              arg3 - signal power at the transmitter
+Example                  TX_SENSORS:0, -                      output, W (RMS)
+                         27.2,47.4.67.5,1.7;
+                                                              arg4 - peak signal power at the
+                                                              transmitter output, W
+                                                              arg5 - SWR
+
+Addendum                 Sent only by the TCI server.
+
+
+
+4.5       New Commands in this version
+VFO_LOCK                 Notification about locking the frequency tuning by the client
+
+Set                      VFO_LOCK:arg1,arg2,arg3;                 arg1 — receiver periodic number
+
+Read                     VFO_LOCK:arg1,arg2;
+                                                                  arg2 — channel periodic number
+                                                                  (A/B);
+Reply                    VFO_LOCK:arg1,arg2,arg3;
+
+Type                     Unidirectional control                   arg3 — lock status (true/false).
+
+Example                  VFO_LOCK:0,1,true;
+                         VFO_LOCK:1,1,false;
+
+Addendum                 Sent only by the TCI server.
+
+
+
+RX_CHANNEL_SENS          Signal level readings in RX bandwidth per channel
+ORS
+
+Set                      RX_CHANNEL_SENSORS:arg1,arg2, arg1 — receiver periodic number
+                         arg3;                         arg2 — channel periodic number
+                                                       (A/B)
+Type                     Unidirectional control
+                                                       arg3 — signal level, dBm
+Example                  RX_CHANNEL_SENSORS:0,0,-71.5;
+                         RX_CHANNEL_SENSORS:1,1,-112.7;
+
+Addendum                 Sent only by the TCI server.
+
+
+
+
+ TCI Protocol – Expert Eelectronics                                                                    40
+  Appendix A. Glossary of Technical Terms
+        Terminology            Description
+
+
+
+
+TCI Protocol – Expert Eelectronics           41
+

@@ -2724,8 +2724,11 @@ namespace Thetis
         }
         private void sendRxChannelSensorsEx(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm, double noiseFloor)
         {
-            // minimum data, short tag, and includes noise floor
-            sendTextFrame("s:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + noiseFloor.ToString("F1", CultureInfo.InvariantCulture) + ";");
+            // minimum data, short tag, and includes noise floor with this data
+            // sr - rx sensor readingse, enabled with command rx_sensors_enable_ex
+            // tag of sr used to minimise data sent as this will be repeating
+            // it is the preferred method for a remote client
+            sendTextFrame("sr:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + noiseFloor.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
         private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
         {
@@ -5631,6 +5634,12 @@ namespace Thetis
                 consoleThreadSafe.SafeTXProfileSet(args[0]);
             }
         }
+        private void handleReturnTrip()
+        {
+            // used by a client to determine total round trip time, it is just an echo
+            string s = "rt;";
+            sendTextFrame(s);
+        }
         private void handleTXProfiles()
         {
             sendTXProfiles();
@@ -6106,7 +6115,7 @@ namespace Thetis
                     case "rx_sensors_enable":
                         handleRxSensorsEnable(args);
                         break;
-                    case "rx_sensors_enable_compressed":
+                    case "rx_sensors_enable_ex": // will cause sr messages, to reduce bw wasted on the tag
                         handleRxSensorsEnableEx(args);
                         break;
                     case "tx_sensors_enable":
@@ -6293,6 +6302,9 @@ namespace Thetis
                     case "tx_profile_ex":
                         string[] tmpArgs = new string[0];
                         handleTXProfile(tmpArgs); // bespoke thetis cmd to select tx profile
+                        break;
+                    case "rt":
+                        handleReturnTrip();
                         break;
                 }
             }

@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TCI Thetis Protocol</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+
+    :root {
+      --accent: #2d657b;
+      --accent-light: #4d8aa2;
+      --text: #20252b;
+      --muted: #5f6d78;
+      --line: #b9c4cb;
+      --table-line: #8f9aa1;
+      --black: #0f1113;
+      --bg-soft: #f5f8fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 11.5pt;
+      line-height: 1.38;
+      background: white;
+    }
+
+    @media print {
+    }
+
+    @media screen {
+      body {
+        padding: 12mm 14mm 18mm 14mm;
+      }
+
+      .cover {
+        min-height: auto;
+      }
+
+      .page-break {
+        break-before: auto;
+        page-break-before: auto;
+        margin-top: 14mm;
+        padding-top: 14mm;
+        border-top: 1px dashed var(--line);
+      }
+    }
+
+    .page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .cover {
+      min-height: 255mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 6mm;
+    }
+
+    .cover-kicker {
+      display: inline-block;
+      margin-bottom: 10mm;
+      color: var(--accent-light);
+      font-size: 10.5pt;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    .cover-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18mm;
+      margin-top: 2mm;
+    }
+
+    .cover-title {
+      font-size: 25pt;
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 0.2px;
+      margin: 0;
+    }
+
+    .cover-version {
+      min-width: 55mm;
+      text-align: left;
+      font-size: 17pt;
+      font-weight: 300;
+      color: var(--text);
+      margin-top: 2mm;
+    }
+
+    .series {
+      margin-top: 14mm;
+      font-size: 12pt;
+      padding-bottom: 4mm;
+      border-bottom: 1px solid #8b959c;
+    }
+
+    .cover-date {
+      margin-top: 4mm;
+      font-size: 11pt;
+    }
+
+    .notice-block {
+      margin-top: 18mm;
+    }
+
+    .notice-title {
+      color: var(--accent-light);
+      font-size: 11pt;
+      margin-bottom: 7mm;
+    }
+
+    .notice-block h3 {
+      font-size: 12pt;
+      font-style: italic;
+      font-weight: 600;
+      margin: 0 0 4mm 0;
+    }
+
+    .notice-block p {
+      margin: 0 0 5mm 0;
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: 23pt;
+      font-weight: 300;
+      margin: 0 0 7mm 0;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 17pt;
+      font-weight: 400;
+      margin: 0 0 5mm 0;
+    }
+
+    h3 {
+      color: var(--text);
+      font-size: 13pt;
+      font-weight: 600;
+      margin: 8mm 0 3mm 0;
+    }
+
+    p {
+      margin: 0 0 4mm 0;
+    }
+
+    .lead {
+      font-size: 12.2pt;
+      color: #2a3136;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      margin-bottom: 6mm;
+    }
+
+    .toc {
+      margin-top: 2mm;
+      font-size: 12pt;
+    }
+
+    .toc-row {
+      display: flex;
+      gap: 10mm;
+      margin: 2.3mm 0;
+    }
+
+    .toc-row .num {
+      width: 14mm;
+      color: #2f3840;
+    }
+
+    .toc-row .text {
+      flex: 1;
+    }
+
+    .toc-row.sub {
+      font-size: 10.5pt;
+      color: #34414a;
+      margin-left: 10mm;
+    }
+
+    .ref-table,
+    .cmd-table,
+    .control-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 4mm 0 7mm 0;
+    }
+
+    .ref-table td,
+    .cmd-table td,
+    .cmd-table th,
+    .control-table td,
+    .control-table th {
+      border: 1px solid var(--table-line);
+      padding: 2.6mm 3mm;
+      vertical-align: top;
+    }
+
+    .control-table thead th,
+    .cmd-table thead th {
+      background: var(--black);
+      color: white;
+      font-weight: 600;
+      font-size: 10.5pt;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      padding: 4.2mm 4.5mm;
+      margin: 5mm 0 7mm 0;
+    }
+
+    .box h3 {
+      margin-top: 0;
+    }
+
+    ul {
+      margin: 0 0 4mm 0;
+      padding-left: 5mm;
+    }
+
+    li {
+      margin: 1.7mm 0;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9.8pt;
+      background: #eef3f6;
+      padding: 0.2mm 1mm;
+      border-radius: 2px;
+      color: #163847;
+    }
+
+    .small {
+      font-size: 10pt;
+    }
+
+    .grid-note {
+      display: grid;
+      grid-template-columns: 48mm 1fr;
+      gap: 2mm 6mm;
+      margin: 3mm 0 0 0;
+      font-size: 10.8pt;
+    }
+
+    .grid-note div:nth-child(odd) {
+      font-weight: 600;
+    }
+
+    .minor-rule {
+      border: 0;
+      border-top: 1px solid var(--line);
+      margin: 6mm 0;
+    }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div class="cover-kicker">Thetis SDR Documentation</div>
+
+    <div class="cover-title-row">
+      <h1 class="cover-title">TCI Thetis Protocol</h1>
+      <div class="cover-version">Ver. 1.09</div>
+    </div>
+
+    <div class="series">
+      Series: Thetis SDR TCI interoperability supplement referencing TCI Protocol Ver. 2.0
+    </div>
+
+    <div class="cover-date">4 June 2026</div>
+
+    <div class="notice-block">
+      <div class="notice-title">Reference Notice</div>
+
+      <h3>Scope</h3>
+      <p>This document supplements the public <strong>Expert Electronics TCI Protocol Ver. 2.0</strong> document dated <strong>12 January 2024</strong>, published at <a href="https://github.com/ExpertSDR3/TCI">https://github.com/ExpertSDR3/TCI</a>. It does not replace the original specification. The official Expert Electronics document remains the base reference for the generic TCI grammar, transport model, and command families.</p>
+
+      <h3>Purpose</h3>
+      <p>This supplement records the current Thetis interpretation of the protocol, including Thetis mappings for selected standard TCI 2.0 commands, Thetis behaviour differences, and Thetis custom commands that are not part of the official Expert Electronics 2.0 document.</p>
+
+      <h3>Audience</h3>
+      <p>This document is intended for client developers, integrators, automation authors, and maintainers working against the Thetis TCI server.</p>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>Reference And Document Control</h2>
+    <p class="section-intro">This supplement documents Thetis behaviour against the official Expert Electronics 2.0 protocol PDF.</p>
+
+    <table class="ref-table">
+      <tbody>
+        <tr>
+          <td><strong>Base specification</strong></td>
+          <td>Expert Electronics, <em>TCI Protocol</em>, Ver. 2.0, 12 January 2024</td>
+        </tr>
+        <tr>
+          <td><strong>Supplement title</strong></td>
+          <td>TCI Thetis Protocol</td>
+        </tr>
+        <tr>
+          <td><strong>Implementation basis</strong></td>
+          <td>Thetis TCI server behaviour as of 4 June 2026, reconciled with the uploaded Expert Electronics TCI Protocol Ver. 2.0 text</td>
+        </tr>
+        <tr>
+          <td><strong>Coverage</strong></td>
+          <td>Selected TCI 2.0 differences, standard command reconciliation, Thetis extension messages, audio negotiation, normal and compact sensor reports, round trip timing echo, and compact display streaming</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="control-table">
+      <thead>
+        <tr>
+          <th style="width:16%;">Version</th>
+          <th>Comment</th>
+          <th style="width:18%;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1.09</td>
+          <td>Updated against the 4 June 2026 <code>TCIServer.cs</code>. Added the per receiver/channel <code>rx_sensors_enable_ex</code> control and the compact <code>sr</code> sensor report, clarified TX sensor fields, added the missing spot maintenance/click notification messages implemented by the current server, and documented the Thetis <code>rt</code> round trip echo command.</td>
+          <td>4 June 2026</td>
+        </tr>
+        <tr>
+          <td>1.8</td>
+          <td>Updated against the current <code>TCIServer.cs</code>, <code>clsDisplayCompression.cs</code>, and <code>clsSpectrumProcessor.cs</code> files. Reworked display stream documentation for the compact <code>TD</code> binary payload, the strict 11-field <code>display_start</code> command, viewport controls, block delta compression, adaptive block selection, keyframe interval, accuracy mode, and display quantisation depth. Added the <code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code> controls.</td>
+          <td>3 June 2026</td>
+        </tr>
+        <tr>
+          <td>1.7</td>
+          <td>Updated against the then current <code>TCIServer.cs</code> display streaming implementation. Added documentation for <code>display_delta_mode</code> and the older display delta binary description.</td>
+          <td>28 May 2026</td>
+        </tr>
+        <tr>
+          <td>1.6</td>
+          <td>Updated against the then current <code>TCIServer.cs</code>, <code>cmaster.cs</code>, and TCI RX audio path implementation. Added display stream control coverage, documented <code>audio_codec</code> plus the full <code>audio_opus_*</code> negotiation family, and expanded examples for stream settings and limit behaviour.</td>
+          <td>27 May 2026</td>
+        </tr>
+        <tr>
+          <td>1.5</td>
+          <td>Revalidated against the current <code>TCIServer.cs</code> implementation and the local Expert Electronics Protocol 2.0 text. Confirmed that the custom message section lists Thetis extensions only; base protocol commands remain documented only where Thetis behaviour differs.</td>
+          <td>26 April 2026</td>
+        </tr>
+        <tr>
+          <td>1.4</td>
+          <td>Updated to match the latest <code>TCIServer.cs</code> implementation. Added documentation for <code>tx_filter_band_ex</code> and <code>run_cat_ex</code>, and rolled the implementation basis forward to the current source.</td>
+          <td>20 April 2026</td>
+        </tr>
+        <tr>
+          <td>1.3</td>
+          <td>Updated to match the latest <code>TCIServer.cs</code> additions. Added documentation for <code>vfo_sync_ex</code>, <code>vfo_swap_ex</code>, <code>fm_deviation_ex</code>, and <code>agc_auto_ex</code>.</td>
+          <td>15 April 2026</td>
+        </tr>
+        <tr>
+          <td>1.2</td>
+          <td>Updated to match the current <code>TCIServer.cs</code> implementation. Documented the move from <code>tx_frequency_thetis</code> to <code>tx_frequency_ex</code>, added receiver extension commands for NB, attenuation, preamp, and CTUN, and added sensor plus stream negotiation notes for the Thetis TCI server.</td>
+          <td>14 April 2026</td>
+        </tr>
+        <tr>
+          <td>1.1</td>
+          <td>Updated the CW terminal family notes to reflect observed Protocol 2.0 command usage validated against ExpertSDR 3 v1.1.7, including receiver qualified <code>cw_terminal</code> and <code>cw_macros_empty</code> forms.</td>
+          <td>28 March 2026</td>
+        </tr>
+        <tr>
+          <td>1.0</td>
+          <td>Initial Thetis supplement for the Expert Electronics TCI Protocol Ver. 2.0 reference set. Focused on Thetis command differences, CW/CWX behaviour, routing notes, and Thetis custom commands.</td>
+          <td>26 March 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>Contents</h2>
+    <div class="toc">
+      <div class="toc-row"><div class="num">1</div><div class="text">Introduction</div></div>
+      <div class="toc-row sub"><div class="num">1.1</div><div class="text">Document Scope</div></div>
+      <div class="toc-row sub"><div class="num">1.2</div><div class="text">Relationship To The Official 2.0 Protocol</div></div>
+      <div class="toc-row"><div class="num">2</div><div class="text">Thetis Implementation Overview</div></div>
+      <div class="toc-row"><div class="num">3</div><div class="text">Selected TCI 2.0 Commands With Thetis Behaviour Differences</div></div>
+      <div class="toc-row sub"><div class="num">3.1</div><div class="text">Receiver, Audio, And AGC Controls</div></div>
+      <div class="toc-row sub"><div class="num">3.2</div><div class="text">Locking, Noise Processing, And Extended Receiver State</div></div>
+      <div class="toc-row sub"><div class="num">3.3</div><div class="text">Display Stream Control</div></div>
+      <div class="toc-row sub"><div class="num">3.4</div><div class="text">Compact Display Binary Payload</div></div>
+      <div class="toc-row sub"><div class="num">3.5</div><div class="text">Sensors, Audio Negotiation, And Opus Codec Settings</div></div>
+      <div class="toc-row sub"><div class="num">3.6</div><div class="text">CW And KEYER Support Via CWX</div></div>
+      <div class="toc-row"><div class="num">4</div><div class="text">Standard Reconciliation And Thetis Extensions</div></div>
+      <div class="toc-row"><div class="num">5</div><div class="text">Compatibility Notes</div></div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>1 Introduction</h2>
+    <h3>1.1 Document Scope</h3>
+    <p>This document covers the parts of TCI 2.0 where Thetis has implementation detail that matters to clients. It focuses on Thetis differences from the base protocol and on Thetis messages that fall outside the official Expert Electronics 2.0 specification.</p>
+
+    <h3>1.2 Relationship To The Official 2.0 Protocol</h3>
+    <p>The official Expert Electronics document remains the baseline command grammar reference. This supplement records Thetis behaviour when those commands are used against the Thetis TCI server. In the CW terminal family, the published Protocol 2.0 document differs from observed command usage in ExpertSDR 3, so the Thetis notes for those commands have been validated against ExpertSDR 3 v1.1.7.</p>
+
+    <div class="box">
+      <h3>Reading Rule</h3>
+      <p class="small">If a command is defined in the official 2.0 document and not called out here, clients should assume the official Expert Electronics behaviour model first. If a command is called out in this supplement, the Thetis note in this document takes precedence for Thetis interoperability.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 Thetis Implementation Overview</h2>
+    <p class="lead">Thetis presents itself as a TCI 2.0 style server, but several command families map onto existing Thetis subsystems rather than separate internal protocol objects.</p>
+
+    <div class="grid-note">
+      <div>Base reference</div><div>Expert Electronics TCI Protocol Ver. 2.0, 12 January 2024</div>
+      <div>CW engine</div><div>CWX is used as the execution engine for TCI CW operations</div>
+      <div>AGC mapping</div><div>TCI AGC names are mapped onto Thetis AGC modes</div>
+      <div>Pan/balance</div><div><code>rx_balance</code> maps onto Thetis pan controls</div>
+      <div>Notch filtering</div><div><code>rx_nf_enable</code> maps to MNF, not MNF+</div>
+      <div>Lock model</div><div><code>lock</code> and <code>vfo_lock</code> are adapted to Thetis VFO A / VFO B routing</div>
+      <div>TX frequency extension</div><div>Thetis publishes standard <code>tx_frequency</code> plus Thetis <code>tx_frequency_ex</code></div>
+      <div>TX filter extension</div><div>Thetis publishes <code>tx_filter_band_ex</code> for transmit filter low/high edges using a normalised positive width range</div>
+      <div>Receiver extensions</div><div>Thetis publishes <code>rx_nb_enable_ex</code>, <code>rx_nr_enable_ex</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>rx_ctun_ex</code>, <code>fm_deviation_ex</code>, and <code>agc_auto_ex</code></div>
+      <div>Sensors</div><div>Optional RX/TX sensor reports are timer driven and enabled by client request. The current server supports both normal RX reports and the compact per receiver/channel <code>sr</code> report enabled by <code>rx_sensors_enable_ex</code></div>
+      <div>Audio streaming</div><div>RX/TX audio negotiation includes codec, sample type, channel count, packet size, TX buffering, and optional deferred reconfiguration</div>
+      <div>Display streaming</div><div>Thetis display output is published as compact WebSocket binary payloads beginning with the <code>TD</code> magic bytes and version <code>1</code></div>
+      <div>Display compression</div><div>Display output supports raw, delta, block delta, and use previous frame payload kinds, with per receiver controls</div>
+      <div>VFO helpers</div><div>Thetis adds explicit VFO sync and swap helpers through <code>vfo_sync_ex</code> and <code>vfo_swap_ex</code></div>
+      <div>Spot metadata</div><div>Thetis accepts structured metadata in the <code>spot</code> arg5 JSON payload</div>
+      <div>CAT passthrough</div><div>Thetis adds <code>run_cat_ex</code> to execute a single CAT command and return the CAT response in a TCI message</div>
+      <div>Round trip check</div><div>Thetis adds <code>rt</code> as a minimal echo command for client round trip timing checks</div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>3 Selected TCI 2.0 Commands With Thetis Behaviour Differences</h2>
+    <p class="section-intro">This section lists standard 2.0 commands where Thetis behaviour, mapping, or restrictions differ in a way that client authors need to consider. Commands not listed here should be treated as normal base protocol behaviour.</p>
+
+    <h3>3.1 Receiver, Audio, And AGC Controls</h3>
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:19%;">Command</th>
+          <th style="width:15%;">Direction</th>
+          <th>Thetis behaviour</th>
+          <th style="width:25%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>VOLUME</td>
+          <td>Bidirectional</td>
+          <td>Controls Thetis master AF rather than receiver gain.</td>
+          <td><code>volume:-12;</code></td>
+        </tr>
+        <tr>
+          <td>RX_VOLUME</td>
+          <td>Bidirectional</td>
+          <td>Receiver and channel audio gain. Thetis uses the form <code>rx_volume:&lt;rx&gt;,&lt;channel&gt;,&lt;db&gt;;</code> and reports values in dB, not a raw linear percentage.</td>
+          <td><code>rx_volume:0,0,-6.00;</code></td>
+        </tr>
+        <tr>
+          <td>RX_BALANCE</td>
+          <td>Bidirectional</td>
+          <td>Maps to Thetis receiver pan. Thetis uses the form <code>rx_balance:&lt;rx&gt;,&lt;channel&gt;,&lt;balance&gt;;</code> with a range of <code>-40.0</code> to <code>40.0</code>.</td>
+          <td><code>rx_balance:0,0,15.0;</code></td>
+        </tr>
+        <tr>
+          <td>AGC_MODE</td>
+          <td>Bidirectional</td>
+          <td>Mapped to Thetis AGC modes. Thetis supports more AGC modes than the base TCI names expose.</td>
+          <td><code>agc_mode:0,fast;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NB_ENABLE</td>
+          <td>Bidirectional</td>
+          <td>Controls the simple NB enabled state. The extended form <code>rx_nb_enable_ex</code> also carries the active NB algorithm index.</td>
+          <td><code>rx_nb_enable:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NR_ENABLE</td>
+          <td>Bidirectional</td>
+          <td>Controls the simple NR enabled state. The extended form <code>rx_nr_enable_ex</code> also carries the active NR algorithm index.</td>
+          <td><code>rx_nr_enable:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_APF_ENABLE</td>
+          <td>Bidirectional</td>
+          <td>Applies to RX1 main and RX2 main only, and only in CW use.</td>
+          <td><code>rx_apf_enable:1,true;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>AGC_MODE Mapping</h3>
+      <div class="grid-note">
+        <div><code>off</code></div><div>FIXD</div>
+        <div><code>normal</code></div><div>MED</div>
+        <div><code>fast</code></div><div>FAST</div>
+        <div><code>slow</code></div><div>SLOW</div>
+        <div><code>long</code></div><div>LONG</div>
+        <div><code>custom</code></div><div>CUSTOM</div>
+      </div>
+      <p class="small muted">Accepted aliases on input include <code>fixd</code>, <code>fixed</code>, <code>med</code>, and <code>medium</code>.</p>
+    </div>
+
+    <h3>3.2 Locking, Noise Processing, And Extended Receiver State</h3>
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:19%;">Command</th>
+          <th style="width:15%;">Direction</th>
+          <th>Thetis behaviour</th>
+          <th style="width:25%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>VFO_LOCK</td>
+          <td>Notification + control</td>
+          <td>Mapped onto Thetis VFO A / VFO B lock model. When RX2 is enabled, VFO B is represented on receiver 1 channels.</td>
+          <td><code>vfo_lock:1,0,true;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_SYNC_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for VFO sync state. Use no arguments to query, or a single boolean to enable or disable synchronisation.</td>
+          <td><code>vfo_sync_ex:true;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_SWAP_EX</td>
+          <td>Unidirectional</td>
+          <td>Thetis extension that swaps the active VFO assignments immediately. This is a bare command with no arguments.</td>
+          <td><code>vfo_swap_ex;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NR_ENABLE / RX_NR_ENABLE_EX</td>
+          <td>Bidirectional</td>
+          <td><code>rx_nr_enable</code> exposes simple on/off NR state. <code>rx_nr_enable_ex</code> adds the active NR algorithm index. Get requests return both forms.</td>
+          <td><code>rx_nr_enable_ex:0,true,2;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NB_ENABLE / RX_NB_ENABLE_EX</td>
+          <td>Bidirectional</td>
+          <td><code>rx_nb_enable</code> exposes simple on/off NB state. <code>rx_nb_enable_ex</code> adds the selected NB algorithm index.</td>
+          <td><code>rx_nb_enable_ex:0,true,1;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NF_ENABLE</td>
+          <td>Bidirectional</td>
+          <td>Maps to Thetis manual notch, MNF, not MNF+ notch creation.</td>
+          <td><code>rx_nf_enable:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_STEP_ATT_ENABLED_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for step attenuator enable state by receiver.</td>
+          <td><code>rx_step_att_enabled_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_STEP_ATT_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for step attenuator value in dB by receiver. This field defines attenuation directly, so values are positive dB attenuation amounts.</td>
+          <td><code>rx_step_att_ex:0,10;</code></td>
+        </tr>
+        <tr>
+          <td>RX_PREAMP_ATT_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for preamp gain behaviour. This field is gain oriented; when the preamp path is being used as an attenuator, attenuation is expressed using negative values. Positive values are currently ignored by Thetis.</td>
+          <td><code>rx_preamp_att_ex:0,-10;</code></td>
+        </tr>
+        <tr>
+          <td>RX_CTUN_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for CTUN state by receiver.</td>
+          <td><code>rx_ctun_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>FM_DEVIATION_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for FM deviation selection by receiver query context. Current supported set values are <code>2500</code> and <code>5000</code> Hz.</td>
+          <td><code>fm_deviation_ex:0,2500;</code></td>
+        </tr>
+        <tr>
+          <td>AGC_AUTO_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for AGC auto mode enable state by receiver.</td>
+          <td><code>agc_auto_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>TX_FILTER_BAND_EX</td>
+          <td>Bidirectional</td>
+          <td>Thetis extension for TX filter low/high edges. Query with no arguments, or set with low/high values in Hz. Thetis normalises values to non-negative low/high order and enforces a minimum 100 Hz span.</td>
+          <td><code>tx_filter_band_ex:100,2900;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>VFO_LOCK Routing</h3>
+      <p>When RX2 is disabled, <code>vfo_lock:0,0</code> refers to VFO A and <code>vfo_lock:0,1</code> refers to VFO B. When RX2 is enabled, <code>vfo_lock:0,0</code> stays on VFO A and VFO B is represented on receiver 1 using <code>vfo_lock:1,0</code> and <code>vfo_lock:1,1</code>.</p>
+    </div>
+
+    <div class="box">
+      <h3>Step Attenuator And Preamp Convention</h3>
+      <ul>
+        <li><code>rx_step_att_ex</code> defines attenuation in dB, so client values are positive attenuation amounts such as <code>10</code>, <code>20</code>, or <code>30</code>.</li>
+        <li><code>rx_preamp_att_ex</code> defines the amount of gain on the preamp path. When that path is being used as attenuation, the attenuation is represented by negative values such as <code>-10</code> or <code>-20</code>.</li>
+        <li>Values above <code>0</code> are currently ignored for <code>rx_preamp_att_ex</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h3>3.3 Display Stream Control</h3>
+    <p>Thetis implements a display stream control family that drives receiver spectrum subscriptions. Display output is sent as compact WebSocket binary payloads described in section 3.4.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:19%;">Command</th>
+          <th style="width:15%;">Direction</th>
+          <th>Thetis behaviour</th>
+          <th style="width:25%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DISPLAY_START</td>
+          <td>Bidirectional</td>
+          <td>Starts or reconfigures a display stream subscription for receiver <code>0</code> or <code>1</code>. The current implementation requires the 11-field form <code>&lt;rx&gt;,&lt;pixels&gt;,&lt;fps&gt;,&lt;fft&gt;,&lt;window&gt;,&lt;detector&gt;,&lt;average_mode&gt;,&lt;average_time_ms&gt;,&lt;one_hz&gt;,&lt;min_dbm&gt;,&lt;max_dbm&gt;</code>.</td>
+          <td><code>display_start:0,1024,15,8192,4,0,2,250.0,true,-140.0,-20.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_STOP</td>
+          <td>Bidirectional</td>
+          <td>Stops the display stream subscription for the selected receiver. When the last subscription is removed, the internal spectrum processor is disposed for that TCI client.</td>
+          <td><code>display_stop:0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_PIXELS</td>
+          <td>Bidirectional</td>
+          <td>Sets the display line width. Thetis accepts values in the range <code>64</code> through <code>32768</code>.</td>
+          <td><code>display_pixels:0,2048;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ZOOM</td>
+          <td>Bidirectional</td>
+          <td>Sets zoom level from <code>0.0</code> to <code>1.0</code> and a zoom centre frequency in Hz. Thetis replies with the normalised zoom and also sends <code>display_pan</code> with the resulting pan value.</td>
+          <td><code>display_zoom:0,0.650000,7074000;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_PAN</td>
+          <td>Bidirectional</td>
+          <td>Sets pan position from <code>0.0</code> to <code>1.0</code>. While zoomed in, this clears the explicit zoom centre tracking state for the receiver.</td>
+          <td><code>display_pan:0,0.500000;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DELTA_MODE</td>
+          <td>Control</td>
+          <td>Enables or disables delta capable display publication for the selected active display subscription. When disabled, block delta mode is also disabled.</td>
+          <td><code>display_delta_mode:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_BLOCK_DELTA_MODE</td>
+          <td>Control</td>
+          <td>Enables or disables block delta display publication. Enabling block delta also enables normal delta mode for that receiver.</td>
+          <td><code>display_block_delta_mode:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ACCURACY_MODE</td>
+          <td>Control</td>
+          <td>Sets display compression tolerance. Values <code>0</code> through <code>4</code> are quantised byte thresholds. Value <code>5</code> enables an automatic threshold based on roughly 0.5 dB resolution.</td>
+          <td><code>display_accuracy_mode:0,5;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ADAPTIVE_BLOCKS</td>
+          <td>Control</td>
+          <td>Enables adaptive block size selection for block delta payloads. Thetis chooses the smallest payload from block sizes <code>64</code>, <code>32</code>, <code>16</code>, and <code>128</code>.</td>
+          <td><code>display_adaptive_blocks:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_KEYFRAME_INTERVAL</td>
+          <td>Control</td>
+          <td>Sets the maximum number of delta frames between raw frames. Values are clamped to <code>0</code> through <code>1000000</code>. <code>0</code> disables the forced keyframe interval.</td>
+          <td><code>display_keyframe_interval:0,30;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_QUANT_BITS</td>
+          <td>Control</td>
+          <td>Sets the number of bits used to quantise raw display samples. Thetis clamps to <code>6</code>, <code>7</code>, or <code>8</code> bits.</td>
+          <td><code>display_quant_bits:0,7;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_FRAMERATE</td>
+          <td>Bidirectional</td>
+          <td>Sets the target display update rate in frames per second. Thetis accepts values in the range <code>1</code> through <code>120</code>.</td>
+          <td><code>display_framerate:0,25;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_FFTSIZE</td>
+          <td>Bidirectional</td>
+          <td>Sets the spectrum FFT size. Thetis works within <code>4096</code> through <code>262144</code> and normalises the request to the nearest power of two in that set.</td>
+          <td><code>display_fftsize:0,16384;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_WINDOW</td>
+          <td>Bidirectional</td>
+          <td>Sets the spectrum window type index. Thetis accepts values in the range <code>0</code> through <code>6</code>.</td>
+          <td><code>display_window:0,4;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DETECTOR</td>
+          <td>Bidirectional</td>
+          <td>Sets the detector type index for the panadapter path. Thetis accepts values in the range <code>0</code> through <code>4</code>.</td>
+          <td><code>display_detector:0,1;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_AVERAGING</td>
+          <td>Bidirectional</td>
+          <td>Sets the averaging mode index. Thetis accepts values in the range <code>0</code> through <code>3</code>.</td>
+          <td><code>display_averaging:0,2;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_AVERAGE_TIME</td>
+          <td>Bidirectional</td>
+          <td>Sets averaging time in milliseconds. Thetis works within <code>1.0</code> through <code>9999.0</code> ms.</td>
+          <td><code>display_average_time:0,250.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ONE_HZ</td>
+          <td>Bidirectional</td>
+          <td>Enables or disables one hertz normalisation. Thetis accepts <code>true</code>/<code>false</code> and also <code>1</code>/<code>0</code>.</td>
+          <td><code>display_one_hz:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DBM_RANGE</td>
+          <td>Bidirectional</td>
+          <td>Sets the quantisation range used when Thetis converts display dBm values into outbound display values. Each endpoint is limited to <code>-200.0</code> through <code>200.0</code> dBm. If <code>max</code> is not greater than <code>min</code>, Thetis applies a minimum 1 dB span.</td>
+          <td><code>display_dbm_range:0,-140.0,-20.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DUPLEX</td>
+          <td>Notification</td>
+          <td>Reports the Thetis display duplex state. In local MOX, a receiver display shows TX data when display duplex is disabled; otherwise it continues to show receiver data.</td>
+          <td><code>display_duplex:false;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>Display Setting Examples</h3>
+      <ul>
+        <li>Start a compact RX1 feed: <code>display_start:0,1024,15,8192,4,0,0,120.0,false,-140.0,-20.0;</code></li>
+        <li>Enable delta and block delta compression: <code>display_delta_mode:0,true;</code> then <code>display_block_delta_mode:0,true;</code></li>
+        <li>Use adaptive blocks and 7 bit raw quantisation: <code>display_adaptive_blocks:0,true;</code> then <code>display_quant_bits:0,7;</code></li>
+        <li>Force a raw keyframe roughly every 30 display updates: <code>display_keyframe_interval:0,30;</code></li>
+        <li>Zoom to a frequency and then pan within the zoomed view: <code>display_zoom:0,0.650000,7074000;</code> then <code>display_pan:0,0.500000;</code></li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>Display Stream Notes</h3>
+      <ul>
+        <li>Thetis exposes display subscriptions for receiver indexes <code>0</code> and <code>1</code> only.</li>
+        <li>The current <code>display_start</code> handler requires exactly 11 arguments. The older 6-field form is no longer accepted by this implementation.</li>
+        <li>Changing pixels, frame rate, FFT size, window, detector, averaging, average time, one hertz state, dBm range, zoom, pan, or display compression settings resets the saved prior frame, so the next update is sent as a raw compact display payload.</li>
+        <li>When the display frequency span or left edge changes, Thetis resets display compression state and sends a raw compact display payload.</li>
+        <li>All display compression controls apply to an existing active subscription. Start the display stream before setting compression controls.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h3>3.4 Compact Display Binary Payload</h3>
+    <p>Thetis display binary frames now use a compact display payload rather than the earlier 64-byte stream header used by audio and IQ streams. The payload starts with the ASCII magic bytes <code>T</code> and <code>D</code>, followed by a one byte version field.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:20%;">Offset</th>
+          <th style="width:23%;">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>0</code></td>
+          <td>Magic 0</td>
+          <td><code>84</code>, ASCII <code>T</code></td>
+        </tr>
+        <tr>
+          <td><code>1</code></td>
+          <td>Magic 1</td>
+          <td><code>68</code>, ASCII <code>D</code></td>
+        </tr>
+        <tr>
+          <td><code>2</code></td>
+          <td>Version</td>
+          <td><code>1</code></td>
+        </tr>
+        <tr>
+          <td><code>3</code></td>
+          <td>Payload kind</td>
+          <td><code>0</code> = raw, <code>1</code> = delta, <code>2</code> = block delta, <code>3</code> = use previous frame</td>
+        </tr>
+        <tr>
+          <td><code>4</code></td>
+          <td>Receiver</td>
+          <td>Receiver index, normally <code>0</code> or <code>1</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Raw Payload Kind 0</h3>
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:20%;">Offset</th>
+          <th style="width:23%;">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>5</code></td>
+          <td>Quantisation bits</td>
+          <td><code>6</code>, <code>7</code>, or <code>8</code></td>
+        </tr>
+        <tr>
+          <td><code>6..9</code></td>
+          <td>Hz left</td>
+          <td>Little endian unsigned 32 bit value for the left edge of the display span</td>
+        </tr>
+        <tr>
+          <td><code>10..13</code></td>
+          <td>Hz span</td>
+          <td>Little endian unsigned 32 bit value for the display span width</td>
+        </tr>
+        <tr>
+          <td><code>14..17</code></td>
+          <td>Logical pixel count</td>
+          <td>Little endian unsigned 32 bit value for the number of display points</td>
+        </tr>
+        <tr>
+          <td><code>18..</code></td>
+          <td>Sample payload</td>
+          <td>Raw quantised display samples. At 8 bits, this is one byte per pixel. At 6 or 7 bits, values are packed most significant bit first.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Delta Payload Kind 1</h3>
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:20%;">Offset</th>
+          <th style="width:23%;">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>5</code></td>
+          <td>Delta bits</td>
+          <td>Bits used for each signed delta. Thetis uses <code>2</code> through <code>7</code> according to the largest per pixel change.</td>
+        </tr>
+        <tr>
+          <td><code>6..</code></td>
+          <td>Delta payload</td>
+          <td>Each value is packed most significant bit first and is decoded as <code>packed - ((1 &lt;&lt; (bits - 1)) - 1)</code>, then added to the previous frame value.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Block Delta Payload Kind 2</h3>
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:20%;">Offset</th>
+          <th style="width:23%;">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>5</code></td>
+          <td>Block size</td>
+          <td>Block size used for this payload. Default is <code>64</code>. With adaptive blocks enabled Thetis may use <code>64</code>, <code>32</code>, <code>16</code>, or <code>128</code>.</td>
+        </tr>
+        <tr>
+          <td><code>6..</code></td>
+          <td>Block mode table and data</td>
+          <td>The first <code>ceil(pixel_count / block_size)</code> bytes are block modes. Mode <code>0</code> means raw block bytes follow, mode <code>1</code> means unchanged block, and modes <code>2</code> through <code>7</code> mean a packed delta block using that number of delta bits.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Use Previous Frame Payload Kind 3</h3>
+    <p>Kind <code>3</code> carries only the common 5 byte compact header. It tells the client to reuse the previous decoded display frame for that receiver. Thetis emits this kind only when delta mode is enabled and the new quantised display frame is unchanged after the active accuracy threshold is applied.</p>
+
+    <div class="box">
+      <h3>Client Decode Rules</h3>
+      <ul>
+        <li>Expect the first frame after <code>display_start</code> to be raw because no previous frame exists.</li>
+        <li>Store the latest decoded frame for each receiver. Delta, block delta, and use previous frame payloads are relative to that stored frame.</li>
+        <li>Use the most recent raw payload metadata for pixel count, left edge, span, and quantisation depth until the next raw payload arrives.</li>
+        <li>If the client loses any compact display binary frame, it should ignore later delta or block delta payloads for that receiver until the next raw payload arrives.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h3>3.5 Sensors, Audio Negotiation, And Opus Codec Settings</h3>
+    <p>The Thetis TCI server supports optional sensor polling plus negotiated RX/TX audio streaming. Current code supports both PCM audio transport and Opus codec negotiation.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:21%;">Command</th>
+          <th style="width:15%;">Direction</th>
+          <th>Thetis behaviour</th>
+          <th style="width:24%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RX_SENSORS_ENABLE</td>
+          <td>Control</td>
+          <td>Enables or disables periodic RX sensor reports. Optional second argument sets the interval in milliseconds.</td>
+          <td><code>rx_sensors_enable:true,200;</code></td>
+        </tr>
+        <tr>
+          <td>RX_SENSORS_ENABLE_EX</td>
+          <td>Control</td>
+          <td>Enables or disables compact per receiver/channel RX sensor reports. Fields are receiver index, channel index, enabled state, and optional interval in milliseconds. This causes Thetis to publish the short <code>sr</code> report for the selected pair.</td>
+          <td><code>rx_sensors_enable_ex:0,0,true,200;</code></td>
+        </tr>
+        <tr>
+          <td>SR</td>
+          <td>Reply</td>
+          <td>Compact RX sensor report emitted by the extended RX sensor subscription. Fields are receiver index, channel index, signal dBm, average signal dBm, peak bin signal dBm, and noise floor dBm.</td>
+          <td><code>sr:0,0,-71.5,-73.2,-69.8,-118.4;</code></td>
+        </tr>
+        <tr>
+          <td>TX_SENSORS_ENABLE</td>
+          <td>Control</td>
+          <td>Enables or disables periodic TX sensor reports. Optional second argument sets the interval in milliseconds. Reports use <code>tx_sensors:&lt;rx&gt;,&lt;mic_dbm&gt;,&lt;rms_watts&gt;,&lt;peak_watts&gt;,&lt;swr&gt;;</code>.</td>
+          <td><code>tx_sensors_enable:true,200;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_RECONFIGURE_BEGIN</td>
+          <td>Control</td>
+          <td>Begins a grouped audio reconfiguration. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
+          <td><code>audio_reconfigure_begin;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_RECONFIGURE_END</td>
+          <td>Control</td>
+          <td>Ends a grouped audio reconfiguration. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
+          <td><code>audio_reconfigure_end;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_SAMPLERATE</td>
+          <td>Bidirectional</td>
+          <td>Sets negotiated audio sample rate. In PCM mode Thetis accepts the standard TCI set <code>8000</code>, <code>12000</code>, <code>24000</code>, and <code>48000</code>. In Opus mode it also accepts <code>16000</code>.</td>
+          <td><code>audio_samplerate:48000;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_CODEC</td>
+          <td>Bidirectional</td>
+          <td>Selects the negotiated audio codec family. Thetis accepts <code>pcm</code> and <code>opus</code>.</td>
+          <td><code>audio_codec:opus;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_STREAM_SAMPLE_TYPE</td>
+          <td>Bidirectional</td>
+          <td>Selects TX/RX audio sample encoding. Thetis accepts <code>int16</code>, <code>int24</code>, <code>int32</code>, <code>float32</code>, and also <code>opus</code> as a shorthand that switches the codec family to Opus.</td>
+          <td><code>audio_stream_sample_type:float32;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_STREAM_CHANNELS</td>
+          <td>Bidirectional</td>
+          <td>Selects audio stream channel count. Thetis accepts <code>1</code> or <code>2</code>.</td>
+          <td><code>audio_stream_channels:2;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_STREAM_SAMPLES</td>
+          <td>Bidirectional</td>
+          <td>Selects the negotiated audio packet sample count. Thetis accepts values from <code>20</code> to <code>4096</code>. In Opus mode, only sizes that map to a valid Opus frame duration at the current sample rate are applied.</td>
+          <td><code>audio_stream_samples:2048;</code></td>
+        </tr>
+        <tr>
+          <td>TX_STREAM_AUDIO_BUFFERING</td>
+          <td>Bidirectional</td>
+          <td>Controls TX audio buffering in milliseconds. Thetis accepts values from <code>50</code> to <code>500</code>.</td>
+          <td><code>tx_stream_audio_buffering:50;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_APPLICATION</td>
+          <td>Bidirectional</td>
+          <td>Sets Opus application mode. Thetis accepts <code>audio</code>, <code>voip</code>, and <code>lowdelay</code>.</td>
+          <td><code>audio_opus_application:audio;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_SIGNAL</td>
+          <td>Bidirectional</td>
+          <td>Sets Opus signal hint. Thetis accepts <code>auto</code>, <code>voice</code>, and <code>music</code>.</td>
+          <td><code>audio_opus_signal:voice;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_BANDWIDTH</td>
+          <td>Bidirectional</td>
+          <td>Sets the Opus bandwidth hint. Thetis accepts <code>auto</code>, <code>narrowband</code>, <code>mediumband</code>, <code>wideband</code>, <code>superwideband</code>, and <code>fullband</code>.</td>
+          <td><code>audio_opus_bandwidth:fullband;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_BITRATE</td>
+          <td>Bidirectional</td>
+          <td>Sets Opus target bitrate in bits per second. Thetis works within <code>6000</code> through <code>510000</code> bps.</td>
+          <td><code>audio_opus_bitrate:64000;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_VBR</td>
+          <td>Bidirectional</td>
+          <td>Enables or disables Opus VBR mode.</td>
+          <td><code>audio_opus_vbr:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_CVBR</td>
+          <td>Bidirectional</td>
+          <td>Enables or disables constrained VBR mode.</td>
+          <td><code>audio_opus_cvbr:false;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_COMPLEXITY</td>
+          <td>Bidirectional</td>
+          <td>Sets Opus encoder complexity. Thetis accepts values in the range <code>0</code> through <code>10</code>.</td>
+          <td><code>audio_opus_complexity:10;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_FEC</td>
+          <td>Bidirectional</td>
+          <td>Enables or disables in band forward error correction.</td>
+          <td><code>audio_opus_fec:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_DTX</td>
+          <td>Bidirectional</td>
+          <td>Enables or disables Opus DTX.</td>
+          <td><code>audio_opus_dtx:false;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_PACKET_LOSS</td>
+          <td>Bidirectional</td>
+          <td>Sets expected packet loss percentage for encoder tuning. Thetis accepts values in the range <code>0</code> through <code>100</code>.</td>
+          <td><code>audio_opus_packet_loss:5;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_FRAME_MS</td>
+          <td>Bidirectional</td>
+          <td>Sets Opus frame duration in milliseconds. Thetis normalises to <code>2.5</code>, <code>5</code>, <code>10</code>, <code>20</code>, <code>40</code>, or <code>60</code> ms, then updates <code>audio_stream_samples</code> to the matching sample count.</td>
+          <td><code>audio_opus_frame_ms:20.0;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>Grouped Audio Reconfiguration</h3>
+      <p>Clients can wrap several audio negotiation commands between <code>audio_reconfigure_begin;</code> and <code>audio_reconfigure_end;</code>. This lets Thetis defer RX audio compression reset and queued TX audio clearing until all related settings have been applied.</p>
+      <p class="small"><code>audio_reconfigure_begin;</code> can be nested. The deferred reset only occurs when matching <code>audio_reconfigure_end;</code> calls reduce the depth back to zero.</p>
+    </div>
+
+    <div class="box">
+      <h3>Sensor Polling Behaviour</h3>
+      <ul>
+        <li>Requested RX and TX sensor intervals are limited by Thetis to <code>30</code> through <code>1000</code> ms.</li>
+        <li>When sensors are enabled, Thetis fires the first timer immediately, then continues at the negotiated interval.</li>
+        <li>Normal RX reports are published as <code>rx_sensors</code>, <code>rx_channel_sensors</code>, and Thetis <code>rx_channel_sensors_ex</code>.</li>
+        <li>Extended RX sensor subscriptions use <code>rx_sensors_enable_ex:&lt;rx&gt;,&lt;channel&gt;,&lt;enabled&gt;[,&lt;interval_ms&gt;];</code> and publish the compact <code>sr</code> report with signal, average signal, peak bin, and noise floor values.</li>
+        <li>TX reports are published as <code>tx_sensors</code> with mic level dBm, RMS power watts, peak power watts, and SWR, and are currently mirrored on both receiver indexes for compatibility.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>Audio Negotiation Defaults</h3>
+      <ul>
+        <li>Thetis starts with <code>audio_codec:pcm;</code>, <code>audio_stream_sample_type:float32;</code>, <code>audio_stream_channels:2;</code>, and <code>tx_stream_audio_buffering:50;</code>.</li>
+        <li>The default PCM audio sample rate is <code>48000</code>. The default sample count helper produces <code>256</code> at 8 kHz, <code>512</code> at 12 kHz, <code>1024</code> at 24 kHz, and <code>2048</code> at 48 kHz.</li>
+        <li>In Opus mode, <code>16000</code> is also accepted and maps to a default sample count of <code>512</code>.</li>
+        <li>When Opus is selected, Thetis publishes sample type <code>opus</code> and keeps <code>audio_stream_samples</code> aligned with the active Opus frame duration.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>Frame Size Examples</h3>
+      <ul>
+        <li>At <code>48000</code> Hz, <code>audio_opus_frame_ms:2.5;</code> maps to <code>audio_stream_samples:120;</code>.</li>
+        <li>At <code>48000</code> Hz, <code>audio_opus_frame_ms:10.0;</code> maps to <code>audio_stream_samples:480;</code>.</li>
+        <li>At <code>48000</code> Hz, <code>audio_opus_frame_ms:20.0;</code> maps to <code>audio_stream_samples:960;</code>.</li>
+        <li>At <code>16000</code> Hz, <code>audio_opus_frame_ms:20.0;</code> maps to <code>audio_stream_samples:320;</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h3>3.6 CW And KEYER Support Via CWX</h3>
+    <p>Thetis implements the TCI CW family using CWX as the execution engine. This keeps remote CW behaviour aligned with the native Thetis CWX subsystem rather than creating a second CW transmit path.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:19%;">Command</th>
+          <th style="width:15%;">Direction</th>
+          <th>Thetis behaviour</th>
+          <th style="width:25%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CW_MACROS_SPEED</td>
+          <td>Bidirectional</td>
+          <td>Controls CWX macro speed.</td>
+          <td><code>cw_macros_speed:30;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS_DELAY</td>
+          <td>Bidirectional</td>
+          <td>Controls CWX PTT delay.</td>
+          <td><code>cw_macros_delay:100;</code></td>
+        </tr>
+        <tr>
+          <td>CW_KEYER_SPEED</td>
+          <td>Bidirectional</td>
+          <td>Controls Thetis keyer speed.</td>
+          <td><code>cw_keyer_speed:24;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS_SPEED_UP</td>
+          <td>Unidirectional</td>
+          <td>Raises CWX macro speed.</td>
+          <td><code>cw_macros_speed_up:5;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS_SPEED_DOWN</td>
+          <td>Unidirectional</td>
+          <td>Lowers CWX macro speed.</td>
+          <td><code>cw_macros_speed_down:3;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS</td>
+          <td>Bidirectional use</td>
+          <td>Sends CW text through CWX.</td>
+          <td><code>cw_macros:0,cq cq de mw0lge;</code></td>
+        </tr>
+        <tr>
+          <td>CW_TERMINAL</td>
+          <td>Bidirectional use</td>
+          <td>Enables or clears terminal mode in the Thetis CW controller. Thetis expects the receiver qualified form validated against ExpertSDR 3.</td>
+          <td><code>cw_terminal:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MSG</td>
+          <td>Bidirectional use</td>
+          <td>Structured prefix / callsign / suffix send using CWX.</td>
+          <td><code>cw_msg:0,tu,mw0lge,599 001;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS_STOP</td>
+          <td>Unidirectional</td>
+          <td>Stops the active TCI CW owner and releases TX even if terminal mode remains enabled.</td>
+          <td><code>cw_macros_stop;</code></td>
+        </tr>
+        <tr>
+          <td>CW_MACROS_EMPTY</td>
+          <td>Notification</td>
+          <td>Sent in terminal mode when the last queued character starts transmitting. Thetis emits the receiver qualified form validated against ExpertSDR 3.</td>
+          <td><code>cw_macros_empty:0;</code></td>
+        </tr>
+        <tr>
+          <td>CALLSIGN_SEND</td>
+          <td>Notification</td>
+          <td>Sent when the callsign portion of <code>cw_msg</code> has been transmitted.</td>
+          <td><code>callsign_send:mw0lge;</code></td>
+        </tr>
+        <tr>
+          <td>KEYER</td>
+          <td>Unidirectional</td>
+          <td>Uses the CWX key path for timed key down / key up operation.</td>
+          <td><code>keyer:0,true,0;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>Observed CW Protocol 2.0 Deviations</h3>
+      <ul>
+        <li>The published TCI 2.0 PDF shows <code>cw_terminal:true;</code> and <code>cw_terminal:false;</code>, but ExpertSDR 3 v1.1.7 uses receiver qualified forms such as <code>cw_terminal:0,true;</code> and <code>cw_terminal:0,false;</code>.</li>
+        <li>The published TCI 2.0 PDF shows <code>cw_macros_empty;</code>, but ExpertSDR 3 v1.1.7 emits <code>cw_macros_empty:0;</code>.</li>
+        <li>Thetis follows the receiver qualified forms above for compatibility with observed Expert Electronics Protocol 2.0 behaviour.</li>
+        <li>In terminal mode, Thetis remains in TX after the macro queue drains until an explicit <code>cw_terminal:&lt;rx&gt;,false;</code> or <code>cw_macros_stop;</code> is received.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>KEYER Behaviour In Thetis</h3>
+      <ul>
+        <li><code>keyer</code> is implemented through CWX, not through the macro text queue.</li>
+        <li>The selected TX side must already be in <code>cwl</code> or <code>cwu</code>.</li>
+        <li><code>keyer:0,...</code> selects TX on VFO A. If RX2 is enabled and TX is currently on VFO B, Thetis forces TX back to VFO A first.</li>
+        <li><code>keyer:1,...</code> only operates when RX2 is enabled and forces TX to VFO B before the CW mode check.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>4 Standard Reconciliation And Thetis Extensions</h2>
+    <p class="section-intro">This section separates official Expert Electronics TCI 2.0 commands from messages that are currently Thetis specific. The official protocol is still the base reference; this table records how the current Thetis server differs from, extends, or omits parts of that base.</p>
+
+    <h3>4.1 Official 2.0 Commands That Are Not Thetis Custom Commands</h3>
+    <p>The uploaded official TCI 2.0 text already defines several commands that were previously listed in this supplement as custom. They remain documented elsewhere only where Thetis behaviour differs.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:28%;">Command</th>
+          <th style="width:18%;">Official 2.0 status</th>
+          <th>Thetis note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SPOT_CLEAR</td>
+          <td>Standard</td>
+          <td>Official TCI 2.0 command for deleting all spots from the panorama. Thetis implements it through its spot manager.</td>
+        </tr>
+        <tr>
+          <td>SPOT_DELETE</td>
+          <td>Standard</td>
+          <td>Official TCI 2.0 command for deleting a single spot. Thetis accepts one argument and passes it to the spot manager delete path.</td>
+        </tr>
+        <tr>
+          <td>CLICKED_ON_SPOT</td>
+          <td>Standard notification</td>
+          <td>Official legacy spot click notification. Thetis emits <code>clicked_on_spot:&lt;callsign&gt;,&lt;frequency_hz&gt;;</code>.</td>
+        </tr>
+        <tr>
+          <td>RX_CLICKED_ON_SPOT</td>
+          <td>Standard notification</td>
+          <td>Official receiver/channel qualified spot click notification. Thetis emits receiver index, channel index, callsign, and frequency.</td>
+        </tr>
+        <tr>
+          <td>LINE_OUT_START / LINE_OUT_STOP</td>
+          <td>Standard</td>
+          <td>Official line out stream controls. Thetis maps the receiver argument onto its available line out / VAC controls when the setup form is available.</td>
+        </tr>
+        <tr>
+          <td>SET_IN_FOCUS</td>
+          <td>Standard</td>
+          <td>Official client to server focus request. Thetis brings the console form to the foreground.</td>
+        </tr>
+        <tr>
+          <td>VFO_LOCK</td>
+          <td>Standard in TCI 2.0</td>
+          <td>Thetis supports the receiver/channel form and maps it onto VFO A / VFO B locks, with RX2 routing rules documented in section 3.2.</td>
+        </tr>
+        <tr>
+          <td>RX_CHANNEL_SENSORS</td>
+          <td>Standard in TCI 2.0</td>
+          <td>Thetis emits the official three-field report and also emits the extended <code>rx_channel_sensors_ex</code> report when normal RX sensors are due.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Official 2.0 Commands Not Currently Parsed Or Emitted By Thetis</h3>
+    <p>The current <code>TCIServer.cs</code> does not appear to implement the following official command families. Clients should not rely on them when targeting Thetis unless support is added later.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:28%;">Official command</th>
+          <th>Thetis status in current source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RX_NB_PARAM</td>
+          <td>Not parsed as a client command in the current server. Thetis exposes NB state through <code>rx_nb_enable</code> and <code>rx_nb_enable_ex</code>.</td>
+        </tr>
+        <tr>
+          <td>RX_ANC_ENABLE</td>
+          <td>Not parsed as a client command in the current server.</td>
+        </tr>
+        <tr>
+          <td>RX_DSE_ENABLE</td>
+          <td>Not parsed as a client command in the current server.</td>
+        </tr>
+        <tr>
+          <td>LINE_OUT_RECORDER_START / SAVE / BREAK</td>
+          <td>Not parsed as client commands in the current server.</td>
+        </tr>
+        <tr>
+          <td>TX_FOOTSWITCH</td>
+          <td>No current Thetis sender was found for the official notification.</td>
+        </tr>
+        <tr>
+          <td>CHANNEL_COUNT</td>
+          <td>The official initialisation command is singular. Thetis and observed ExpertSDR3 traffic use <code>channels_count</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>4.3 Thetis Extension Commands Not In The Official 2.0 Text</h3>
+    <p>The commands below are implemented by the current Thetis TCI server but are not listed as official commands in the uploaded Expert Electronics TCI 2.0 text.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Command</th>
+          <th style="width:16%;">Type</th>
+          <th>Purpose</th>
+          <th style="width:24%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CHANNELS_COUNT</td>
+          <td>Initialization reply</td>
+          <td>Thetis emits the plural initialisation message <code>channels_count:&lt;count&gt;;</code>. The official TCI 2.0 text names the command <code>channel_count</code>. Client code should accept the Thetis spelling when talking to Thetis.</td>
+          <td><code>channels_count:2;</code></td>
+        </tr>
+        <tr>
+          <td>RX_ENABLE</td>
+          <td>Send / reply</td>
+          <td>Thetis receiver enable state. RX1 is effectively always available; RX2 can be enabled or disabled. This command appears in ExpertSDR3 style startup traffic but is not listed in the uploaded official 2.0 command list.</td>
+          <td><code>rx_enable:1,true;</code></td>
+        </tr>
+        <tr>
+          <td>TX_FILTER_BAND_EX</td>
+          <td>Send / reply</td>
+          <td>Thetis TX filter edge extension. Fields are low edge in Hz and high edge in Hz. Thetis normalises both values to non-negative order and enforces a minimum 100 Hz span.</td>
+          <td><code>tx_filter_band_ex:100,2900;</code></td>
+        </tr>
+        <tr>
+          <td>TX_FREQUENCY_EX</td>
+          <td>Notification</td>
+          <td>Extended TX frequency notification. Fields are TX frequency in Hz, Thetis band token, RX2 enabled flag, and TX on VFO B flag.</td>
+          <td><code>tx_frequency_ex:7070468,b40m,false,false;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NR_ENABLE_EX</td>
+          <td>Send / reply</td>
+          <td>Extended RX noise reduction state. Fields are receiver index, enabled state, and NR selection index. Thetis accepts NR selection indexes <code>0</code> through <code>4</code>.</td>
+          <td><code>rx_nr_enable_ex:0,true,2;</code></td>
+        </tr>
+        <tr>
+          <td>RX_NB_ENABLE_EX</td>
+          <td>Send / reply</td>
+          <td>Extended RX noise blanker state. Fields are receiver index, enabled state, and NB selection index. Thetis accepts NB selection indexes <code>0</code> through <code>2</code>.</td>
+          <td><code>rx_nb_enable_ex:0,true,1;</code></td>
+        </tr>
+        <tr>
+          <td>RX_STEP_ATT_ENABLED_EX</td>
+          <td>Send / reply</td>
+          <td>Step attenuator enable state by receiver. The set path requires the Thetis setup form to be available.</td>
+          <td><code>rx_step_att_enabled_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_STEP_ATT_EX</td>
+          <td>Send / reply</td>
+          <td>Step attenuator value by receiver. The value is a positive attenuation value in dB.</td>
+          <td><code>rx_step_att_ex:0,10;</code></td>
+        </tr>
+        <tr>
+          <td>RX_PREAMP_ATT_EX</td>
+          <td>Send / reply</td>
+          <td>Preamp attenuation extension by receiver. Thetis replies with a negative attenuation value derived from the current preamp mode. On set, positive values are ignored.</td>
+          <td><code>rx_preamp_att_ex:0,-10;</code></td>
+        </tr>
+        <tr>
+          <td>RX_CTUN_EX</td>
+          <td>Send / reply</td>
+          <td>Thetis CTUN state extension. Fields are receiver index and enabled state.</td>
+          <td><code>rx_ctun_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_SYNC_EX</td>
+          <td>Send / reply</td>
+          <td>Thetis VFO sync state. Use no arguments to request the current state.</td>
+          <td><code>vfo_sync_ex:true;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_SWAP_EX</td>
+          <td>Send</td>
+          <td>Immediately swaps the active VFO assignments in Thetis.</td>
+          <td><code>vfo_swap_ex;</code></td>
+        </tr>
+        <tr>
+          <td>FM_DEVIATION_EX</td>
+          <td>Send / reply</td>
+          <td>Thetis FM deviation extension. Current accepted set values are <code>2500</code> and <code>5000</code> Hz.</td>
+          <td><code>fm_deviation_ex:0,2500;</code></td>
+        </tr>
+        <tr>
+          <td>AGC_AUTO_EX</td>
+          <td>Send / reply</td>
+          <td>Thetis AGC auto enable extension. Fields are receiver index and enabled state.</td>
+          <td><code>agc_auto_ex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>RX_CHANNEL_SENSORS_EX</td>
+          <td>Notification</td>
+          <td>Extended channel sensor report sent with the standard channel sensor report during normal RX sensor subscriptions. Fields are receiver index, channel index, current signal dBm, average signal dBm, and peak bin signal dBm.</td>
+          <td><code>rx_channel_sensors_ex:0,0,-71.5,-73.2,-69.8;</code></td>
+        </tr>
+        <tr>
+          <td>RX_SENSORS_ENABLE_EX</td>
+          <td>Send</td>
+          <td>Compact per receiver/channel RX sensor subscription. Fields are receiver index, channel index, enabled state, and optional interval in milliseconds. The interval is clamped to the same <code>30</code> through <code>1000</code> ms range as normal sensors.</td>
+          <td><code>rx_sensors_enable_ex:0,0,true,200;</code></td>
+        </tr>
+        <tr>
+          <td>SR</td>
+          <td>Notification</td>
+          <td>Short compact RX sensor report emitted by <code>rx_sensors_enable_ex</code>. Fields are receiver index, channel index, signal dBm, average signal dBm, peak bin signal dBm, and noise floor dBm.</td>
+          <td><code>sr:0,0,-71.5,-73.2,-69.8,-118.4;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_START</td>
+          <td>Send / reply</td>
+          <td>Starts or reconfigures a Thetis display stream subscription. Current Thetis requires the 11-field form documented in section 3.3.</td>
+          <td><code>display_start:0,1024,15,8192,4,0,2,250.0,true,-140.0,-20.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_STOP</td>
+          <td>Send / reply</td>
+          <td>Stops the selected display stream subscription.</td>
+          <td><code>display_stop:0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_PIXELS</td>
+          <td>Send / reply</td>
+          <td>Sets display line width. Thetis clamps values to <code>64</code> through <code>32768</code>.</td>
+          <td><code>display_pixels:0,2048;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ZOOM</td>
+          <td>Send / reply</td>
+          <td>Sets zoom level and centre frequency. Thetis replies with the normalised zoom and follows with <code>display_pan</code>.</td>
+          <td><code>display_zoom:0,0.650000,7074000;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_PAN</td>
+          <td>Send / reply</td>
+          <td>Sets pan position from <code>0.0</code> through <code>1.0</code>.</td>
+          <td><code>display_pan:0,0.500000;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_FRAMERATE</td>
+          <td>Send / reply</td>
+          <td>Sets requested display frame rate. Thetis clamps to <code>1</code> through <code>120</code> fps.</td>
+          <td><code>display_framerate:0,25;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_FFTSIZE</td>
+          <td>Send / reply</td>
+          <td>Sets the display FFT size. The value is normalised by the spectrum processor.</td>
+          <td><code>display_fftsize:0,8192;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_WINDOW</td>
+          <td>Send / reply</td>
+          <td>Sets display window type. Thetis clamps to <code>0</code> through <code>6</code>.</td>
+          <td><code>display_window:0,4;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DETECTOR</td>
+          <td>Send / reply</td>
+          <td>Sets display detector type. Thetis clamps to <code>0</code> through <code>4</code>.</td>
+          <td><code>display_detector:0,0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_AVERAGING</td>
+          <td>Send / reply</td>
+          <td>Sets display average mode. Thetis clamps to <code>0</code> through <code>3</code>.</td>
+          <td><code>display_averaging:0,2;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_AVERAGE_TIME</td>
+          <td>Send / reply</td>
+          <td>Sets display average time in milliseconds. Thetis clamps to its supported tau range.</td>
+          <td><code>display_average_time:0,250.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ONE_HZ</td>
+          <td>Send / reply</td>
+          <td>Enables or disables one hertz normalisation for display output.</td>
+          <td><code>display_one_hz:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DBM_RANGE</td>
+          <td>Send / reply</td>
+          <td>Sets display min and max dBm values used for quantisation and client scaling.</td>
+          <td><code>display_dbm_range:0,-140.0,-20.0;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DELTA_MODE</td>
+          <td>Send / reply</td>
+          <td>Enables or disables delta capable display publication. Disabling it also disables block delta mode.</td>
+          <td><code>display_delta_mode:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_BLOCK_DELTA_MODE</td>
+          <td>Send / reply</td>
+          <td>Enables or disables block delta display publication. Enabling it also enables normal delta mode.</td>
+          <td><code>display_block_delta_mode:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ACCURACY_MODE</td>
+          <td>Send / reply</td>
+          <td>Sets display compression tolerance. Values <code>0</code> through <code>4</code> are byte thresholds; <code>5</code> selects automatic tolerance.</td>
+          <td><code>display_accuracy_mode:0,5;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_ADAPTIVE_BLOCKS</td>
+          <td>Send / reply</td>
+          <td>Enables adaptive block size selection for block delta frames.</td>
+          <td><code>display_adaptive_blocks:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_KEYFRAME_INTERVAL</td>
+          <td>Send / reply</td>
+          <td>Sets the maximum number of delta frames between raw frames. <code>0</code> disables the forced keyframe interval.</td>
+          <td><code>display_keyframe_interval:0,30;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_QUANT_BITS</td>
+          <td>Send / reply</td>
+          <td>Sets raw display quantisation depth. Thetis clamps to <code>6</code>, <code>7</code>, or <code>8</code> bits.</td>
+          <td><code>display_quant_bits:0,7;</code></td>
+        </tr>
+        <tr>
+          <td>DISPLAY_DUPLEX</td>
+          <td>Notification</td>
+          <td>Reports Thetis display duplex state to display stream clients.</td>
+          <td><code>display_duplex:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_CODEC</td>
+          <td>Send / reply</td>
+          <td>Selects the negotiated audio codec family. Thetis accepts <code>pcm</code> and <code>opus</code>.</td>
+          <td><code>audio_codec:opus;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_APPLICATION</td>
+          <td>Send / reply</td>
+          <td>Sets Opus application mode. Accepted values are <code>audio</code>, <code>voip</code>, and <code>lowdelay</code>.</td>
+          <td><code>audio_opus_application:audio;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_SIGNAL</td>
+          <td>Send / reply</td>
+          <td>Sets Opus signal hint. Accepted values are <code>auto</code>, <code>voice</code>, and <code>music</code>.</td>
+          <td><code>audio_opus_signal:voice;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_BANDWIDTH</td>
+          <td>Send / reply</td>
+          <td>Sets Opus bandwidth hint. Accepted values are <code>auto</code>, <code>narrowband</code>, <code>mediumband</code>, <code>wideband</code>, <code>superwideband</code>, and <code>fullband</code>.</td>
+          <td><code>audio_opus_bandwidth:fullband;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_BITRATE</td>
+          <td>Send / reply</td>
+          <td>Sets Opus bitrate in bits per second. Thetis clamps to <code>6000</code> through <code>512000</code>.</td>
+          <td><code>audio_opus_bitrate:64000;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_VBR</td>
+          <td>Send / reply</td>
+          <td>Enables or disables Opus variable bitrate mode.</td>
+          <td><code>audio_opus_vbr:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_CVBR</td>
+          <td>Send / reply</td>
+          <td>Enables or disables constrained variable bitrate mode.</td>
+          <td><code>audio_opus_cvbr:false;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_COMPLEXITY</td>
+          <td>Send / reply</td>
+          <td>Sets Opus complexity. Thetis clamps to <code>0</code> through <code>10</code>.</td>
+          <td><code>audio_opus_complexity:10;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_FEC</td>
+          <td>Send / reply</td>
+          <td>Enables or disables Opus in band forward error correction.</td>
+          <td><code>audio_opus_fec:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_DTX</td>
+          <td>Send / reply</td>
+          <td>Enables or disables Opus DTX.</td>
+          <td><code>audio_opus_dtx:false;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_PACKET_LOSS</td>
+          <td>Send / reply</td>
+          <td>Sets expected packet loss percentage. Thetis clamps to <code>0</code> through <code>100</code>.</td>
+          <td><code>audio_opus_packet_loss:5;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_OPUS_FRAME_MS</td>
+          <td>Send / reply</td>
+          <td>Sets Opus frame duration. Thetis normalises to <code>2.5</code>, <code>5</code>, <code>10</code>, <code>20</code>, <code>40</code>, or <code>60</code> ms and updates <code>audio_stream_samples</code>.</td>
+          <td><code>audio_opus_frame_ms:20.0;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_RECONFIGURE_BEGIN</td>
+          <td>Send</td>
+          <td>Begins grouped audio reconfiguration. Thetis defers audio reset and queued TX audio clearing while the reconfiguration depth is above zero.</td>
+          <td><code>audio_reconfigure_begin;</code></td>
+        </tr>
+        <tr>
+          <td>AUDIO_RECONFIGURE_END</td>
+          <td>Send</td>
+          <td>Ends grouped audio reconfiguration. Deferred reset is applied when the nesting depth returns to zero.</td>
+          <td><code>audio_reconfigure_end;</code></td>
+        </tr>
+        <tr>
+          <td>TX_PROFILE_EX</td>
+          <td>Send / reply</td>
+          <td>Selects or reports the active Thetis TX profile. Use no argument to request the current profile.</td>
+          <td><code>tx_profile_ex:dx;</code></td>
+        </tr>
+        <tr>
+          <td>TX_PROFILES_EX</td>
+          <td>Send / reply</td>
+          <td>Returns the available Thetis TX profile names as a comma separated list.</td>
+          <td><code>tx_profiles_ex;</code></td>
+        </tr>
+        <tr>
+          <td>CALIBRATION_EX</td>
+          <td>Send / reply</td>
+          <td>Returns Thetis calibration values. Fields are receiver index, meter offset, display offset, XVTR gain offset, 6 m gain offset, and TX display offset.</td>
+          <td><code>calibration_ex:0;</code></td>
+        </tr>
+        <tr>
+          <td>RUN_CAT_EX</td>
+          <td>Send / reply</td>
+          <td>Executes one CAT command through Thetis and returns the CAT response wrapped in a TCI message. On error, Thetis replies with <code>?</code>.</td>
+          <td><code>run_cat_ex:ZZFA;</code></td>
+        </tr>
+        <tr>
+          <td>RT</td>
+          <td>Send / echo reply</td>
+          <td>Round trip timing helper. The client sends the bare command <code>rt;</code> and Thetis replies with the same bare command <code>rt;</code>. It has no arguments and is intended only as a lightweight echo for measuring total client to server to client latency.</td>
+          <td><code>rt;</code></td>
+        </tr>
+        <tr>
+          <td>SHUTDOWN_EX</td>
+          <td>Send</td>
+          <td>Requests a full Thetis shutdown.</td>
+          <td><code>shutdown_ex;</code></td>
+        </tr>
+        <tr>
+          <td>SPOT_SIMULATE_CLICK</td>
+          <td>Send</td>
+          <td>Triggers a simulated spot click in Thetis. Fields are callsign and frequency in Hz.</td>
+          <td><code>spot_simulate_click:k1abc,14074000;</code></td>
+        </tr>
+        <tr>
+          <td>SPOT arg5 JSON payload</td>
+          <td>Send</td>
+          <td>Thetis extension to the standard <code>spot</code> command. A fifth argument beginning with <code>[json]</code> can carry structured metadata.</td>
+          <td><code>spot:k1abc,cw,7025000,4294967295,[json]{...};</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>SPOT JSON Payload In Arg5</h3>
+    <p>Thetis accepts a structured JSON payload in the fifth <code>spot</code> argument by appending <code>[json]</code> immediately before the JSON object. The parser treats the JSON block as part of the same <code>spot</code> command even when it contains commas, quotes, or nested braces.</p>
+
+    <div class="box">
+      <h3>Command Format</h3>
+      <p><code>spot:&lt;callsign&gt;,&lt;mode&gt;,&lt;frequency_hz&gt;,&lt;argb&gt;,[json]{...};</code></p>
+      <p><code>spot:g4abc,cw,7025000,4294967295,[json]{"Spotter":"m0xyz","Comment":"Loud on dipole","Heading":45,"Country":"England","UtcTime":"2025-06-25T16:45:30Z","TextColor":"#ffd700","Flag":"gb","FlagSpotter":"gb","Distance":128,"IsSWL":false,"SWLSecondsToLive":0};</code></p>
+    </div>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">JSON property</th>
+          <th style="width:17%;">Type</th>
+          <th>Current Thetis behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Spotter</td>
+          <td>string</td>
+          <td>Stored and displayed as the spotter callsign or source label.</td>
+        </tr>
+        <tr>
+          <td>Comment</td>
+          <td>string</td>
+          <td>Used as the spot comment text and replaces the plain arg5 free text field when JSON is present.</td>
+        </tr>
+        <tr>
+          <td>Heading</td>
+          <td>integer</td>
+          <td>Beam heading in degrees. Values outside <code>0</code> to <code>360</code> are treated as not present.</td>
+        </tr>
+        <tr>
+          <td>Continent</td>
+          <td>string</td>
+          <td>Accepted by the JSON schema, but the current Thetis add spot path does not populate the stored spot continent from this field.</td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>string</td>
+          <td>Stored as the spot country. If omitted, Thetis may derive country and flag information from the callsign prefix.</td>
+        </tr>
+        <tr>
+          <td>UtcTime</td>
+          <td>string</td>
+          <td>UTC timestamp in the form <code>yyyy-MM-ddTHH:mm:ssZ</code>. If parsing fails or the field is omitted, Thetis uses the current UTC time.</td>
+        </tr>
+        <tr>
+          <td>TextColor</td>
+          <td>string</td>
+          <td>Optional text colour override parsed by Thetis spot colour handling.</td>
+        </tr>
+        <tr>
+          <td>Flag</td>
+          <td>string</td>
+          <td>Optional flag asset code for the spotted station, using the ANSI two letter country code.</td>
+        </tr>
+        <tr>
+          <td>FlagSpotter</td>
+          <td>string</td>
+          <td>Optional flag asset code for the spotter, using the ANSI two letter country code.</td>
+        </tr>
+        <tr>
+          <td>Distance</td>
+          <td>integer</td>
+          <td>Optional distance in kilometres. When present, Thetis stores the supplied value with the spot.</td>
+        </tr>
+        <tr>
+          <td>IsSWL</td>
+          <td>boolean</td>
+          <td>Optional to mark the spot as SWL only behaviour for Thetis spot lifetime management.</td>
+        </tr>
+        <tr>
+          <td>SWLSecondsToLive</td>
+          <td>integer</td>
+          <td>Optional SWL expiry in seconds. Negative values are treated as <code>0</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>When JSON is used, Thetis deserialises arg5 into its internal <code>JsonSpotData</code> class and passes both the raw JSON text and parsed object into spot creation. If JSON deserialisation fails, the spot is ignored. The parser looks specifically for the marker <code>[json]{</code> inside the <code>spot</code> command. Without <code>[json]</code>, all content from arg5 onward is joined back together as free text.</p>
+  </section>
+
+
+  </section>
+
+  <div class="page-break"></div>
+
+  <section>
+    <h2>5 Compatibility Notes</h2>
+
+    <h3>5.1 Reference Recommendation</h3>
+    <p>Client authors should continue to use the official Expert Electronics TCI 2.0 document as the baseline reference. Where the published document conflicts with observed command usage, especially in the CW terminal family, Thetis interoperability notes in this supplement take precedence.</p>
+
+    <h3>5.2 Display Client Guidance</h3>
+    <ul>
+      <li>Use the 11-field <code>display_start</code> form. The older 6-field form is not accepted by the current Thetis implementation.</li>
+      <li>Detect display binary frames by the leading bytes <code>84,68,1</code>, which represent <code>TD</code> version <code>1</code>.</li>
+      <li>Keep a decoded previous frame for each receiver because delta, block delta, and use previous frame payloads depend on it.</li>
+      <li>Ignore delta payloads until a raw payload has been received for that receiver.</li>
+      <li>After any loss of binary display data, wait for the next raw payload before resuming delta decode for that receiver.</li>
+    </ul>
+
+    <h3>5.3 Validated Protocol 2.0 Deviations And Omissions</h3>
+    <ul>
+      <li><code>cw_terminal</code>: the published document shows a single boolean argument, but Thetis follows the receiver qualified form used by ExpertSDR 3 v1.1.7, for example <code>cw_terminal:0,true;</code>.</li>
+      <li><code>cw_macros_empty</code>: the published document shows a bare notification, but Thetis emits the receiver qualified form used by ExpertSDR 3 v1.1.7, for example <code>cw_macros_empty:0;</code>.</li>
+      <li>Terminal TX hold: terminal mode remains in TX after queued CW completes and only drops on explicit terminal clear, stop, disconnect, or other hard abort conditions.</li>
+    </ul>
+
+    <h3>5.4 Routing And Receiver Topology</h3>
+    <p>Several commands in Thetis map onto the VFO A / VFO B model rather than a strict one command per receiver abstraction. This is most visible in <code>lock</code>, <code>vfo_lock</code>, and <code>keyer</code> when RX2 is enabled.</p>
+
+    <h3>5.5 CW Mode Preconditions</h3>
+    <p>Thetis does not silently force a non CW mode into CW for TCI CW operations. TCI CW activity is expected to operate only when the selected TX side is already in <code>cwl</code> or <code>cwu</code>.</p>
+
+    <h3>5.6 Client Guidance</h3>
+    <ul>
+      <li>Use the official Expert Electronics 2.0 document for generic command grammar and message sequencing, but prefer the validated ExpertSDR 3 v1.1.7 CW terminal forms when they differ from the PDF.</li>
+      <li>Use this supplement for Thetis routing, AGC mapping, CW/CWX behaviour, sensor negotiation, compact <code>sr</code> reports, stream negotiation, VFO sync/swap helpers, display compression, round trip <code>rt</code> echo checks, official command deviations, and Thetis extension messages.</li>
+      <li>Prefer <code>tx_frequency_ex</code> rather than the retired <code>tx_frequency_thetis</code> extension when you need Thetis band and TX routing context.</li>
+      <li>Treat CW ownership as exclusive in Thetis.</li>
+      <li>Do not assume that all TCI receivers in Thetis map directly to independent hardware or DSP chains.</li>
+    </ul>
+
+    <hr class="minor-rule">
+    <p class="small muted">End of document.</p>
+  </section>
+</body>
+</html>
