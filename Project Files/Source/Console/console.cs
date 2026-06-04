@@ -46995,6 +46995,11 @@ namespace Thetis
                         if (max_bin > -400f) _RX1MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
                     }
 
+                    if (_lastRX1NoiseFloorGood && (MeterManager.RequiresUpdate(1, Reading.NF) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.NF))))
+                    {
+                        _RX1MeterValues[Reading.NF] = _lastRX1NoiseFloor;
+                    }
+
                     updateRX = true;
 
                     if (TCIServer != null) TCIsensorInterval = TCIServer.MinimumRequiredRxSensorInterval();
@@ -47170,6 +47175,11 @@ namespace Thetis
                         if (!_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(1);
                         if (max_bin > -400f) _RX2MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
+                    }
+
+                    if (_lastRX2NoiseFloorGood && (MeterManager.RequiresUpdate(2, Reading.NF) || (TCIServer != null && TCIServer.SensorRequiresUpdate(2, Reading.NF))))
+                    {
+                        _RX1MeterValues[Reading.NF] = _lastRX1NoiseFloor;
                     }
 
                     updateRX = true;

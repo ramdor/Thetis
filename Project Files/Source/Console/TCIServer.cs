@@ -467,6 +467,7 @@ namespace Thetis
             public double Signal = -200.0;
             public double AvgSignal = -200.0;
             public double PeakBinSignal = -200.0;
+            public double NoiseFloor = -200.0;
             public bool Updated = false;
         }
 
@@ -581,6 +582,7 @@ namespace Thetis
                     case Reading.AVG_SIGNAL_STRENGTH:
                     case Reading.SIGNAL_MAX_BIN:
                     case Reading.SIGNAL_STRENGTH:
+                    case Reading.NF:
                         {
                             int rx = receiver - 1;
                             if (rx < 0 || rx > 1) return false;
@@ -597,7 +599,7 @@ namespace Thetis
             }
         }
 
-        public void SetRxChannelReading(int receiver, int channel, double signal, double avg_signal, double peak_bin_signal)
+        public void SetRxChannelReading(int receiver, int channel, double signal, double avg_signal, double peak_bin_signal, double noise_floor)
         {
             lock (_lock)
             {
@@ -607,6 +609,7 @@ namespace Thetis
                 state.Signal = signal;
                 state.AvgSignal = avg_signal;
                 state.PeakBinSignal = peak_bin_signal;
+                state.NoiseFloor = noise_floor;
                 state.Updated = true;
             }
         }
@@ -623,13 +626,14 @@ namespace Thetis
             }
         }
 
-        public bool TryGetRxChannelReadingForSend(int receiver, int channel, out double signal, out double avg_signal, out double peak_bin_signal)
+        public bool TryGetRxChannelReadingForSend(int receiver, int channel, out double signal, out double avg_signal, out double peak_bin_signal, out double noise_floor)
         {
             lock (_lock)
             {
                 signal = -200.0;
                 avg_signal = -200.0;
                 peak_bin_signal = -200.0;
+                noise_floor = -200.0;
                 if (!_rxSensorsEnabled) return false;
                 if (receiver < 0 || receiver > 1 || channel < 0 || channel > 1) return false;
 
@@ -639,6 +643,7 @@ namespace Thetis
                 signal = state.Signal;
                 avg_signal = state.AvgSignal;
                 peak_bin_signal = state.PeakBinSignal;
+                noise_floor = state.NoiseFloor;
                 return true;
             }
         }
@@ -954,9 +959,10 @@ namespace Thetis
             int receiver = rx - 1;
             if (receiver < 0 || receiver > 1) return;
 
-            if (readings.TryGetValue(Reading.SIGNAL_STRENGTH, out float signal) && readings.TryGetValue(Reading.AVG_SIGNAL_STRENGTH, out float avg_signal) && readings.TryGetValue(Reading.SIGNAL_MAX_BIN, out float peak_bin_signal))
+            if (readings.TryGetValue(Reading.SIGNAL_STRENGTH, out float signal) && readings.TryGetValue(Reading.AVG_SIGNAL_STRENGTH, out float avg_signal) && readings.TryGetValue(Reading.SIGNAL_MAX_BIN, out float peak_bin_signal)
+                && readings.TryGetValue(Reading.NF, out float nf))
             {
-                m_sensorManager.SetRxChannelReading(receiver, 0, signal, avg_signal, peak_bin_signal);
+                m_sensorManager.SetRxChannelReading(receiver, 0, signal, avg_signal, peak_bin_signal, nf);
             }
         }
 
@@ -2617,10 +2623,10 @@ namespace Thetis
         {
             sendTextFrame("rx_sensors:" + rx.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
-        private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm)
+        private void sendRxChannelSensors(int rx, int channel, double levelDbm, double avgLevelDbm, double peakBinDbm, double noiseFloor)
         {
             sendTextFrame("rx_channel_sensors:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
-            sendTextFrame("rx_channel_sensors_ex:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + ";");
+            sendTextFrame("rx_channel_sensors_ex:" + rx.ToString() + "," + channel.ToString() + "," + levelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + avgLevelDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + peakBinDbm.ToString("F1", CultureInfo.InvariantCulture) + "," + noiseFloor.ToString("F1", CultureInfo.InvariantCulture) + ";");
         }
         private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
         {
@@ -2998,23 +3004,23 @@ namespace Thetis
             catch
             { }
 
-            if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig))
+            if (m_sensorManager.TryGetRxChannelReadingForSend(0, 0, out double rx1Main_sig, out double rx1Main_avgsig, out double rx1Main_peak_bin_sig, out double rx1Main_noise_floor))
             {
                 sendRxSensors(0, rx1Main_sig);
-                sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig);
+                sendRxChannelSensors(0, 0, rx1Main_sig, rx1Main_avgsig, rx1Main_peak_bin_sig, rx1Main_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(0, 0);
             }
 
-            if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig))
+            if (rx1SubEnabled && m_sensorManager.TryGetRxChannelReadingForSend(0, 1, out double rx1Sub_sig, out double rx1Sub_avgsig, out double rx1Sub_peak_bin_sig, out double rx1Sub_noise_floor))
             {
-                sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig);
+                sendRxChannelSensors(0, 1, rx1Sub_sig, rx1Sub_avgsig, rx1Sub_peak_bin_sig, rx1Sub_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(0, 1);
             }
 
-            if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig))
+            if (rx2Enabled && m_sensorManager.TryGetRxChannelReadingForSend(1, 0, out double rx2Main_sig, out double rx2Miain_avgsig, out double rx2Main_peak_bin_sig, out double rx2Miain_noise_floor))
             {
                 sendRxSensors(1, rx2Main_sig);
-                sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig);
+                sendRxChannelSensors(1, 0, rx2Main_sig, rx2Miain_avgsig, rx2Main_peak_bin_sig, rx2Miain_noise_floor);
                 m_sensorManager.ConsumeRxChannelReading(1, 0);
             }
         }
