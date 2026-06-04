@@ -42,6 +42,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -65,6 +66,9 @@ namespace Thetis
         private const double DefaultAverageTau = 0.12;
         private const float EmptyPixelValue = -200.0f;
         private const int DataIndexWrap = 1000000000;
+        private const float DefaultNoiseFloorValue = -200.0f;
+        private const int DefaultNoiseFloorSensitivity = 3;
+        private const float DefaultNoiseFloorShiftDbm = 0.0f;
         private static readonly ArrayPool<float> PixelArrayPool = ArrayPool<float>.Shared;
 
         private readonly Console _console;
@@ -74,6 +78,8 @@ namespace Thetis
         private volatile SpectrumEndpoint[] _endpointSnapshot;
 
         private volatile bool _workerRunning;
+        private int _NFsensitivity = DefaultNoiseFloorSensitivity;
+        private float _fNFshiftDBM = DefaultNoiseFloorShiftDbm;
         private bool _disposed;
 
         public clsSpectrumProcessor(Console console)
@@ -96,6 +102,30 @@ namespace Thetis
             _workerThread.Start();
         }
 
+        public int NFsensitivity
+        {
+            get { return _NFsensitivity; }
+            set
+            {
+                int t = value;
+                if (t < 1) t = 1;
+                if (t > 19) t = 19;
+                _NFsensitivity = t;
+            }
+        }
+
+        public float NFshiftDBM
+        {
+            get { return _fNFshiftDBM; }
+            set
+            {
+                float t = value;
+                if (t < -12f) t = -12f;
+                if (t > 12f) t = 12f;
+                _fNFshiftDBM = t;
+            }
+        }
+
         public bool AddReceiver(int receiverId, int pixels, int frameRate, int fftSize)
         {
             ThrowIfDisposed();
@@ -107,7 +137,7 @@ namespace Thetis
 
             SpecHPSDR templateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(receiverId) : null;
             SpecHPSDR txTemplateSpec = _console.specRX != null ? _console.specRX.GetSpecRX(cmaster.inid(1, 0)) : null;
-            SpectrumEndpoint endpoint = new SpectrumEndpoint(_console, receiverId, pixels, frameRate, fftSize, templateSpec, txTemplateSpec);
+            SpectrumEndpoint endpoint = new SpectrumEndpoint(this, _console, receiverId, pixels, frameRate, fftSize, templateSpec, txTemplateSpec);
 
             lock (_endpointsLock)
             {
@@ -313,6 +343,18 @@ namespace Thetis
             }
 
             return endpoint.TryCopyLatestPixels(destination, out pixelCount, out dataIndex);
+        }
+
+        public bool TryGetReceiverNoiseFloor(int receiverId, out float noiseFloorDbm)
+        {
+            SpectrumEndpoint endpoint;
+            if (!TryGetReceiverEndpoint(receiverId, out endpoint))
+            {
+                noiseFloorDbm = DefaultNoiseFloorValue;
+                return false;
+            }
+
+            return endpoint.TryGetGoodNoiseFloor(out noiseFloorDbm);
         }
 
         public bool TryGetReceiverHzSpan(int receiverId, out int hzSpan)
@@ -521,6 +563,9 @@ namespace Thetis
             _console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
             _console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
             _console.PowerChangeHanders += OnPowerChanged;
+            _console.AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;
+            _console.PreampModeChangedHandlers += OnPreampModeChanged;
+            _console.BandChangeHandlers += OnBandChanged;
         }
 
         private void UnsubscribeDelegates()
@@ -528,8 +573,15 @@ namespace Thetis
             _console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
             _console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
             _console.PowerChangeHanders -= OnPowerChanged;
+            _console.AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
+            _console.PreampModeChangedHandlers -= OnPreampModeChanged;
+            _console.BandChangeHandlers -= OnBandChanged;
         }
-
+        
+        private void OnBandChanged(int rx, Band oldBand, Band newBand)
+        {
+            ResetNoiseFloorForReceiverEvent(rx);
+        }
         private void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
         {
             SpectrumEndpoint[] endpoints = GetEndpointArray();
@@ -550,6 +602,27 @@ namespace Thetis
             {
                 if (endpoints[i].MatchesReceiverEvent(rx))
                     endpoints[i].SetSampleRate(sampleRate);
+            }
+        }
+
+        private void OnAttenuatorDataChanged(int rx, int oldAtt, int newAtt)
+        {
+            ResetNoiseFloorForReceiverEvent(rx);
+        }
+
+        private void OnPreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode)
+        {
+            ResetNoiseFloorForReceiverEvent(rx);
+        }
+
+        private void ResetNoiseFloorForReceiverEvent(int rx)
+        {
+            SpectrumEndpoint[] endpoints = GetEndpointArray();
+
+            for (int i = 0; i < endpoints.Length; i++)
+            {
+                if (endpoints[i].MatchesReceiverEvent(rx))
+                    endpoints[i].ResetNoiseFloor();
             }
         }
 
@@ -671,6 +744,7 @@ namespace Thetis
         {
             private const double ViewportEpsilon = 0.000001;
             private readonly object _syncRoot = new object();
+            private readonly clsSpectrumProcessor _owner;
             private readonly Console _console;
             private readonly int _receiverId;
             private readonly int _displayId;
@@ -708,14 +782,24 @@ namespace Thetis
             private double _zoomCentreAnchorPosition;
             private bool _enabled;
             private bool _hasData;
+            private bool _noiseFloorGood;
+            private bool _fastAttackNoiseFloor;
+            private float _noiseFloorUnshiftedDbm;
+            private float _fftBinAverage;
+            private float _lerpAverage;
+            private float _attackTimeInMs;
+            private long _lastFastAttackUtcTicks;
             private bool _shutdown;
             private int _dataIndex;
             private long _nextReadUtcTicks;
 
             private const long SchedulingToleranceTicks = TimeSpan.TicksPerMillisecond * 2;
+            private const float FastPow10Scale = 2786635.259211258f;
+            private const int FastPow10Bias = 0x3f800000;
 
-            public SpectrumEndpoint(Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec, SpecHPSDR txTemplateSpec)
+            public SpectrumEndpoint(clsSpectrumProcessor owner, Console console, int receiverId, int pixels, int frameRate, int fftSize, SpecHPSDR templateSpec, SpecHPSDR txTemplateSpec)
             {
+                _owner = owner;
                 _console = console;
                 _receiverId = receiverId;
                 _pixels = pixels;
@@ -758,6 +842,11 @@ namespace Thetis
                 _zoomCentreAnchorPosition = 0.5;
                 _maxFftSize = DefaultMaxFftSize;
                 _enabled = true;
+                _noiseFloorUnshiftedDbm = DefaultNoiseFloorValue;
+                _fftBinAverage = DefaultNoiseFloorValue;
+                _lerpAverage = DefaultNoiseFloorValue;
+                _attackTimeInMs = 2000.0f;
+                ResetNoiseFloorLocked();
 
                 EnsurePixelBuffersLocked(_pixels);
                 ClearPixelBuffersLocked();
@@ -970,6 +1059,14 @@ namespace Thetis
                 {
                     if (_shutdown) return;
 
+                    if (_hasZoomCentreFrequency && _zoomCentreTracksReceiverCentre)
+                    {
+                        double centreHz = GetReceiverCentreFrequencyHz();
+                        _zoomCentreFrequencyHz = centreHz + _zoomCentreOffsetHz;
+                        _nextReadUtcTicks = 0;
+                        return;
+                    }
+
                     if (_hasZoomCentreFrequency)
                         RefreshLocked();
                     else
@@ -996,6 +1093,7 @@ namespace Thetis
                     _spec.resetPixelBuffers();
                     _txSpec.resetPixelBuffers();
                     ClearPixelBuffersLocked();
+                    ResetNoiseFloorLocked();
                     _hasData = false;
                     _nextReadUtcTicks = 0;
                 }
@@ -1006,8 +1104,17 @@ namespace Thetis
                 lock (_syncRoot)
                 {
                     ClearPixelBuffersLocked();
+                    ResetNoiseFloorLocked();
                     _hasData = false;
                     _nextReadUtcTicks = 0;
+                }
+            }
+
+            public void ResetNoiseFloor()
+            {
+                lock (_syncRoot)
+                {
+                    ResetNoiseFloorLocked();
                 }
             }
 
@@ -1062,7 +1169,29 @@ namespace Thetis
                     if (flag == 1)
                     {
                         float offset = GetPixelOffset(displayId);
-                        if (offset != 0.0f)
+                        bool processNoiseFloor = displayId == _displayId;
+
+                        if (processNoiseFloor)
+                        {
+                            float averageSum = 0.0f;
+                            int averageCount = 1;
+                            float currentAverage = _fftBinAverage + 2.0f;
+
+                            for (int i = 0; i < _pixels; i++)
+                            {
+                                float pixel = _workingPixels[i] + offset;
+                                _workingPixels[i] = pixel;
+
+                                if (pixel < currentAverage)
+                                {
+                                    averageSum += FastPow10Raw(pixel);
+                                    averageCount++;
+                                }
+                            }
+
+                            ProcessNoiseFloorLocked(averageCount, averageSum, _pixels, nowUtcTicks);
+                        }
+                        else if (offset != 0.0f)
                         {
                             for (int i = 0; i < _pixels; i++)
                                 _workingPixels[i] += offset;
@@ -1083,6 +1212,21 @@ namespace Thetis
                     if (_dataIndex >= DataIndexWrap) _dataIndex = 1;
 
                     return true;
+                }
+            }
+
+            public bool TryGetGoodNoiseFloor(out float noiseFloorDbm)
+            {
+                lock (_syncRoot)
+                {
+                    if (!_noiseFloorGood)
+                    {
+                        noiseFloorDbm = DefaultNoiseFloorValue;
+                        return false;
+                    }
+
+                    noiseFloorDbm = _noiseFloorUnshiftedDbm + _owner.NFshiftDBM;
+                    return !_shutdown;
                 }
             }
 
@@ -1341,6 +1485,7 @@ namespace Thetis
 
                 RefreshDisplaySpecLocked(_spec, _configuredSampleRate, _blockSize);
                 RefreshDisplaySpecLocked(_txSpec, _txConfiguredSampleRate, _txBlockSize);
+                ResetNoiseFloorLocked();
                 _nextReadUtcTicks = 0;
             }
 
@@ -1464,6 +1609,64 @@ namespace Thetis
                 EnsurePixelBuffersLocked(_pixels);
                 FillPixelBuffer(_latestPixels, _pixels);
                 FillPixelBuffer(_workingPixels, _pixels);
+            }
+
+            private void ResetNoiseFloorLocked()
+            {
+                _noiseFloorGood = false;
+                _fastAttackNoiseFloor = true;
+                _noiseFloorUnshiftedDbm = DefaultNoiseFloorValue;
+                _fftBinAverage = DefaultNoiseFloorValue;
+                _lerpAverage = DefaultNoiseFloorValue;
+                _lastFastAttackUtcTicks = 0;
+            }
+
+            private void ProcessNoiseFloorLocked(int averageCount, float averageSum, int width, long nowUtcTicks)
+            {
+                int requireSamples = (int)(width * (_owner.NFsensitivity / 20.0f));
+
+                if (averageCount >= requireSamples)
+                {
+                    float linearAverage = averageSum / (float)averageCount;
+                    float oldLinear = FastPow10Raw(_fftBinAverage);
+                    float newLinear = (linearAverage + oldLinear) * 0.5f;
+                    float tmp = 10.0f * (float)Math.Log10(newLinear + 1e-60);
+                    if (!float.IsNaN(tmp)) _fftBinAverage = tmp;
+                }
+                else
+                {
+                    _fftBinAverage += _fastAttackNoiseFloor ? 3.0f : 1.0f;
+                }
+
+                if (_fftBinAverage < DefaultNoiseFloorValue) _fftBinAverage = DefaultNoiseFloorValue;
+                if (_fftBinAverage > 200.0f) _fftBinAverage = 200.0f;
+
+                int framesInAttack = _fastAttackNoiseFloor ? 0 : (int)((_frameRate / 1000.0f) * (double)_attackTimeInMs);
+                framesInAttack++;
+
+                float difference = _lerpAverage - _fftBinAverage;
+                _lerpAverage -= difference / framesInAttack;
+
+                if (_fastAttackNoiseFloor)
+                {
+                    if (_lastFastAttackUtcTicks <= 0) _lastFastAttackUtcTicks = nowUtcTicks;
+                    long elapsedTicks = nowUtcTicks - _lastFastAttackUtcTicks;
+                    if (elapsedTicks > TimeSpan.TicksPerSecond) _fastAttackNoiseFloor = false;
+                }
+
+                if (!_fastAttackNoiseFloor)
+                {
+                    _noiseFloorUnshiftedDbm = _lerpAverage;
+                    _noiseFloorGood = true;
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static unsafe float FastPow10Raw(float dB)
+            {
+                if (dB <= -200.0f || dB >= 200.0f) return (float)Math.Pow(10.0, dB / 10.0);
+                int bits = (int)(dB * FastPow10Scale) + FastPow10Bias;
+                return *(float*)&bits;
             }
 
             private static float[] RentPixelBuffer(int pixels)

@@ -46935,7 +46935,9 @@ namespace Thetis
                     float offset = RXOffset(1);
 
                     // get all readings
+                    double old = _RX1MeterValues[Reading.SIGNAL_STRENGTH];
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.SIGNAL_STRENGTH))) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    if (old != _RX1MeterValues[Reading.SIGNAL_STRENGTH]) Display.DebugText = _RX1MeterValues[Reading.SIGNAL_STRENGTH].ToString();
                     bool bNeedAvg = true;
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)))
                     {

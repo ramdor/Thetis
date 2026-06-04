@@ -3095,16 +3095,37 @@ namespace Thetis
             return false;
         }
 
+        private bool isReceiverTransmittingForSensors(int receiver, bool mox, bool rx2Enabled, bool vfoBtx)
+        {
+            if (!mox) return false;
+
+            if (receiver == 0)
+                return !(vfoBtx && rx2Enabled);
+
+            if (receiver == 1)
+                return vfoBtx && rx2Enabled;
+
+            return false;
+        }
+
         private void RxSensorsTimerCallback(object state)
         {
             if (m_stopClient || m_disconnected) return;
 
             bool rx2Enabled = false;
             bool rx1SubEnabled = false;
+            bool mox = false;
+            bool vfoBtx = false;
             try
             {
-                rx2Enabled = consoleThreadSafe.RX2Enabled;
-                rx1SubEnabled = !rx2Enabled && consoleThreadSafe.GetSubRX(1);
+                Console console = consoleThreadSafe;
+                if (console != null)
+                {
+                    rx2Enabled = console.RX2Enabled;
+                    rx1SubEnabled = !rx2Enabled && console.GetSubRX(1);
+                    mox = console.MOX;
+                    vfoBtx = console.VFOBTX;
+                }
             }
             catch
             { }
@@ -3121,6 +3142,18 @@ namespace Thetis
                     bool exPairDue = m_sensorManager.IsRxChannelSensorsExDue(receiver, channel, nowTicks);
 
                     if (!normalPairDue && !exPairDue) continue;
+
+                    if (isReceiverTransmittingForSensors(receiver, mox, rx2Enabled, vfoBtx))
+                    {
+                        if (normalPairDue)
+                            normalSensorsSent = true;
+
+                        if (exPairDue)
+                            m_sensorManager.MarkRxChannelSensorsExSent(receiver, channel, nowTicks);
+
+                        m_sensorManager.ConsumeRxChannelReading(receiver, channel);
+                        continue;
+                    }
 
                     if (!m_sensorManager.TryGetRxChannelReadingForSend(receiver, channel, out double signal, out double avg_signal, out double peak_bin_signal))
                         continue;
@@ -3141,7 +3174,8 @@ namespace Thetis
                     {
                         if (!normalPairDue)
                         {
-                            // we need to get this from analyser : TODO
+                            double noise_floor = -200.0;
+                            tryGetReceiverNoiseFloorForSensors(receiver, out noise_floor);
                             sendRxChannelSensorsEx(receiver, channel, signal, avg_signal, peak_bin_signal, noise_floor);
                             sent = true;
                         }
@@ -5995,7 +6029,7 @@ namespace Thetis
                         break;
                     case "audio_opus_frame_ms":
                         handleAudioOpusFrameMs(args);
-                        break;                  
+                        break;
                     case "tx_stream_audio_buffering":
                         handleTxStreamAudioBuffering(args);
                         break;
@@ -6279,7 +6313,7 @@ namespace Thetis
 
             frameMs = 20.0;
             return false;
-        }     
+        }
 
         private void resetAudioCompressionState()
         {
@@ -7334,7 +7368,7 @@ namespace Thetis
             }
 
             if (codecChanged || rateChanged || samplesChanged || channelsChanged)
-            requestAudioStreamResetAndTxClear();
+                requestAudioStreamResetAndTxClear();
             if (rateChanged)
                 sendAudioSampleRate(audioSampleRate);
             sendAudioCodec(m_audioCodec);
@@ -7769,6 +7803,39 @@ namespace Thetis
             result = false;
             return false;
         }
+        private bool tryGetReceiverNoiseFloorForSensors(int receiver, out double noiseFloor)
+        {
+            noiseFloor = -200.0;
+
+            float noiseFloorDbm;
+
+            lock (m_objStreamLock)
+            {
+                if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver) && m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
+                {
+                    noiseFloor = noiseFloorDbm;
+                    return true;
+                }
+            }
+
+            Console c = consoleThreadSafe;
+            if (c == null) return false;
+
+            if (receiver == 0)
+            {
+                noiseFloor = c.LastNFRX1;
+                return true;
+            }
+
+            if (receiver == 1)
+            {
+                noiseFloor = c.LastNFRX2;
+                return true;
+            }
+
+            return false;
+        }
+
         private clsSpectrumProcessor ensureSpectrumProcessor()
         {
             if (m_spectrumProcessor == null && _console != null)
@@ -7793,7 +7860,7 @@ namespace Thetis
             return subscription.DisplayCompressionSettings;
         }
         private void resetDisplayCompressionState(TCIDisplaySubscription subscription)
-            {
+        {
             if (subscription == null) return;
 
             if (subscription.DisplayCompressionState == null)
@@ -8003,10 +8070,10 @@ namespace Thetis
                 subscription.PanSlider = panSlider;
                 if (!isDisplayFullyZoomedOut(zoomSlider))
                 {
-                subscription.HasZoomCentreFrequency = false;
-                subscription.ZoomCentreTracksReceiverCentre = false;
-                subscription.ZoomCentreFrequencyHz = 0.0;
-                subscription.ZoomCentreOffsetHz = 0.0;
+                    subscription.HasZoomCentreFrequency = false;
+                    subscription.ZoomCentreTracksReceiverCentre = false;
+                    subscription.ZoomCentreFrequencyHz = 0.0;
+                    subscription.ZoomCentreOffsetHz = 0.0;
                 }
                 subscription.LastDataIndex = 0;
                 resetDisplayCompressionState(subscription);
