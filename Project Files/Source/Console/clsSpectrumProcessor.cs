@@ -529,8 +529,8 @@ namespace Thetis
                     sleepTimer.Reset();
                     while (_workerRunning && sleepTimer.ElapsedMsec <= fractionalMilliseconds) ;
                     fractionalMilliseconds = sleepTimer.ElapsedMsec - fractionalMilliseconds;
+                }
             }
-        }
         }
 
         private static long GetHiPerfTimerTicks(HiPerfTimer timer)
@@ -746,7 +746,7 @@ namespace Thetis
             int bestDistance = Math.Abs(clamped - best);
 
             for (int value = DefaultFftSize << 1; value <= DefaultMaxFftSize; value <<= 1)
-        {
+            {
                 int distance = Math.Abs(clamped - value);
                 if (distance < bestDistance)
                 {

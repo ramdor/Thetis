@@ -813,6 +813,21 @@ namespace Thetis
             public clsDisplayCompression.State DisplayCompressionState;
         }
 
+        private sealed class TCIDisplayPayloadWork
+        {
+            public TCIDisplaySubscription Subscription;
+            public int Receiver;
+            public float[] Pixels;
+            public int PixelCount;
+            public float MinDbm;
+            public float MaxDbm;
+            public clsDisplayCompression.Settings DisplaySettings;
+            public clsDisplayCompression.State DisplayState;
+            public int HzLeft;
+            public int HzSpan;
+            public int DataIndex;
+        }
+
         //
         public delegate void ClientConnected();
         public delegate void ClientDisconnected();
@@ -867,6 +882,8 @@ namespace Thetis
         private readonly object m_objOutboundLock = new object();
         private readonly object m_objTxQueueLock = new object();
         private readonly object m_objRxAudioLock = new object();
+        private readonly object m_objAudioCompressionLock = new object();
+        private readonly object m_objDisplayCompressionLock = new object();
         private const int MAX_TX_AUDIO_QUEUE_BLOCKS = 64;
         private const int MAX_TX_AUDIO_QUEUE_COMPLEX_SAMPLES = 96000;
         private readonly AutoResetEvent m_outboundFrameEvent = new AutoResetEvent(false);
@@ -887,6 +904,7 @@ namespace Thetis
         private readonly clsAudioCompression m_audioCompression = new clsAudioCompression();
         private readonly clsAudioCompression.OpusSettings m_audioOpusSettings = new clsAudioCompression.OpusSettings();
         private readonly clsDisplayCompression m_displayCompression = new clsDisplayCompression();
+        private bool m_audioCompressionDisposed = false;
         private int[] m_hwSampleRate = new int[] { 48000, 48000 };
         private int m_audioSampleRate = 48000;
         private TCISampleType m_audioSampleType = TCISampleType.FLOAT32;
@@ -1990,8 +2008,9 @@ namespace Thetis
                     {
                         serviceDisplayStreams();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Debug.Print(ex.ToString());
                     }
                 }
             }
@@ -2383,6 +2402,8 @@ namespace Thetis
         }
         private double getDisplayReceiverCentreFrequencyHz(int receiver)
         {
+            if (receiver < 0 || receiver > 1) return 0.0;
+
             Console console = consoleThreadSafe;
             if (console == null) return 0.0;
 
@@ -2396,6 +2417,7 @@ namespace Thetis
         }
         private void updateDisplayZoomCentreTrackingMode(int receiver)
         {
+            double centreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
             double frequencyHz = 0.0;
             double zoomSlider = 0.0;
             double panSlider = 0.5;
@@ -2405,7 +2427,6 @@ namespace Thetis
             {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || !subscription.HasZoomCentreFrequency || m_spectrumProcessor == null) return;
 
-                double centreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
                 bool zoomCentreTracksReceiverCentre = true;
                 frequencyHz = centreFrequencyHz + subscription.ZoomCentreOffsetHz;
 
@@ -3312,8 +3333,9 @@ namespace Thetis
                             {
                                 ParseReceiveBuffer(frameBytes);
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Debug.Print(ex.ToString());
                             }
 
                             bytesAsArray = _m_buffer.ToArray();
@@ -3465,7 +3487,7 @@ namespace Thetis
             }
             clearQueuedTxAudio();
             clearRxAudioStreamState();
-            m_audioCompression.Dispose();
+            disposeAudioCompression();
             server?.ReleaseActiveTxAudioListener(this);
             server?.RefreshTxAudioSourceState();
             m_server?.RefreshStreamRunState();
@@ -3518,7 +3540,7 @@ namespace Thetis
 
                 if (m_sendThread != null)
                 {
-                    m_sendThread.Join(100);
+                    m_sendThread.Join(200);
 
                     if (m_sendThread.IsAlive)
                     {
@@ -3529,7 +3551,7 @@ namespace Thetis
 
                 if (m_displayThread != null)
                 {
-                    m_displayThread.Join(100);
+                    m_displayThread.Join(200);
 
                     if (m_displayThread.IsAlive)
                     {
@@ -3547,7 +3569,7 @@ namespace Thetis
 
                 if (m_VFODataThread != null)
                 {
-                    m_VFODataThread.Join(50);
+                    m_VFODataThread.Join(200);
 
                     if (m_VFODataThread.IsAlive)
                     {
@@ -3558,7 +3580,7 @@ namespace Thetis
 
                 if (m_clientListenerThread != null)
                 {
-                    m_clientListenerThread.Join(50);
+                    m_clientListenerThread.Join(200);
 
                     if (m_clientListenerThread.IsAlive)
                     {
@@ -6317,7 +6339,21 @@ namespace Thetis
 
         private void resetAudioCompressionState()
         {
-            m_audioCompression.Reset();
+            lock (m_objAudioCompressionLock)
+            {
+                if (m_audioCompressionDisposed) return;
+                m_audioCompression.Reset();
+            }
+        }
+
+        private void disposeAudioCompression()
+        {
+            lock (m_objAudioCompressionLock)
+            {
+                if (m_audioCompressionDisposed) return;
+                m_audioCompression.Dispose();
+                m_audioCompressionDisposed = true;
+            }
         }
 
         private void beginAudioReconfiguration()
@@ -6859,7 +6895,14 @@ namespace Thetis
 
                     if (codec == TCIAudioCodec.OPUS)
                     {
-                        byte[] encoded = m_audioCompression.EncodeOpus(interleaved, packetSamples, sampleRate, channels, opusSettings, out int encodedBytes);
+                        byte[] encoded;
+                        int encodedBytes;
+                        lock (m_objAudioCompressionLock)
+                        {
+                            if (m_audioCompressionDisposed)
+                                return;
+                            encoded = m_audioCompression.EncodeOpus(interleaved, packetSamples, sampleRate, channels, opusSettings, out encodedBytes);
+                        }
                         if (encodedBytes > 0)
                             sendBinaryFrame(buildStreamPayload(receiver, sampleRate, TCISampleType.OPUS, interleaved.Length, TCIStreamType.RX_AUDIO_STREAM, channels, encoded), true);
                     }
@@ -6993,7 +7036,12 @@ namespace Thetis
                     {
                         opusSettings = copyAudioOpusSettingsLocked();
                     }
-                    decoded = m_audioCompression.DecodeOpus(payload, dataOffset, actualDataBytes, sampleRate, channels, opusSettings, out decodedValueCount);
+                    lock (m_objAudioCompressionLock)
+                    {
+                        if (m_audioCompressionDisposed)
+                            return;
+                        decoded = m_audioCompression.DecodeOpus(payload, dataOffset, actualDataBytes, sampleRate, channels, opusSettings, out decodedValueCount);
+                    }
                     if (decodedValueCount <= 0 || decoded == null || decoded.Length == 0)
                         return;
                 }
@@ -7859,14 +7907,32 @@ namespace Thetis
 
             return subscription.DisplayCompressionSettings;
         }
+        private clsDisplayCompression.Settings copyDisplayCompressionSettings(clsDisplayCompression.Settings settings)
+        {
+            if (settings == null)
+                return new clsDisplayCompression.Settings();
+
+            return new clsDisplayCompression.Settings()
+            {
+                DeltaMode = settings.DeltaMode,
+                BlockDeltaMode = settings.BlockDeltaMode,
+                AdaptiveBlocks = settings.AdaptiveBlocks,
+                AccuracyMode = settings.AccuracyMode,
+                KeyFrameIntervalFrames = settings.KeyFrameIntervalFrames,
+                QuantizationBits = settings.QuantizationBits
+            };
+        }
         private void resetDisplayCompressionState(TCIDisplaySubscription subscription)
         {
             if (subscription == null) return;
 
-            if (subscription.DisplayCompressionState == null)
-                subscription.DisplayCompressionState = new clsDisplayCompression.State();
-            else
-                subscription.DisplayCompressionState.Reset();
+            lock (m_objDisplayCompressionLock)
+            {
+                if (subscription.DisplayCompressionState == null)
+                    subscription.DisplayCompressionState = new clsDisplayCompression.State();
+                else
+                    subscription.DisplayCompressionState.Reset();
+            }
 
             subscription.LastHzLeft = 0;
             subscription.LastHzSpan = 0;
@@ -7899,6 +7965,7 @@ namespace Thetis
             if (maxDbm <= minDbm) maxDbm = minDbm + 1.0f;
 
             bool displayStreamAdded = false;
+            double receiverCentreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
 
             lock (m_objStreamLock)
             {
@@ -7924,6 +7991,7 @@ namespace Thetis
                 int sampleRate = cmaster.GetInputRate(0, receiver);
                 if (sampleRate > 0)
                     processor.SetReceiverSampleRate(receiver, sampleRate);
+
                 processor.SetReceiverWindowType(receiver, windowType);
                 processor.SetReceiverDetectorTypePan(receiver, detectorType);
                 processor.SetReceiverAverageMode(receiver, averageMode);
@@ -7933,7 +8001,7 @@ namespace Thetis
                 processor.SetReceiverZoomSlider(receiver, zoomSlider);
                 if (hasZoomCentreFrequency)
                 {
-                    double processorZoomCentreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver) + zoomCentreOffsetHz;
+                    double processorZoomCentreFrequencyHz = receiverCentreFrequencyHz + zoomCentreOffsetHz;
                     processor.SetReceiverZoomCentreFrequency(receiver, processorZoomCentreFrequencyHz, zoomCentreTracksReceiverCentre);
                     zoomCentreFrequencyHz = processorZoomCentreFrequencyHz;
                 }
@@ -8029,14 +8097,16 @@ namespace Thetis
             if (double.IsNaN(frequencyHz) || double.IsInfinity(frequencyHz)) return;
             zoomSlider = clampDisplayViewportValue(zoomSlider, 0.0);
             double panSlider = 0.5;
+            bool displayReceiverShowingTransmitter = isDisplayReceiverShowingTransmitter(receiver);
+            double receiverCentreFrequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
 
             lock (m_objStreamLock)
             {
                 if (!tryGetDisplaySubscription(receiver, out TCIDisplaySubscription subscription) || m_spectrumProcessor == null) return;
-                if (isDisplayReceiverShowingTransmitter(receiver))
-                    frequencyHz = getDisplayReceiverCentreFrequencyHz(receiver);
+                if (displayReceiverShowingTransmitter)
+                    frequencyHz = receiverCentreFrequencyHz;
                 bool zoomCentreTracksReceiverCentre = true;
-                double zoomCentreOffsetHz = frequencyHz - getDisplayReceiverCentreFrequencyHz(receiver);
+                double zoomCentreOffsetHz = frequencyHz - receiverCentreFrequencyHz;
                 if (!m_spectrumProcessor.SetReceiverZoomCentreFrequency(receiver, frequencyHz, zoomCentreTracksReceiverCentre)) return;
                 if (!m_spectrumProcessor.SetReceiverZoomSlider(receiver, zoomSlider)) return;
                 m_spectrumProcessor.TryGetReceiverViewport(receiver, out zoomSlider, out panSlider);
@@ -8337,6 +8407,7 @@ namespace Thetis
                 return;
 
             List<byte[]> payloads = null;
+            List<TCIDisplayPayloadWork> workItems = null;
 
             lock (m_objStreamLock)
             {
@@ -8371,21 +8442,56 @@ namespace Thetis
                     if (subscription.LastHzSpan != 0 && (subscription.LastHzSpan != hzSpan || subscription.LastHzLeft != hzLeft))
                         resetDisplayCompressionState(subscription);
 
-                    clsDisplayCompression.Settings displaySettings = ensureDisplayCompressionSettings(subscription);
-                    clsDisplayCompression.Result displayResult = m_displayCompression.Encode(subscription.PixelBuffer, pixelCount, subscription.MinDbm, subscription.MaxDbm, displaySettings, subscription.DisplayCompressionState);
-                    if (displayResult == null)
+                    if (workItems == null)
+                        workItems = new List<TCIDisplayPayloadWork>();
+
+                    float[] pixels = new float[pixelCount];
+                    Array.Copy(subscription.PixelBuffer, pixels, pixelCount);
+                    workItems.Add(new TCIDisplayPayloadWork()
+                    {
+                        Subscription = subscription,
+                        Receiver = subscription.Receiver,
+                        Pixels = pixels,
+                        PixelCount = pixelCount,
+                        MinDbm = subscription.MinDbm,
+                        MaxDbm = subscription.MaxDbm,
+                        DisplaySettings = copyDisplayCompressionSettings(ensureDisplayCompressionSettings(subscription)),
+                        DisplayState = subscription.DisplayCompressionState,
+                        HzLeft = hzLeft,
+                        HzSpan = hzSpan,
+                        DataIndex = dataIndex
+                    });
+                }
+            }
+
+            if (workItems == null)
+                return;
+
+            foreach (TCIDisplayPayloadWork work in workItems)
+            {
+                clsDisplayCompression.Result displayResult;
+                lock (m_objDisplayCompressionLock)
+                {
+                    displayResult = m_displayCompression.Encode(work.Pixels, work.PixelCount, work.MinDbm, work.MaxDbm, work.DisplaySettings, work.DisplayState);
+                }
+                if (displayResult == null)
+                    continue;
+
+                byte[] payload = buildCompactDisplayStreamPayload(work.Receiver, work.HzLeft, work.HzSpan, displayResult);
+
+                lock (m_objStreamLock)
+                {
+                    if (!m_displaySubscriptions.TryGetValue(work.Receiver, out TCIDisplaySubscription subscription) || subscription != work.Subscription)
                         continue;
 
-                    byte[] payload = buildCompactDisplayStreamPayload(subscription.Receiver, hzLeft, hzSpan, displayResult);
-
-                    subscription.LastDataIndex = dataIndex;
-                    subscription.LastHzLeft = hzLeft;
-                    subscription.LastHzSpan = hzSpan;
-
-                    if (payloads == null)
-                        payloads = new List<byte[]>();
-                    payloads.Add(payload);
+                    subscription.LastDataIndex = work.DataIndex;
+                    subscription.LastHzLeft = work.HzLeft;
+                    subscription.LastHzSpan = work.HzSpan;
                 }
+
+                if (payloads == null)
+                    payloads = new List<byte[]>();
+                payloads.Add(payload);
             }
 
             if (payloads == null)
@@ -8937,7 +9043,7 @@ namespace Thetis
 
                 if (m_serverThread != null)
                 {
-                    m_serverThread.Join(50); // dont need to wait long here, as we are blocking anyway
+                    m_serverThread.Join(150); // dont need to wait long here, as we are blocking anyway
                     if (m_serverThread.IsAlive)
                         m_serverThread.Abort();
                     m_serverThread = null;
