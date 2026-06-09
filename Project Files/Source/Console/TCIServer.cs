@@ -310,7 +310,10 @@ using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.IO;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
@@ -858,7 +861,7 @@ namespace Thetis
 
         private Console _console;
         private TcpClient m_client = null;
-        private NetworkStream m_stream = null;
+        private Stream m_stream = null;
         private bool m_stopClient = false;
         private bool m_disconnected = false;
         private int m_disconnectNotified = 0;
@@ -925,14 +928,19 @@ namespace Thetis
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
+            : this(client, c, server, rateLimit, client.GetStream())
+        {
+        }
+        public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit, Stream stream)
         {
             _console = c;
             m_nRateLimit = rateLimit;
             m_server = server;
             m_client = client;
             m_client.ReceiveTimeout = 0;
-            m_stream = client.GetStream();
-            m_stream.ReadTimeout = Timeout.Infinite;
+            m_stream = stream;
+            if (m_stream != null && m_stream.CanTimeout)
+                m_stream.ReadTimeout = SOCKET_READ_TIMEOUT_MS;
             m_audioStreamSamples = getDefaultAudioStreamSamples(m_audioSampleRate);
             for (int i = 0; i < m_hwSampleRate.Length; i++)
             {
@@ -1271,6 +1279,8 @@ namespace Thetis
         }
         public void CTUNChanged(int rx, bool enabled)
         {
+            updateIF(rx - 1, 0);
+            updateIF(rx - 1, 1);
             if (m_disconnected) return;
             sendCTUN(rx - 1, enabled);
             updateDisplayZoomCentreTrackingMode(rx - 1);
@@ -2335,7 +2345,8 @@ namespace Thetis
                     offset = (int)consoleThreadSafe.radio.GetDSPRX(1, 0).RXOsc;
             }
 
-            offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
+            //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
+            //offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
 
             string s = "if:" + rx.ToString() + "," + chan.ToString() + "," + offset.ToString() + ";";
             sendTextFrame(s);
@@ -2751,7 +2762,8 @@ namespace Thetis
                     ddsFreq = (long)(consoleThreadSafe.CentreRX2Frequency * 1e6);
             }
 
-            ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7]
+            //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
+            //ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7]
 
             string s = "dds:" + rx.ToString() + "," + ddsFreq.ToString() + ";";
             sendTextFrame(s);
@@ -3264,22 +3276,6 @@ namespace Thetis
                 try
                 {
                     if (m_stream == null || m_client == null)
-                    {
-                        m_stopClient = true;
-                        continue;
-                    }
-
-                    Socket socket = m_client.Client;
-                    if (socket == null)
-                    {
-                        m_stopClient = true;
-                        continue;
-                    }
-
-                    if (!socket.Poll(SOCKET_READ_TIMEOUT_MS * 1000, SelectMode.SelectRead))
-                        continue;
-
-                    if (socket.Available < 1)
                     {
                         m_stopClient = true;
                         continue;
@@ -4218,7 +4214,24 @@ namespace Thetis
             BreakIn breakInMode = consoleThreadSafe.CurrentBreakInMode;
             return breakInMode == BreakIn.QSK || breakInMode == BreakIn.Manual;
         }
+        private void updateIF(int rx, int chan)
+        {
+            if(rx < 0 || rx > 1 || chan < 0 || chan > 1) return;
 
+            int IF = 0;
+            switch (rx)
+            {
+                case 0:
+                    IF = chan == 0 ? (int)((consoleThreadSafe.VFOAFreq - consoleThreadSafe.CentreFrequency) * 1e6) : (int)((consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreFrequency) * 1e6);
+                    break;
+                case 1:
+                    // just return vfo b
+                    IF = (int)((consoleThreadSafe.VFOBFreq - consoleThreadSafe.CentreRX2Frequency) * 1e6);
+                    break;
+            }
+
+            sendIF(rx, chan, IF);
+        }
         private void handleIF(string[] args)
         {
             int rx = 0;
@@ -4338,6 +4351,11 @@ namespace Thetis
                     bOK = long.TryParse(args[1], out ddsLong);
                 if (bOK)
                 {
+                    //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
+                    ////[2.10.3.16]MW0LGE we need to adjust dds here by cw pitch shift if in cw mode because it gets reapplied by code that is in move spectrum
+                    ////If we dont do this, and we are requested for a dds of X, the outbound after we apply will be X + cwShift, which would be incorrect
+                    //ddsLong -= consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1);
+
                     double dds = ddsLong / 1e6;
 
                     //[2.10.3.16]MW0LGE changes here to fix issue with dds causing multiple IF messages
@@ -8622,12 +8640,319 @@ namespace Thetis
 
         private Console _console;
 
+        private sealed class TCIWssSupport
+        {
+            private readonly TCPIPtciServer m_owner;
+            private readonly TcpListener m_listener;
+            private readonly X509Certificate2 m_certificate;
+            private Thread m_thread = null;
+            private bool m_stop = false;
+
+            public TCIWssSupport(TCPIPtciServer owner, IPEndPoint ipNport, X509Certificate2 certificate)
+            {
+                m_owner = owner;
+                m_listener = new TcpListener(ipNport);
+                m_certificate = certificate;
+            }
+
+            public bool Start()
+            {
+                try
+                {
+                    m_stop = false;
+                    m_listener.Start();
+                    m_thread = new Thread(new ThreadStart(threadStart));
+                    m_thread.Priority = ThreadPriority.BelowNormal;
+                    m_thread.Name = "TCI secure server Thread";
+                    m_thread.Start();
+                    return true;
+                }
+                catch
+                {
+                    Stop();
+                    return false;
+                }
+            }
+
+            public void Stop()
+            {
+                m_stop = true;
+
+                try
+                {
+                    m_listener.Stop();
+                }
+                catch
+                {
+                }
+
+                if (m_thread != null)
+                {
+                    m_thread.Join(150);
+                    if (m_thread.IsAlive)
+                        m_thread.Abort();
+                    m_thread = null;
+                }
+
+                try
+                {
+                    m_certificate.Dispose();
+                }
+                catch
+                {
+                }
+            }
+
+            ////
+            //private void threadStart()
+            //{
+            //    while (!m_stop && !m_owner.m_stopServer)
+            //    {
+            //        TcpClient client = null;
+            //        SslStream stream = null;
+
+            //        try
+            //        {
+            //            client = m_listener.AcceptTcpClient();
+            //            client.NoDelay = true;
+
+            //            debugPrintClientDetails(client, stream, "accepted");
+
+            //            stream = new SslStream(client.GetStream(), false);
+            //            stream.AuthenticateAsServer(m_certificate, false, SslProtocols.None, false);
+
+            //            debugPrintClientDetails(client, stream, "authenticated");
+
+            //            if (m_owner.addAcceptedClient(client, stream))
+            //            {
+            //                debugPrintClientDetails(client, stream, "added");
+
+            //                client = null;
+            //                stream = null;
+            //            }
+            //        }
+            //        catch
+            //        {
+            //        }
+            //        finally
+            //        {
+            //            if (stream != null)
+            //            {
+            //                try
+            //                {
+            //                    stream.Close();
+            //                }
+            //                catch
+            //                {
+            //                }
+            //            }
+
+            //            if (client != null)
+            //            {
+            //                try
+            //                {
+            //                    client.Close();
+            //                }
+            //                catch
+            //                {
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //private void debugPrintClientDetails(TcpClient client, SslStream stream, string stage)
+            //{
+            //    try
+            //    {
+            //        System.Diagnostics.Debug.WriteLine("----- Client " + stage + " -----");
+
+            //        if (client != null)
+            //        {
+            //            System.Net.Sockets.Socket socket = client.Client;
+
+            //            System.Diagnostics.Debug.WriteLine("Connected: " + client.Connected);
+            //            System.Diagnostics.Debug.WriteLine("NoDelay: " + client.NoDelay);
+
+            //            if (socket != null)
+            //            {
+            //                System.Net.IPEndPoint remote_ep = socket.RemoteEndPoint as System.Net.IPEndPoint;
+            //                System.Net.IPEndPoint local_ep = socket.LocalEndPoint as System.Net.IPEndPoint;
+
+            //                if (remote_ep != null)
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("Remote IP: " + remote_ep.Address);
+            //                    System.Diagnostics.Debug.WriteLine("Remote Port: " + remote_ep.Port);
+            //                }
+            //                else
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("Remote: unknown");
+            //                }
+
+            //                if (local_ep != null)
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("Local IP: " + local_ep.Address);
+            //                    System.Diagnostics.Debug.WriteLine("Local Port: " + local_ep.Port);
+            //                }
+            //                else
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("Local: unknown");
+            //                }
+
+            //                System.Diagnostics.Debug.WriteLine("AddressFamily: " + socket.AddressFamily);
+            //                System.Diagnostics.Debug.WriteLine("SocketType: " + socket.SocketType);
+            //                System.Diagnostics.Debug.WriteLine("ProtocolType: " + socket.ProtocolType);
+            //                System.Diagnostics.Debug.WriteLine("Available: " + socket.Available);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("Client: null");
+            //        }
+
+            //        if (stream != null)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("SSL IsAuthenticated: " + stream.IsAuthenticated);
+            //            System.Diagnostics.Debug.WriteLine("SSL IsEncrypted: " + stream.IsEncrypted);
+            //            System.Diagnostics.Debug.WriteLine("SSL IsSigned: " + stream.IsSigned);
+            //            System.Diagnostics.Debug.WriteLine("SSL IsMutuallyAuthenticated: " + stream.IsMutuallyAuthenticated);
+
+            //            if (stream.IsAuthenticated)
+            //            {
+            //                System.Diagnostics.Debug.WriteLine("SSL Protocol: " + stream.SslProtocol);
+            //                System.Diagnostics.Debug.WriteLine("Cipher: " + stream.CipherAlgorithm + " " + stream.CipherStrength);
+            //                System.Diagnostics.Debug.WriteLine("Hash: " + stream.HashAlgorithm + " " + stream.HashStrength);
+            //                System.Diagnostics.Debug.WriteLine("Key Exchange: " + stream.KeyExchangeAlgorithm + " " + stream.KeyExchangeStrength);
+
+            //                string cf_connecting_ip = readHeaderValue(stream, "CF-Connecting-IP");
+
+            //                if (!string.IsNullOrEmpty(cf_connecting_ip))
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("CF-Connecting-IP: " + cf_connecting_ip);
+            //                }
+            //                else
+            //                {
+            //                    System.Diagnostics.Debug.WriteLine("CF-Connecting-IP: not found");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("SSL Stream: null");
+            //        }
+
+            //        System.Diagnostics.Debug.WriteLine("---------------------------");
+            //    }
+            //    catch
+            //    {
+            //    }
+            //}
+
+            //private string readHeaderValue(SslStream stream, string header_name)
+            //{
+            //    try
+            //    {
+            //        byte[] buffer = new byte[1];
+            //        System.Text.StringBuilder headers = new System.Text.StringBuilder();
+            //        string header_end = "\r\n\r\n";
+
+            //        while (headers.Length < 32768)
+            //        {
+            //            int read = stream.Read(buffer, 0, 1);
+
+            //            if (read <= 0)
+            //            {
+            //                break;
+            //            }
+
+            //            headers.Append((char)buffer[0]);
+
+            //            if (headers.Length >= header_end.Length && headers.ToString().EndsWith(header_end))
+            //            {
+            //                break;
+            //            }
+            //        }
+
+            //        string[] lines = headers.ToString().Split(new string[] { "\r\n" }, System.StringSplitOptions.None);
+
+            //        for (int i = 0; i < lines.Length; i++)
+            //        {
+            //            string line = lines[i];
+
+            //            if (line.StartsWith(header_name + ":", System.StringComparison.OrdinalIgnoreCase))
+            //            {
+            //                return line.Substring(header_name.Length + 1).Trim();
+            //            }
+            //        }
+            //    }
+            //    catch
+            //    {
+            //    }
+
+            //    return null;
+            //}
+            ////
+
+
+            private void threadStart()
+            {
+                while (!m_stop && !m_owner.m_stopServer)
+                {
+                    TcpClient client = null;
+                    SslStream stream = null;
+
+                    try
+                    {
+                        client = m_listener.AcceptTcpClient();
+                        client.NoDelay = true;
+
+                        stream = new SslStream(client.GetStream(), false);
+                        stream.AuthenticateAsServer(m_certificate, false, SslProtocols.None, false);
+
+                        if (m_owner.addAcceptedClient(client, stream))
+                        {
+                            client = null;
+                            stream = null;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        if (stream != null)
+                        {
+                            try
+                            {
+                                stream.Close();
+                            }
+                            catch
+                            {
+                            }
+                        }
+
+                        if (client != null)
+                        {
+                            try
+                            {
+                                client.Close();
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public static IPAddress DEFAULT_SERVER = IPAddress.Parse("127.0.0.1");
         public static int DEFAULT_PORT = 31001;
         public static IPEndPoint DEFAULT_IP_END_POINT =
             new IPEndPoint(DEFAULT_SERVER, DEFAULT_PORT);
 
         private TcpListener m_server = null;
+        private TCIWssSupport m_wssSupport = null;
         private bool m_stopServer = false;
         private bool m_stopPurging = false;
         private Thread m_serverThread = null;
@@ -8665,26 +8990,50 @@ namespace Thetis
         }
         public TCPIPtciServer()
         {
-            Init(DEFAULT_IP_END_POINT);
+            Init(DEFAULT_IP_END_POINT, null, null);
+        }
+        public TCPIPtciServer(string certificatePath)
+        {
+            Init(DEFAULT_IP_END_POINT, certificatePath, null);
+        }
+        public TCPIPtciServer(string certificatePath, string certificatePassword)
+        {
+            Init(DEFAULT_IP_END_POINT, certificatePath, certificatePassword);
         }
         public TCPIPtciServer(IPAddress serverIP)
         {
-            Init(new IPEndPoint(serverIP, DEFAULT_PORT));
+            Init(new IPEndPoint(serverIP, DEFAULT_PORT), null, null);
+        }
+        public TCPIPtciServer(IPAddress serverIP, string certificatePath, string certificatePassword = null)
+        {
+            Init(new IPEndPoint(serverIP, DEFAULT_PORT), certificatePath, certificatePassword);
         }
 
         public TCPIPtciServer(int port)
         {
-            Init(new IPEndPoint(DEFAULT_SERVER, port));
+            Init(new IPEndPoint(DEFAULT_SERVER, port), null, null);
+        }
+        public TCPIPtciServer(int port, string certificatePath, string certificatePassword = null)
+        {
+            Init(new IPEndPoint(DEFAULT_SERVER, port), certificatePath, certificatePassword);
         }
 
         public TCPIPtciServer(IPAddress serverIP, int port)
         {
-            Init(new IPEndPoint(serverIP, port));
+            Init(new IPEndPoint(serverIP, port), null, null);
+        }
+        public TCPIPtciServer(IPAddress serverIP, int port, string certificatePath, string certificatePassword = null)
+        {
+            Init(new IPEndPoint(serverIP, port), certificatePath, certificatePassword);
         }
 
         public TCPIPtciServer(IPEndPoint ipNport)
         {
-            Init(ipNport);
+            Init(ipNport, null, null);
+        }
+        public TCPIPtciServer(IPEndPoint ipNport, string certificatePath, string certificatePassword = null)
+        {
+            Init(ipNport, certificatePath, certificatePassword);
         }
         ~TCPIPtciServer()
         {
@@ -8696,7 +9045,7 @@ namespace Thetis
             }
         }
 
-        private void Init(IPEndPoint ipNport)
+        private void Init(IPEndPoint ipNport, string certificatePath, string certificatePassword)
         {
             try
             {
@@ -8706,10 +9055,41 @@ namespace Thetis
                 }
                 _log = new frmLog();
                 m_server = new TcpListener(ipNport);
+                m_wssSupport = createWssSupport(ipNport, certificatePath, certificatePassword);
             }
             catch
             {
                 m_server = null;
+                m_wssSupport = null;
+            }
+        }
+
+        private TCIWssSupport createWssSupport(IPEndPoint ipNport, string certificatePath, string certificatePassword)
+        {
+            if (string.IsNullOrEmpty(certificatePath)) return null;
+            if (!File.Exists(certificatePath)) return null;
+            if (ipNport.Port >= IPEndPoint.MaxPort) return null;
+
+            try
+            {
+                X509Certificate2 certificate;
+                if (certificatePassword == null)
+                    certificate = new X509Certificate2(certificatePath);
+                else
+                    certificate = new X509Certificate2(certificatePath, certificatePassword);
+
+                if (!certificate.HasPrivateKey)
+                {
+                    certificate.Dispose();
+                    return null;
+                }
+
+                return new TCIWssSupport(this, new IPEndPoint(ipNport.Address, ipNport.Port + 1), certificate);
+            }
+            catch (Exception ex)
+            {
+                m_sLastError = ex.Message;
+                return null;
             }
         }
 
@@ -8931,6 +9311,8 @@ namespace Thetis
                 try
                 {
                     m_server.Start();
+                    if (m_wssSupport != null && !m_wssSupport.Start())
+                        m_wssSupport = null;
 
                     m_serverThread = new Thread(new ThreadStart(ServerThreadStart));
                     m_serverThread.Priority = ThreadPriority.BelowNormal;
@@ -9044,6 +9426,18 @@ namespace Thetis
 
                 // Stop the TCP/IP Server, so can clean up without more clients connecting
                 m_stopServer = true;
+                try
+                {
+                    if (m_wssSupport != null)
+                    {
+                        m_wssSupport.Stop();
+                        m_wssSupport = null;
+                    }
+                }
+                catch
+                {
+
+                }
                 try
                 {
                     m_server.Stop();
@@ -9282,56 +9676,83 @@ namespace Thetis
                 socketListener.StopSocketListener();
             }
         }
+        private bool addAcceptedClient(TcpClient client, Stream stream)
+        {
+            TCPIPtciSocketListener socketListener = null;
+            bool bAdded = false;
+
+            try
+            {
+                socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit, stream);
+
+                lock (m_objLocker)
+                {
+                    if (m_socketListenersList == null)
+                    {
+                        socketListener.StopSocketListener();
+                        return false;
+                    }
+
+                    m_socketListenersList.Add(socketListener);
+                    bAdded = true;
+                }
+
+                socketListener.ClientConnectedHandlers += ClientConnectedHandler;
+                socketListener.ClientDisconnectedHandlers += ClientDisconnectedHandler;
+                socketListener.ClientErrorHandlers += ClientErrorHandler;
+
+                socketListener.StartSocketListener();
+                return true;
+            }
+            catch
+            {
+                if (socketListener != null)
+                {
+                    socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
+                    socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
+                    socketListener.ClientErrorHandlers -= ClientErrorHandler;
+
+                    if (bAdded)
+                    {
+                        lock (m_objLocker)
+                        {
+                            if (m_socketListenersList != null)
+                                m_socketListenersList.Remove(socketListener);
+                        }
+                    }
+
+                    socketListener.StopSocketListener();
+                }
+
+                return false;
+            }
+        }
         private void ServerThreadStart()
         {
             //Socket clientSocket = null;
             TcpClient client = null;
 
-            TCPIPtciSocketListener socketListener = null;
-            bool bAddedDelegates = false;
             while (!m_stopServer)
             {
                 try
                 {
-                    bAddedDelegates = false;
                     //clientSocket = m_server.AcceptSocket();
                     client = m_server.AcceptTcpClient();
                     client.NoDelay = true;
 
-                    socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit);
+                    if (!addAcceptedClient(client, client.GetStream()))
+                        client.Close();
 
-                    lock (m_objLocker)
-                    {
-                        m_socketListenersList.Add(socketListener);
-                    }
-
-                    socketListener.ClientConnectedHandlers += ClientConnectedHandler;
-                    socketListener.ClientDisconnectedHandlers += ClientDisconnectedHandler;
-                    socketListener.ClientErrorHandlers += ClientErrorHandler;
-                    bAddedDelegates = true;
-
-                    socketListener.StartSocketListener();
+                    client = null;
                 }
                 catch (SocketException se)
                 {
-                    if (bAddedDelegates && socketListener != null)
-                    {
-                        socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-                        socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-                        socketListener.ClientErrorHandlers -= ClientErrorHandler;
-                    }
                     m_stopServer = true;
                     m_sLastError = se.Message;
                     ServerErrorHandlers?.Invoke(se);
                 }
                 catch
                 {
-                    if (bAddedDelegates && socketListener != null)
-                    {
-                        socketListener.ClientConnectedHandlers -= ClientConnectedHandler;
-                        socketListener.ClientDisconnectedHandlers -= ClientDisconnectedHandler;
-                        socketListener.ClientErrorHandlers -= ClientErrorHandler;
-                    }
                     m_stopServer = true;
                 }
             }

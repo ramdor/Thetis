@@ -2471,7 +2471,32 @@ namespace Thetis
                     }
 
                     Debug.Print("Starting TCI on " + m_sTCIAddress + ":" + m_nTCIPort.ToString());
-                    m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort);
+
+                    string certFolder = Path.Combine(AppDataPath, "certificates");
+                    try
+                    {
+                        if (!Directory.Exists(certFolder))
+                        {
+                            Directory.CreateDirectory(certFolder);
+                        }
+                    }
+                    catch { }
+
+                    string certPath = Path.Combine(certFolder, "tciserver.pfx");
+                    if (!File.Exists(certPath)) certPath = null;
+                    string pw = null;
+
+                    if (!string.IsNullOrEmpty(certPath))
+                    {
+                        string pwPath = Path.Combine(certFolder, "tciserver_pw.txt");
+                        try
+                        {
+                            pw = File.ReadAllText(pwPath, Encoding.UTF8);
+                        }
+                        catch { }
+                    }
+
+                    m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort, certPath, pw);
                     cmaster.TCIServer = m_tcpTCIServer;
 
                     addTCIDelegates();
@@ -10817,7 +10842,7 @@ namespace Thetis
             {
                 bool bOld = _click_tune_display;
                 _click_tune_display = value;
-                if (bOld != _click_tune_display) CTUNChangedHandlers?.Invoke(1, bOld, _click_tune_display, RX1Band); //MW0LGE_21d
+                if (!_ignore_ctun_notify_handlers && (bOld != _click_tune_display)) CTUNChangedHandlers?.Invoke(1, bOld, _click_tune_display, RX1Band); //MW0LGE_21d
             }
         }
 
@@ -10829,7 +10854,7 @@ namespace Thetis
             {
                 bool bOld = _click_tune_rx2_display;
                 _click_tune_rx2_display = value;
-                if (bOld != _click_tune_rx2_display) CTUNChangedHandlers?.Invoke(2, bOld, _click_tune_rx2_display, RX2Band); //MW0LGE_21d
+                if (!_ignore_ctun_notify_handlers && (bOld != _click_tune_rx2_display)) CTUNChangedHandlers?.Invoke(2, bOld, _click_tune_rx2_display, RX2Band); //MW0LGE_21d
             }
         }
 
@@ -24164,6 +24189,8 @@ namespace Thetis
                             "VFOAsub : " + VFOASubFreq.ToString() + Environment.NewLine +
                             "CenRX1 : " + CentreFrequency.ToString() + Environment.NewLine +
                             "CenRX2 : " + CentreRX2Frequency.ToString() + Environment.NewLine +
+                            "IF_RX1 hz: " + ((int)((VFOAFreq - CentreFrequency) * 1e6)).ToString() + Environment.NewLine +
+                            (rx2_enabled ? "IF_RX2 hz: " + ((int)((VFOBFreq - CentreRX2Frequency) * 1e6)).ToString() + Environment.NewLine : "") +
                             "DisplayVFOA : " + Display.VFOA.ToString() + Environment.NewLine +
                             "DisplayVFOB : " + Display.VFOB.ToString() + Environment.NewLine +
                             "DisplayVFOAsub : " + Display.VFOASub.ToString() + Environment.NewLine +
@@ -46935,9 +46962,7 @@ namespace Thetis
                     float offset = RXOffset(1);
 
                     // get all readings
-                    double old = _RX1MeterValues[Reading.SIGNAL_STRENGTH];
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.SIGNAL_STRENGTH))) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
-                    if (old != _RX1MeterValues[Reading.SIGNAL_STRENGTH]) Display.DebugText = _RX1MeterValues[Reading.SIGNAL_STRENGTH].ToString();
                     bool bNeedAvg = true;
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH) || (TCIServer != null && TCIServer.SensorRequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)))
                     {
@@ -52549,20 +52574,41 @@ namespace Thetis
             }
         }
 
+        private bool _ignore_ctun_notify_handlers = false; //dont call delegates if set to true when ctun changes
         public bool SetCTUN(int rx, bool state)
         {
             if (rx < 1 || rx > 2) return false;
+
+            bool set = false;
+            bool oldstate = false;
+            Band band = Band.FIRST;
+
+            _ignore_ctun_notify_handlers = true;
             switch (rx)
             {
                 case 1:
+                    oldstate = chkFWCATU.Checked;
+                    band = RX1Band;
                     chkFWCATU.Checked = state;
-                    return true;
+                    set = true;
+                    break;
                 case 2:
+                    oldstate = chkX2TR.Checked;
+                    band = RX2Band;
                     chkX2TR.Checked = state;
-                    return true;
+                    set = true;
+                    break;
                 default:
-                    return false;
+                    break;
             }
+            _ignore_ctun_notify_handlers = false;
+
+            if (set && (state != oldstate))
+            {
+                CTUNChangedHandlers?.Invoke(rx, oldstate, state, band);
+            }
+
+            return set;
         }
 
         public bool SetSubRX(int rx, bool state)
@@ -53894,7 +53940,7 @@ namespace Thetis
                 _tci_display_stream_in_use = true;
                 _ok_to_update_zoom_pan = true;
                 Zoom = 10;
-                Pan = 0;
+                btnDisplayPanCenter_Click(this, EventArgs.Empty); //centre pan
                 _ok_to_update_zoom_pan = false;
             }
             else if (streams == 0 && _tci_display_stream_in_use)
