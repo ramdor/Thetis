@@ -4849,7 +4849,7 @@ namespace Thetis
                 }
             }
         }
-        public static float RX1OffsetWithDup // used by minispec which is always in duplex mode
+        public static float RX1OffsetWithDup
         {
             get
             {
@@ -4908,7 +4908,7 @@ namespace Thetis
                 }
             }
         }
-        public static float RX2OffsetWithDup // used by minispec which is always in duplex mode
+        public static float RX2OffsetWithDup
         {
             get
             {

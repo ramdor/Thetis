@@ -923,20 +923,32 @@ namespace Thetis
         private bool m_audioResetPending = false;
         private bool m_txAudioClearPending = false;
         private bool m_seenModernTxAudioNegotiation = false;
+        private readonly bool m_secureConnection = false;
+        private readonly string m_authConnectionId = Guid.NewGuid().ToString("N");
+        private bool m_authenticationRequired = false;
+        private bool m_authenticated = false;
+        private string m_effectiveClientIp = "unknown";
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
         private clsSpectrumProcessor m_spectrumProcessor = null;
         private System.Threading.Timer m_tmRxSensors;
         private System.Threading.Timer m_tmTxSensors;
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
-            : this(client, c, server, rateLimit, client.GetStream())
+            : this(client, c, server, rateLimit, client.GetStream(), false)
         {
         }
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit, Stream stream)
+            : this(client, c, server, rateLimit, stream, stream is SslStream)
+        {
+        }
+        public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit, Stream stream, bool secureConnection)
         {
             _console = c;
             m_nRateLimit = rateLimit;
             m_server = server;
             m_client = client;
+            m_secureConnection = secureConnection;
+            m_authenticationRequired = m_server != null && m_server.IsAuthenticationRequired(m_secureConnection);
+            m_effectiveClientIp = getDirectClientIp();
             m_client.ReceiveTimeout = 0;
             m_stream = stream;
             if (m_stream != null && m_stream.CanTimeout)
@@ -3032,6 +3044,124 @@ namespace Thetis
             Debug.Print("SENT INITIAL STATE");
         }
 
+        private void startAuthenticationOrInitialisation()
+        {
+            m_authenticationRequired = m_server != null && m_server.IsAuthenticationRequired(m_secureConnection);
+            m_effectiveClientIp = getDirectClientIp();
+
+            if (m_authenticationRequired)
+            {
+                m_authenticated = false;
+                sendTextFrame("authentication_required:true;");
+                return;
+            }
+
+            m_authenticated = true;
+            sendInitialisationData();
+        }
+
+        private bool handleAuthenticationAndPermissions(string cmd, string argsText, string[] args)
+        {
+            if (string.Equals(cmd, "authentication_pincode", StringComparison.OrdinalIgnoreCase))
+            {
+                handleAuthenticationPincode(argsText);
+                return false;
+            }
+
+            if (m_authenticationRequired && !m_authenticated)
+            {
+                sendTextFrame("authentication_required:true;");
+                return false;
+            }
+
+            if (m_authenticationRequired && !TCIpermissions.IsAllowed(m_authConnectionId, cmd, args))
+            {
+                string permission = TCIpermissions.GetPermissionForCommand(cmd, args);
+                if (string.IsNullOrEmpty(permission))
+                    sendTextFrame("permission_denied:" + cmd + ";");
+                else
+                    sendTextFrame("permission_denied:" + permission + ";");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void handleAuthenticationPincode(string accessCode)
+        {
+            if (!m_authenticationRequired)
+                return;
+
+            if (m_authenticated)
+                return;
+
+            TCIpermissions.AuthenticationResult result = TCIpermissions.Authenticate(m_authConnectionId, m_effectiveClientIp, accessCode == null ? string.Empty : accessCode.Trim());
+
+            if (result.Locked)
+            {
+                sendTextFrame("authentication_locked:" + result.LockedSeconds.ToString(CultureInfo.InvariantCulture) + ";");
+                return;
+            }
+
+            if (!result.Success)
+            {
+                sendTextFrame("authentication_fail:" + result.AttemptsLeft.ToString(CultureInfo.InvariantCulture) + ";");
+                return;
+            }
+
+            m_authenticated = true;
+            sendTextFrame("authentication_ok;");
+            sendTextFrame("authentication_permissions:" + result.PermissionsCsv + ";");
+            sendInitialisationData();
+        }
+
+        private bool isAuthenticationProtocolMessage(string sMsg)
+        {
+            if (string.IsNullOrEmpty(sMsg)) return false;
+            string msg = sMsg.Trim().ToLowerInvariant();
+            return msg.StartsWith("authentication_required:") ||
+                   msg.StartsWith("authentication_ok") ||
+                   msg.StartsWith("authentication_fail:") ||
+                   msg.StartsWith("authentication_locked:") ||
+                   msg.StartsWith("authentication_permissions:") ||
+                   msg.StartsWith("permission_denied:");
+        }
+
+        private string getDirectClientIp()
+        {
+            try
+            {
+                if (m_client == null || m_client.Client == null) return "unknown";
+                IPEndPoint remoteEndPoint = m_client.Client.RemoteEndPoint as IPEndPoint;
+                if (remoteEndPoint == null || remoteEndPoint.Address == null) return "unknown";
+                return remoteEndPoint.Address.ToString();
+            }
+            catch
+            {
+                return "unknown";
+            }
+        }
+
+        private string getSafeIncomingLogText(string msg)
+        {
+            if (string.IsNullOrWhiteSpace(msg)) return msg;
+
+            string trimmed = msg.Trim();
+            if (trimmed.StartsWith("authentication_pincode:", StringComparison.OrdinalIgnoreCase))
+                return "authentication_pincode:<hidden>;";
+
+            List<string> commands = splitTextCommands(trimmed);
+            if (commands.Count <= 1) return msg;
+
+            for (int i = 0; i < commands.Count; i++)
+            {
+                if (commands[i].TrimStart().StartsWith("authentication_pincode:", StringComparison.OrdinalIgnoreCase))
+                    commands[i] = "authentication_pincode:<hidden>";
+            }
+
+            return string.Join(";", commands.ToArray()) + ";";
+        }
+
         private void sendInitialisationData()
         {
             string sProtocol; //MW0LGE_22 emulate ee3 protocol
@@ -3306,7 +3436,7 @@ namespace Thetis
                                     Debug.Print("Upgraded to websocket");
 
                                     _m_buffer.RemoveRange(0, nStart);
-                                    sendInitialisationData();
+                                    startAuthenticationOrInitialisation();
                                 }
                                 else
                                 {
@@ -3427,6 +3557,7 @@ namespace Thetis
         {
             try
             {
+                if (m_authenticationRequired && !m_authenticated && !isAuthenticationProtocolMessage(sMsg)) return;
                 if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
                 {
                     if (m_client.Connected)
@@ -3446,6 +3577,7 @@ namespace Thetis
         {
             try
             {
+                if (m_authenticationRequired && !m_authenticated) return;
                 if (!m_stopClient && !m_disconnected && m_bWebSocket && m_client != null && m_stream != null)
                 {
                     if (m_client.Connected)
@@ -3477,6 +3609,7 @@ namespace Thetis
         }
         public void StopSocketListener()
         {
+            TCIpermissions.CloseSession(m_authConnectionId);
             TCPIPtciServer server = m_server;
             notifyServerDisconnected(server);
             lock (m_objStreamLock)
@@ -3719,6 +3852,7 @@ namespace Thetis
             }
             else if (opcode == EOpcodeType.Binary)
             {
+                if (!handleAuthenticationAndPermissions("binary_tx_audio", null, null)) return;
                 byte[] payload = new byte[dataLength];
                 Buffer.BlockCopy(bytes, dataIndex, payload, 0, dataLength);
                 handleBinaryFrame(payload);
@@ -5851,7 +5985,7 @@ namespace Thetis
 
             //Debug.Print("TCI Msg : " + msg);
 
-            if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, msg);
+            if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, getSafeIncomingLogText(msg));
 
             if (msg.EndsWith(";")) msg = msg.Substring(0, msg.Length - 1).Trim();
 
@@ -5862,7 +5996,10 @@ namespace Thetis
             if (parts.Length == 2 || json_spot)
             {
                 string cmd = parts[0].ToLower().Trim();
-                string[] args = parts[1].Split(',');
+                string argsText = parts[1];
+                string[] args = argsText.Split(',');
+
+                if (!handleAuthenticationAndPermissions(cmd, argsText, args)) return;
 
                 switch (cmd)
                 {
@@ -6203,6 +6340,7 @@ namespace Thetis
             else if (parts.Length == 1)
             {
                 string cmd = parts[0].ToLower().Trim();
+                if (!handleAuthenticationAndPermissions(cmd, null, null)) return;
                 // just command
                 switch (cmd)
                 {
@@ -7983,6 +8121,21 @@ namespace Thetis
             if (!float.TryParse(args[10], NumberStyles.Float, CultureInfo.InvariantCulture, out float maxDbm)) return;
             if (receiver < 0 || receiver > 1) return;
 
+            bool canChangeDisplaySettings = !m_authenticationRequired || TCIpermissions.IsAllowed(m_authConnectionId, "display_zoom", new string[] { receiver.ToString(CultureInfo.InvariantCulture), "0", "0" });
+            if (!canChangeDisplaySettings)
+            {
+                pixels = 512;
+                frameRate = 30;
+                fftSize = 65536;
+                windowType = 2;
+                detectorType = 0;
+                averageMode = 3;
+                averageTimeMs = 120.0f;
+                normOneHz = false;
+                minDbm = -115.0f;
+                maxDbm = -60.0f;
+            }
+
             pixels = clampDisplayPixels(pixels);
             frameRate = clampDisplayFrameRate(frameRate);
             fftSize = normalizeDisplayFFTSize(fftSize);
@@ -8909,7 +9062,7 @@ namespace Thetis
                         stream = new SslStream(client.GetStream(), false);
                         stream.AuthenticateAsServer(m_certificate, false, SslProtocols.None, false);
 
-                        if (m_owner.addAcceptedClient(client, stream))
+                        if (m_owner.addAcceptedClient(client, stream, true))
                         {
                             client = null;
                             stream = null;
@@ -8968,6 +9121,8 @@ namespace Thetis
         private bool m_bDistantDDSMovesVFO = true;
         private bool m_bIQSwap = true;
         private bool m_bAlwaysStreamIQ = false;
+        private bool m_bAuthenticationSystemWS = false;
+        private bool m_bAuthenticationSystemWSS = false;
         private TCITxStereoInputMode m_txStereoInputMode = TCITxStereoInputMode.Both;
         private TCICWController m_cwController = null;
         private int m_cwInternalMacroSpeedUpdates = 0;
@@ -9168,10 +9323,64 @@ namespace Thetis
                 RefreshStreamRunState();
             }
         }
+        public bool AuthenticationSystemWS
+        {
+            get { return m_bAuthenticationSystemWS; }
+            set { m_bAuthenticationSystemWS = value; }
+        }
+        public bool AuthenticationSystemWSS
+        {
+            get { return m_bAuthenticationSystemWSS; }
+            set { m_bAuthenticationSystemWSS = value; }
+        }
+        public string TCIPermissionsJson
+        {
+            get { return TCIpermissions.SaveToJson(); }
+            set { TCIpermissions.LoadFromJson(value); }
+        }
+        internal bool IsAuthenticationRequired(bool secureConnection)
+        {
+            return secureConnection ? m_bAuthenticationSystemWSS : m_bAuthenticationSystemWS;
+        }
+
         public TCITxStereoInputMode TXStereoInputMode
         {
             get { return m_txStereoInputMode; }
             set { m_txStereoInputMode = value; }
+        }
+
+        private bool getSetupBool(object setupForm, string propertyName, bool defaultValue)
+        {
+            try
+            {
+                if (setupForm == null) return defaultValue;
+                System.Reflection.PropertyInfo property = setupForm.GetType().GetProperty(propertyName);
+                if (property == null || property.PropertyType != typeof(bool)) return defaultValue;
+                object value = property.GetValue(setupForm, null);
+                if (value is bool) return (bool)value;
+            }
+            catch
+            {
+            }
+
+            return defaultValue;
+        }
+
+        private string getSetupString(object setupForm, string propertyName, string defaultValue)
+        {
+            try
+            {
+                if (setupForm == null) return defaultValue;
+                System.Reflection.PropertyInfo property = setupForm.GetType().GetProperty(propertyName);
+                if (property == null || property.PropertyType != typeof(string)) return defaultValue;
+                object value = property.GetValue(setupForm, null);
+                if (value is string) return (string)value;
+            }
+            catch
+            {
+            }
+
+            return defaultValue;
         }
 
         public void StartServer(Console c, int rateLimit = 0)
@@ -9201,6 +9410,11 @@ namespace Thetis
                     m_bIQSwap = c.SetupForm.TCISwapIQ;
                     m_bAlwaysStreamIQ = c.SetupForm.TCIAlwaysStreamIQ;
                     m_txStereoInputMode = c.SetupForm.TCITXInputChannel;
+                    m_bAuthenticationSystemWS = getSetupBool(c.SetupForm, "AuthenticationSystemWS", m_bAuthenticationSystemWS);
+                    m_bAuthenticationSystemWSS = getSetupBool(c.SetupForm, "AuthenticationSystemWSS", m_bAuthenticationSystemWSS);
+                    string permissionsJson = getSetupString(c.SetupForm, "TCIPermissionsJson", null);
+                    if (!string.IsNullOrWhiteSpace(permissionsJson))
+                        TCIpermissions.LoadFromJson(permissionsJson);
                 }
                 else
                 {
@@ -9678,12 +9892,16 @@ namespace Thetis
         }
         private bool addAcceptedClient(TcpClient client, Stream stream)
         {
+            return addAcceptedClient(client, stream, stream is SslStream);
+        }
+        private bool addAcceptedClient(TcpClient client, Stream stream, bool secureConnection)
+        {
             TCPIPtciSocketListener socketListener = null;
             bool bAdded = false;
 
             try
             {
-                socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit, stream);
+                socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit, stream, secureConnection);
 
                 lock (m_objLocker)
                 {

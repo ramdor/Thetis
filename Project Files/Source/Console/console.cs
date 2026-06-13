@@ -951,10 +951,32 @@ namespace Thetis
             if (_portAudioIssue)
                 MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-            //            
+            //[2.10.3.16]MW0LGE load in TCI auth data
+            LogTool.AddLogEntry("Loading TCI auth data...", "AUTH");
+
+            string perms = Path.Combine(AppDataPath, "TCIpermissions.json");
+            string json = File.Exists(perms) ? File.ReadAllText(perms) : null;
+
+            TCIpermissions.LoadFromJson(json);
+
+            TCIpermissions.AddUser("admin", "Admin", "admin", "6789", string.Empty);
+            TCIpermissions.SetUserEnabled("admin", true);
+            TCIpermissions.SetUserRole("admin", "admin");
+            TCIpermissions.SetUserAccessCode("admin", "6789");
+
+            TCIpermissions.AddUser("rx_only", "RX Only", "advanced_rx_operator", "1234", string.Empty);
+            TCIpermissions.SetUserEnabled("rx_only", true);
+            TCIpermissions.SetUserRole("rx_only", "advanced_rx_operator");
+            TCIpermissions.SetUserAccessCode("rx_only", "1234");
+
+            File.WriteAllText(perms, TCIpermissions.SaveToJson());
+
+            LogTool.Completed("AUTH");
+            //
+
             if (!IsSetupFormNull) SetupForm.SetupCMAsio(_portAudioIssue, Common.HasArg(args, "-cmasioconfig"));
 
-            CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
+            CpuUsage();
 
             LogTool.AddLogEntry("Processing finder info...", "FIND");
             Splash.SetStatus("Processing Finder Info");
@@ -2498,6 +2520,8 @@ namespace Thetis
 
                     m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort, certPath, pw);
                     cmaster.TCIServer = m_tcpTCIServer;
+
+                    m_tcpTCIServer.AuthenticationSystemWSS = true;
 
                     addTCIDelegates();
 
@@ -21789,7 +21813,7 @@ namespace Thetis
                 else
                     run = this.chkPower.Checked;
             }
-            catch { }
+            catch { run = false; }
 
             if (run)
             {
@@ -21805,24 +21829,30 @@ namespace Thetis
                     {
                         this.Invoke(new MethodInvoker(() =>
                         {
-                            checkOverloadsAndSync();
-                            if (count == 0) checkSeqErrors();
                             run = this.chkPower.Checked;
+                            if (run)
+                            {
+                                checkOverloadsAndSync();
+                                if (count == 0) checkSeqErrors();
+                            }
                         }));
                     }
                     else
                     {
-                        checkOverloadsAndSync();
-                        if (count == 0) checkSeqErrors();
                         run = this.chkPower.Checked;
+                        if (run)
+                        {
+                            checkOverloadsAndSync();
+                            if (count == 0) checkSeqErrors();
+                        }
                     }
 
                     count++;
                     if (count == 5) count = 0;
                 }
-                catch { }
+                catch { run = false; }
 
-                await Task.Delay(100);
+                if (run) await Task.Delay(100);
             }
         }
         private void checkSeqErrors()

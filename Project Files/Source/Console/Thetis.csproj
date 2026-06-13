@@ -461,6 +461,7 @@
     <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsMeterScriptEngine.cs" />
     <Compile Include="clsSpectrumProcessor.cs" />
+    <Compile Include="clsTCIpermissions.cs" />
     <Compile Include="frmCFCConfig.cs">
       <SubType>Form</SubType>
     </Compile>
