@@ -8959,8 +8959,12 @@ namespace Thetis
             private readonly TCPIPtciServer m_owner;
             private readonly TcpListener m_listener;
             private readonly X509Certificate2 m_certificate;
+            private const int HandshakeTimeoutMs = 10000;
             private Thread m_thread = null;
             private bool m_stop = false;
+            private readonly object m_handshakeLock = new object();
+            private TcpClient m_handshakeClient = null;
+            private SslStream m_handshakeStream = null;
 
             public TCIWssSupport(TCPIPtciServer owner, IPEndPoint ipNport, X509Certificate2 certificate)
             {
@@ -9000,6 +9004,8 @@ namespace Thetis
                 {
                 }
 
+                closeActiveHandshakeTransport();
+
                 if (m_thread != null)
                 {
                     m_thread.Join(150);
@@ -9015,6 +9021,94 @@ namespace Thetis
                 catch
                 {
                 }
+            }
+
+            private void setHandshakeTransport(TcpClient client, SslStream stream)
+            {
+                lock (m_handshakeLock)
+                {
+                    m_handshakeClient = client;
+                    m_handshakeStream = stream;
+                }
+            }
+
+            private void clearHandshakeTransport(TcpClient client, SslStream stream)
+            {
+                lock (m_handshakeLock)
+                {
+                    if (object.ReferenceEquals(m_handshakeClient, client))
+                        m_handshakeClient = null;
+
+                    if (object.ReferenceEquals(m_handshakeStream, stream))
+                        m_handshakeStream = null;
+                }
+            }
+
+            private void closeActiveHandshakeTransport()
+            {
+                TcpClient client;
+                SslStream stream;
+
+                lock (m_handshakeLock)
+                {
+                    client = m_handshakeClient;
+                    stream = m_handshakeStream;
+                    m_handshakeClient = null;
+                    m_handshakeStream = null;
+                }
+
+                closeTransport(client, stream);
+            }
+
+            private static void closeTransport(TcpClient client, SslStream stream)
+            {
+                if (stream != null)
+                {
+                    try
+                    {
+                        stream.Close();
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                if (client != null)
+                {
+                    try
+                    {
+                        client.Close();
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            private bool authenticateServerWithTimeout(TcpClient client, SslStream stream)
+            {
+                try
+                {
+                    Task task = stream.AuthenticateAsServerAsync(m_certificate, false, SslProtocols.None, false);
+
+                    if (task.Wait(HandshakeTimeoutMs))
+                        return true;
+
+                    closeTransport(client, stream);
+
+                    try
+                    {
+                        task.Wait(100);
+                    }
+                    catch
+                    {
+                    }
+                }
+                catch
+                {
+                }
+
+                return false;
             }
 
             ////
@@ -9221,7 +9315,12 @@ namespace Thetis
                         client.NoDelay = true;
 
                         stream = new SslStream(client.GetStream(), false);
-                        stream.AuthenticateAsServer(m_certificate, false, SslProtocols.None, false);
+                        setHandshakeTransport(client, stream);
+
+                        if (!authenticateServerWithTimeout(client, stream))
+                            continue;
+
+                        clearHandshakeTransport(client, stream);
 
                         if (m_owner.addAcceptedClient(client, stream, true))
                         {
@@ -9234,6 +9333,8 @@ namespace Thetis
                     }
                     finally
                     {
+                        clearHandshakeTransport(client, stream);
+
                         if (stream != null)
                         {
                             try
