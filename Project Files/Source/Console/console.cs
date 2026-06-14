@@ -13255,7 +13255,7 @@ namespace Thetis
             {
                 line_in = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
-                SetMicGain();
+                setMicLineBoost();
             }
         }
 
@@ -13267,7 +13267,7 @@ namespace Thetis
             {
                 line_in_boost = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
-                SetMicGain();
+                setMicLineBoost();
             }
         }
 
@@ -13279,7 +13279,7 @@ namespace Thetis
             {
                 mic_boost = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
-                SetMicGain();
+                setMicLineBoost();
             }
         }
 
@@ -15761,10 +15761,10 @@ namespace Thetis
                     return;
 
                 //[2.10.3.6]MW0LGE fix #417
-                value = Math.Max(mic_gain_min, value);
-                value = Math.Min(mic_gain_max, value);
-                ptbMic.Minimum = mic_gain_min;
-                ptbMic.Maximum = mic_gain_max;
+                value = Math.Max(_mic_gain_min, value);
+                value = Math.Min(_mic_gain_max, value);
+                ptbMic.Minimum = _mic_gain_min;
+                ptbMic.Maximum = _mic_gain_max;
                 //
 
                 ptbMic.Value = value;
@@ -15781,10 +15781,10 @@ namespace Thetis
                     return;
 
                 //[2.10.3.6]MW0LGE fix #417
-                value = Math.Max(mic_gain_min, value);
-                value = Math.Min(mic_gain_max, value);
-                ptbFMMic.Minimum = mic_gain_min;
-                ptbFMMic.Maximum = mic_gain_max;
+                value = Math.Max(_mic_gain_min, value);
+                value = Math.Min(_mic_gain_max, value);
+                ptbFMMic.Minimum = _mic_gain_min;
+                ptbFMMic.Maximum = _mic_gain_max;
                 //
 
                 ptbFMMic.Value = value;
@@ -16546,10 +16546,10 @@ namespace Thetis
             set
             {
                 //[2.10.3.6]MW0LGE fix #417
-                value = Math.Max(mic_gain_min, value);
-                value = Math.Min(mic_gain_max, value);
-                ptbMic.Minimum = mic_gain_min;
-                ptbMic.Maximum = mic_gain_max;
+                value = Math.Max(_mic_gain_min, value);
+                value = Math.Min(_mic_gain_max, value);
+                ptbMic.Minimum = _mic_gain_min;
+                ptbMic.Maximum = _mic_gain_max;
                 //
 
                 ptbMic.Value = value;
@@ -18443,7 +18443,7 @@ namespace Thetis
                     break;
             }
         }
-        public bool VFOASubInUse
+        public bool VFOASubRxInUse
         {
             get { return rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked); }
         }
@@ -18452,7 +18452,7 @@ namespace Thetis
         {
             get
             {
-                if (!VFOASubInUse) return -999.999; // [2.10.1.0] MW0LGE changed as MeterManager makes use of this
+                if (!VFOASubRxInUse) return -999.999; // [2.10.1.0] MW0LGE changed as MeterManager makes use of this
                 return Math.Round(m_dVFOASubFreq, 6); // MW0LGE_21d rounded to 6
             }
 
@@ -19245,24 +19245,24 @@ namespace Thetis
             }
         }
 
-        private int mic_gain_min = -40;
+        private int _mic_gain_min = -40;
         public int MicGainMin
         {
-            get { return mic_gain_min; }
+            get { return _mic_gain_min; }
             set
             {
-                mic_gain_min = value;
+                _mic_gain_min = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
             }
         }
 
-        private int mic_gain_max = 10;
+        private int _mic_gain_max = 10;
         public int MicGainMax
         {
-            get { return mic_gain_max; }
+            get { return _mic_gain_max; }
             set
             {
-                mic_gain_max = value;
+                _mic_gain_max = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
             }
         }
@@ -27538,7 +27538,7 @@ namespace Thetis
 
                 DataFlowing = true;
                 SetupForm.UpdateGeneraHardware();
-                SetMicGain();
+                setMicLineBoost();
                 chkQSK_CheckStateChanged(this, EventArgs.Empty);
 
                 if (RX1DSPMode != DSPMode.CWL && RX1DSPMode != DSPMode.CWU)
@@ -28904,8 +28904,8 @@ namespace Thetis
 
         private void ptbMic_Scroll(object sender, System.EventArgs e)
         {
-            ptbMic.Minimum = mic_gain_min;
-            ptbMic.Maximum = mic_gain_max;
+            ptbMic.Minimum = _mic_gain_min;
+            ptbMic.Maximum = _mic_gain_max;
             lblMicVal.Text = ptbMic.Value.ToString() + " dB";
             if (radio.GetDSPTX(0).CurrentDSPMode != DSPMode.FM)
             {
@@ -28933,8 +28933,50 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.MicGain = ptbMic.Value;
         }
+        //
+        public bool MicMuted
+        {
+            get { return _mic_muted; }
+        }
+        public double MicGainDb
+        {
+            get { return (int)_mic_gain_db; }
+            set
+            {
+                int db = (int)value;
+
+                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
+                {
+                    if (db < ptbFMMic.Minimum) db = ptbFMMic.Minimum;
+                    if (db > ptbFMMic.Maximum) db = ptbFMMic.Maximum;
+
+                    if (ptbFMMic.Value != db)
+                    {
+                        ptbFMMic.Value = db;
+                    }
+                    ptbFMMic_Scroll(this, EventArgs.Empty);
+                }
+                else
+                {
+                    if (db < ptbMic.Minimum) db = ptbMic.Minimum;
+                    if (db > ptbMic.Maximum) db = ptbMic.Maximum;
+
+                    if (ptbMic.Value != db)
+                    {
+                        ptbMic.Value = db;
+                    }
+                    ptbMic_Scroll(this, EventArgs.Empty);
+                }
+            }
+        }
+        //
+        private double _mic_gain_db = 0;
         private void setAudioMicGain(double gain_db)
         {
+            bool old_mic_muted = _mic_muted;            
+            double old_scalar = Audio.MicPreamp;
+            double old_mic_gain_db = _mic_gain_db;
+
             if (chkMicMute.Checked) // although it is called chkMicMute, checked = mic in use
             {
                 Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
@@ -28945,6 +28987,13 @@ namespace Thetis
                 Audio.MicPreamp = 0.0;
                 _mic_muted = true;
             }
+
+            _mic_gain_db = gain_db;
+
+            if (old_mic_muted != _mic_muted || old_mic_gain_db != _mic_gain_db || old_scalar != Audio.MicPreamp)
+            {                
+                MicGainChangedHandlers?.Invoke(1, old_mic_muted, _mic_muted, old_mic_gain_db, _mic_gain_db, old_scalar, Audio.MicPreamp, _mic_gain_min, _mic_gain_max); // there is no rx2 mic
+            }            
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
         {
@@ -35563,26 +35612,23 @@ namespace Thetis
         // ======================================================
 
         // Added 6/20/05 BT for CAT commands
-        public void CATVFOSwap(string pChangec)
+        public void CATVFOSwap(int change)
         {
-            string c = pChangec;
-            if (c.Length > 0)
+            //[2.10.3.16]MW0LGE now an int
+            switch (change)
             {
-                switch (c)
-                {
-                    case "0":
-                        btnVFOAtoB_Click(btnVFOAtoB, EventArgs.Empty);
-                        break;
-                    case "1":
-                        btnVFOBtoA_Click(btnVFOBtoA, EventArgs.Empty);
-                        break;
-                    case "2":
-                        btnVFOSwap_Click(btnVFOSwap, EventArgs.Empty);
-                        break;
-                    case "3":
-                        btnIFtoVFO_Click(btnIFtoVFO, EventArgs.Empty);
-                        break;
-                }
+                case 0:
+                    btnVFOAtoB_Click(btnVFOAtoB, EventArgs.Empty);
+                    break;
+                case 1:
+                    btnVFOBtoA_Click(btnVFOBtoA, EventArgs.Empty);
+                    break;
+                case 2:
+                    btnVFOSwap_Click(btnVFOSwap, EventArgs.Empty);
+                    break;
+                case 3:
+                    btnIFtoVFO_Click(btnIFtoVFO, EventArgs.Empty);
+                    break;
             }
         }
 
@@ -36205,34 +36251,53 @@ namespace Thetis
             if (udXIT.Value <= IT_MIDIminimum + Convert.ToDecimal(fracBetweenLEDs * IT_MIDImaximum)) fract = fracBetweenLEDs;
             Midi2Cat.SendUpdateToMidi(CatCmd.XIT_inc, fract);
         }
-
-        private void btnZeroBeat_Click(object sender, System.EventArgs e)
+        public void ZeroBeat(int rx) //[2.10.3.16]MW0LGE modified for rx2 support
         {
-            if (!PowerOn) return;
+            if (!PowerOn || rx < 1 || rx > 2) return;
 
-            int peak_hz = FindPeakFreqInPassband();
+            int peak_hz = findPeakFreqInPassband(rx);
             if (peak_hz == -1)
             {
                 return; // find peak croaked - bail
             }
+
+            DSPMode dsp_mode = DSPMode.FIRST;
+            decimal filter_low = 0;
+            decimal filter_high = 0;
+            switch (rx)
+            {
+                case 1:
+                    dsp_mode = _rx1_dsp_mode;
+                    filter_low = udFilterLow.Value;
+                    filter_high = udFilterHigh.Value;
+                    break;
+                case 2:
+                    dsp_mode = _rx2_dsp_mode;
+                    filter_low = udRX2FilterLow.Value;
+                    filter_high = udRX2FilterHigh.Value;
+                    break;
+                default:
+                    return;
+            }
+
             // Debug.WriteLine("peak: " + peak_hz);
             int delta_hz = 0;
 
-            // if we're in CW mode, zero beat to CWPitch, provided it is in the passband
-            switch (_rx1_dsp_mode)
+            // if we're in CW mode, zero beat to CWPitch, provided it is in the passband            
+            switch (dsp_mode)
             {
                 case DSPMode.CWL:
                 case DSPMode.CWU:
                 case DSPMode.USB:
                 case DSPMode.LSB:
                     int local_pitch = CWPitch;
-                    if (_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.LSB)
+                    if (dsp_mode == DSPMode.CWL || dsp_mode == DSPMode.LSB)
                     {
                         local_pitch = -local_pitch;
                     }
                     // is cwoffset in passband?
-                    if (local_pitch >= udFilterLow.Value &&
-                        local_pitch <= udFilterHigh.Value)
+                    if (local_pitch >= filter_low &&
+                        local_pitch <= filter_high)
                     {
                         delta_hz = peak_hz - local_pitch;
                         // Debug.WriteLine("delta(cw): " + delta_hz);
@@ -36242,14 +36307,14 @@ namespace Thetis
                         // if we get here and delta_hz is still 0, the current
                         // CW pitch is not within the passband.
                         // Put strongest peak @ center of passband
-                        int center_hz = ((int)udFilterHigh.Value + (int)udFilterLow.Value) / 2;
+                        int center_hz = ((int)filter_high + (int)filter_low) / 2;
                         delta_hz = peak_hz - center_hz;
                     }
                     break;
                 case DSPMode.DIGL:
                     local_pitch = -digl_click_tune_offset;
-                    if (local_pitch >= udFilterLow.Value &&
-                        local_pitch <= udFilterHigh.Value)
+                    if (local_pitch >= filter_low &&
+                        local_pitch <= filter_high)
                     {
                         delta_hz = peak_hz - local_pitch;
                     }
@@ -36258,14 +36323,14 @@ namespace Thetis
                         // if we get here and delta_hz is still 0, the current
                         // pitch is not within the passband.
                         // Put strongest peak @ center of passband
-                        int center_hz = ((int)udFilterHigh.Value + (int)udFilterLow.Value) / 2;
+                        int center_hz = ((int)filter_high + (int)filter_low) / 2;
                         delta_hz = peak_hz - center_hz;
                     }
                     break;
                 case DSPMode.DIGU:
                     local_pitch = digu_click_tune_offset;
-                    if (local_pitch >= udFilterLow.Value &&
-                        local_pitch <= udFilterHigh.Value)
+                    if (local_pitch >= filter_low &&
+                        local_pitch <= filter_high)
                     {
                         delta_hz = peak_hz - local_pitch;
                     }
@@ -36274,7 +36339,7 @@ namespace Thetis
                         // if we get here and delta_hz is still 0, the current
                         // pitch is not within the passband.
                         // Put strongest peak @ center of passband
-                        int center_hz = ((int)udFilterHigh.Value + (int)udFilterLow.Value) / 2;
+                        int center_hz = ((int)filter_high + (int)filter_low) / 2;
                         delta_hz = peak_hz - center_hz;
                     }
                     break;
@@ -36285,33 +36350,78 @@ namespace Thetis
                     break;
             }
 
-            if (zero_beat_rit)
+            switch (rx)
             {
-                udRIT.Value += delta_hz;
-                chkRIT.Checked = true;
-            }
-            else
-            {
-                VFOAFreq += delta_hz * 0.0000010;
+                case 1:
+                    if (zero_beat_rit)
+                    {
+                        udRIT.Value += delta_hz;
+                        chkRIT.Checked = true;
+                    }
+                    else
+                    {
+                        VFOAFreq += delta_hz * 0.0000010;
+                    }
+                    break;
+                case 2:
+                    if (zero_beat_rit)
+                    {
+                        //udRIT.Value += delta_hz;  // no rx2 rit :(  here for future
+                        //chkRIT.Checked = true;
+                    }
+                    else
+                    {
+                        VFOBFreq += delta_hz * 0.0000010;
+                    }
+                    break;
             }
         }
-        private object _findPeakLock = new Object();
-        unsafe private int FindPeakFreqInPassband()
+        private void btnZeroBeat_Click(object sender, System.EventArgs e)
         {
+            ZeroBeat(1);
+        }
+        private object _findPeakLock = new Object();
+        unsafe private int findPeakFreqInPassband(int rx)
+        {
+            //[2.10.3.16]MW0LGE modified for rx support
+            int disp = 0;
+            double freq = 0;
+            double centre_freq = 0;
+            decimal filter_low = 0;
+            decimal filter_high = 0;
+            switch (rx)
+            {
+                case 1:
+                    disp = 0;
+                    freq = VFOAFreq;
+                    centre_freq = CentreFrequency;
+                    filter_low = udFilterLow.Value;
+                    filter_high = udFilterHigh.Value;
+                    break;
+                case 2:
+                    disp = 1;
+                    freq = VFOBFreq;
+                    centre_freq = CentreRX2Frequency;
+                    filter_low = udRX2FilterLow.Value;
+                    filter_high = udRX2FilterHigh.Value;
+                    break;
+                default:
+                    return -1;
+            }
             lock (_findPeakLock)
             {
                 // convert hz to buckets in the averaging data
-                int lo_cut_hz = (int)udFilterLow.Value;
-                int hi_cut_hz = (int)udFilterHigh.Value;
+                int lo_cut_hz = (int)filter_low;
+                int hi_cut_hz = (int)filter_high;
 
-                double hz_per_bucket = sample_rate_rx1 / (double)specRX.GetSpecRX(0).FFTSize;
+                double hz_per_bucket = sample_rate_rx1 / (double)specRX.GetSpecRX(disp).FFTSize;
 
-                int zero_hz_bucket = specRX.GetSpecRX(0).FFTSize / 2;
+                int zero_hz_bucket = specRX.GetSpecRX(disp).FFTSize / 2;
 
                 if (_click_tune_display) //MW0LGE_21d
                 {
                     // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
-                    double dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+                    double dBucketOffset = ((freq - centre_freq) * 1e6) / hz_per_bucket;
                     zero_hz_bucket += (int)dBucketOffset;
                 }
 
@@ -36319,7 +36429,7 @@ namespace Thetis
                 int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
 
                 //MW0LGE_21d belts and braces
-                if (lo_bucket < 0 || hi_bucket > specRX.GetSpecRX(0).FFTSize - 1)
+                if (lo_bucket < 0 || hi_bucket > specRX.GetSpecRX(disp).FFTSize - 1)
                 {
                     return -1;
                 }
@@ -36332,7 +36442,7 @@ namespace Thetis
 
                 double[,] spectrum_data;
 
-                spectrum_data = new double[specRX.GetSpecRX(0).FFTSize, 2];
+                spectrum_data = new double[specRX.GetSpecRX(disp).FFTSize, 2];
                 if (spectrum_data == null)
                 {
                     _spectrum_mutex.ReleaseMutex();
@@ -36343,13 +36453,13 @@ namespace Thetis
                 _spectrum_mutex.WaitOne();
                 fixed (double* ptr = &(spectrum_data[0, 0]))
                     //[2.10.2.3]MW0LGE timeout version used, with 10 times frame rate to give some additional time
-                    SpecHPSDRDLL.SnapSpectrumTimeout(0, ss, 0, ptr, (uint)((1000 / (float)_display_fps) * 10), ref flag);
+                    SpecHPSDRDLL.SnapSpectrumTimeout(disp, ss, 0, ptr, (uint)((1000 / (float)_display_fps) * 10), ref flag);
                 _spectrum_mutex.ReleaseMutex();
                 if (flag == 0) return -1;
 
                 double mag_sqr;
 
-                int fft_size = specRX.GetSpecRX(0).FFTSize;
+                int fft_size = specRX.GetSpecRX(disp).FFTSize;
                 double[] dbm = new double[hi_bucket - lo_bucket + 1];
 
                 for (int i = lo_bucket; i <= hi_bucket; i++)
@@ -36680,11 +36790,6 @@ namespace Thetis
             _old_rx1_sub_pan = ptbPanSubRX.Value;
         }
         private bool _oldMultiRX = false;
-        private bool _sub_rx_enabled = false;
-        private bool SubRXEnabled
-        {
-            get { return _sub_rx_enabled; }
-        }
         unsafe private void chkEnableMultiRX_CheckedChanged(object sender, System.EventArgs e)
         {
             //[2.10.3.5]MW0LGE
@@ -36757,7 +36862,7 @@ namespace Thetis
                     CurrentClickTuneMode = ClickTuneMode.VFOA;
 
             }
-            _sub_rx_enabled = chkEnableMultiRX.Checked;
+
             Display.SubRX1Enabled = chkEnableMultiRX.Checked;
             MultiRXToolStripMenuItem.Checked = chkEnableMultiRX.Checked;
 
@@ -36766,9 +36871,22 @@ namespace Thetis
 
             if (chkEnableMultiRX.Checked != _oldMultiRX)
             {
-                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
-
-                MultiRxHandlers?.Invoke(1, chkEnableMultiRX.Checked, _oldMultiRX, VFOASubFreq, nb, RX2Enabled);
+                //[2.10.3.16]MW0LGE freq, nb are only valid if rx2 is in use, lets send vfoB details if rx2 is disabled
+                //note there is no sub rx for rx2
+                Band nb;
+                double freq;
+                bool rx2enabled = RX2Enabled;
+                if (rx2enabled)
+                {
+                    nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region); 
+                    freq = XVTRForm.TranslateFreq(VFOASubFreq);
+                }
+                else
+                {
+                    nb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx1_xvtr_index, current_region);
+                    freq = XVTRForm.TranslateFreq(VFOBFreq);
+                }
+                MultiRxHandlers?.Invoke(1, chkEnableMultiRX.Checked, _oldMultiRX, freq, nb, rx2enabled);
                 _oldMultiRX = chkEnableMultiRX.Checked;
             }
         }
@@ -40446,8 +40564,8 @@ namespace Thetis
         }
         private void ptbFMMic_Scroll(object sender, EventArgs e)
         {
-            ptbFMMic.Minimum = mic_gain_min;
-            ptbFMMic.Maximum = mic_gain_max;
+            ptbFMMic.Minimum = _mic_gain_min;
+            ptbFMMic.Maximum = _mic_gain_max;
             lblMicValFM.Text = ptbFMMic.Value.ToString();
             if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
             {
@@ -41031,7 +41149,7 @@ namespace Thetis
             NetworkIO.SetMicXlr(v);
         }
 
-        public void SetMicGain()
+        public void setMicLineBoost() //[2.10.3.13]MW0LGE renamed to what it does
         {
             var v = mic_boost ? 1 : 0;
             NetworkIO.SetMicBoost(v);
@@ -45192,6 +45310,8 @@ namespace Thetis
 
         public delegate void FMDeviationChanged(int rx, int oldDeviationHz, int newDeviationHz);
 
+        public delegate void MicGainChanged(int rx, bool old_mute, bool new_mute, double old_gain_db, double new_gain_db, double old_gain_scalar, double new_gain_scalar, int min_db, int max_db);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45338,7 +45458,7 @@ namespace Thetis
         public AGCModeChanged AGCModeChangedHandlers;
         public AGCAutoModeChanged AGCAutoModeChangedHandlers;
         public GeneralSettingsChanged GeneralSettingsChangedHandlers;
-        public SQLChanged SQLChangedHandlers;
+        public SQLChanged SQLStateChangedHandlers;
 
         public GlobalKeyPress GlobalKeyPressUpHandlers;
         public GlobalKeyPress GlobalKeyPressDownHandlers;
@@ -45354,6 +45474,8 @@ namespace Thetis
         public CWXShown CWXShownHandlers;
 
         public FMDeviationChanged FMDeviationChangedHandlers;
+
+        public MicGainChanged MicGainChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -47558,7 +47680,7 @@ namespace Thetis
             SquelchState sst = _rx1_dsp_mode == DSPMode.FM ? _rx1_fm_squelch_state : _rx1_squelch_state;
             if (_old_sql_state[0] != sst)
             {
-                SQLChangedHandlers?.Invoke(1, _old_sql_state[0], sst);
+                SQLStateChangedHandlers?.Invoke(1, _old_sql_state[0], sst);
                 _old_sql_state[0] = sst;
             }
         }
@@ -47738,7 +47860,7 @@ namespace Thetis
             SquelchState sst = _rx2_dsp_mode == DSPMode.FM ? _rx2_fm_squelch_state : _rx2_squelch_state;
             if (_old_sql_state[1] != sst)
             {
-                SQLChangedHandlers?.Invoke(2, _old_sql_state[1], sst);
+                SQLStateChangedHandlers?.Invoke(2, _old_sql_state[1], sst);
                 _old_sql_state[1] = sst;
             }
         }

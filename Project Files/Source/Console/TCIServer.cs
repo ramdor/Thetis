@@ -1354,6 +1354,11 @@ namespace Thetis
 
             sendCalibration(rx, meter_offset, display_offset, xvtr_gain_offset, offset_6m, tx_display_offset);
         }
+        public void MicGainChanged(int rx, bool muted, double gain_db, double gain_scalar, int min_db, int max_db)
+        {
+            if (m_disconnected) return;
+            sendMicGain(rx, muted, gain_db, min_db, max_db);
+        }
         public void MONChanged(bool newState)
         {
             if (m_disconnected) return;
@@ -1481,10 +1486,11 @@ namespace Thetis
             if (m_disconnected) return;
             sendAllVFOLocks();
         }
-        public void SqlChanged(int rx, SquelchState newState)
+        public void SqlStateChanged(int rx, SquelchState newState)
         {
             if (m_disconnected) return;
             sendSqlEnable(rx - 1, newState != SquelchState.OFF);
+            sendSqlEnableEx(rx - 1, newState);
         }
         public void SqlLevelChanged(int rx, int newValue)
         {
@@ -1670,6 +1676,21 @@ namespace Thetis
         {
             if (m_disconnected) return;
             sendFilterBand(rx - 1, low, high);
+        }
+        public void VfoTxChange(int channel, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendVfoTx(channel, enabled);
+        }
+        public void SubRxChange(int rx, int chan, bool enabled, double frequency, Band band, bool rx2Enabled)
+        {
+            if (m_disconnected) return;
+            sendSubRx(rx, chan, enabled, frequency);
+        }
+        public void VfoSubChange(int rx, int chan, double frequency)
+        {
+            if (m_disconnected) return;
+            sendSubVfo(rx, chan, frequency);
         }
         public void FilterEdgesChange(int rx, Filter filter, Band band, int low, int high)
         {
@@ -2191,6 +2212,11 @@ namespace Thetis
             string s = "sql_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
+        private void sendSqlEnableEx(int rx, SquelchState state)
+        {
+            string s = "sql_enable_ex:" + rx.ToString() + "," + ((int)state).ToString() + ";";
+            sendTextFrame(s);
+        }
         private void sendSqlLevel(int rx, int level)
         {
             string s = "sql_level:" + rx.ToString() + "," + level.ToString() + ";";
@@ -2574,6 +2600,12 @@ namespace Thetis
             string s = "rx_mute:" + rx.ToString() + "," + mute.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
+        private void sendMicGain(int rx, bool muted, double gain_db, int min_db, int max_db)
+        {
+            string s = "mic_gain:" + rx.ToString() + "," + muted.ToString().ToLowerInvariant() + "," + ((int)gain_db).ToString() + "," +
+                min_db.ToString() + "," + max_db.ToString() + ";";
+            sendTextFrame(s);
+        }
         private void sendMONEnable(bool enable)
         {
             string s = "mon_enable:" + enable.ToString().ToLower() + ";";
@@ -2839,6 +2871,20 @@ namespace Thetis
         {
             sendTextFrame("ps-a:" + enabled.ToString().ToLowerInvariant() + ";");
         }
+        private void sendVfoTx(int chan, bool enabled)
+        {
+            sendTextFrame("vfo_tx:" + chan.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";");
+        }
+        private void sendSubRx(int rx, int chan, bool enabled, double frequency)
+        {
+            long freq = enabled ? (long)(frequency * 1e6) : 0;
+            sendTextFrame("subrx:" + rx.ToString() + "," + chan.ToString() + "," + enabled.ToString().ToLowerInvariant() + "," + freq.ToString() + ";");
+        }
+        private void sendSubVfo(int rx, int chan, double frequency)
+        {
+            long freq = (long)(frequency * 1e6);
+            sendTextFrame("subvfo:" + rx.ToString() + "," + chan.ToString() + "," + freq.ToString() + ";");
+        }
         private void sendStartStop(bool bPower)
         {
             if (bPower)
@@ -2975,6 +3021,9 @@ namespace Thetis
             sendFMDeviationEx(0, consoleThreadSafe.FMDeviation_Hz);
             sendFMDeviationEx(1, consoleThreadSafe.FMDeviation_Hz);
 
+            sendMicGain(0, consoleThreadSafe.MicMuted, consoleThreadSafe.MicGainDb, consoleThreadSafe.MicGainMin, consoleThreadSafe.MicGainMax);
+            //sendMicGain(1, consoleThreadSafe.MicMuted, consoleThreadSafe.MicGainDb, consoleThreadSafe.MicGainMin, consoleThreadSafe.MicGainMax);// for completeness
+
             sendCTUN(0, consoleThreadSafe.GetCTUN(1));
             sendCTUN(1, consoleThreadSafe.GetCTUN(2));
 
@@ -3000,6 +3049,8 @@ namespace Thetis
             sendAllVFOLocks();
             sendSqlEnable(0, consoleThreadSafe.GetSqlMode(1) != SquelchState.OFF);
             sendSqlEnable(1, consoleThreadSafe.GetSqlMode(2) != SquelchState.OFF);
+            sendSqlEnableEx(0, consoleThreadSafe.GetSqlMode(1));
+            sendSqlEnableEx(1, consoleThreadSafe.GetSqlMode(2));
             sendSqlLevel(0, consoleThreadSafe.GetSql(1));
             sendSqlLevel(1, consoleThreadSafe.GetSql(2));
             sendDiglOffset(consoleThreadSafe.DIGLClickTuneOffset);
@@ -3017,6 +3068,16 @@ namespace Thetis
 
             sendTXEnable(0, !consoleThreadSafe.MOX);
             sendTXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
+
+            sendVfoTx(0, consoleThreadSafe.VFOATX); // i know they flip, but in tci we send both
+            sendVfoTx(1, consoleThreadSafe.VFOBTX);
+
+            bool subRxInUse = consoleThreadSafe.GetSubRX(1);
+            sendSubRx(0, 1, subRxInUse, consoleThreadSafe.VFOASubFreq);
+            sendSubRx(1, 1, false, 0); // send for completeness
+
+            sendSubVfo(0, 1, consoleThreadSafe.VFOASubFreq);
+            sendSubVfo(1, 1, 0); // for completeness
 
             sendRxChannelEnable(0, 0, true);
             sendRxChannelEnable(0, 1, consoleThreadSafe.GetSubRX(1));
@@ -4123,6 +4184,26 @@ namespace Thetis
                 consoleThreadSafe.SetSqlMode(rx + 1, enabled ? SquelchState.SQL : SquelchState.OFF);
             }
         }
+        private void handleSqlEnableEx(string[] args)
+        {
+            if (args == null || args.Length < 1 || args.Length > 2) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 1)
+            {
+                sendSqlEnableEx(rx, consoleThreadSafe.GetSqlMode(rx + 1));
+            }
+            else
+            {
+                if (int.TryParse(args[1], out int state))
+                {
+                    if(state < (int)SquelchState.OFF || state >= (int)SquelchState.LAST) return;
+                    
+                    consoleThreadSafe.SetSqlMode(rx + 1, (SquelchState)state);
+                }
+            }
+        }
         private void handleSqlLevel(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -4972,6 +5053,35 @@ namespace Thetis
                 sendMuteRX(rx, rx == 0 ? consoleThreadSafe.MUT : consoleThreadSafe.MUT2);
             }
         }
+        private void handleMicGain(string[] args)
+        {
+            if (args.Length < 1) return;
+
+            bool bOK = int.TryParse(args[0], out int rx);
+
+            if (bOK && args.Length >= 2) // we do nothing with min/max if sent in
+            {
+                //set
+                bool mute_ok = bool.TryParse(args[1], out bool mute);
+                bool gain_db_ok = int.TryParse(args[2], out int gain_db);
+                if (!gain_db_ok)
+                {
+                    gain_db = -999;
+                    gain_db_ok = true;
+                }                
+
+                if (mute_ok && gain_db_ok)
+                {
+                    consoleThreadSafe.MicMute = !mute; // MicMute set to false to mute it
+                    if (gain_db != -999) consoleThreadSafe.MicGainDb = gain_db;
+                }
+            }
+            else if (bOK && args.Length == 1)
+            {
+                //same values whatever rx is queried, as only one setting
+                sendMicGain(rx, consoleThreadSafe.MicMuted, consoleThreadSafe.MicGainDb, consoleThreadSafe.MicGainMin, consoleThreadSafe.MicGainMax);
+            }
+        }
         private void handleMONEnable(string[] args, bool hasArgs = true)
         {
             if (hasArgs && args.Length == 1)
@@ -5436,6 +5546,83 @@ namespace Thetis
             {
                 //query
                 sendPureSignalAuto(consoleThreadSafe.PSA);
+            }
+        }
+        private void handleVfoTx(string[] args)
+        {
+            if (args.Length == 1)
+            {
+                bool bOK = int.TryParse(args[0], out int rx);
+                if (bOK && rx >= 0 && rx <= 1)
+                {
+                    consoleThreadSafe.VFOATX = rx == 0;
+                    consoleThreadSafe.VFOBTX = rx == 1;
+                }
+            }
+            else if (args.Length == 0)
+            {
+                //query
+                sendVfoTx(0, consoleThreadSafe.VFOATX);
+                sendVfoTx(1, consoleThreadSafe.VFOBTX);
+            }
+        }
+        private void handleVfoControl(string[] args)
+        {
+            //inbound only, vfo freqs will go out if anything changes
+            if (args.Length == 1)
+            {
+                bool bOK = int.TryParse(args[0], out int control);
+                if (bOK && (control >= 0 && control <= 3))
+                {
+                    // 0 = A>B
+                    // 1 = B>A
+                    // 2 = A<>B
+                    // 3 = IF>VFO (rx1 only)
+                    consoleThreadSafe.CATVFOSwap(control);
+                }
+            }
+        }
+        private void handleSubRx(string[] args)
+        {
+            if (args.Length != 2) return;
+
+            bool bOK = int.TryParse(args[0], out int rx);
+            if(rx != 0) return; // there is no subrx for rx2
+
+            if (bOK)
+            {
+                bOK = bool.TryParse(args[1], out bool enable);
+                if (bOK)
+                {
+                    consoleThreadSafe.SetSubRX(1, enable);
+                }
+            }
+        }
+        private void handleSubVfo(string[] args)
+        {
+            if (args.Length != 2) return;
+
+            bool bOK = int.TryParse(args[0], out int rx);
+            if (rx != 0) return; // there is no subrx for rx2
+
+            if (bOK)
+            {
+                bOK = long.TryParse(args[1], out long freq);
+                if (bOK)
+                {
+                    consoleThreadSafe.VFOASubFreq = freq;
+                }
+            }
+        }
+        private void handleZeroBeat(string[] args)
+        {
+            if (args.Length != 1) return;
+
+            bool bOK = int.TryParse(args[0], out int rx);
+
+            if (bOK)
+            {
+                consoleThreadSafe.ZeroBeat(rx + 1);
             }
         }
         private void handleRxSensorsEnable(string[] args)
@@ -6195,6 +6382,9 @@ namespace Thetis
                     case "sql_enable":
                         handleSqlEnable(args);
                         break;
+                    case "sql_enable_ex":
+                        handleSqlEnableEx(args);
+                        break;
                     case "sql_level":
                         handleSqlLevel(args);
                         break;
@@ -6399,6 +6589,9 @@ namespace Thetis
                     case "rx_mute":
                         handleMuteRX(args);
                         break;
+                    case "mic_gain":
+                        handleMicGain(args);
+                        break;
                     case "mon_volume":
                         handleMONVolume(args);
                         break;
@@ -6495,6 +6688,21 @@ namespace Thetis
                         break;
                     case "ps-a":
                         handlePureSignalAuto(args);
+                        break;
+                    case "vfo_tx":
+                        handleVfoTx(args);
+                        break;
+                    case "vfo_control":
+                        handleVfoControl(args);
+                        break;
+                    case "subrx":
+                        handleSubRx(args);
+                        break;
+                    case "subvfo":
+                        handleSubVfo(args);
+                        break;
+                    case "0beat":
+                        handleZeroBeat(args);
                         break;
                 }
             }
@@ -6617,12 +6825,20 @@ namespace Thetis
                         handleShutdown(); // bespoke thetis cmd  to do a full shutdown
                         break;
                     case "tx_profile_ex":
-                        string[] tmpArgs = new string[0];
-                        handleTXProfile(tmpArgs); // bespoke thetis cmd to select tx profile
-                        break;
+                        {
+                            string[] tmpArgs = new string[0];
+                            handleTXProfile(tmpArgs); // bespoke thetis cmd to select tx profile
+                            break;
+                        }
                     case "rt":
                         handleReturnTripTime();
                         break;
+                    case "vfo_tx":
+                        {
+                            string[] tmpArgs = new string[0];
+                            handleVfoTx(tmpArgs);
+                            break;
+                        }
                 }
             }
         }
@@ -9722,6 +9938,9 @@ namespace Thetis
                     console.ModeChangeHandlers += OnModeChangeHandler;
                     console.BandChangeHandlers += OnBandChangeHandler;
                     console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
+                    console.VFOTXChangedHandlers += OnVFOTXChanged;
+                    console.MultiRxHandlers += OnMultiRxChanged;
+                    console.VFOASubFrequencyChangeHandlers += OnVFOASub;
                     console.FilterChangedHandlers += OnFilterChanged;
                     console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
                     console.TXFiltersChangedHandlers += OnTXFiltersChanged;
@@ -9762,7 +9981,7 @@ namespace Thetis
                     console.VFOSyncChangedHandlers += OnVFOSyncChanged;
                     console.VfoALockChangedHandlers += OnVfoALockChanged;
                     console.VfoBLockChangedHandlers += OnVfoBLockChanged;
-                    console.SQLChangedHandlers += OnSqlChanged;
+                    console.SQLStateChangedHandlers += OnSqlStateChanged;
                     console.SQLLevelChangedHandlers += OnSqlLevelChanged;
                     console.APFChangedHandlers += OnApfChanged;
                     console.TNFChangedHandlers += OnTnfChanged;
@@ -9783,6 +10002,8 @@ namespace Thetis
                     console.DisplayOffsetChangedHandlers += OnCalibrationChanged;
                     console.XvtrGainOffsetChangedHandlers += OnCalibrationChanged;
                     console.Rx6mOffsetChangedHandlers += OnCalibrationChanged;
+
+                    console.MicGainChangedHandlers += OnMicGainChanged;
 
                     m_bDelegatesAdded = true;
                 }
@@ -9841,6 +10062,9 @@ namespace Thetis
                     console.ModeChangeHandlers -= OnModeChangeHandler;
                     console.BandChangeHandlers -= OnBandChangeHandler;
                     console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
+                    console.VFOTXChangedHandlers -= OnVFOTXChanged;
+                    console.MultiRxHandlers -= OnMultiRxChanged;
+                    console.VFOASubFrequencyChangeHandlers -= OnVFOASub;
                     console.FilterChangedHandlers -= OnFilterChanged;
                     console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
                     console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
@@ -9881,7 +10105,7 @@ namespace Thetis
                     console.VFOSyncChangedHandlers -= OnVFOSyncChanged;
                     console.VfoALockChangedHandlers -= OnVfoALockChanged;
                     console.VfoBLockChangedHandlers -= OnVfoBLockChanged;
-                    console.SQLChangedHandlers -= OnSqlChanged;
+                    console.SQLStateChangedHandlers -= OnSqlStateChanged;
                     console.SQLLevelChangedHandlers -= OnSqlLevelChanged;
                     console.APFChangedHandlers -= OnApfChanged;
                     console.TNFChangedHandlers -= OnTnfChanged;
@@ -9902,6 +10126,8 @@ namespace Thetis
                     console.DisplayOffsetChangedHandlers -= OnCalibrationChanged;
                     console.XvtrGainOffsetChangedHandlers -= OnCalibrationChanged;
                     console.Rx6mOffsetChangedHandlers -= OnCalibrationChanged;
+
+                    console.MicGainChangedHandlers -= OnMicGainChanged;
 
                     m_bDelegatesAdded = false;
                 }
@@ -10435,6 +10661,45 @@ namespace Thetis
                 }
             }
         }
+        private void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.VfoTxChange(0, !vfoB && newState);
+                    socketListener.VfoTxChange(1, vfoB && newState); // so so that we get both channels sent out
+                }
+            }
+        }
+        private void OnMultiRxChanged(int rx, bool newState, bool oldState, double vfoASubFrequency, Band b, bool bRx2Enabled)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    //Debug.Print($"OnMultiRxChanged: rx={rx}, newState={newState}, oldState={oldState}, vfoASubFrequency={vfoASubFrequency}, band={b}, bRx2Enabled={bRx2Enabled}");
+                    socketListener.SubRxChange(rx - 1, 1, newState, vfoASubFrequency, b, bRx2Enabled); // always channel 1
+                }
+            }
+        }
+        private void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    //Debug.Print($"OnVFOASub: rx={rx}, newFreq={newFreq}");
+                    socketListener.VfoSubChange(rx - 1, 1, newFreq); //vfo sub always channel 1
+                }
+            }
+        }
         public void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
             lock (m_objLocker)
@@ -10742,7 +11007,7 @@ namespace Thetis
                 }
             }
         }
-        private void OnSqlChanged(int rx, SquelchState old_state, SquelchState new_state)
+        private void OnSqlStateChanged(int rx, SquelchState old_state, SquelchState new_state)
         {
             lock (m_objLocker)
             {
@@ -10750,7 +11015,7 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    socketListener.SqlChanged(rx, new_state);
+                    socketListener.SqlStateChanged(rx, new_state);
                 }
             }
         }
@@ -10871,6 +11136,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.CalibrationChanged(rx);
+                }
+            }
+        }
+        private void OnMicGainChanged(int rx, bool old_mute, bool new_mute, double old_gain_db, double new_gain_db, double old_gain_scalar, double new_gain_scalar, int min_db, int max_db)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.MicGainChanged(rx - 1, new_mute, new_gain_db, new_gain_scalar, min_db, max_db);
                 }
             }
         }

@@ -3665,7 +3665,7 @@ namespace Thetis
             _console.AGCModeChangedHandlers += OnAGCModeChanged;
             _console.AGCAutoModeChangedHandlers += OnAGCAutoModeChanged;
             _console.GeneralSettingsChangedHandlers += OnGeneralSettingsChanged;
-            _console.SQLChangedHandlers += OnSqlChanged;
+            _console.SQLStateChangedHandlers += OnSqlChanged;
             _console.CWXShownHandlers += OnCWXShown;
 
             ContainerEnabledHandlers += OnContainerEnabled;
@@ -3776,7 +3776,7 @@ namespace Thetis
             _console.AGCModeChangedHandlers -= OnAGCModeChanged;
             _console.AGCAutoModeChangedHandlers -= OnAGCAutoModeChanged;
             _console.GeneralSettingsChangedHandlers -= OnGeneralSettingsChanged;
-            _console.SQLChangedHandlers -= OnSqlChanged;
+            _console.SQLStateChangedHandlers -= OnSqlChanged;
             _console.CWXShownHandlers -= OnCWXShown;
 
             ContainerEnabledHandlers -= OnContainerEnabled;
@@ -4221,7 +4221,7 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                bool updateVFOASub = _console.VFOASubInUse; //[2.10.1.0] MW0LGE needed because at init rx2 might not be enabled, and the init function will have been given -999.999 from console.vfoasubfreq
+                bool updateVFOASub = _console.VFOASubRxInUse; //[2.10.1.0] MW0LGE needed because at init rx2 might not be enabled, and the init function will have been given -999.999 from console.vfoasubfreq
                 double freq = _console.VFOASubFreq;
 
                 foreach (KeyValuePair<string, clsMeter> mkvp in _meters)

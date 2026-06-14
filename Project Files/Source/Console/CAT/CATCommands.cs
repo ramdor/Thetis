@@ -7680,14 +7680,21 @@ namespace Thetis
 		{
 			if(s.Length == parser.nSet & Convert.ToInt32(s) <= 3)
 			{
-				console.CATVFOSwap(s);
-				return "";
-			}
+				//[2.10.3.16]MW0LGE changed from string to int, well because I hate such shoddy code which this cat system is riddled with
+				//also range check it here
+				bool ok = int.TryParse(s, out int swap);
+				if (ok && (swap >= 0 && swap <= 3))
+				{
+					console.CATVFOSwap(swap);
+                    return "";
+                }
+				else
+                    return parser.Error1;
+            }
 			else
 			{
 				return parser.Error1;
 			}
-
 		}
 
         // Reads or sets the VAC2 Output cable
