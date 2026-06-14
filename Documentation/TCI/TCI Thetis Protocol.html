@@ -285,14 +285,14 @@
 
     <div class="cover-title-row">
       <h1 class="cover-title">TCI Thetis Protocol</h1>
-      <div class="cover-version">Ver. 1.09</div>
+      <div class="cover-version">Ver. 1.10</div>
     </div>
 
     <div class="series">
       Series: Thetis SDR TCI interoperability supplement referencing TCI Protocol Ver. 2.0
     </div>
 
-    <div class="cover-date">4 June 2026</div>
+    <div class="cover-date">13 June 2026</div>
 
     <div class="notice-block">
       <div class="notice-title">Reference Notice</div>
@@ -326,11 +326,11 @@
         </tr>
         <tr>
           <td><strong>Implementation basis</strong></td>
-          <td>Thetis TCI server behaviour as of 4 June 2026, reconciled with the uploaded Expert Electronics TCI Protocol Ver. 2.0 text</td>
+          <td>Thetis TCI server behaviour as of 13 June 2026, reconciled with the uploaded Expert Electronics TCI Protocol Ver. 2.0 text, current TCIServer.cs, and current clsTCIpermissions.cs</td>
         </tr>
         <tr>
           <td><strong>Coverage</strong></td>
-          <td>Selected TCI 2.0 differences, standard command reconciliation, Thetis extension messages, audio negotiation, normal and compact sensor reports, round trip timing echo, and compact display streaming</td>
+          <td>Selected TCI 2.0 differences, WebSocket and secure WebSocket startup, authentication and permissions, standard command reconciliation, Thetis extension messages, current parsed command coverage, audio negotiation, normal and compact sensor reports, round trip timing echo, and compact display streaming</td>
         </tr>
       </tbody>
     </table>
@@ -344,6 +344,11 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>1.10</td>
+          <td>Added secure WebSocket setup, authentication handshake messages, permission roles, command permission mapping, parsed command coverage, and Thetis extension command notes for <code>rx_snb_enable</code>, <code>duplex</code>, <code>tune_twotone</code>, and <code>ps-a</code>.</td>
+          <td>13 June 2026</td>
+        </tr>
         <tr>
           <td>1.09</td>
           <td>Updated against the 4 June 2026 <code>TCIServer.cs</code>. Added the per receiver/channel <code>rx_sensors_enable_ex</code> control and the compact <code>sr</code> sensor report, clarified TX sensor fields, added the missing spot maintenance/click notification messages implemented by the current server, and documented the Thetis <code>rt</code> round trip echo command.</td>
@@ -406,7 +411,10 @@
       <div class="toc-row"><div class="num">1</div><div class="text">Introduction</div></div>
       <div class="toc-row sub"><div class="num">1.1</div><div class="text">Document Scope</div></div>
       <div class="toc-row sub"><div class="num">1.2</div><div class="text">Relationship To The Official 2.0 Protocol</div></div>
-      <div class="toc-row"><div class="num">2</div><div class="text">Thetis Implementation Overview</div></div>
+      <div class="toc-row"><div class="num">2</div><div class="text">Thetis Implementation, Connection, Security, And Permissions Overview</div></div>
+      <div class="toc-row sub"><div class="num">2.1</div><div class="text">Transport, WebSocket, And WSS</div></div>
+      <div class="toc-row sub"><div class="num">2.2</div><div class="text">Authentication Handshake</div></div>
+      <div class="toc-row sub"><div class="num">2.3</div><div class="text">Permissions, Roles, And Startup State</div></div>
       <div class="toc-row"><div class="num">3</div><div class="text">Selected TCI 2.0 Commands With Thetis Behaviour Differences</div></div>
       <div class="toc-row sub"><div class="num">3.1</div><div class="text">Receiver, Audio, And AGC Controls</div></div>
       <div class="toc-row sub"><div class="num">3.2</div><div class="text">Locking, Noise Processing, And Extended Receiver State</div></div>
@@ -415,6 +423,7 @@
       <div class="toc-row sub"><div class="num">3.5</div><div class="text">Sensors, Audio Negotiation, And Opus Codec Settings</div></div>
       <div class="toc-row sub"><div class="num">3.6</div><div class="text">CW And KEYER Support Via CWX</div></div>
       <div class="toc-row"><div class="num">4</div><div class="text">Standard Reconciliation And Thetis Extensions</div></div>
+      <div class="toc-row sub"><div class="num">4.4</div><div class="text">Current Parsed Command And Permission Map</div></div>
       <div class="toc-row"><div class="num">5</div><div class="text">Compatibility Notes</div></div>
     </div>
   </section>
@@ -436,7 +445,7 @@
   </section>
 
   <section>
-    <h2>2 Thetis Implementation Overview</h2>
+    <h2>2 Thetis Implementation, Connection, Security, And Permissions Overview</h2>
     <p class="lead">Thetis presents itself as a TCI 2.0 style server, but several command families map onto existing Thetis subsystems rather than separate internal protocol objects.</p>
 
     <div class="grid-note">
@@ -457,6 +466,159 @@
       <div>Spot metadata</div><div>Thetis accepts structured metadata in the <code>spot</code> arg5 JSON payload</div>
       <div>CAT passthrough</div><div>Thetis adds <code>run_cat_ex</code> to execute a single CAT command and return the CAT response in a TCI message</div>
       <div>Round trip check</div><div>Thetis adds <code>rt</code> as a minimal echo command for client round trip timing checks</div>
+    </div>
+
+    <h3>2.1 Transport, WebSocket, And WSS</h3>
+    <p>Thetis uses a WebSocket transport for TCI text commands and binary stream frames. The default listener is <code>127.0.0.1:31001</code>. Clients normally connect with <code>ws://&lt;host&gt;:31001/</code>, then exchange normal TCI text messages after the HTTP WebSocket upgrade completes.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Item</th>
+          <th>Current Thetis behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Plain WebSocket</td>
+          <td>The normal TCI listener accepts WebSocket upgrade requests on the configured TCI address and port. Text frames are UTF-8. Binary frames are used for IQ, audio, TX audio, and compact display payloads.</td>
+        </tr>
+        <tr>
+          <td>Secure WebSocket</td>
+          <td>When a certificate path is configured and the certificate contains a private key, Thetis also starts a secure listener on the same address and on <code>TCI port + 1</code>. With the default port, the secure endpoint is therefore <code>wss://&lt;host&gt;:31002/</code>.</td>
+        </tr>
+        <tr>
+          <td>Certificate requirements</td>
+          <td>The WSS listener is not created unless the certificate file exists and can be loaded as an <code>X509Certificate2</code> with a private key. If WSS setup fails, the plain WS listener can still run.</td>
+        </tr>
+        <tr>
+          <td>Keepalive</td>
+          <td>The server sends WebSocket ping frames containing <code>Thetis</code> approximately every 20 seconds. Clients should reply with normal WebSocket pong handling.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.2 Authentication Handshake</h3>
+    <p>Authentication is optional and can be enabled separately for WS and WSS. When authentication is required, Thetis does not send normal initialisation data immediately after the WebSocket upgrade. It first sends an authentication request and waits for the client access code.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:26%;">Message</th>
+          <th style="width:16%;">Direction</th>
+          <th>Meaning</th>
+          <th style="width:24%;">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AUTHENTICATION_REQUIRED</td>
+          <td>Server to client</td>
+          <td>Authentication is required before any normal TCI state is sent. The same message is repeated if a non authentication command is sent before login.</td>
+          <td><code>authentication_required:true;</code></td>
+        </tr>
+        <tr>
+          <td>AUTHENTICATION_PINCODE</td>
+          <td>Client to server</td>
+          <td>Submits the access code. The entire argument text after the colon is trimmed and checked against the configured users.</td>
+          <td><code>authentication_pincode:123456;</code></td>
+        </tr>
+        <tr>
+          <td>AUTHENTICATION_OK</td>
+          <td>Server to client</td>
+          <td>The access code matched an enabled user. This is followed by the permission list and then the normal initialisation sequence.</td>
+          <td><code>authentication_ok;</code></td>
+        </tr>
+        <tr>
+          <td>AUTHENTICATION_PERMISSIONS</td>
+          <td>Server to client</td>
+          <td>Comma separated effective permission tokens for the authenticated session. These are the role permissions plus any extra user permissions.</td>
+          <td><code>authentication_permissions:view_status,view_spectrum;</code></td>
+        </tr>
+        <tr>
+          <td>AUTHENTICATION_FAIL</td>
+          <td>Server to client</td>
+          <td>The code was not accepted. The argument is the remaining attempt count.</td>
+          <td><code>authentication_fail:4;</code></td>
+        </tr>
+        <tr>
+          <td>AUTHENTICATION_LOCKED</td>
+          <td>Server to client</td>
+          <td>The session or source address is locked after too many failures. The argument is the lockout time in seconds. Current lockout is 300 seconds after 5 failed attempts.</td>
+          <td><code>authentication_locked:300;</code></td>
+        </tr>
+        <tr>
+          <td>PERMISSION_DENIED</td>
+          <td>Server to client</td>
+          <td>A command was authenticated but not allowed. If the command has a permission mapping, Thetis returns the missing permission token; if not, it returns the command name.</td>
+          <td><code>permission_denied:change_frequency;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>Authentication Flow For Clients</h3>
+      <p class="small">Connect to WS or WSS, wait for either normal initialisation or <code>authentication_required:true;</code>. If authentication is required, send <code>authentication_pincode:&lt;access_code&gt;;</code>. After <code>authentication_ok;</code> and <code>authentication_permissions:...;</code>, process the normal startup state ending with <code>ready;</code>. Do not assume that initialisation will be sent before successful authentication.</p>
+    </div>
+
+    <h3>2.3 Permissions, Roles, And Startup State</h3>
+    <p>Permissions are enforced only when authentication is enabled for the connection type being used. When authentication is disabled, the current parser accepts all implemented commands without permission checks.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Permission token</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>view_status</code></td><td>Read radio status and low impact status helpers.</td></tr>
+        <tr><td><code>view_spectrum</code></td><td>Start or stop IQ and display/spectrum streams.</td></tr>
+        <tr><td><code>listen_rx_audio</code></td><td>Start or stop RX audio and line out streams.</td></tr>
+        <tr><td><code>change_rx_audio</code></td><td>Change audio sample settings and RX audio related controls.</td></tr>
+        <tr><td><code>change_frequency</code></td><td>Change frequency, IF, VFO, and related tuning controls.</td></tr>
+        <tr><td><code>change_mode</code></td><td>Change demodulation mode.</td></tr>
+        <tr><td><code>change_rx_filter</code></td><td>Change RX filter edges.</td></tr>
+        <tr><td><code>change_rx_dsp</code></td><td>Change RX DSP controls such as NR, NB, ANF, APF, notch, and AGC.</td></tr>
+        <tr><td><code>change_rx_frontend</code></td><td>Change RX enable, CTUN, attenuator, preamp, FM deviation, and VFO sync controls.</td></tr>
+        <tr><td><code>change_display</code></td><td>Change display stream settings such as pixels, zoom, pan, FFT, averaging, and compression.</td></tr>
+        <tr><td><code>tx_ptt</code></td><td>Control transmit PTT.</td></tr>
+        <tr><td><code>tx_tune</code></td><td>Control tune.</td></tr>
+        <tr><td><code>tx_power</code></td><td>Change drive and tune drive.</td></tr>
+        <tr><td><code>tx_settings</code></td><td>Change split, TX filter, and TX profile settings.</td></tr>
+        <tr><td><code>tx_audio</code></td><td>Send binary TX audio frames.</td></tr>
+        <tr><td><code>cw_keyer</code></td><td>Use CW macro, message, and keyer controls.</td></tr>
+        <tr><td><code>spots</code></td><td>Add, delete, clear, or manage spots.</td></tr>
+        <tr><td><code>radio_power</code></td><td>Start or stop the radio.</td></tr>
+        <tr><td><code>admin</code></td><td>Use administrative extensions such as shutdown and CAT passthrough.</td></tr>
+      </tbody>
+    </table>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Built in role</th>
+          <th>Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Viewer</td><td><code>view_status</code>, <code>view_spectrum</code></td></tr>
+        <tr><td>Listener</td><td>Viewer plus <code>listen_rx_audio</code></td></tr>
+        <tr><td>RX Operator</td><td>Listener plus <code>change_rx_audio</code>, <code>change_frequency</code>, <code>change_mode</code>, <code>change_rx_filter</code>, <code>change_rx_dsp</code>, and <code>change_display</code></td></tr>
+        <tr><td>Advanced RX Operator</td><td>RX Operator plus <code>change_rx_frontend</code></td></tr>
+        <tr><td>TX Operator</td><td>Advanced RX Operator plus <code>tx_ptt</code>, <code>tx_tune</code>, <code>tx_power</code>, <code>tx_settings</code>, and <code>cw_keyer</code></td></tr>
+        <tr><td>Admin</td><td>All normal permissions, including <code>tx_audio</code>, <code>spots</code>, <code>radio_power</code>, and <code>admin</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h3>Default Permission Configuration</h3>
+      <p class="small">The default configuration creates a <code>guest</code> user assigned to the Listener role with access code <code>123456</code>. Access codes are stored as PBKDF2 SHA256 hashes using 100000 iterations, 16 byte salts, and 32 byte hashes. A deployed system should replace the default access code before exposing authenticated TCI access.</p>
+    </div>
+
+    <div class="box">
+      <h3>Startup State After Authentication</h3>
+      <p class="small">After successful authentication, or immediately when authentication is disabled, Thetis sends the normal initialisation and state snapshot. The current startup begins with <code>protocol</code>, <code>device</code>, <code>receive_only</code>, <code>trx_count</code>, <code>channels_count</code>, <code>vfo_limits</code>, <code>if_limits</code>, and <code>modulations_list</code>, then sends the current radio state, audio settings, display related defaults, RX/TX enable state, lock state, sensors related state, TX profile/calibration extensions, and finally <code>ready;</code>.</p>
     </div>
   </section>
 
@@ -555,7 +717,7 @@
         <tr>
           <td>VFO_SYNC_EX</td>
           <td>Bidirectional</td>
-          <td>Thetis extension for VFO sync state. Use no arguments to query, or a single boolean to enable or disable synchronisation.</td>
+          <td>Thetis extension for VFO sync state. Use the bare command to query, or a single boolean argument to enable or disable synchronisation.</td>
           <td><code>vfo_sync_ex:true;</code></td>
         </tr>
         <tr>
@@ -772,12 +934,6 @@
           <td>Sets the quantisation range used when Thetis converts display dBm values into outbound display values. Each endpoint is limited to <code>-200.0</code> through <code>200.0</code> dBm. If <code>max</code> is not greater than <code>min</code>, Thetis applies a minimum 1 dB span.</td>
           <td><code>display_dbm_range:0,-140.0,-20.0;</code></td>
         </tr>
-        <tr>
-          <td>DISPLAY_DUPLEX</td>
-          <td>Notification</td>
-          <td>Reports the Thetis display duplex state. In local MOX, a receiver display shows TX data when display duplex is disabled; otherwise it continues to show receiver data.</td>
-          <td><code>display_duplex:false;</code></td>
-        </tr>
       </tbody>
     </table>
 
@@ -986,14 +1142,14 @@
         <tr>
           <td>AUDIO_RECONFIGURE_BEGIN</td>
           <td>Control</td>
-          <td>Begins a grouped audio reconfiguration. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
-          <td><code>audio_reconfigure_begin;</code></td>
+          <td>Begins a grouped audio reconfiguration. In the current parser this is handled by the colon form <code>audio_reconfigure_begin:;</code>; the bare <code>audio_reconfigure_begin;</code> form is not in the bare command switch. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
+          <td><code>audio_reconfigure_begin:;</code></td>
         </tr>
         <tr>
           <td>AUDIO_RECONFIGURE_END</td>
           <td>Control</td>
-          <td>Ends a grouped audio reconfiguration. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
-          <td><code>audio_reconfigure_end;</code></td>
+          <td>Ends a grouped audio reconfiguration. In the current parser this is handled by the colon form <code>audio_reconfigure_end:;</code>; the bare <code>audio_reconfigure_end;</code> form is not in the bare command switch. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
+          <td><code>audio_reconfigure_end:;</code></td>
         </tr>
         <tr>
           <td>AUDIO_SAMPLERATE</td>
@@ -1102,8 +1258,8 @@
 
     <div class="box">
       <h3>Grouped Audio Reconfiguration</h3>
-      <p>Clients can wrap several audio negotiation commands between <code>audio_reconfigure_begin;</code> and <code>audio_reconfigure_end;</code>. This lets Thetis defer RX audio compression reset and queued TX audio clearing until all related settings have been applied.</p>
-      <p class="small"><code>audio_reconfigure_begin;</code> can be nested. The deferred reset only occurs when matching <code>audio_reconfigure_end;</code> calls reduce the depth back to zero.</p>
+      <p>Clients can wrap several audio negotiation commands between <code>audio_reconfigure_begin:;</code> and <code>audio_reconfigure_end:;</code>. This lets Thetis defer RX audio compression reset and queued TX audio clearing until all related settings have been applied.</p>
+      <p class="small"><code>audio_reconfigure_begin:;</code> can be nested. The deferred reset only occurs when matching <code>audio_reconfigure_end:;</code> calls reduce the depth back to zero.</p>
     </div>
 
     <div class="box">
@@ -1577,12 +1733,6 @@
           <td><code>display_quant_bits:0,7;</code></td>
         </tr>
         <tr>
-          <td>DISPLAY_DUPLEX</td>
-          <td>Notification</td>
-          <td>Reports Thetis display duplex state to display stream clients.</td>
-          <td><code>display_duplex:true;</code></td>
-        </tr>
-        <tr>
           <td>AUDIO_CODEC</td>
           <td>Send / reply</td>
           <td>Selects the negotiated audio codec family. Thetis accepts <code>pcm</code> and <code>opus</code>.</td>
@@ -1657,19 +1807,43 @@
         <tr>
           <td>AUDIO_RECONFIGURE_BEGIN</td>
           <td>Send</td>
-          <td>Begins grouped audio reconfiguration. Thetis defers audio reset and queued TX audio clearing while the reconfiguration depth is above zero.</td>
-          <td><code>audio_reconfigure_begin;</code></td>
+          <td>Begins grouped audio reconfiguration. Use <code>audio_reconfigure_begin:;</code>. Thetis defers audio reset and queued TX audio clearing while the reconfiguration depth is above zero.</td>
+          <td><code>audio_reconfigure_begin:;</code></td>
         </tr>
         <tr>
           <td>AUDIO_RECONFIGURE_END</td>
           <td>Send</td>
-          <td>Ends grouped audio reconfiguration. Deferred reset is applied when the nesting depth returns to zero.</td>
-          <td><code>audio_reconfigure_end;</code></td>
+          <td>Ends grouped audio reconfiguration. Use <code>audio_reconfigure_end:;</code>. Deferred reset is applied when the nesting depth returns to zero.</td>
+          <td><code>audio_reconfigure_end:;</code></td>
+        </tr>
+        <tr>
+          <td>RX_SNB_ENABLE</td>
+          <td>Send / reply</td>
+          <td>Thetis spectral noise blanker state by receiver. Use <code>rx_snb_enable:&lt;rx&gt;;</code> to query or <code>rx_snb_enable:&lt;rx&gt;,&lt;bool&gt;;</code> to set. When authentication is enabled, this command requires <code>change_rx_dsp</code>.</td>
+          <td><code>rx_snb_enable:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>DUPLEX</td>
+          <td>Send / reply</td>
+          <td>Thetis display duplex state. The implemented protocol command is <code>duplex</code>; there is no <code>display_duplex</code> command. Zero based receiver <code>0</code> can be queried with <code>duplex:0;</code> or set with <code>duplex:0,&lt;bool&gt;;</code>. Receiver <code>1</code> queries return <code>false</code> and set requests are ignored. When authentication is enabled, this command requires <code>change_display</code>.</td>
+          <td><code>duplex:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>TUNE_TWOTONE</td>
+          <td>Send / reply</td>
+          <td>Thetis two tone tune state. Set requests use <code>tune_twotone:&lt;rx&gt;,&lt;bool&gt;;</code> and are accepted only when the supplied zero based receiver matches the active TX routing. The current one argument query path replies using receiver <code>0</code> regardless of the supplied argument, so clients should treat <code>tune_twotone:0;</code> as the only useful query form. When authentication is enabled, this command requires <code>tx_power</code>.</td>
+          <td><code>tune_twotone:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>PS-A</td>
+          <td>Send / reply</td>
+          <td>Thetis PureSignal auto state. Set with <code>ps-a:&lt;bool&gt;;</code>. Although the handler contains a zero argument query branch, the current parser has no bare <code>ps-a;</code> case and <code>ps-a:;</code> is parsed as one empty argument, so there is no working client query command in the current source. The state is still sent by Thetis during initial state and when PureSignal auto changes. When authentication is enabled, this command requires <code>tx_settings</code>.</td>
+          <td><code>ps-a:true;</code></td>
         </tr>
         <tr>
           <td>TX_PROFILE_EX</td>
           <td>Send / reply</td>
-          <td>Selects or reports the active Thetis TX profile. Use no argument to request the current profile.</td>
+          <td>Selects or reports the active Thetis TX profile. Use the bare command <code>tx_profile_ex;</code> to request the current profile, or <code>tx_profile_ex:&lt;name&gt;;</code> to set it.</td>
           <td><code>tx_profile_ex:dx;</code></td>
         </tr>
         <tr>
@@ -1713,6 +1887,117 @@
           <td>Send</td>
           <td>Thetis extension to the standard <code>spot</code> command. A fifth argument beginning with <code>[json]</code> can carry structured metadata.</td>
           <td><code>spot:k1abc,cw,7025000,4294967295,[json]{...};</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h3>4.4 Current Parsed Command And Permission Map</h3>
+    <p>The table below records the current permission mapping used by <code>clsTCIpermissions.cs</code>. It is included so that a client developer can implement authentication handling without reading the server source.</p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Permission</th>
+          <th>Commands covered</th>
+          <th style="width:24%;">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>radio_power</code></td>
+          <td><code>start</code>, <code>stop</code></td>
+          <td>Power state controls.</td>
+        </tr>
+        <tr>
+          <td><code>admin</code></td>
+          <td><code>shutdown_ex</code>, <code>run_cat_ex</code></td>
+          <td>Administrative and CAT passthrough controls.</td>
+        </tr>
+        <tr>
+          <td><code>change_mode</code></td>
+          <td><code>modulation</code></td>
+          <td>Mode change.</td>
+        </tr>
+        <tr>
+          <td><code>change_frequency</code></td>
+          <td><code>dds</code>, <code>if</code>, <code>vfo</code>, <code>vfo_swap_ex</code>, set forms of <code>digl_offset</code> and <code>digu_offset</code></td>
+          <td>For <code>digl_offset</code> and <code>digu_offset</code>, the permission depends on whether arguments are supplied.</td>
+        </tr>
+        <tr>
+          <td><code>change_rx_filter</code></td>
+          <td><code>rx_filter_band</code></td>
+          <td>RX filter edge control.</td>
+        </tr>
+        <tr>
+          <td><code>view_spectrum</code></td>
+          <td><code>display_start</code>, <code>display_stop</code>, <code>iq_start</code>, <code>iq_stop</code></td>
+          <td>Stream start and stop controls.</td>
+        </tr>
+        <tr>
+          <td><code>change_display</code></td>
+          <td><code>display_zoom</code>, <code>display_pan</code>, <code>display_pixels</code>, <code>display_delta_mode</code>, <code>display_block_delta_mode</code>, <code>display_accuracy_mode</code>, <code>display_adaptive_blocks</code>, <code>display_keyframe_interval</code>, <code>display_quant_bits</code>, <code>display_framerate</code>, <code>display_fftsize</code>, <code>display_window</code>, <code>display_detector</code>, <code>display_averaging</code>, <code>display_average_time</code>, <code>display_one_hz</code>, <code>display_dbm_range</code>, <code>iq_samplerate</code>, <code>duplex</code></td>
+          <td>Display, IQ sample rate, and duplex display settings.</td>
+        </tr>
+        <tr>
+          <td><code>listen_rx_audio</code></td>
+          <td><code>audio_start</code>, <code>audio_stop</code>, <code>line_out_start</code>, <code>line_out_stop</code></td>
+          <td>RX audio and line out stream start and stop controls.</td>
+        </tr>
+        <tr>
+          <td><code>change_rx_audio</code></td>
+          <td><code>audio_samplerate</code>, <code>audio_codec</code>, <code>audio_reconfigure_begin</code>, <code>audio_reconfigure_end</code>, <code>audio_stream_sample_type</code>, <code>audio_stream_channels</code>, <code>audio_stream_samples</code>, all <code>audio_opus_*</code> controls, <code>tx_stream_audio_buffering</code>, <code>mute</code>, <code>volume</code>, <code>rx_mute</code>, <code>mon_volume</code>, <code>mon_enable</code>, <code>rx_volume</code>, <code>rx_balance</code>, <code>sql_enable</code>, <code>sql_level</code></td>
+          <td>Audio format and audio control settings.</td>
+        </tr>
+        <tr>
+          <td><code>change_rx_dsp</code></td>
+          <td><code>rx_nr_enable</code>, <code>rx_nr_enable_ex</code>, <code>rx_nb_enable</code>, <code>rx_nb_enable_ex</code>, <code>rx_snb_enable</code>, <code>rx_anf_enable</code>, <code>rx_bin_enable</code>, <code>rx_apf_enable</code>, <code>rx_nf_enable</code>, <code>agc_auto_ex</code>, <code>agc_mode</code>, <code>agc_gain</code></td>
+          <td>RX DSP, noise processing, and AGC controls.</td>
+        </tr>
+        <tr>
+          <td><code>change_rx_frontend</code></td>
+          <td><code>rx_enable</code>, <code>rx_channel_enable</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>vfo_sync_ex</code>, <code>fm_deviation_ex</code>, <code>rx_ctun_ex</code></td>
+          <td>RX frontend and receiver state controls.</td>
+        </tr>
+        <tr>
+          <td><code>tx_ptt</code></td>
+          <td><code>trx</code></td>
+          <td>Transmit PTT control.</td>
+        </tr>
+        <tr>
+          <td><code>tx_tune</code></td>
+          <td><code>tune</code></td>
+          <td>Tune control.</td>
+        </tr>
+        <tr>
+          <td><code>tx_power</code></td>
+          <td><code>drive</code>, <code>tune_drive</code>, <code>tune_twotone</code></td>
+          <td>TX drive and two tone tune controls.</td>
+        </tr>
+        <tr>
+          <td><code>tx_settings</code></td>
+          <td><code>split_enable</code>, <code>tx_filter_band_ex</code>, <code>tx_profile_ex</code>, <code>ps-a</code></td>
+          <td>TX profile, split, filter, and PureSignal auto settings.</td>
+        </tr>
+        <tr>
+          <td><code>tx_audio</code></td>
+          <td><code>binary_tx_audio</code></td>
+          <td>This applies to binary TX audio frames, not a normal text command.</td>
+        </tr>
+        <tr>
+          <td><code>cw_keyer</code></td>
+          <td><code>cw_macros_speed</code>, <code>cw_macros_delay</code>, <code>cw_keyer_speed</code>, <code>cw_macros_speed_up</code>, <code>cw_macros_speed_down</code>, <code>cw_macros</code>, <code>cw_terminal</code>, <code>cw_msg</code>, <code>keyer</code>, <code>cw_macros_stop</code>, <code>callsign_send</code></td>
+          <td><code>callsign_send</code> is mapped even though the current server emits it as a notification.</td>
+        </tr>
+        <tr>
+          <td><code>spots</code></td>
+          <td><code>spot</code>, <code>spot_delete</code>, <code>spot_clear</code>, <code>spot_simulate_click</code></td>
+          <td>Spot management and simulated spot click handling.</td>
+        </tr>
+        <tr>
+          <td><code>view_status</code></td>
+          <td><code>rit_enable</code>, <code>xit_enable</code>, <code>rit_offset</code>, <code>xit_offset</code>, <code>lock</code>, <code>vfo_lock</code>, <code>set_in_focus</code>, <code>rx_sensors_enable</code>, <code>rx_sensors_enable_ex</code>, <code>tx_sensors_enable</code>, <code>tx_profiles_ex</code>, <code>calibration_ex</code>, <code>rt</code>, query forms of <code>digl_offset</code> and <code>digu_offset</code></td>
+          <td>Status, sensors, and low impact query controls.</td>
         </tr>
       </tbody>
     </table>
@@ -1802,8 +2087,6 @@
   </section>
 
 
-  </section>
-
   <div class="page-break"></div>
 
   <section>
@@ -1834,7 +2117,15 @@
     <h3>5.5 CW Mode Preconditions</h3>
     <p>Thetis does not silently force a non CW mode into CW for TCI CW operations. TCI CW activity is expected to operate only when the selected TX side is already in <code>cwl</code> or <code>cwu</code>.</p>
 
-    <h3>5.6 Client Guidance</h3>
+    <h3>5.6 Implementation Notes</h3>
+    <ul>
+      <li>The duplex command is <code>duplex</code>. There is no <code>display_duplex</code> text command.</li>
+      <li><code>duplex</code> requires <code>change_display</code>, <code>rx_snb_enable</code> requires <code>change_rx_dsp</code>, <code>tune_twotone</code> requires <code>tx_power</code>, and <code>ps-a</code> requires <code>tx_settings</code> when authentication is enabled.</li>
+      <li><code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code> are handled in the colon command branch. Use <code>audio_reconfigure_begin:;</code> and <code>audio_reconfigure_end:;</code>.</li>
+      <li><code>ps-a</code> can be set, and is sent by the server, but the current parser does not expose a working client query form.</li>
+    </ul>
+
+    <h3>5.7 Client Guidance</h3>
     <ul>
       <li>Use the official Expert Electronics 2.0 document for generic command grammar and message sequencing, but prefer the validated ExpertSDR 3 v1.1.7 CW terminal forms when they differ from the PDF.</li>
       <li>Use this supplement for Thetis routing, AGC mapping, CW/CWX behaviour, sensor negotiation, compact <code>sr</code> reports, stream negotiation, VFO sync/swap helpers, display compression, round trip <code>rt</code> echo checks, official command deviations, and Thetis extension messages.</li>

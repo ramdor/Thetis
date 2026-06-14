@@ -633,6 +633,7 @@ namespace Thetis
             //
 
             m_bLogShutdown = Common.HasArg(args, "-logshutdown");
+            m_bLogShutdown = true; // for testing
 
             // check versions of DLL/etc
             if (!checkVersions())
@@ -2410,10 +2411,20 @@ namespace Thetis
             get { return _tci_ptt; }
             set
             {
+                bool old_state = _tci_ptt;
+
                 _tci_ptt = value && !_disable_ptt; // only use when we allow ptt control
                                                    // Prevents the issue when ptt control is off,
                                                    // a tcippt request comes in and then sits there
                                                    // until sometime later ptt control is turned on
+
+                //[2.10.3.16]MW0LGE do something if tune or 2tone are on, and this is set off
+                //_tci_ptt is not set by tun or 2tone via tci, so this is a catch if trx is set to false
+                if (!_tci_ptt) 
+                {
+                    if (TUN) TUN = false;
+                    if (TwoTone) TwoTone = false;
+                }
             }
         }
         private int m_nTCIPort = 50001;
@@ -15397,7 +15408,20 @@ namespace Thetis
             get { return _display_duplex; }
             set { _display_duplex = value; }
         }
+        public void SetDisplayDuplex(int rx, bool value)
+        {
+            if (rx != 1) return; // only on rx1
 
+            //_display_duplex = value; done in event handler for chkRX2SR
+            if (value != chkRX2SR.Checked)
+            {
+                chkRX2SR.Checked = value;
+            }
+            else
+            {
+                chkRX2SR_CheckedChanged(this, EventArgs.Empty);
+            }
+        }
         double rx1_dds_freq_mhz;
         private void UpdateRX1DDSFreq()
         {

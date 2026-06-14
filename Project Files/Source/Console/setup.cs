@@ -378,11 +378,11 @@ namespace Thetis
             if (comboGanymedeCATPort.Items.Count > 0) comboGanymedeCATPort.SelectedIndex = 0;
 
             // some default tci server states MW0LGE_21k9d
+            chkUseRX1vfoaForRX2vfoa.Checked = false;  //[2.10.3.16]MW0LGE change to false
             chkCopyRX2VFObToVFOa.Checked = true;
-            chkUseRX1vfoaForRX2vfoa.Checked = true;
             chkTCIsendInitialStateOnConnect.Checked = true;
             // some default tcpipcat server states
-            chkWelcomeMessageTCPIPCat.Checked = true;
+            chkWelcomeMessageTCPIPCat.Checked = false; //[2.10.3.16]MW0LGE change to false
             // some default tcpipcat + tci
             chkLimitPowerCATTCIMsgs.Checked = true;
             //

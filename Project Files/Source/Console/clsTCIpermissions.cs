@@ -504,7 +504,6 @@ namespace Thetis
                 case "if":
                 case "vfo":
                 case "vfo_swap_ex":
-                case "spot_simulate_click":
                     return CHANGE_FREQUENCY;
                 case "rx_filter_band":
                     return CHANGE_RX_FILTER;
@@ -532,6 +531,7 @@ namespace Thetis
                 case "display_one_hz":
                 case "display_dbm_range":
                 case "iq_samplerate":
+                case "duplex":
                     return CHANGE_DISPLAY;
                 case "audio_start":
                 case "audio_stop":
@@ -571,6 +571,7 @@ namespace Thetis
                 case "rx_nr_enable_ex":
                 case "rx_nb_enable":
                 case "rx_nb_enable_ex":
+                case "rx_snb_enable":
                 case "rx_anf_enable":
                 case "rx_bin_enable":
                 case "rx_apf_enable":
@@ -594,10 +595,12 @@ namespace Thetis
                     return TX_TUNE;
                 case "drive":
                 case "tune_drive":
+                case "tune_twotone":
                     return TX_POWER;
                 case "split_enable":
                 case "tx_filter_band_ex":
                 case "tx_profile_ex":
+                case "ps-a":
                     return TX_SETTINGS;
                 case "binary_tx_audio":
                     return TX_AUDIO;
@@ -616,6 +619,7 @@ namespace Thetis
                 case "spot":
                 case "spot_delete":
                 case "spot_clear":
+                case "spot_simulate_click":
                     return SPOTS;
                 case "rit_enable":
                 case "xit_enable":

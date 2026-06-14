@@ -8,18 +8,18 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord : [Click Here](https://discord.gg/6fHCRKnDc9)
 
-This version, v2.10.3.14, will be the last version released publicly by MW0LGE - Richard Samphire.
-This repo will no longer be updated or monitored.
-
-EDIT: actually v2.10.3.15 will be the last ;)
 
 ## v2.10.3.16 - Change Log
 - [add] option added to setup n1mm to use/ignore the cw frequency tone shift when sending spectrum to n1mm, default now off (was previously always enabled)
 - [add] new low bandwidth TCI display stream, including delta and delta block modes
 - [add] new compressed TCI audio stream support using OPUS codec (Concentus)
+- [add] many new tci commands added
 - [change] changed some tci code around centre frequency change and dds messages. An inbound dds message if Thetis is in CTUN off mode will now cause frequency change to that dds frequency
+- [change] some defaults for tci have changed when using a default database
 - [fix] cleaned up dds and if messages sent from thetis to try to minimise repeats/dupes
 - [fix] TCI command to change rx filter will now select VAR1 before making the change
+- [fix] tun/2tone will be terminated if a tci trx false message arrives
+- [fix] tci cw offsets have been removed so that dds and if now match the values internally used by console and display
 
 ## v2.10.3.15 - Change Log
 - [add] option to allow smearing of waterfalls (default off), Setup->Appearance->General

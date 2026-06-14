@@ -1031,12 +1031,16 @@ namespace Thetis
             //sendIFLimits(-halfSample, halfSample);
             sendIFLimits(-halfSample, halfSample); // sadly this is global in tci, so use rx1
         }
-        public void DisplayDuplexChange(bool enabled)
+        public void DuplexChange(int rx, bool enabled)
         {
             if (m_disconnected) return;
-            sendDisplayDuplex(enabled);
+            sendDuplex(rx -1, enabled);
         }
-
+        public void PureSignalAutoAChange(int rx, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendPureSignalAuto(enabled); // ignore the rx, it is global tx setting anyway
+        }
         internal bool RequiresRxSensorUpdate(int receiver, int channel)
         {
             return m_sensorManager.RequiresRxChannelUpdate(receiver, channel);
@@ -1265,6 +1269,11 @@ namespace Thetis
             if (m_disconnected) return;
             sendTune(rx - 1, newTune);
         }
+        public void TwoToneChange(int rx, bool oldTwoTone, bool newTwoTone)
+        {
+            if (m_disconnected) return;
+            sendTwoTone(rx - 1, newTwoTone);
+        }
         public void SplitChange(int rx, bool newSplit)
         {
             if (m_disconnected) return;
@@ -1444,6 +1453,11 @@ namespace Thetis
             bool enabled = newNB > 0;
             sendNBEnable(rx - 1, enabled, false, newNB);
             sendNBEnable(rx - 1, enabled, true, newNB);
+        }
+        public void SNBChanged(int rx, bool enabled)
+        {
+            if (m_disconnected) return;
+            sendSNBEnable(rx - 1, enabled);
         }
         public void NRChanged(int rx, int newNR)
         {
@@ -2701,6 +2715,11 @@ namespace Thetis
             string s = "tune:" + rx.ToString() + "," + tune.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
+        private void sendTwoTone(int rx, bool twotone)
+        {
+            string s = "tune_twotone:" + rx.ToString() + "," + twotone.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
         private void sendRXEnable(int rx, bool enable)
         {
             string s = "rx_enable:" + rx.ToString() + "," + enable.ToString().ToLower() + ";";
@@ -2812,9 +2831,13 @@ namespace Thetis
             string s = "tx_filter_band_ex:" + low.ToString() + "," + high.ToString() + ";";
             sendTextFrame(s);
         }
-        private void sendDisplayDuplex(bool enabled)
+        private void sendDuplex(int rx, bool enabled)
         {
-            sendTextFrame("display_duplex:" + enabled.ToString().ToLowerInvariant() + ";");
+            sendTextFrame("duplex:" + rx.ToString() + "," + enabled.ToString().ToLowerInvariant() + ";");
+        }
+        private void sendPureSignalAuto(bool enabled)
+        {
+            sendTextFrame("ps-a:" + enabled.ToString().ToLowerInvariant() + ";");
         }
         private void sendStartStop(bool bPower)
         {
@@ -2881,7 +2904,10 @@ namespace Thetis
             sendFilterBand(0, consoleThreadSafe.RX1FilterLow, consoleThreadSafe.RX1FilterHigh);
             sendFilterBand(1, consoleThreadSafe.RX2FilterLow, consoleThreadSafe.RX2FilterHigh);
             sendTXFilterBandEx(consoleThreadSafe.TXFilterLow, consoleThreadSafe.TXFilterHigh);
-            sendDisplayDuplex(consoleThreadSafe.DisplayDuplex);
+
+            sendDuplex(0, consoleThreadSafe.DisplayDuplex); // only rx1
+
+            sendPureSignalAuto(consoleThreadSafe.PSA);
 
             sendRXEnable(0, !consoleThreadSafe.MOX);
             sendRXEnable(1, bRX2Enabled && !consoleThreadSafe.MOX);
@@ -2904,6 +2930,9 @@ namespace Thetis
                 sendNBEnable(zeroBaseRx, nb > 0, false, nb);
                 sendNBEnable(zeroBaseRx, nb > 0, true, nb);
             }
+            //SNB
+            sendSNBEnable(0, consoleThreadSafe.GetSNB(1));
+            sendSNBEnable(1, consoleThreadSafe.GetSNB(2));
 
             sendRxBinEnable(0, consoleThreadSafe.GetBin(1));
             sendRxBinEnable(1, consoleThreadSafe.GetBin(2));
@@ -3006,6 +3035,9 @@ namespace Thetis
 
             sendTune(0, consoleThreadSafe.TUN && !(consoleThreadSafe.VFOBTX && bRX2Enabled));
             sendTune(1, consoleThreadSafe.TUN && (consoleThreadSafe.VFOBTX && bRX2Enabled));
+
+            sendTwoTone(0, consoleThreadSafe.TwoTone && !(consoleThreadSafe.VFOBTX && bRX2Enabled));
+            sendTwoTone(1, consoleThreadSafe.TwoTone && (consoleThreadSafe.VFOBTX && bRX2Enabled));
 
             sendIQStartStop(0, false);
             sendIQStartStop(1, false);
@@ -5198,8 +5230,18 @@ namespace Thetis
             if (args.Length == 2)
             {
                 bool bOK = int.TryParse(args[0], out rx);
+
                 if (bOK)
+                {
+                    bool forRX1 = rx == 0 && (!consoleThreadSafe.RX2Enabled || (consoleThreadSafe.RX2Enabled && !consoleThreadSafe.VFOBTX));
+                    bool forRX2 = rx == 1 && consoleThreadSafe.VFOBTX && consoleThreadSafe.RX2Enabled;
+                    if (!forRX1 && !forRX2) return;
+                }
+
+                if (bOK)
+                {                    
                     bOK = bool.TryParse(args[1], out tune);
+                }
                 if (bOK)
                 {
                     if (consoleThreadSafe.TUN != tune)
@@ -5212,7 +5254,36 @@ namespace Thetis
                 sendTune(rx, consoleThreadSafe.TUN);
             }
         }
+        private void handleTwoTone(string[] args)
+        {
+            int rx = 0;
+            bool twotone = false;
 
+            if (args.Length == 2)
+            {
+                bool bOK = int.TryParse(args[0], out rx);
+
+                if (bOK)
+                {
+                    bool forRX1 = rx == 0 && (!consoleThreadSafe.RX2Enabled || (consoleThreadSafe.RX2Enabled && !consoleThreadSafe.VFOBTX));
+                    bool forRX2 = rx == 1 && consoleThreadSafe.VFOBTX && consoleThreadSafe.RX2Enabled;
+                    if (!forRX1 && !forRX2) return;
+                }
+
+                if (bOK)
+                    bOK = bool.TryParse(args[1], out twotone);
+                if (bOK)
+                {
+                    if (consoleThreadSafe.TwoTone != twotone)
+                        consoleThreadSafe.TwoTone = twotone;
+                }
+            }
+            else if (args.Length == 1)
+            {
+                //query
+                sendTwoTone(rx, consoleThreadSafe.TwoTone);
+            }
+        }
         private void handleRxFilterBand(string[] args)
         {
             if (m_server == null) return;
@@ -5317,6 +5388,56 @@ namespace Thetis
             }
         }
 
+        private void handleDuplex(string[] args)
+        {
+            int rx = 0;
+            bool enable = false;
+
+            bool bOK = int.TryParse(args[0], out rx);
+            if (rx < 0 || rx > 1) return;
+
+            if (args.Length == 2)
+            {
+                if (bOK)
+                    bOK = bool.TryParse(args[1], out enable);
+                if (bOK)
+                {
+                    // there is no dup for rx1, return
+                    if (rx != 0) return;
+                    consoleThreadSafe.SetDisplayDuplex(1, enable);
+                }
+            }
+            else if (bOK && args.Length == 1)
+            {
+                //query
+                if (rx == 0)
+                {
+                    sendDuplex(rx, consoleThreadSafe.DisplayDuplex);
+                }
+                else if (rx == 1)
+                {
+                    sendDuplex(rx, false); // no rx2 dup
+                }
+            }
+        }
+        private void handlePureSignalAuto(string[] args)
+        {
+            bool enable = false;
+
+            if (args.Length == 1)
+            {
+                bool bOK = bool.TryParse(args[0], out enable);
+                if (bOK)
+                {
+                    consoleThreadSafe.PSA = enable;
+                }
+            }
+            else if (args.Length == 0)
+            {
+                //query
+                sendPureSignalAuto(consoleThreadSafe.PSA);
+            }
+        }
         private void handleRxSensorsEnable(string[] args)
         {
             if (args == null || args.Length < 1 || args.Length > 2) return;
@@ -5371,6 +5492,14 @@ namespace Thetis
                 s = "rx_nb_enable_ex:" + rx.ToString() + "," + enabled.ToString().ToLower() + "," + nb.ToString() + ";";
             else
                 s = "rx_nb_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
+
+            sendTextFrame(s);
+        }
+        private void sendSNBEnable(int rx, bool enabled)
+        {
+            string s;
+
+            s = "rx_snb_enable:" + rx.ToString() + "," + enabled.ToString().ToLower() + ";";
 
             sendTextFrame(s);
         }
@@ -5438,6 +5567,27 @@ namespace Thetis
                 {
                     consoleThreadSafe.SetSelectedNB(rx + 1, 0);
                 }
+            }
+        }
+        private void handleRxSNBEnable(string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0], out int rx)) return;
+            if (rx < 0 || rx > 1) return;
+
+            bool enable = false;
+            if (args.Length == 1)
+            {
+                //get
+                enable = consoleThreadSafe.GetSNB(rx + 1);
+                sendSNBEnable(rx, enable);
+            }
+            else
+            {
+                //set
+                if (!bool.TryParse(args[1], out enable)) return;
+
+                consoleThreadSafe.SetSNB(rx + 1, enable);
             }
         }
         private void sendAnfEnable(int rx, bool enabled)
@@ -5786,7 +5936,7 @@ namespace Thetis
                 consoleThreadSafe.SafeTXProfileSet(args[0]);
             }
         }
-        private void handleReturnTrip()
+        private void handleReturnTripTime()
         {
             // used by a client to determine total round trip time, it is just an echo
             string s = "rt;";
@@ -6084,8 +6234,14 @@ namespace Thetis
                     case "tune":
                         handleTune(args);
                         break;
+                    case "tune_twotone":
+                        handleTwoTone(args);
+                        break;
                     case "rx_enable":
                         handleRXEnable(args);
+                        break;
+                    case "duplex":
+                        handleDuplex(args);
                         break;
                     case "dds":
                         handleDDS(args);
@@ -6285,6 +6441,9 @@ namespace Thetis
                     case "rx_nb_enable":
                         handleRxNBEnable(args, false);
                         break;
+                    case "rx_snb_enable":
+                        handleRxSNBEnable(args);
+                        break;
                     case "rx_nb_enable_ex":
                         handleRxNBEnable(args, true);
                         break;
@@ -6334,7 +6493,9 @@ namespace Thetis
                         // this is special, we send whole of msg and handle it there
                         handleRunCatCommand(msg);
                         break;
-
+                    case "ps-a":
+                        handlePureSignalAuto(args);
+                        break;
                 }
             }
             else if (parts.Length == 1)
@@ -6460,7 +6621,7 @@ namespace Thetis
                         handleTXProfile(tmpArgs); // bespoke thetis cmd to select tx profile
                         break;
                     case "rt":
-                        handleReturnTrip();
+                        handleReturnTripTime();
                         break;
                 }
             }
@@ -9466,8 +9627,10 @@ namespace Thetis
                     console.PowerChangeHanders += OnPowerChangeHander;
                     console.SplitChangedHandlers += OnSplitChanged;
                     console.TuneChangedHandlers += OnTuneChanged;
+                    console.TwoToneChangedHandlers += OnTwoToneChanged;
                     console.DrivePowerChangedHandlers += OnDrivePowerChanged;
                     console.DuplexChangedHandlers += OnDuplexChanged;
+                    console.PSAChangedHandlers += OnPSAChanged;
                     console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
                     console.ThetisFocusChangedHandlers += OnThetisFocusChanged;
                     console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
@@ -9490,6 +9653,7 @@ namespace Thetis
                     console.MeterReadingsChangedHandlers += OnMeterReadingsChanged;
                     console.NRChangedHandlers += OnNrChanged;
                     console.NBChangedHandlers += OnNbChanged;
+                    console.SNBChangedHandlers += OnSNBChanged;
                     console.ANFChangedHandlers += OnAnfChanged;
                     console.BINChangedHandlers += OnBinChanged;
                     console.AGCModeChangedHandlers += OnAGCModeChanged;
@@ -9582,8 +9746,10 @@ namespace Thetis
                     console.PowerChangeHanders -= OnPowerChangeHander;
                     console.SplitChangedHandlers -= OnSplitChanged;
                     console.TuneChangedHandlers -= OnTuneChanged;
+                    console.TwoToneChangedHandlers -= OnTwoToneChanged;
                     console.DrivePowerChangedHandlers -= OnDrivePowerChanged;
                     console.DuplexChangedHandlers -= OnDuplexChanged;
+                    console.PSAChangedHandlers -= OnPSAChanged;
                     console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
                     console.ThetisFocusChangedHandlers -= OnThetisFocusChanged;
                     console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
@@ -9606,6 +9772,7 @@ namespace Thetis
                     console.MeterReadingsChangedHandlers -= OnMeterReadingsChanged;
                     console.NRChangedHandlers -= OnNrChanged;
                     console.NBChangedHandlers -= OnNbChanged;
+                    console.SNBChangedHandlers -= OnSNBChanged;
                     console.ANFChangedHandlers -= OnAnfChanged;
                     console.BINChangedHandlers -= OnBinChanged;
                     console.AGCModeChangedHandlers -= OnAGCModeChanged;
@@ -10259,7 +10426,19 @@ namespace Thetis
 
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
-                    socketListener.DisplayDuplexChange(newDuplex);
+                    socketListener.DuplexChange(rx, newDuplex);
+                }
+            }
+        }
+        private void OnPSAChanged(int rx, bool oldDuplex, bool newDuplex)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.PureSignalAutoAChange(rx, newDuplex);
                 }
             }
         }
@@ -10284,6 +10463,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.TuneChange(rx, oldTune, newTune);
+                }
+            }
+        }
+        private void OnTwoToneChanged(int rx, bool oldTwoTone, bool newTwoTone)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.TwoToneChange(rx, oldTwoTone, newTwoTone);
                 }
             }
         }
@@ -10346,6 +10537,18 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.NBChanged(rx, new_nb);
+                }
+            }
+        }
+        private void OnSNBChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.SNBChanged(rx, new_state);
                 }
             }
         }
