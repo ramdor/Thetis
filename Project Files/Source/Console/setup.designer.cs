@@ -3638,8 +3638,8 @@
             this.txtTCIServer_wssport = new System.Windows.Forms.TextBoxTS();
             this.txtTCIServer_wsport = new System.Windows.Forms.TextBoxTS();
             this.btnAuthPermissions = new System.Windows.Forms.ButtonTS();
-            this.checkBoxTS3 = new System.Windows.Forms.CheckBoxTS();
-            this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
+            this.chkTCIserver_additional_port_WSS = new System.Windows.Forms.CheckBoxTS();
+            this.chkTCIserver_additional_port_WS = new System.Windows.Forms.CheckBoxTS();
             this.radTCITXchannel_both = new System.Windows.Forms.RadioButtonTS();
             this.chkTCI_distant_dds = new System.Windows.Forms.CheckBoxTS();
             this.radTCITXchannel_R = new System.Windows.Forms.RadioButtonTS();
@@ -58243,8 +58243,8 @@
             this.scrollableControl3.Controls.Add(this.txtTCIServer_wssport);
             this.scrollableControl3.Controls.Add(this.txtTCIServer_wsport);
             this.scrollableControl3.Controls.Add(this.btnAuthPermissions);
-            this.scrollableControl3.Controls.Add(this.checkBoxTS3);
-            this.scrollableControl3.Controls.Add(this.checkBoxTS1);
+            this.scrollableControl3.Controls.Add(this.chkTCIserver_additional_port_WSS);
+            this.scrollableControl3.Controls.Add(this.chkTCIserver_additional_port_WS);
             this.scrollableControl3.Controls.Add(this.radTCITXchannel_both);
             this.scrollableControl3.Controls.Add(this.chkTCI_distant_dds);
             this.scrollableControl3.Controls.Add(this.radTCITXchannel_R);
@@ -58323,30 +58323,33 @@
             this.btnAuthPermissions.Text = "Auth Permissions";
             this.toolTip1.SetToolTip(this.btnAuthPermissions, "Authentication permissions and pin numbers");
             this.btnAuthPermissions.UseVisualStyleBackColor = true;
+            this.btnAuthPermissions.Click += new System.EventHandler(this.btnAuthPermissions_Click);
             // 
-            // checkBoxTS3
+            // chkTCIserver_additional_port_WSS
             // 
-            this.checkBoxTS3.AutoSize = true;
-            this.checkBoxTS3.Image = null;
-            this.checkBoxTS3.Location = new System.Drawing.Point(6, 58);
-            this.checkBoxTS3.Name = "checkBoxTS3";
-            this.checkBoxTS3.Size = new System.Drawing.Size(196, 17);
-            this.checkBoxTS3.TabIndex = 120;
-            this.checkBoxTS3.Text = "Additional authenticated Port (WSS)";
-            this.toolTip1.SetToolTip(this.checkBoxTS3, "An encrypted Secure WebSocket (WSS) port that uses pin code authentication");
-            this.checkBoxTS3.UseVisualStyleBackColor = true;
+            this.chkTCIserver_additional_port_WSS.AutoSize = true;
+            this.chkTCIserver_additional_port_WSS.Image = null;
+            this.chkTCIserver_additional_port_WSS.Location = new System.Drawing.Point(6, 58);
+            this.chkTCIserver_additional_port_WSS.Name = "chkTCIserver_additional_port_WSS";
+            this.chkTCIserver_additional_port_WSS.Size = new System.Drawing.Size(196, 17);
+            this.chkTCIserver_additional_port_WSS.TabIndex = 120;
+            this.chkTCIserver_additional_port_WSS.Text = "Additional authenticated Port (WSS)";
+            this.toolTip1.SetToolTip(this.chkTCIserver_additional_port_WSS, "An encrypted Secure WebSocket (WSS) port that uses pin code authentication");
+            this.chkTCIserver_additional_port_WSS.UseVisualStyleBackColor = true;
+            this.chkTCIserver_additional_port_WSS.CheckedChanged += new System.EventHandler(this.chkTCIserver_additional_port_WSS_CheckedChanged);
             // 
-            // checkBoxTS1
+            // chkTCIserver_additional_port_WS
             // 
-            this.checkBoxTS1.AutoSize = true;
-            this.checkBoxTS1.Image = null;
-            this.checkBoxTS1.Location = new System.Drawing.Point(6, 34);
-            this.checkBoxTS1.Name = "checkBoxTS1";
-            this.checkBoxTS1.Size = new System.Drawing.Size(189, 17);
-            this.checkBoxTS1.TabIndex = 119;
-            this.checkBoxTS1.Text = "Additional authenticated Port (WS)";
-            this.toolTip1.SetToolTip(this.checkBoxTS1, "An unecrypted WebSocket (WS) port that uses pin code authentication");
-            this.checkBoxTS1.UseVisualStyleBackColor = true;
+            this.chkTCIserver_additional_port_WS.AutoSize = true;
+            this.chkTCIserver_additional_port_WS.Image = null;
+            this.chkTCIserver_additional_port_WS.Location = new System.Drawing.Point(6, 34);
+            this.chkTCIserver_additional_port_WS.Name = "chkTCIserver_additional_port_WS";
+            this.chkTCIserver_additional_port_WS.Size = new System.Drawing.Size(189, 17);
+            this.chkTCIserver_additional_port_WS.TabIndex = 119;
+            this.chkTCIserver_additional_port_WS.Text = "Additional authenticated Port (WS)";
+            this.toolTip1.SetToolTip(this.chkTCIserver_additional_port_WS, "An unecrypted WebSocket (WS) port that uses pin code authentication");
+            this.chkTCIserver_additional_port_WS.UseVisualStyleBackColor = true;
+            this.chkTCIserver_additional_port_WS.CheckedChanged += new System.EventHandler(this.chkTCIserver_additional_port_WS_CheckedChanged);
             // 
             // radTCITXchannel_both
             // 
@@ -77200,8 +77203,8 @@
         private CheckBoxTS chkN1mm_include_cw_shift;
         private CheckBoxTS chkTCI_distant_dds;
         private ScrollableControl scrollableControl3;
-        private CheckBoxTS checkBoxTS3;
-        private CheckBoxTS checkBoxTS1;
+        private CheckBoxTS chkTCIserver_additional_port_WSS;
+        private CheckBoxTS chkTCIserver_additional_port_WS;
         private TextBoxTS txtTCIServer_wssport;
         private TextBoxTS txtTCIServer_wsport;
         private ButtonTS btnAuthPermissions;

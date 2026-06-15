@@ -9538,6 +9538,11 @@ namespace Thetis
         }
         private void updateTciServerHeader()
         {
+            // total = all ws + wss connections
+            // ws = number of ws connections
+            // wss = number of wss
+            // display = number of clients using display streams
+            // audio = number of clients using audio streams
             int total = _tci_clients_connected;
             lblTCIServerHeader.Text = $"TCI Server ({total} total) (0 ws) (0 wss) (0 display) (0 audio)";
         }
@@ -37464,6 +37469,21 @@ namespace Thetis
         private void chkTCI_distant_dds_CheckedChanged(object sender, EventArgs e)
         {
             if (console.TCIServer != null) console.TCIServer.DistantDDSMovesVFO = chkTCI_distant_dds.Checked;
+        }
+
+        private void chkTCIserver_additional_port_WS_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkTCIserver_additional_port_WSS_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAuthPermissions_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
