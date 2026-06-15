@@ -926,6 +926,7 @@ namespace Thetis
         private readonly bool m_secureConnection = false;
         private readonly string m_authConnectionId = Guid.NewGuid().ToString("N");
         private bool m_authenticationRequired = false;
+        private bool m_configuredAuthenticationRequired = false;
         private bool m_authenticated = false;
         private string m_effectiveClientIp = "unknown";
         private readonly clsTCISensorManager m_sensorManager = new clsTCISensorManager();
@@ -941,13 +942,18 @@ namespace Thetis
         {
         }
         public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit, Stream stream, bool secureConnection)
+            : this(client, c, server, rateLimit, stream, secureConnection, server != null && server.IsAuthenticationRequired(secureConnection))
+        {
+        }
+        public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit, Stream stream, bool secureConnection, bool authenticationRequired)
         {
             _console = c;
             m_nRateLimit = rateLimit;
             m_server = server;
             m_client = client;
             m_secureConnection = secureConnection;
-            m_authenticationRequired = m_server != null && m_server.IsAuthenticationRequired(m_secureConnection);
+            m_authenticationRequired = authenticationRequired;
+            m_configuredAuthenticationRequired = authenticationRequired;
             m_effectiveClientIp = getDirectClientIp();
             m_client.ReceiveTimeout = 0;
             m_stream = stream;
@@ -3139,7 +3145,7 @@ namespace Thetis
 
         private void startAuthenticationOrInitialisation()
         {
-            m_authenticationRequired = m_server != null && m_server.IsAuthenticationRequired(m_secureConnection);
+            m_authenticationRequired = m_configuredAuthenticationRequired;
             m_effectiveClientIp = getDirectClientIp();
 
             if (m_authenticationRequired)
@@ -3705,13 +3711,18 @@ namespace Thetis
             TCIpermissions.CloseSession(m_authConnectionId);
             TCPIPtciServer server = m_server;
             notifyServerDisconnected(server);
+            bool audioStreamsRemoved;
             lock (m_objStreamLock)
             {
+                audioStreamsRemoved = m_audioStreamEnabled.Count > 0 || m_tciPttActive;
+                m_audioStreamEnabled.Clear();
                 m_txUsesTCIAudio = false;
                 m_tciPttActive = false;
             }
             clearQueuedTxAudio();
             clearRxAudioStreamState();
+            if (audioStreamsRemoved)
+                server?.OnAudioStreamsActiveChanged();
             disposeAudioCompression();
             server?.ReleaseActiveTxAudioListener(this);
             server?.RefreshTxAudioSourceState();
@@ -3832,6 +3843,14 @@ namespace Thetis
         public bool IsDisconnected()
         {
             return m_disconnected;
+        }
+        public bool IsSecureConnection
+        {
+            get { return m_secureConnection; }
+        }
+        public bool IsAuthenticationRequired
+        {
+            get { return m_authenticationRequired; }
         }
         private int GetFrameLength(Byte[] bytes)
         {
@@ -4373,6 +4392,7 @@ namespace Thetis
 
                     m_server?.RefreshTxAudioSourceState();
                     m_server?.RefreshStreamRunState();
+                    m_server?.OnAudioStreamsActiveChanged();
                     return;
                 }
 
@@ -4441,6 +4461,7 @@ namespace Thetis
 
                 m_server?.RefreshTxAudioSourceState();
                 m_server?.RefreshStreamRunState();
+                m_server?.OnAudioStreamsActiveChanged();
             }
             else if (bOK && args.Length == 1)
             {
@@ -7350,6 +7371,15 @@ namespace Thetis
             }
         }
 
+        internal int ActiveAudioStreamCount()
+        {
+            lock (m_objStreamLock)
+            {
+                if (!IsReadyForStreaming()) return 0;
+                return m_audioStreamEnabled.Count + (m_tciPttActive ? 1 : 0);
+            }
+        }
+
         internal void PublishIQSamples(int receiver, int sampleRate, float[] iqSamples, int complexSamples = -1)
         {
             if (iqSamples == null) return;
@@ -7886,10 +7916,11 @@ namespace Thetis
         {
             if (args.Length != 1) return;
             if (!int.TryParse(args[0], out int receiver)) return;
+            bool audioStreamChanged;
             lock (m_objStreamLock)
             {
-                if (enable) m_audioStreamEnabled.Add(receiver);
-                else m_audioStreamEnabled.Remove(receiver);
+                if (enable) audioStreamChanged = m_audioStreamEnabled.Add(receiver);
+                else audioStreamChanged = m_audioStreamEnabled.Remove(receiver);
             }
 
             if (!enable)
@@ -7897,6 +7928,8 @@ namespace Thetis
 
             sendAudioStartStop(receiver, enable);
             m_server?.RefreshStreamRunState();
+            if (audioStreamChanged)
+                m_server?.OnAudioStreamsActiveChanged();
         }
 
         private void handleAudioCodec(string[] args)
@@ -9166,6 +9199,7 @@ namespace Thetis
         public ClientError ClientErrorHandlers;
         public ServerError ServerErrorHandlers;
         public event Action<int> DisplayStreamsActiveChanged;
+        public event Action<int> AudioStreamsActiveChanged;
         //
 
         private Console _console;
@@ -9175,18 +9209,21 @@ namespace Thetis
             private readonly TCPIPtciServer m_owner;
             private readonly TcpListener m_listener;
             private readonly X509Certificate2 m_certificate;
+            private readonly bool m_authenticationRequired;
             private const int HandshakeTimeoutMs = 10000;
             private Thread m_thread = null;
             private bool m_stop = false;
             private readonly object m_handshakeLock = new object();
             private TcpClient m_handshakeClient = null;
             private SslStream m_handshakeStream = null;
+            private string m_lastError = "";
 
-            public TCIWssSupport(TCPIPtciServer owner, IPEndPoint ipNport, X509Certificate2 certificate)
+            public TCIWssSupport(TCPIPtciServer owner, IPEndPoint ipNport, X509Certificate2 certificate, bool authenticationRequired)
             {
                 m_owner = owner;
                 m_listener = new TcpListener(ipNport);
                 m_certificate = certificate;
+                m_authenticationRequired = authenticationRequired;
             }
 
             public bool Start()
@@ -9201,11 +9238,17 @@ namespace Thetis
                     m_thread.Start();
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    m_lastError = ex.Message;
                     Stop();
                     return false;
                 }
+            }
+
+            public string LastError
+            {
+                get { return m_lastError; }
             }
 
             public void Stop()
@@ -9538,7 +9581,7 @@ namespace Thetis
 
                         clearHandshakeTransport(client, stream);
 
-                        if (m_owner.addAcceptedClient(client, stream, true))
+                        if (m_owner.addAcceptedClient(client, stream, true, m_authenticationRequired))
                         {
                             client = null;
                             stream = null;
@@ -9583,10 +9626,18 @@ namespace Thetis
             new IPEndPoint(DEFAULT_SERVER, DEFAULT_PORT);
 
         private TcpListener m_server = null;
+        private TcpListener m_authWsServer = null;
         private TCIWssSupport m_wssSupport = null;
+        private IPEndPoint m_ipNport = null;
+        private string m_certificatePath = null;
+        private string m_certificatePassword = null;
+        private bool m_bEnableAuthenticatedWS = false;
+        private bool m_bEnableAuthenticatedWSS = false;
+        private List<string> m_startupWarnings = new List<string>();
         private bool m_stopServer = false;
         private bool m_stopPurging = false;
         private Thread m_serverThread = null;
+        private Thread m_authWsServerThread = null;
         private Thread m_purgingThread = null;
         private List<TCPIPtciSocketListener> m_socketListenersList = null;
         private TCPIPtciSocketListener m_activeTxAudioListener = null;
@@ -9687,21 +9738,50 @@ namespace Thetis
                     _log = null;
                 }
                 _log = new frmLog();
+                m_ipNport = ipNport;
+                m_certificatePath = certificatePath;
+                m_certificatePassword = certificatePassword;
                 m_server = new TcpListener(ipNport);
-                m_wssSupport = createWssSupport(ipNport, certificatePath, certificatePassword);
+                m_authWsServer = null;
+                m_wssSupport = null;
             }
             catch
             {
                 m_server = null;
+                m_authWsServer = null;
                 m_wssSupport = null;
             }
         }
 
+        private void addStartupWarning(string warning)
+        {
+            if (string.IsNullOrEmpty(warning)) return;
+
+            if (m_startupWarnings == null)
+                m_startupWarnings = new List<string>();
+
+            m_startupWarnings.Add(warning);
+        }
+
         private TCIWssSupport createWssSupport(IPEndPoint ipNport, string certificatePath, string certificatePassword)
         {
-            if (string.IsNullOrEmpty(certificatePath)) return null;
-            if (!File.Exists(certificatePath)) return null;
-            if (ipNport.Port >= IPEndPoint.MaxPort) return null;
+            if (string.IsNullOrEmpty(certificatePath))
+            {
+                addStartupWarning("Authenticated WSS was enabled, but the certificate path was not configured.");
+                return null;
+            }
+
+            if (!File.Exists(certificatePath))
+            {
+                addStartupWarning("Authenticated WSS was enabled, but the certificate file was not found.");
+                return null;
+            }
+
+            if (ipNport.Port > IPEndPoint.MaxPort - 2)
+            {
+                addStartupWarning("Authenticated WSS was enabled, but port " + (ipNport.Port + 2).ToString() + " is not valid.");
+                return null;
+            }
 
             try
             {
@@ -9714,14 +9794,16 @@ namespace Thetis
                 if (!certificate.HasPrivateKey)
                 {
                     certificate.Dispose();
+                    addStartupWarning("Authenticated WSS was enabled, but the certificate does not contain a private key.");
                     return null;
                 }
 
-                return new TCIWssSupport(this, new IPEndPoint(ipNport.Address, ipNport.Port + 1), certificate);
+                return new TCIWssSupport(this, new IPEndPoint(ipNport.Address, ipNport.Port + 2), certificate, true);
             }
             catch (Exception ex)
             {
                 m_sLastError = ex.Message;
+                addStartupWarning("Authenticated WSS was enabled, but the certificate could not be loaded. [ " + ex.Message + " ]");
                 return null;
             }
         }
@@ -9811,6 +9893,24 @@ namespace Thetis
             get { return m_bAuthenticationSystemWSS; }
             set { m_bAuthenticationSystemWSS = value; }
         }
+        public bool EnableAuthenticatedWS
+        {
+            get { return m_bEnableAuthenticatedWS; }
+            set { m_bEnableAuthenticatedWS = value; }
+        }
+        public bool EnableAuthenticatedWSS
+        {
+            get { return m_bEnableAuthenticatedWSS; }
+            set { m_bEnableAuthenticatedWSS = value; }
+        }
+        public string StartupWarnings
+        {
+            get
+            {
+                if (m_startupWarnings == null || m_startupWarnings.Count == 0) return "";
+                return string.Join(Environment.NewLine, m_startupWarnings.ToArray());
+            }
+        }
         public string TCIPermissionsJson
         {
             get { return TCIpermissions.SaveToJson(); }
@@ -9825,23 +9925,6 @@ namespace Thetis
         {
             get { return m_txStereoInputMode; }
             set { m_txStereoInputMode = value; }
-        }
-
-        private bool getSetupBool(object setupForm, string propertyName, bool defaultValue)
-        {
-            try
-            {
-                if (setupForm == null) return defaultValue;
-                System.Reflection.PropertyInfo property = setupForm.GetType().GetProperty(propertyName);
-                if (property == null || property.PropertyType != typeof(bool)) return defaultValue;
-                object value = property.GetValue(setupForm, null);
-                if (value is bool) return (bool)value;
-            }
-            catch
-            {
-            }
-
-            return defaultValue;
         }
 
         private string getSetupString(object setupForm, string propertyName, string defaultValue)
@@ -9866,6 +9949,9 @@ namespace Thetis
             if (m_server != null)
             {
                 m_nRateLimit = rateLimit;
+                m_stopServer = false;
+                m_stopPurging = false;
+                m_startupWarnings = new List<string>();
 
                 if (c != null && !c.IsSetupFormNull)
                 {
@@ -9888,8 +9974,8 @@ namespace Thetis
                     m_bIQSwap = c.SetupForm.TCISwapIQ;
                     m_bAlwaysStreamIQ = c.SetupForm.TCIAlwaysStreamIQ;
                     m_txStereoInputMode = c.SetupForm.TCITXInputChannel;
-                    m_bAuthenticationSystemWS = getSetupBool(c.SetupForm, "AuthenticationSystemWS", m_bAuthenticationSystemWS);
-                    m_bAuthenticationSystemWSS = getSetupBool(c.SetupForm, "AuthenticationSystemWSS", m_bAuthenticationSystemWSS);
+                    m_bAuthenticationSystemWS = false;
+                    m_bAuthenticationSystemWSS = m_bEnableAuthenticatedWSS;
                     string permissionsJson = getSetupString(c.SetupForm, "TCIPermissionsJson", null);
                     if (!string.IsNullOrWhiteSpace(permissionsJson))
                         TCIpermissions.LoadFromJson(permissionsJson);
@@ -9914,6 +10000,8 @@ namespace Thetis
 
                     m_bIQSwap = true;
                     m_bAlwaysStreamIQ = false;
+                    m_bAuthenticationSystemWS = false;
+                    m_bAuthenticationSystemWSS = m_bEnableAuthenticatedWSS;
                     m_txStereoInputMode = TCITxStereoInputMode.Both;
                 }
 
@@ -10011,13 +10099,14 @@ namespace Thetis
                 try
                 {
                     m_server.Start();
-                    if (m_wssSupport != null && !m_wssSupport.Start())
-                        m_wssSupport = null;
 
                     m_serverThread = new Thread(new ThreadStart(ServerThreadStart));
                     m_serverThread.Priority = ThreadPriority.BelowNormal;
                     m_serverThread.Name = "TCI server Thread";
                     m_serverThread.Start();
+
+                    startAuthenticatedWsServer();
+                    startAuthenticatedWssServer();
 
                     m_purgingThread = new Thread(new ThreadStart(PurgingThreadStart));
                     m_purgingThread.Priority = ThreadPriority.Lowest;
@@ -10035,6 +10124,73 @@ namespace Thetis
                 {
                     StopServer();
                 }
+            }
+        }
+
+        private void startAuthenticatedWsServer()
+        {
+            if (!m_bEnableAuthenticatedWS) return;
+
+            if (m_ipNport == null)
+            {
+                addStartupWarning("Authenticated WS was enabled, but the server endpoint was not configured.");
+                return;
+            }
+
+            if (m_ipNport.Port > IPEndPoint.MaxPort - 1)
+            {
+                addStartupWarning("Authenticated WS was enabled, but port " + (m_ipNport.Port + 1).ToString() + " is not valid.");
+                return;
+            }
+
+            try
+            {
+                m_authWsServer = new TcpListener(new IPEndPoint(m_ipNport.Address, m_ipNport.Port + 1));
+                m_authWsServer.Start();
+                m_authWsServerThread = new Thread(new ThreadStart(AuthWsServerThreadStart));
+                m_authWsServerThread.Priority = ThreadPriority.BelowNormal;
+                m_authWsServerThread.Name = "TCI authenticated ws server Thread";
+                m_authWsServerThread.Start();
+            }
+            catch (Exception ex)
+            {
+                m_sLastError = ex.Message;
+                addStartupWarning("Unable to start authenticated WS on port " + (m_ipNport.Port + 1).ToString() + ". [ " + ex.Message + " ]");
+
+                try
+                {
+                    if (m_authWsServer != null) m_authWsServer.Stop();
+                }
+                catch
+                {
+                }
+
+                m_authWsServer = null;
+            }
+        }
+
+        private void startAuthenticatedWssServer()
+        {
+            if (!m_bEnableAuthenticatedWSS) return;
+
+            if (m_ipNport == null)
+            {
+                addStartupWarning("Authenticated WSS was enabled, but the server endpoint was not configured.");
+                return;
+            }
+
+            m_wssSupport = createWssSupport(m_ipNport, m_certificatePath, m_certificatePassword);
+            if (m_wssSupport == null) return;
+
+            if (!m_wssSupport.Start())
+            {
+                string lastError = m_wssSupport.LastError;
+                if (string.IsNullOrEmpty(lastError))
+                    addStartupWarning("Unable to start authenticated WSS on port " + (m_ipNport.Port + 2).ToString() + ".");
+                else
+                    addStartupWarning("Unable to start authenticated WSS on port " + (m_ipNport.Port + 2).ToString() + ". [ " + lastError + " ]");
+
+                m_wssSupport = null;
             }
         }
 
@@ -10148,6 +10304,18 @@ namespace Thetis
                 }
                 try
                 {
+                    if (m_authWsServer != null)
+                    {
+                        m_authWsServer.Stop();
+                        m_authWsServer = null;
+                    }
+                }
+                catch
+                {
+
+                }
+                try
+                {
                     m_server.Stop();
                 }
                 catch
@@ -10161,6 +10329,14 @@ namespace Thetis
                     if (m_serverThread.IsAlive)
                         m_serverThread.Abort();
                     m_serverThread = null;
+                }
+
+                if (m_authWsServerThread != null)
+                {
+                    m_authWsServerThread.Join(150);
+                    if (m_authWsServerThread.IsAlive)
+                        m_authWsServerThread.Abort();
+                    m_authWsServerThread = null;
                 }
 
                 m_stopPurging = true;
@@ -10359,6 +10535,48 @@ namespace Thetis
                 return nRet;
             }
         }
+        public int WsClientsConnected
+        {
+            get
+            {
+                int nRet = 0;
+                lock (m_objLocker)
+                {
+                    if (m_server == null || m_socketListenersList == null) return nRet;
+
+                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                    {
+                        if (socketListener != null && !socketListener.IsDisconnected() && !socketListener.IsSecureConnection) nRet++;
+                    }
+                }
+                return nRet;
+            }
+        }
+        public int WssClientsConnected
+        {
+            get
+            {
+                int nRet = 0;
+                lock (m_objLocker)
+                {
+                    if (m_server == null || m_socketListenersList == null) return nRet;
+
+                    foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                    {
+                        if (socketListener != null && !socketListener.IsDisconnected() && socketListener.IsSecureConnection) nRet++;
+                    }
+                }
+                return nRet;
+            }
+        }
+        public int DisplayStreamsActive
+        {
+            get { return getActiveDisplayStreamCount(); }
+        }
+        public int AudioStreamsActive
+        {
+            get { return getActiveAudioStreamCount(); }
+        }
         public bool IsServerRunning
         {
             get { return m_server != null; }
@@ -10386,16 +10604,21 @@ namespace Thetis
         }
         private bool addAcceptedClient(TcpClient client, Stream stream)
         {
-            return addAcceptedClient(client, stream, stream is SslStream);
+            bool secureConnection = stream is SslStream;
+            return addAcceptedClient(client, stream, secureConnection, IsAuthenticationRequired(secureConnection));
         }
         private bool addAcceptedClient(TcpClient client, Stream stream, bool secureConnection)
+        {
+            return addAcceptedClient(client, stream, secureConnection, IsAuthenticationRequired(secureConnection));
+        }
+        private bool addAcceptedClient(TcpClient client, Stream stream, bool secureConnection, bool authenticationRequired)
         {
             TCPIPtciSocketListener socketListener = null;
             bool bAdded = false;
 
             try
             {
-                socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit, stream, secureConnection);
+                socketListener = new TCPIPtciSocketListener(client, console, this, m_nRateLimit, stream, secureConnection, authenticationRequired);
 
                 lock (m_objLocker)
                 {
@@ -10466,6 +10689,35 @@ namespace Thetis
                 catch
                 {
                     m_stopServer = true;
+                }
+            }
+        }
+        private void AuthWsServerThreadStart()
+        {
+            TcpClient client = null;
+
+            while (!m_stopServer)
+            {
+                try
+                {
+                    client = m_authWsServer.AcceptTcpClient();
+                    client.NoDelay = true;
+
+                    if (!addAcceptedClient(client, client.GetStream(), false, true))
+                        client.Close();
+
+                    client = null;
+                }
+                catch (SocketException se)
+                {
+                    if (!m_stopServer)
+                    {
+                        m_sLastError = se.Message;
+                        ServerErrorHandlers?.Invoke(se);
+                    }
+                }
+                catch
+                {
                 }
             }
         }
@@ -11391,6 +11643,30 @@ namespace Thetis
             return activeDisplayStreamCount;
         }
 
+        private int getActiveAudioStreamCount()
+        {
+            int activeAudioStreamCount = 0;
+
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return 0;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    if (socketListener == null) continue;
+
+                    activeAudioStreamCount += socketListener.ActiveAudioStreamCount();
+                }
+            }
+
+            return activeAudioStreamCount;
+        }
+
+        public bool IsAnyAudioStreamActive()
+        {
+            return getActiveAudioStreamCount() > 0;
+        }
+
         public bool IsAnyDisplayStreamActive()
         {
             return getActiveDisplayStreamCount() > 0;
@@ -11399,6 +11675,11 @@ namespace Thetis
         internal void OnDisplayStreamsActiveChanged()
         {
             DisplayStreamsActiveChanged?.Invoke(getActiveDisplayStreamCount());
+        }
+
+        internal void OnAudioStreamsActiveChanged()
+        {
+            AudioStreamsActiveChanged?.Invoke(getActiveAudioStreamCount());
         }
 
         internal void RefreshStreamRunState()

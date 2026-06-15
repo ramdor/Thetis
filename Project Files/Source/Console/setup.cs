@@ -9528,13 +9528,25 @@ namespace Thetis
             return true;
         }
         private int _tci_clients_connected = 0;
+        private int _tci_ws_clients_connected = 0;
+        private int _tci_wss_clients_connected = 0;
+        private int _tci_display_streams_active = 0;
+        private int _tci_audio_streams_active = 0;
         public int TCIClientsConnectedChange
         {
             set
             {
-                _tci_clients_connected = value;
-                updateTciServerHeader();                
+                UpdateTCIServerHeader(value, 0, 0, 0, 0);
             }
+        }
+        public void UpdateTCIServerHeader(int total, int ws, int wss, int display, int audio)
+        {
+            _tci_clients_connected = total;
+            _tci_ws_clients_connected = ws;
+            _tci_wss_clients_connected = wss;
+            _tci_display_streams_active = display;
+            _tci_audio_streams_active = audio;
+            updateTciServerHeader();
         }
         private void updateTciServerHeader()
         {
@@ -9543,8 +9555,7 @@ namespace Thetis
             // wss = number of wss
             // display = number of clients using display streams
             // audio = number of clients using audio streams
-            int total = _tci_clients_connected;
-            lblTCIServerHeader.Text = $"TCI Server ({total} total) (0 ws) (0 wss) (0 display) (0 audio)";
+            lblTCIServerHeader.Text = $"TCI Server ({_tci_clients_connected} total) ({_tci_ws_clients_connected} ws) ({_tci_wss_clients_connected} wss) ({_tci_display_streams_active} display) ({_tci_audio_streams_active} audio)";
         }
         public int TCPIPcatClientsConnectedChange
         {
@@ -22528,7 +22539,7 @@ namespace Thetis
             // this is setup in init, after the ip and port have been recovered and inializing is false
             btnShowLog.Enabled = chkTCIServerListening.Checked;
             lblToggleToUseTCI.Visible = false;
-            console.SetupTCI(chkTCIServerListening.Checked, (int)udTCIRateLimit.Value);
+            console.SetupTCI(chkTCIServerListening.Checked, (int)udTCIRateLimit.Value, TCIAuthenticatedWSEnabled, TCIAuthenticatedWSSEnabled);
         }
         public void StartupTCIServer()
         {
@@ -22558,6 +22569,8 @@ namespace Thetis
                 if (bPortOk && (port < 0 || port > 65535)) bPortOk = false;
             }
 
+            updateTCIAdditionalPortLabels(bPortOk, port);
+
             //check ip is valid
             bIPOk = IPAddress.TryParse(sTmp, out address);
 
@@ -22572,6 +22585,12 @@ namespace Thetis
                 txtTCIServerBindIPPort.BackColor = Color.Red;
                 lblToggleToUseTCI.Visible = false;
             }
+        }
+
+        private void updateTCIAdditionalPortLabels(bool portOk, int port)
+        {
+            txtTCIServer_wsport.Text = portOk && port <= 65534 ? (port + 1).ToString() : "-";
+            txtTCIServer_wssport.Text = portOk && port <= 65533 ? (port + 2).ToString() : "-";
         }
 
         private void udTCIRateLimit_ValueChanged(object sender, EventArgs e)
@@ -35528,6 +35547,14 @@ namespace Thetis
         {
             get { return chkTCIAlwaysStreamIQ.Checked; }
         }
+        public bool TCIAuthenticatedWSEnabled
+        {
+            get { return chkTCIserver_additional_port_WS.Checked; }
+        }
+        public bool TCIAuthenticatedWSSEnabled
+        {
+            get { return chkTCIserver_additional_port_WSS.Checked; }
+        }
         public TCITxStereoInputMode TCITXInputChannel
         {
             get
@@ -37473,12 +37500,12 @@ namespace Thetis
 
         private void chkTCIserver_additional_port_WS_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!initializing && chkTCIServerListening.Checked) lblToggleToUseTCI.Visible = true;
         }
 
         private void chkTCIserver_additional_port_WSS_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!initializing && chkTCIServerListening.Checked) lblToggleToUseTCI.Visible = true;
         }
 
         private void btnAuthPermissions_Click(object sender, EventArgs e)

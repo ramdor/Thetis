@@ -2444,6 +2444,7 @@ namespace Thetis
         {
             if (_bTCIDelegatesAdded) return;
             m_tcpTCIServer.DisplayStreamsActiveChanged += OnTCIDisplayStreamsActiveChanged;
+            m_tcpTCIServer.AudioStreamsActiveChanged += OnTCIAudioStreamsActiveChanged;
             m_tcpTCIServer.ClientConnectedHandlers += OnTCIClientConnect;
             m_tcpTCIServer.ClientDisconnectedHandlers += OnTCIClientDisconnect;
             m_tcpTCIServer.ClientErrorHandlers += OnTCIClientError;
@@ -2455,6 +2456,7 @@ namespace Thetis
             if (_bTCIDelegatesAdded)
             {
                 m_tcpTCIServer.DisplayStreamsActiveChanged -= OnTCIDisplayStreamsActiveChanged;
+                m_tcpTCIServer.AudioStreamsActiveChanged -= OnTCIAudioStreamsActiveChanged;
                 m_tcpTCIServer.ClientConnectedHandlers -= OnTCIClientConnect;
                 m_tcpTCIServer.ClientDisconnectedHandlers -= OnTCIClientDisconnect;
                 m_tcpTCIServer.ClientErrorHandlers -= OnTCIClientError;
@@ -2464,15 +2466,27 @@ namespace Thetis
         }
         private void OnTCIClientConnect()
         {
-            if (m_tcpTCIServer == null) return;
-            if (!IsSetupFormNull)
-                SetupForm.TCIClientsConnectedChange = m_tcpTCIServer.ClientsConnected;
+            updateTCIServerHeader();
         }
         private void OnTCIClientDisconnect()
         {
-            if (m_tcpTCIServer == null) return;
-            if (!IsSetupFormNull)
-                SetupForm.TCIClientsConnectedChange = m_tcpTCIServer.ClientsConnected;
+            updateTCIServerHeader();
+        }
+        private void OnTCIAudioStreamsActiveChanged(int streams)
+        {
+            updateTCIServerHeader();
+        }
+        private void updateTCIServerHeader()
+        {
+            if (IsSetupFormNull) return;
+
+            if (m_tcpTCIServer == null)
+            {
+                SetupForm.UpdateTCIServerHeader(0, 0, 0, 0, 0);
+                return;
+            }
+
+            SetupForm.UpdateTCIServerHeader(m_tcpTCIServer.ClientsConnected, m_tcpTCIServer.WsClientsConnected, m_tcpTCIServer.WssClientsConnected, m_tcpTCIServer.DisplayStreamsActive, m_tcpTCIServer.AudioStreamsActive);
         }
         private void OnTCIClientError(SocketException se)
         {
@@ -2486,7 +2500,7 @@ namespace Thetis
         {
             if (m_tcpTCIServer != null) m_tcpTCIServer.ShowLog();
         }
-        public void SetupTCI(bool bOn, int rateLimit)
+        public void SetupTCI(bool bOn, int rateLimit, bool enableAuthenticatedWS, bool enableAuthenticatedWSS)
         {
             if (bOn)
             {
@@ -2499,8 +2513,10 @@ namespace Thetis
                         m_tcpTCIServer.StopServer();
 
                         OnTCIDisplayStreamsActiveChanged(0); // incase this didnt hapen for some reason
+                        updateTCIServerHeader();
 
                         cmaster.TCIServer = null;
+                        removeTCIDelegates();
                     }
 
                     Debug.Print("Starting TCI on " + m_sTCIAddress + ":" + m_nTCIPort.ToString());
@@ -2516,10 +2532,10 @@ namespace Thetis
                     catch { }
 
                     string certPath = Path.Combine(certFolder, "tciserver.pfx");
-                    if (!File.Exists(certPath)) certPath = null;
+                    if (!enableAuthenticatedWSS && !File.Exists(certPath)) certPath = null;
                     string pw = null;
 
-                    if (!string.IsNullOrEmpty(certPath))
+                    if (enableAuthenticatedWSS || !string.IsNullOrEmpty(certPath))
                     {
                         string pwPath = Path.Combine(certFolder, "tciserver_pw.txt");
                         try
@@ -2532,7 +2548,10 @@ namespace Thetis
                     m_tcpTCIServer = new TCPIPtciServer(address, m_nTCIPort, certPath, pw);
                     cmaster.TCIServer = m_tcpTCIServer;
 
-                    m_tcpTCIServer.AuthenticationSystemWSS = true;
+                    m_tcpTCIServer.EnableAuthenticatedWS = enableAuthenticatedWS;
+                    m_tcpTCIServer.EnableAuthenticatedWSS = enableAuthenticatedWSS;
+                    m_tcpTCIServer.AuthenticationSystemWS = false;
+                    m_tcpTCIServer.AuthenticationSystemWSS = enableAuthenticatedWSS;
 
                     addTCIDelegates();
 
@@ -2544,7 +2563,7 @@ namespace Thetis
                         {
                             SetupForm.DisableTCIServerDueToError();
 
-                            SetupForm.TCIClientsConnectedChange = 0; // reset
+                            SetupForm.UpdateTCIServerHeader(0, 0, 0, 0, 0); // reset
                         }
                         removeTCIDelegates();
                         MessageBox.Show("Unable to start the server." + Environment.NewLine + Environment.NewLine + "[ " + m_tcpTCIServer.LastError + " ]", "TCI Server",
@@ -2552,8 +2571,14 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!IsSetupFormNull)
-                            SetupForm.TCIClientsConnectedChange = m_tcpTCIServer.ClientsConnected;
+                        updateTCIServerHeader();
+
+                        string startupWarnings = m_tcpTCIServer.StartupWarnings;
+                        if (!string.IsNullOrEmpty(startupWarnings))
+                        {
+                            MessageBox.Show(startupWarnings, "TCI Server",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
                     }
                 }
                 //
@@ -2566,12 +2591,13 @@ namespace Thetis
                     m_tcpTCIServer.StopServer();
 
                     OnTCIDisplayStreamsActiveChanged(0); // incase this didnt hapen for some reason
+                    updateTCIServerHeader();
 
                     cmaster.TCIServer = null;
                     removeTCIDelegates();
 
                     if (!IsSetupFormNull)
-                        SetupForm.TCIClientsConnectedChange = 0; // reset
+                        SetupForm.UpdateTCIServerHeader(0, 0, 0, 0, 0); // reset
                 }
                 //
             }
@@ -54115,6 +54141,8 @@ namespace Thetis
         private bool _ok_to_update_zoom_pan = false;
         private void OnTCIDisplayStreamsActiveChanged(int streams)
         {
+            updateTCIServerHeader();
+
             if (streams > 0 && !_tci_display_stream_in_use)
             {
                 // prevent zoom/pan changes
