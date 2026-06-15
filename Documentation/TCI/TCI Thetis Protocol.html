@@ -285,14 +285,14 @@
 
     <div class="cover-title-row">
       <h1 class="cover-title">TCI Thetis Protocol</h1>
-      <div class="cover-version">Ver. 1.10</div>
+      <div class="cover-version">Ver. 1.11</div>
     </div>
 
     <div class="series">
       Series: Thetis SDR TCI interoperability supplement referencing TCI Protocol Ver. 2.0
     </div>
 
-    <div class="cover-date">13 June 2026</div>
+    <div class="cover-date">14 June 2026</div>
 
     <div class="notice-block">
       <div class="notice-title">Reference Notice</div>
@@ -326,11 +326,11 @@
         </tr>
         <tr>
           <td><strong>Implementation basis</strong></td>
-          <td>Thetis TCI server behaviour as of 13 June 2026, reconciled with the uploaded Expert Electronics TCI Protocol Ver. 2.0 text, current TCIServer.cs, and current clsTCIpermissions.cs</td>
+          <td>Thetis TCI server behaviour as of 14 June 2026, based on the supplied current Thetis TCI source and the uploaded Expert Electronics TCI Protocol Ver. 2.0 text</td>
         </tr>
         <tr>
           <td><strong>Coverage</strong></td>
-          <td>Selected TCI 2.0 differences, WebSocket and secure WebSocket startup, authentication and permissions, standard command reconciliation, Thetis extension messages, current parsed command coverage, audio negotiation, normal and compact sensor reports, round trip timing echo, and compact display streaming</td>
+          <td>Selected TCI 2.0 differences, WebSocket and secure WebSocket startup, authentication and permissions, standard command reconciliation, Thetis extension messages, current parsed command coverage, audio negotiation, mic gain, squelch state, VFO TX and sub receiver helpers, normal and compact sensor reports, round trip timing echo, and compact display streaming</td>
         </tr>
       </tbody>
     </table>
@@ -345,58 +345,63 @@
       </thead>
       <tbody>
         <tr>
+          <td>1.11</td>
+          <td>Added mic gain, extended squelch state, VFO TX selection, VFO control actions, sub receiver state/frequency, zero beat, WSS handshake timeout, and startup account details.</td>
+          <td>14 June 2026</td>
+        </tr>
+        <tr>
           <td>1.10</td>
-          <td>Added secure WebSocket setup, authentication handshake messages, permission roles, command permission mapping, parsed command coverage, and Thetis extension command notes for <code>rx_snb_enable</code>, <code>duplex</code>, <code>tune_twotone</code>, and <code>ps-a</code>.</td>
+          <td>Added secure WebSocket setup, authentication messages, permission roles, command permission mapping, parsed command coverage, and extension notes for <code>rx_snb_enable</code>, <code>duplex</code>, <code>tune_twotone</code>, and <code>ps-a</code>.</td>
           <td>13 June 2026</td>
         </tr>
         <tr>
           <td>1.09</td>
-          <td>Updated against the 4 June 2026 <code>TCIServer.cs</code>. Added the per receiver/channel <code>rx_sensors_enable_ex</code> control and the compact <code>sr</code> sensor report, clarified TX sensor fields, added the missing spot maintenance/click notification messages implemented by the current server, and documented the Thetis <code>rt</code> round trip echo command.</td>
+          <td>Added per receiver/channel <code>rx_sensors_enable_ex</code>, compact <code>sr</code> sensor reports, TX sensor fields, spot maintenance/click messages, and the <code>rt</code> round trip echo command.</td>
           <td>4 June 2026</td>
         </tr>
         <tr>
           <td>1.8</td>
-          <td>Updated against the current <code>TCIServer.cs</code>, <code>clsDisplayCompression.cs</code>, and <code>clsSpectrumProcessor.cs</code> files. Reworked display stream documentation for the compact <code>TD</code> binary payload, the strict 11-field <code>display_start</code> command, viewport controls, block delta compression, adaptive block selection, keyframe interval, accuracy mode, and display quantisation depth. Added the <code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code> controls.</td>
+          <td>Reworked display stream documentation for the compact <code>TD</code> binary payload, strict 11-field <code>display_start</code>, viewport controls, block delta compression, adaptive block selection, keyframe interval, accuracy mode, and display quantisation depth. Added <code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code>.</td>
           <td>3 June 2026</td>
         </tr>
         <tr>
           <td>1.7</td>
-          <td>Updated against the then current <code>TCIServer.cs</code> display streaming implementation. Added documentation for <code>display_delta_mode</code> and the older display delta binary description.</td>
+          <td>Added display delta mode coverage and the older display delta binary description.</td>
           <td>28 May 2026</td>
         </tr>
         <tr>
           <td>1.6</td>
-          <td>Updated against the then current <code>TCIServer.cs</code>, <code>cmaster.cs</code>, and TCI RX audio path implementation. Added display stream control coverage, documented <code>audio_codec</code> plus the full <code>audio_opus_*</code> negotiation family, and expanded examples for stream settings and limit behaviour.</td>
+          <td>Added display stream control coverage, <code>audio_codec</code>, the full <code>audio_opus_*</code> negotiation family, and expanded stream setting examples.</td>
           <td>27 May 2026</td>
         </tr>
         <tr>
           <td>1.5</td>
-          <td>Revalidated against the current <code>TCIServer.cs</code> implementation and the local Expert Electronics Protocol 2.0 text. Confirmed that the custom message section lists Thetis extensions only; base protocol commands remain documented only where Thetis behaviour differs.</td>
+          <td>Separated Thetis extensions from base protocol commands and kept base commands only where Thetis behaviour differs.</td>
           <td>26 April 2026</td>
         </tr>
         <tr>
           <td>1.4</td>
-          <td>Updated to match the latest <code>TCIServer.cs</code> implementation. Added documentation for <code>tx_filter_band_ex</code> and <code>run_cat_ex</code>, and rolled the implementation basis forward to the current source.</td>
+          <td>Added <code>tx_filter_band_ex</code> and <code>run_cat_ex</code>.</td>
           <td>20 April 2026</td>
         </tr>
         <tr>
           <td>1.3</td>
-          <td>Updated to match the latest <code>TCIServer.cs</code> additions. Added documentation for <code>vfo_sync_ex</code>, <code>vfo_swap_ex</code>, <code>fm_deviation_ex</code>, and <code>agc_auto_ex</code>.</td>
+          <td>Added <code>vfo_sync_ex</code>, <code>vfo_swap_ex</code>, <code>fm_deviation_ex</code>, and <code>agc_auto_ex</code>.</td>
           <td>15 April 2026</td>
         </tr>
         <tr>
           <td>1.2</td>
-          <td>Updated to match the current <code>TCIServer.cs</code> implementation. Documented the move from <code>tx_frequency_thetis</code> to <code>tx_frequency_ex</code>, added receiver extension commands for NB, attenuation, preamp, and CTUN, and added sensor plus stream negotiation notes for the Thetis TCI server.</td>
+          <td>Replaced <code>tx_frequency_thetis</code> with <code>tx_frequency_ex</code>, and added receiver extension commands for NB, attenuation, preamp, CTUN, sensors, and stream negotiation.</td>
           <td>14 April 2026</td>
         </tr>
         <tr>
           <td>1.1</td>
-          <td>Updated the CW terminal family notes to reflect observed Protocol 2.0 command usage validated against ExpertSDR 3 v1.1.7, including receiver qualified <code>cw_terminal</code> and <code>cw_macros_empty</code> forms.</td>
+          <td>Documented receiver qualified CW terminal and CW macro empty forms.</td>
           <td>28 March 2026</td>
         </tr>
         <tr>
           <td>1.0</td>
-          <td>Initial Thetis supplement for the Expert Electronics TCI Protocol Ver. 2.0 reference set. Focused on Thetis command differences, CW/CWX behaviour, routing notes, and Thetis custom commands.</td>
+          <td>Initial Thetis supplement for the Expert Electronics TCI Protocol Ver. 2.0 reference set.</td>
           <td>26 March 2026</td>
         </tr>
       </tbody>
@@ -457,19 +462,19 @@
       <div>Lock model</div><div><code>lock</code> and <code>vfo_lock</code> are adapted to Thetis VFO A / VFO B routing</div>
       <div>TX frequency extension</div><div>Thetis publishes standard <code>tx_frequency</code> plus Thetis <code>tx_frequency_ex</code></div>
       <div>TX filter extension</div><div>Thetis publishes <code>tx_filter_band_ex</code> for transmit filter low/high edges using a normalised positive width range</div>
-      <div>Receiver extensions</div><div>Thetis publishes <code>rx_nb_enable_ex</code>, <code>rx_nr_enable_ex</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>rx_ctun_ex</code>, <code>fm_deviation_ex</code>, and <code>agc_auto_ex</code></div>
+      <div>Receiver extensions</div><div>Thetis publishes <code>rx_nb_enable_ex</code>, <code>rx_nr_enable_ex</code>, <code>rx_snb_enable</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>rx_ctun_ex</code>, <code>fm_deviation_ex</code>, <code>agc_auto_ex</code>, and <code>sql_enable_ex</code></div>
       <div>Sensors</div><div>Optional RX/TX sensor reports are timer driven and enabled by client request. The current server supports both normal RX reports and the compact per receiver/channel <code>sr</code> report enabled by <code>rx_sensors_enable_ex</code></div>
-      <div>Audio streaming</div><div>RX/TX audio negotiation includes codec, sample type, channel count, packet size, TX buffering, and optional deferred reconfiguration</div>
+      <div>Audio streaming</div><div>RX/TX audio negotiation includes codec, sample type, channel count, packet size, TX buffering, optional deferred reconfiguration</div>
       <div>Display streaming</div><div>Thetis display output is published as compact WebSocket binary payloads beginning with the <code>TD</code> magic bytes and version <code>1</code></div>
       <div>Display compression</div><div>Display output supports raw, delta, block delta, and use previous frame payload kinds, with per receiver controls</div>
-      <div>VFO helpers</div><div>Thetis adds explicit VFO sync and swap helpers through <code>vfo_sync_ex</code> and <code>vfo_swap_ex</code></div>
+      <div>VFO helpers</div><div>Thetis adds VFO sync, swap, TX selection, VFO control, sub receiver, and zero beat helpers through <code>vfo_sync_ex</code>, <code>vfo_swap_ex</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code></div>
       <div>Spot metadata</div><div>Thetis accepts structured metadata in the <code>spot</code> arg5 JSON payload</div>
       <div>CAT passthrough</div><div>Thetis adds <code>run_cat_ex</code> to execute a single CAT command and return the CAT response in a TCI message</div>
       <div>Round trip check</div><div>Thetis adds <code>rt</code> as a minimal echo command for client round trip timing checks</div>
     </div>
 
     <h3>2.1 Transport, WebSocket, And WSS</h3>
-    <p>Thetis uses a WebSocket transport for TCI text commands and binary stream frames. The default listener is <code>127.0.0.1:31001</code>. Clients normally connect with <code>ws://&lt;host&gt;:31001/</code>, then exchange normal TCI text messages after the HTTP WebSocket upgrade completes.</p>
+    <p>Thetis uses a WebSocket transport for TCI text commands and binary stream frames. The default listener is <code>127.0.0.1:50001</code>. Clients normally connect with <code>ws://&lt;host&gt;:50001/</code>, then exchange normal TCI text messages after the HTTP WebSocket upgrade completes.</p>
 
     <table class="cmd-table">
       <thead>
@@ -485,11 +490,15 @@
         </tr>
         <tr>
           <td>Secure WebSocket</td>
-          <td>When a certificate path is configured and the certificate contains a private key, Thetis also starts a secure listener on the same address and on <code>TCI port + 1</code>. With the default port, the secure endpoint is therefore <code>wss://&lt;host&gt;:31002/</code>.</td>
+          <td>When a certificate path is configured and the certificate contains a private key, Thetis also starts a secure listener on the same address and on <code>TCI port + 1</code>. With the default port, the secure endpoint is therefore <code>wss://&lt;host&gt;:50002/</code>.</td>
         </tr>
         <tr>
           <td>Certificate requirements</td>
           <td>The WSS listener is not created unless the certificate file exists and can be loaded as an <code>X509Certificate2</code> with a private key. If WSS setup fails, the plain WS listener can still run.</td>
+        </tr>
+        <tr>
+          <td>WSS handshake timeout</td>
+          <td>The TLS server authentication step has a 10000 ms timeout. If the TLS handshake does not complete in that window, Thetis closes the active handshake transport.</td>
         </tr>
         <tr>
           <td>Keepalive</td>
@@ -613,12 +622,12 @@
 
     <div class="box">
       <h3>Default Permission Configuration</h3>
-      <p class="small">The default configuration creates a <code>guest</code> user assigned to the Listener role with access code <code>123456</code>. Access codes are stored as PBKDF2 SHA256 hashes using 100000 iterations, 16 byte salts, and 32 byte hashes. A deployed system should replace the default access code before exposing authenticated TCI access.</p>
+      <p class="small">The permissions class default configuration creates a <code>guest</code> user assigned to the Listener role with access code <code>123456</code>. Current Thetis startup also creates or updates an enabled <code>admin</code> user with access code <code>6789</code> and an enabled <code>rx_only</code> user with access code <code>1234</code>. Access codes are stored as PBKDF2 SHA256 hashes using 100000 iterations, 16 byte salts, and 32 byte hashes. A deployed system should replace the default access codes before exposing authenticated TCI access.</p>
     </div>
 
     <div class="box">
       <h3>Startup State After Authentication</h3>
-      <p class="small">After successful authentication, or immediately when authentication is disabled, Thetis sends the normal initialisation and state snapshot. The current startup begins with <code>protocol</code>, <code>device</code>, <code>receive_only</code>, <code>trx_count</code>, <code>channels_count</code>, <code>vfo_limits</code>, <code>if_limits</code>, and <code>modulations_list</code>, then sends the current radio state, audio settings, display related defaults, RX/TX enable state, lock state, sensors related state, TX profile/calibration extensions, and finally <code>ready;</code>.</p>
+      <p class="small">After successful authentication, or immediately when authentication is disabled, Thetis sends the normal initialisation and state snapshot. The current startup begins with <code>protocol</code>, <code>device</code>, <code>receive_only</code>, <code>trx_count</code>, <code>channels_count</code>, <code>vfo_limits</code>, <code>if_limits</code>, and <code>modulations_list</code>, then sends the current radio state, audio settings, display related defaults, RX/TX enable state, lock state, sensors related state, TX profile/calibration extensions, <code>mic_gain</code>, <code>sql_enable_ex</code>, <code>vfo_tx</code>, <code>subrx</code>, <code>subvfo</code>, and finally <code>ready;</code>.</p>
     </div>
   </section>
 
@@ -1841,6 +1850,48 @@
           <td><code>ps-a:true;</code></td>
         </tr>
         <tr>
+          <td>SQL_ENABLE_EX</td>
+          <td>Send / reply</td>
+          <td>Extended Thetis squelch state by receiver. Use <code>sql_enable_ex:&lt;rx&gt;;</code> to query, or <code>sql_enable_ex:&lt;rx&gt;,&lt;state&gt;;</code> to set. Current state values are <code>0</code> off, <code>1</code> SQL, and <code>2</code> VSQL. Thetis also continues to send the standard boolean <code>sql_enable</code> state.</td>
+          <td><code>sql_enable_ex:0,2;</code></td>
+        </tr>
+        <tr>
+          <td>MIC_GAIN</td>
+          <td>Send / reply / notification</td>
+          <td>Mic mute and gain state. Server replies use <code>mic_gain:&lt;rx&gt;,&lt;muted&gt;,&lt;gain_db&gt;,&lt;min_db&gt;,&lt;max_db&gt;;</code>. The current startup sends receiver <code>0</code> only. Query with <code>mic_gain:&lt;rx&gt;;</code>. Set with at least <code>mic_gain:&lt;rx&gt;,&lt;muted&gt;,&lt;gain_db&gt;;</code>; any min/max fields sent by a client are ignored.</td>
+          <td><code>mic_gain:0,false,10,0,70;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_TX</td>
+          <td>Send / reply / notification</td>
+          <td>Current TX VFO selection state. Thetis emits <code>vfo_tx:&lt;channel&gt;,&lt;enabled&gt;;</code> for channel <code>0</code> and <code>1</code>. Use bare <code>vfo_tx;</code> to query both states. To select the TX VFO, send the one argument control form <code>vfo_tx:&lt;channel&gt;;</code>. The current handler ignores two argument client set forms.</td>
+          <td><code>vfo_tx:1;</code></td>
+        </tr>
+        <tr>
+          <td>VFO_CONTROL</td>
+          <td>Send</td>
+          <td>Inbound VFO action helper. Values are <code>0</code> for A to B, <code>1</code> for B to A, <code>2</code> for A/B swap, and <code>3</code> for IF to VFO on RX1. The command has no direct reply; changed VFO state is reported through the normal VFO/IF messages.</td>
+          <td><code>vfo_control:2;</code></td>
+        </tr>
+        <tr>
+          <td>SUBRX</td>
+          <td>Send / notification</td>
+          <td>Sub receiver enable state. Thetis emits <code>subrx:&lt;rx&gt;,&lt;channel&gt;,&lt;enabled&gt;,&lt;frequency_hz&gt;;</code>. The current client control form is <code>subrx:&lt;rx&gt;,&lt;enabled&gt;;</code>, accepts only receiver <code>0</code>, and does not provide a separate query form.</td>
+          <td><code>subrx:0,true;</code></td>
+        </tr>
+        <tr>
+          <td>SUBVFO</td>
+          <td>Send / notification</td>
+          <td>Sub receiver VFO frequency. Thetis emits <code>subvfo:&lt;rx&gt;,&lt;channel&gt;,&lt;frequency_hz&gt;;</code>. The current client control form is <code>subvfo:&lt;rx&gt;,&lt;frequency_hz&gt;;</code>, accepts only receiver <code>0</code>, and does not provide a separate query form.</td>
+          <td><code>subvfo:0,7074000;</code></td>
+        </tr>
+        <tr>
+          <td>0BEAT</td>
+          <td>Send</td>
+          <td>Zero beat helper. Use <code>0beat:&lt;rx&gt;;</code>. The receiver argument is zero based in TCI and converted to the one based Thetis receiver number internally. The command has no direct reply.</td>
+          <td><code>0beat:0;</code></td>
+        </tr>
+        <tr>
           <td>TX_PROFILE_EX</td>
           <td>Send / reply</td>
           <td>Selects or reports the active Thetis TX profile. Use the bare command <code>tx_profile_ex;</code> to request the current profile, or <code>tx_profile_ex:&lt;name&gt;;</code> to set it.</td>
@@ -1893,7 +1944,7 @@
 
 
     <h3>4.4 Current Parsed Command And Permission Map</h3>
-    <p>The table below records the current permission mapping used by <code>clsTCIpermissions.cs</code>. It is included so that a client developer can implement authentication handling without reading the server source.</p>
+    <p>The table below records the current permission mapping used by <code>clsTCIpermissions.cs</code>. It is included so that a client developer can implement authentication handling without reading the server source. Commands listed in section 4.3 but absent from this table are parsed by the TCI server but are not currently mapped to a permission token.</p>
 
     <table class="cmd-table">
       <thead>
@@ -2001,6 +2052,11 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="box">
+      <h3>Parsed Commands Without A Current Permission Mapping</h3>
+      <p class="small">The current parser recognises <code>sql_enable_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code>, but the supplied current <code>clsTCIpermissions.cs</code> does not map them to a permission token. When authentication is enabled, client control/query forms for these commands are denied before reaching their handlers. Server initiated notifications for these states can still be sent as part of startup or state changes.</p>
+    </div>
 
     <h3>SPOT JSON Payload In Arg5</h3>
     <p>Thetis accepts a structured JSON payload in the fifth <code>spot</code> argument by appending <code>[json]</code> immediately before the JSON object. The parser treats the JSON block as part of the same <code>spot</code> command even when it contains commas, quotes, or nested braces.</p>
@@ -2121,14 +2177,17 @@
     <ul>
       <li>The duplex command is <code>duplex</code>. There is no <code>display_duplex</code> text command.</li>
       <li><code>duplex</code> requires <code>change_display</code>, <code>rx_snb_enable</code> requires <code>change_rx_dsp</code>, <code>tune_twotone</code> requires <code>tx_power</code>, and <code>ps-a</code> requires <code>tx_settings</code> when authentication is enabled.</li>
+      <li><code>sql_enable_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code> are parsed by the server but are not currently permission mapped.</li>
       <li><code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code> are handled in the colon command branch. Use <code>audio_reconfigure_begin:;</code> and <code>audio_reconfigure_end:;</code>.</li>
       <li><code>ps-a</code> can be set, and is sent by the server, but the current parser does not expose a working client query form.</li>
+      <li><code>vfo_tx</code> uses different client control and server notification forms: clients select a TX VFO with <code>vfo_tx:&lt;channel&gt;;</code>, while Thetis reports <code>vfo_tx:&lt;channel&gt;,&lt;enabled&gt;;</code>.</li>
+      <li><code>subrx</code> and <code>subvfo</code> also use compact client control forms and wider server notification forms.</li>
     </ul>
 
     <h3>5.7 Client Guidance</h3>
     <ul>
       <li>Use the official Expert Electronics 2.0 document for generic command grammar and message sequencing, but prefer the validated ExpertSDR 3 v1.1.7 CW terminal forms when they differ from the PDF.</li>
-      <li>Use this supplement for Thetis routing, AGC mapping, CW/CWX behaviour, sensor negotiation, compact <code>sr</code> reports, stream negotiation, VFO sync/swap helpers, display compression, round trip <code>rt</code> echo checks, official command deviations, and Thetis extension messages.</li>
+      <li>Use this supplement for Thetis routing, AGC mapping, CW/CWX behaviour, sensor negotiation, compact <code>sr</code> reports, stream negotiation, VFO sync/swap/TX/sub receiver helpers, display compression, round trip <code>rt</code> echo checks, official command deviations, and Thetis extension messages.</li>
       <li>Prefer <code>tx_frequency_ex</code> rather than the retired <code>tx_frequency_thetis</code> extension when you need Thetis band and TX routing context.</li>
       <li>Treat CW ownership as exclusive in Thetis.</li>
       <li>Do not assume that all TCI receivers in Thetis map directly to independent hardware or DSP chains.</li>

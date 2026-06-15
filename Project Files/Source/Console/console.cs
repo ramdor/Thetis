@@ -2540,10 +2540,20 @@ namespace Thetis
 
                     if (!m_tcpTCIServer.IsServerRunning)
                     {
-                        if (!IsSetupFormNull) SetupForm.DisableTCIServerDueToError();
+                        if (!IsSetupFormNull)
+                        {
+                            SetupForm.DisableTCIServerDueToError();
+
+                            SetupForm.TCIClientsConnectedChange = 0; // reset
+                        }
                         removeTCIDelegates();
                         MessageBox.Show("Unable to start the server." + Environment.NewLine + Environment.NewLine + "[ " + m_tcpTCIServer.LastError + " ]", "TCI Server",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                    else
+                    {
+                        if (!IsSetupFormNull)
+                            SetupForm.TCIClientsConnectedChange = m_tcpTCIServer.ClientsConnected;
                     }
                 }
                 //
@@ -2559,7 +2569,10 @@ namespace Thetis
 
                     cmaster.TCIServer = null;
                     removeTCIDelegates();
-                }                                
+
+                    if (!IsSetupFormNull)
+                        SetupForm.TCIClientsConnectedChange = 0; // reset
+                }
                 //
             }
             UpdateStatusBarStatusIcons(StatusBarIconGroup.TCI);

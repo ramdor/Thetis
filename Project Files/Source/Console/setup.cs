@@ -9527,10 +9527,19 @@ namespace Thetis
 
             return true;
         }
-
+        private int _tci_clients_connected = 0;
         public int TCIClientsConnectedChange
         {
-            set { grpTCIServer.Text = "TCI Server (" + value.ToString() + " clients)"; }
+            set
+            {
+                _tci_clients_connected = value;
+                updateTciServerHeader();                
+            }
+        }
+        private void updateTciServerHeader()
+        {
+            int total = _tci_clients_connected;
+            lblTCIServerHeader.Text = $"TCI Server ({total} total) (0 ws) (0 wss) (0 display) (0 audio)";
         }
         public int TCPIPcatClientsConnectedChange
         {
