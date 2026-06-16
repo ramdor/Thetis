@@ -8174,6 +8174,7 @@
             // 
             this.grpOzyType.Controls.Add(this.btnDiscoverRadios);
             this.grpOzyType.Controls.Add(this.ucRadioList_Radios);
+            this.grpOzyType.Controls.Add(this.chkNetworkWDT);
             this.grpOzyType.Controls.Add(this.chkAdvancedNetworkingSettings);
             this.grpOzyType.Controls.Add(this.pnlAdvancedNetworkSettings);
             this.grpOzyType.Controls.Add(this.chkAnySubnet);
@@ -8401,7 +8402,6 @@
             this.panelTS14.BackColor = System.Drawing.Color.Transparent;
             this.panelTS14.Controls.Add(this.radViaAllNics);
             this.panelTS14.Controls.Add(this.radViaSpecificNic);
-            this.panelTS14.Controls.Add(this.chkNetworkWDT);
             this.panelTS14.Location = new System.Drawing.Point(110, 18);
             this.panelTS14.Name = "panelTS14";
             this.panelTS14.Size = new System.Drawing.Size(108, 52);
@@ -8440,7 +8440,7 @@
             this.chkNetworkWDT.Checked = true;
             this.chkNetworkWDT.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkNetworkWDT.Image = null;
-            this.chkNetworkWDT.Location = new System.Drawing.Point(323, 23);
+            this.chkNetworkWDT.Location = new System.Drawing.Point(312, 18);
             this.chkNetworkWDT.Name = "chkNetworkWDT";
             this.chkNetworkWDT.Size = new System.Drawing.Size(120, 17);
             this.chkNetworkWDT.TabIndex = 16;
