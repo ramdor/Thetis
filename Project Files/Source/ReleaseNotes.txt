@@ -20,6 +20,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] TCI command to change rx filter will now select VAR1 before making the change
 - [fix] tun/2tone will be terminated if a tci trx false message arrives
 - [fix] tci cw offsets have been removed so that dds and if now match the values internally used by console and display
+- [fix] cmasio tx input audio will not be scaled by +6dB. If 2 channel cmasio is used for mic input then the data will be combined for tx and scaled by 0.5 to remove the +6dB gain if L+R are the same
+- [fix] vac stereo audio when combined will be scaled by 0.5 to reduce the +6db gain seen if L+R are the same
 
 ## v2.10.3.15 - Change Log
 - [add] option to allow smearing of waterfalls (default off), Setup->Appearance->General

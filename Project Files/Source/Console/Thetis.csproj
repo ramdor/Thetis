@@ -468,6 +468,12 @@
     <Compile Include="frmCFCConfig.Designer.cs">
       <DependentUpon>frmCFCConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTCIAuthPerms.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTCIAuthPerms.Designer.cs">
+      <DependentUpon>frmTCIAuthPerms.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucParametricEq.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1077,6 +1083,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSerialPortPicker.resx">
       <DependentUpon>frmSerialPortPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTCIAuthPerms.resx">
+      <DependentUpon>frmTCIAuthPerms.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmVariablePicker.resx">
       <DependentUpon>frmVariablePicker.cs</DependentUpon>

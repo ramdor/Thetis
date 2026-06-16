@@ -123,14 +123,26 @@ void asioIN(double* in_tx)
 	if (pcma->lockMode)
 	{
 		if (WaitForSingleObject(pcma->bufferFull, 2) == WAIT_TIMEOUT) { ++pcma->underFlowsIn; return; }
-		memcpy(in_tx, pcma->input, pcma->blocksize * sizeof(complex));
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		memcpy(in_tx, pcma->input, pcma->blocksize * sizeof(complex));		
+		if (pcma->input_mode == IM_BOTH) //[2.10.3.16]MW0LGE fix 2 channel into a mono combine for tx audio
+										 //same 0dB signal on two channels will give 0dB mic gain
+										 //In 2 channel, if that 0dB signal is only on L for example, the mic will show -6dB
+										 //If cmasio is configured to use left or right, then this is not required. A 0dB signal
+										 //when in mono mode, will show 0dB
+		{
+			combinebuff(pcma->blocksize, in_tx, in_tx);
+			scalebuff(pcma->blocksize, in_tx, 0.5, in_tx);
+		}
 		ReleaseSemaphore(pcma->bufferEmpty, 1, NULL);
 	}
 	else
 	{
 		xrmatchOUT(pcma->rmatchIN, in_tx);
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		if (pcma->input_mode == IM_BOTH) //[2.10.3.16]MW0LGE see above
+		{
+			combinebuff(pcma->blocksize, in_tx, in_tx);
+			scalebuff(pcma->blocksize, in_tx, 0.5, in_tx);
+		}
 	}
 }
 
@@ -250,6 +262,10 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 		{
 			pcma->input[j] = (double)inL[i] * inv_scale;
 			pcma->input[j + 1] = (double)inR[i] * inv_scale;
+			if (pcma->input[j + 1] != 0.0) {
+				int moo = 1;
+				moo++;
+			}
 		}
 	}
 

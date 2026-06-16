@@ -197,6 +197,16 @@ namespace Thetis
             public string ModifiedUtc;
             public string Notes;
             public bool HasAccessCode;
+            public string AccessCode;
+            public bool AccessCodeChanged;
+        }
+
+        public sealed class SetupPermission
+        {
+            public string Id;
+            public string DisplayName;
+            public string Description;
+            public List<string> Commands;
         }
 
         public sealed class SetupRole
@@ -654,6 +664,75 @@ namespace Thetis
             }
         }
 
+        public static List<SetupPermission> GetPermissionsForSetup()
+        {
+            List<SetupPermission> permissions = new List<SetupPermission>();
+            permissions.Add(createSetupPermission(VIEW_STATUS, "View Status", "Read radio and server status.", new string[] { "rit_enable", "xit_enable", "rit_offset", "xit_offset", "lock", "vfo_lock", "set_in_focus", "rx_sensors_enable", "rx_sensors_enable_ex", "tx_sensors_enable", "tx_profiles_ex", "calibration_ex", "rt", "digl_offset read", "digu_offset read" }));
+            permissions.Add(createSetupPermission(VIEW_SPECTRUM, "View Spectrum", "Receive spectrum and IQ display data.", new string[] { "display_start", "display_stop", "iq_start", "iq_stop" }));
+            permissions.Add(createSetupPermission(LISTEN_RX_AUDIO, "Listen RX Audio", "Receive RX and line out audio streams.", new string[] { "audio_start", "audio_stop", "line_out_start", "line_out_stop" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_AUDIO, "Change RX Audio", "Change RX audio, monitor, squelch, mute, balance and codec settings.", new string[] { "audio_samplerate", "audio_codec", "audio_reconfigure_begin", "audio_reconfigure_end", "audio_stream_sample_type", "audio_stream_channels", "audio_stream_samples", "audio_opus_application", "audio_opus_signal", "audio_opus_bandwidth", "audio_opus_bitrate", "audio_opus_vbr", "audio_opus_cvbr", "audio_opus_complexity", "audio_opus_fec", "audio_opus_dtx", "audio_opus_packet_loss", "audio_opus_frame_ms", "tx_stream_audio_buffering", "mute", "volume", "rx_mute", "mon_volume", "mon_enable", "rx_volume", "rx_balance", "sql_enable", "sql_level" }));
+            permissions.Add(createSetupPermission(CHANGE_FREQUENCY, "Change Frequency", "Change VFO, DDS, IF and frequency related settings.", new string[] { "dds", "if", "vfo", "vfo_swap_ex", "digl_offset write", "digu_offset write" }));
+            permissions.Add(createSetupPermission(CHANGE_MODE, "Change Mode", "Change modulation mode.", new string[] { "modulation" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_FILTER, "Change RX Filter", "Change RX filter edges.", new string[] { "rx_filter_band" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_DSP, "Change RX DSP", "Change RX DSP features such as NR, NB, ANF, APF and AGC.", new string[] { "rx_nr_enable", "rx_nr_enable_ex", "rx_nb_enable", "rx_nb_enable_ex", "rx_snb_enable", "rx_anf_enable", "rx_bin_enable", "rx_apf_enable", "rx_nf_enable", "agc_auto_ex", "agc_mode", "agc_gain" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_FRONTEND, "Change RX Frontend", "Change RX enable, channels, preamp, attenuation and frontend settings.", new string[] { "rx_enable", "rx_channel_enable", "rx_step_att_enabled_ex", "rx_step_att_ex", "rx_preamp_att_ex", "vfo_sync_ex", "fm_deviation_ex", "rx_ctun_ex" }));
+            permissions.Add(createSetupPermission(CHANGE_DISPLAY, "Change Display", "Change display, IQ and spectrum stream settings.", new string[] { "display_zoom", "display_pan", "display_pixels", "display_delta_mode", "display_block_delta_mode", "display_accuracy_mode", "display_adaptive_blocks", "display_keyframe_interval", "display_quant_bits", "display_framerate", "display_fftsize", "display_window", "display_detector", "display_averaging", "display_average_time", "display_one_hz", "display_dbm_range", "iq_samplerate", "duplex" }));
+            permissions.Add(createSetupPermission(TX_PTT, "TX PTT", "Control transmit PTT.", new string[] { "trx" }));
+            permissions.Add(createSetupPermission(TX_TUNE, "TX Tune", "Control tune transmit mode.", new string[] { "tune" }));
+            permissions.Add(createSetupPermission(TX_POWER, "TX Power", "Change drive and tune power.", new string[] { "drive", "tune_drive", "tune_twotone" }));
+            permissions.Add(createSetupPermission(TX_SETTINGS, "TX Settings", "Change TX filter, TX profile, split and PureSignal settings.", new string[] { "split_enable", "tx_filter_band_ex", "tx_profile_ex", "ps-a" }));
+            permissions.Add(createSetupPermission(TX_AUDIO, "TX Audio", "Send TX audio streams.", new string[] { "binary_tx_audio" }));
+            permissions.Add(createSetupPermission(CW_KEYER, "CW Keyer", "Control CW keyer, terminal and macros.", new string[] { "cw_macros_speed", "cw_macros_delay", "cw_keyer_speed", "cw_macros_speed_up", "cw_macros_speed_down", "cw_macros", "cw_terminal", "cw_msg", "keyer", "cw_macros_stop", "callsign_send" }));
+            permissions.Add(createSetupPermission(SPOTS, "Spots", "Create, delete and clear spots.", new string[] { "spot", "spot_delete", "spot_clear", "spot_simulate_click" }));
+            permissions.Add(createSetupPermission(RADIO_POWER, "Radio Power", "Start and stop the radio.", new string[] { "start", "stop" }));
+            permissions.Add(createSetupPermission(ADMIN, "Admin", "Run administrative TCI commands.", new string[] { "shutdown_ex", "run_cat_ex" }));
+            return permissions;
+        }
+
+        public static bool EnsureDefaultGuest()
+        {
+            lock (_lockObj)
+            {
+                TCIUser user;
+                if (tryGetUserLocked("guest", out user))
+                {
+                    bool changed = false;
+                    if (user.Enabled)
+                    {
+                        user.Enabled = false;
+                        changed = true;
+                    }
+                    if (!string.Equals(user.Role, "listener", StringComparison.OrdinalIgnoreCase))
+                    {
+                        user.Role = "listener";
+                        changed = true;
+                    }
+                    if (!hasStoredAccessCode(user))
+                    {
+                        setUserAccessCodeLocked(user, "123456");
+                        changed = true;
+                    }
+                    if (changed) user.ModifiedUtc = utcNowString();
+                    return changed;
+                }
+
+                string utc = utcNowString();
+                TCIUser guest = new TCIUser();
+                guest.Id = "guest";
+                guest.DisplayName = "Guest";
+                guest.Enabled = false;
+                guest.Role = "listener";
+                guest.Permissions = new List<string>();
+                guest.CreatedUtc = utc;
+                guest.ModifiedUtc = utc;
+                guest.Notes = "Built in disabled guest account";
+                setUserAccessCodeLocked(guest, "123456");
+                _config.Users.Add(guest);
+                rebuildLookupsLocked();
+                return true;
+            }
+        }
+
         public static List<SetupUser> GetUsersForSetup()
         {
             lock (_lockObj)
@@ -693,6 +772,129 @@ namespace Thetis
                 }
 
                 return roles;
+            }
+        }
+
+        public static bool ApplySetupData(IEnumerable<SetupRole> setupRoles, IEnumerable<SetupUser> setupUsers, out string errorMessage)
+        {
+            lock (_lockObj)
+            {
+                errorMessage = string.Empty;
+
+                List<TCIRole> roles = new List<TCIRole>();
+                Dictionary<string, bool> roleIds = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
+                if (setupRoles != null)
+                {
+                    foreach (SetupRole setupRole in setupRoles)
+                    {
+                        if (setupRole == null) continue;
+                        string id = normaliseId(setupRole.Id);
+                        if (string.IsNullOrEmpty(id)) continue;
+                        if (roleIds.ContainsKey(id))
+                        {
+                            errorMessage = "Duplicate role.";
+                            return false;
+                        }
+
+                        TCIRole role = new TCIRole();
+                        role.Id = id;
+                        role.DisplayName = cleanDisplayName(setupRole.DisplayName, id);
+                        role.Permissions = cleanPermissionList(setupRole.Permissions);
+                        roles.Add(role);
+                        roleIds[id] = true;
+                    }
+                }
+
+                if (roles.Count == 0)
+                {
+                    errorMessage = "At least one role is required.";
+                    return false;
+                }
+
+                List<TCIUser> users = new List<TCIUser>();
+                Dictionary<string, bool> userIds = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
+                if (setupUsers != null)
+                {
+                    foreach (SetupUser setupUser in setupUsers)
+                    {
+                        if (setupUser == null) continue;
+                        string id = normaliseId(setupUser.Id);
+                        if (string.IsNullOrEmpty(id)) continue;
+                        if (userIds.ContainsKey(id))
+                        {
+                            errorMessage = "Duplicate PIN.";
+                            return false;
+                        }
+
+                        string role = string.Equals(id, "guest", StringComparison.OrdinalIgnoreCase) ? "listener" : normaliseId(setupUser.Role);
+                        if (string.IsNullOrEmpty(role) || !roleIds.ContainsKey(role))
+                        {
+                            errorMessage = "PIN " + cleanDisplayName(setupUser.DisplayName, id) + " uses a missing role.";
+                            return false;
+                        }
+
+                        TCIUser existingUser;
+                        bool existing = tryGetUserLocked(id, out existingUser);
+                        TCIUser user = new TCIUser();
+                        user.Id = id;
+                        user.DisplayName = cleanDisplayName(setupUser.DisplayName, id);
+                        user.Enabled = setupUser.Enabled;
+                        user.Role = role;
+                        user.Permissions = cleanPermissionList(setupUser.Permissions);
+                        user.CreatedUtc = existing && !string.IsNullOrWhiteSpace(existingUser.CreatedUtc) ? existingUser.CreatedUtc : utcNowString();
+                        user.ModifiedUtc = utcNowString();
+                        user.Notes = setupUser.Notes ?? string.Empty;
+
+                        if (setupUser.AccessCodeChanged || !existing || !hasStoredAccessCode(existingUser))
+                        {
+                            if (string.IsNullOrWhiteSpace(setupUser.AccessCode))
+                            {
+                                errorMessage = "PIN " + user.DisplayName + " needs an access PIN.";
+                                return false;
+                            }
+
+                            foreach (TCIUser existingCandidate in _config.Users)
+                            {
+                                if (existingCandidate == null) continue;
+                                if (string.Equals(existingCandidate.Id, id, StringComparison.OrdinalIgnoreCase)) continue;
+                                if (hasStoredAccessCode(existingCandidate) && verifyAccessCode(existingCandidate, setupUser.AccessCode))
+                                {
+                                    errorMessage = "PIN " + user.DisplayName + " has the same number as PIN " + cleanDisplayName(existingCandidate.DisplayName, existingCandidate.Id) + ".";
+                                    return false;
+                                }
+                            }
+
+                            setUserAccessCodeLocked(user, setupUser.AccessCode);
+                        }
+                        else
+                        {
+                            user.AccessCodeHash = existingUser.AccessCodeHash;
+                            user.AccessCodeSalt = existingUser.AccessCodeSalt;
+                            user.HashAlgorithm = existingUser.HashAlgorithm;
+                            user.HashIterations = existingUser.HashIterations;
+                        }
+
+                        if (!hasStoredAccessCode(user)) user.Enabled = false;
+                        users.Add(user);
+                        userIds[id] = true;
+                    }
+                }
+
+                if (users.Count == 0)
+                {
+                    errorMessage = "At least one PIN is required.";
+                    return false;
+                }
+
+                _config.Roles = roles;
+                _config.Users = users;
+                normaliseConfigLocked(_config);
+                rebuildLookupsLocked();
+                ResetRuntimeLockouts();
+                _sessions.Clear();
+                return true;
             }
         }
 
@@ -746,7 +948,7 @@ namespace Thetis
             TCIUser guest = new TCIUser();
             guest.Id = "guest";
             guest.DisplayName = "Guest";
-            guest.Enabled = true;
+            guest.Enabled = false;
             guest.Role = "listener";
             guest.Permissions = new List<string>();
             guest.CreatedUtc = utc;
@@ -755,6 +957,16 @@ namespace Thetis
             setUserAccessCodeLocked(guest, "123456");
             config.Users.Add(guest);
             return config;
+        }
+
+        private static SetupPermission createSetupPermission(string id, string displayName, string description, IEnumerable<string> commands)
+        {
+            SetupPermission permission = new SetupPermission();
+            permission.Id = normalisePermission(id);
+            permission.DisplayName = cleanDisplayName(displayName, permission.Id);
+            permission.Description = description ?? string.Empty;
+            permission.Commands = commands == null ? new List<string>() : new List<string>(commands.OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+            return permission;
         }
 
         private static List<TCIRole> createDefaultRoles()

@@ -959,18 +959,10 @@ namespace Thetis
             string json = File.Exists(perms) ? File.ReadAllText(perms) : null;
 
             TCIpermissions.LoadFromJson(json);
+            bool tci_permissions_changed = TCIpermissions.EnsureDefaultGuest();
 
-            TCIpermissions.AddUser("admin", "Admin", "admin", "6789", string.Empty);
-            TCIpermissions.SetUserEnabled("admin", true);
-            TCIpermissions.SetUserRole("admin", "admin");
-            TCIpermissions.SetUserAccessCode("admin", "6789");
-
-            TCIpermissions.AddUser("rx_only", "RX Only", "advanced_rx_operator", "1234", string.Empty);
-            TCIpermissions.SetUserEnabled("rx_only", true);
-            TCIpermissions.SetUserRole("rx_only", "advanced_rx_operator");
-            TCIpermissions.SetUserAccessCode("rx_only", "1234");
-
-            File.WriteAllText(perms, TCIpermissions.SaveToJson());
+            if (tci_permissions_changed || !File.Exists(perms))
+                File.WriteAllText(perms, TCIpermissions.SaveToJson());
 
             LogTool.Completed("AUTH");
             //

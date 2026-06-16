@@ -35555,6 +35555,10 @@ namespace Thetis
         {
             get { return chkTCIserver_additional_port_WSS.Checked; }
         }
+        public string TCIPermissionsJson
+        {
+            get { return TCIpermissions.SaveToJson(); }
+        }
         public TCITxStereoInputMode TCITXInputChannel
         {
             get
@@ -37510,7 +37514,10 @@ namespace Thetis
 
         private void btnAuthPermissions_Click(object sender, EventArgs e)
         {
-
+            using (frmTCIAuthPerms form = new frmTCIAuthPerms(Path.Combine(console.AppDataPath, "TCIpermissions.json")))
+            {
+                form.ShowDialog(this);
+            }
         }
     }
 
