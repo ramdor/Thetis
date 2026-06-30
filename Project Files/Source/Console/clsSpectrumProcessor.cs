@@ -1342,12 +1342,12 @@ namespace Thetis
                 {
                     if (ResolveReadDisplayId() == _displayId)
                     {
-                        hzLeft = _HzLeft;
+                        hzLeft = _HzLeft;// + _console.GetDSPcwPitchShiftToZero(_receiverId + 1);
                     }
                     else
                     {
                         SyncTransmitterSettingsLocked();
-                        hzLeft = _txHzLeft;
+                        hzLeft = _txHzLeft;// + _console.GetDSPcwPitchShiftToZero(_receiverId + 1);
                     }
                     return !_shutdown;
                 }

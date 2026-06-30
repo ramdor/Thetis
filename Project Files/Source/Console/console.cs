@@ -5398,40 +5398,40 @@ namespace Thetis
                             switch (f)
                             {
                                 case Filter.F1:
-                                    preset[m].SetFilter(f, -cw_pitch - 500, -cw_pitch + 500, "1.0k");
+                                    preset[m].SetFilter(f, -_cw_pitch - 500, -_cw_pitch + 500, "1.0k");
                                     break;
                                 case Filter.F2:
-                                    preset[m].SetFilter(f, -cw_pitch - 400, -cw_pitch + 400, "800");
+                                    preset[m].SetFilter(f, -_cw_pitch - 400, -_cw_pitch + 400, "800");
                                     break;
                                 case Filter.F3:
-                                    preset[m].SetFilter(f, -cw_pitch - 300, -cw_pitch + 300, "600");
+                                    preset[m].SetFilter(f, -_cw_pitch - 300, -_cw_pitch + 300, "600");
                                     break;
                                 case Filter.F4:
-                                    preset[m].SetFilter(f, -cw_pitch - 250, -cw_pitch + 250, "500");
+                                    preset[m].SetFilter(f, -_cw_pitch - 250, -_cw_pitch + 250, "500");
                                     break;
                                 case Filter.F5:
-                                    preset[m].SetFilter(f, -cw_pitch - 200, -cw_pitch + 200, "400");
+                                    preset[m].SetFilter(f, -_cw_pitch - 200, -_cw_pitch + 200, "400");
                                     break;
                                 case Filter.F6:
-                                    preset[m].SetFilter(f, -cw_pitch - 125, -cw_pitch + 125, "250");
+                                    preset[m].SetFilter(f, -_cw_pitch - 125, -_cw_pitch + 125, "250");
                                     break;
                                 case Filter.F7:
-                                    preset[m].SetFilter(f, -cw_pitch - 75, -cw_pitch + 75, "150");
+                                    preset[m].SetFilter(f, -_cw_pitch - 75, -_cw_pitch + 75, "150");
                                     break;
                                 case Filter.F8:
-                                    preset[m].SetFilter(f, -cw_pitch - 50, -cw_pitch + 50, "100");
+                                    preset[m].SetFilter(f, -_cw_pitch - 50, -_cw_pitch + 50, "100");
                                     break;
                                 case Filter.F9:
-                                    preset[m].SetFilter(f, -cw_pitch - 25, -cw_pitch + 25, "50");
+                                    preset[m].SetFilter(f, -_cw_pitch - 25, -_cw_pitch + 25, "50");
                                     break;
                                 case Filter.F10:
-                                    preset[m].SetFilter(f, -cw_pitch - 13, -cw_pitch + 13, "25");
+                                    preset[m].SetFilter(f, -_cw_pitch - 13, -_cw_pitch + 13, "25");
                                     break;
                                 case Filter.VAR1:
-                                    preset[m].SetFilter(f, -cw_pitch - 250, -cw_pitch + 250, "Var 1");
+                                    preset[m].SetFilter(f, -_cw_pitch - 250, -_cw_pitch + 250, "Var 1");
                                     break;
                                 case Filter.VAR2:
-                                    preset[m].SetFilter(f, -cw_pitch - 250, -cw_pitch + 250, "Var 2");
+                                    preset[m].SetFilter(f, -_cw_pitch - 250, -_cw_pitch + 250, "Var 2");
                                     break;
                             }
                             preset[m].LastFilter = Filter.F5;
@@ -5440,40 +5440,40 @@ namespace Thetis
                             switch (f)
                             {
                                 case Filter.F1:
-                                    preset[m].SetFilter(f, cw_pitch - 500, cw_pitch + 500, "1.0k");
+                                    preset[m].SetFilter(f, _cw_pitch - 500, _cw_pitch + 500, "1.0k");
                                     break;
                                 case Filter.F2:
-                                    preset[m].SetFilter(f, cw_pitch - 400, cw_pitch + 400, "800");
+                                    preset[m].SetFilter(f, _cw_pitch - 400, _cw_pitch + 400, "800");
                                     break;
                                 case Filter.F3:
-                                    preset[m].SetFilter(f, cw_pitch - 300, cw_pitch + 300, "600");
+                                    preset[m].SetFilter(f, _cw_pitch - 300, _cw_pitch + 300, "600");
                                     break;
                                 case Filter.F4:
-                                    preset[m].SetFilter(f, cw_pitch - 250, cw_pitch + 250, "500");
+                                    preset[m].SetFilter(f, _cw_pitch - 250, _cw_pitch + 250, "500");
                                     break;
                                 case Filter.F5:
-                                    preset[m].SetFilter(f, cw_pitch - 200, cw_pitch + 200, "400");
+                                    preset[m].SetFilter(f, _cw_pitch - 200, _cw_pitch + 200, "400");
                                     break;
                                 case Filter.F6:
-                                    preset[m].SetFilter(f, cw_pitch - 125, cw_pitch + 125, "250");
+                                    preset[m].SetFilter(f, _cw_pitch - 125, _cw_pitch + 125, "250");
                                     break;
                                 case Filter.F7:
-                                    preset[m].SetFilter(f, cw_pitch - 75, cw_pitch + 75, "150");
+                                    preset[m].SetFilter(f, _cw_pitch - 75, _cw_pitch + 75, "150");
                                     break;
                                 case Filter.F8:
-                                    preset[m].SetFilter(f, cw_pitch - 50, cw_pitch + 50, "100");
+                                    preset[m].SetFilter(f, _cw_pitch - 50, _cw_pitch + 50, "100");
                                     break;
                                 case Filter.F9:
-                                    preset[m].SetFilter(f, cw_pitch - 25, cw_pitch + 25, "50");
+                                    preset[m].SetFilter(f, _cw_pitch - 25, _cw_pitch + 25, "50");
                                     break;
                                 case Filter.F10:
-                                    preset[m].SetFilter(f, cw_pitch - 13, cw_pitch + 13, "25");
+                                    preset[m].SetFilter(f, _cw_pitch - 13, _cw_pitch + 13, "25");
                                     break;
                                 case Filter.VAR1:
-                                    preset[m].SetFilter(f, cw_pitch - 250, cw_pitch + 250, "Var 1");
+                                    preset[m].SetFilter(f, _cw_pitch - 250, _cw_pitch + 250, "Var 1");
                                     break;
                                 case Filter.VAR2:
-                                    preset[m].SetFilter(f, cw_pitch - 250, cw_pitch + 250, "Var 2");
+                                    preset[m].SetFilter(f, _cw_pitch - 250, _cw_pitch + 250, "Var 2");
                                     break;
                             }
                             preset[m].LastFilter = Filter.F5;
@@ -18267,19 +18267,19 @@ namespace Thetis
             return nPitch;
         }
 
-        private int cw_pitch = 600;
+        private int _cw_pitch = 600;
         public int CWPitch
         {
-            get { return cw_pitch; }
+            get { return _cw_pitch; }
             set
             {
-                int old_cwpitch = cw_pitch;
-                int diff = cw_pitch - value;
-                cw_pitch = value;
-                if (cw_pitch <= 0) cw_pitch = 0;  //-W2PA
-                udCWPitch.Value = cw_pitch;
-                Display.CWPitch = cw_pitch;
-                NetworkIO.SetCWSidetoneFreq(cw_pitch);
+                int old_cwpitch = _cw_pitch;
+                int diff = _cw_pitch - value;
+                _cw_pitch = value;
+                if (_cw_pitch <= 0) _cw_pitch = 0;  //-W2PA
+                udCWPitch.Value = _cw_pitch;
+                Display.CWPitch = _cw_pitch;
+                NetworkIO.SetCWSidetoneFreq(_cw_pitch);
 
                 //-W2PA June 2017
                 //      This centers the passband of the CW filters on the pitch frequency, but if CWPitch setter is called by mode buttons,  
@@ -18294,8 +18294,8 @@ namespace Thetis
                     string name = rx1_filters[(int)DSPMode.CWL].GetName(f);
 
                     int bw = high - low;
-                    low = -cw_pitch - bw / 2;
-                    high = -cw_pitch + bw / 2;
+                    low = -_cw_pitch - bw / 2;
+                    high = -_cw_pitch + bw / 2;
 
                     if (high > 0) // stop shifting the passband when it hits the image limit, while allowing pitch to continue to decrease
                     {
@@ -18312,8 +18312,8 @@ namespace Thetis
                     name = rx1_filters[(int)DSPMode.CWU].GetName(f);
 
                     bw = high - low;
-                    low = cw_pitch - bw / 2;
-                    high = cw_pitch + bw / 2;
+                    low = _cw_pitch - bw / 2;
+                    high = _cw_pitch + bw / 2;
 
                     if (low < 0) // stop adjusting the passband when it hits the image limit, while allowing pitch to continue to decrease
                     {
@@ -18367,7 +18367,7 @@ namespace Thetis
                         SetupForm.RX2APFFreq = ptbCWAPFFreq.Value;
                 }
 
-                if (old_cwpitch != cw_pitch) CWPitchChangedHandlers?.Invoke(old_cwpitch, cw_pitch, Display.ShowCWZeroLine);
+                if (old_cwpitch != _cw_pitch) CWPitchChangedHandlers?.Invoke(old_cwpitch, _cw_pitch, Display.ShowCWZeroLine);
             }
         }
 
@@ -22013,15 +22013,15 @@ namespace Thetis
             switch (RX1DSPMode)
             {
                 case DSPMode.CWL:
-                    freq += cw_pitch * 1e-6;
+                    freq += _cw_pitch * 1e-6;
                     break;
                 case DSPMode.CWU:
-                    freq -= cw_pitch * 1e-6;
+                    freq -= _cw_pitch * 1e-6;
                     break;
                 case DSPMode.AM:
                 case DSPMode.SAM:
                 case DSPMode.FM:
-                    if (chkTUN.Checked && !_display_duplex) freq -= cw_pitch * 1e-6;
+                    if (chkTUN.Checked && !_display_duplex) freq -= _cw_pitch * 1e-6;
                     break;
                 case DSPMode.USB:
                 case DSPMode.DIGU:
@@ -22029,14 +22029,14 @@ namespace Thetis
                     if (chkTUN.Checked && !_display_duplex)
                     {
                         if (RX1IsOn60mChannel() && current_region == FRSRegion.US)
-                            freq -= (ModeFreqOffset(_rx1_dsp_mode) + cw_pitch * 1e-6);
+                            freq -= (ModeFreqOffset(_rx1_dsp_mode) + _cw_pitch * 1e-6);
                         else
-                            freq -= cw_pitch * 1e-6;
+                            freq -= _cw_pitch * 1e-6;
                     }
                     break;
                 case DSPMode.LSB:
                 case DSPMode.DIGL:
-                    if (chkTUN.Checked && !_display_duplex) freq += cw_pitch * 1e-6;
+                    if (chkTUN.Checked && !_display_duplex) freq += _cw_pitch * 1e-6;
                     break;
             }
 
@@ -29695,10 +29695,10 @@ namespace Thetis
                 switch (_rx1_dsp_mode)
                 {
                     case DSPMode.CWL:
-                        freq += (double)cw_pitch * 0.0000010;
+                        freq += (double)_cw_pitch * 0.0000010;
                         break;
                     case DSPMode.CWU:
-                        freq -= (double)cw_pitch * 0.0000010;
+                        freq -= (double)_cw_pitch * 0.0000010;
                         break;
                 }
             }
@@ -30239,10 +30239,10 @@ namespace Thetis
                         case DSPMode.LSB:
                         case DSPMode.CWL:
                         case DSPMode.DIGL:
-                            radio.GetDSPTX(0).TXPostGenToneFreq = -cw_pitch;
+                            radio.GetDSPTX(0).TXPostGenToneFreq = -_cw_pitch;
                             break;
                         default:
-                            radio.GetDSPTX(0).TXPostGenToneFreq = +cw_pitch;
+                            radio.GetDSPTX(0).TXPostGenToneFreq = +_cw_pitch;
                             break;
                     }
 
@@ -30378,10 +30378,10 @@ namespace Thetis
                 case DSPMode.LSB:
                 case DSPMode.CWL:
                 case DSPMode.DIGL:
-                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = -cw_pitch;
+                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = -_cw_pitch;
                     break;
                 default:
-                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = +cw_pitch;
+                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = +_cw_pitch;
                     break;
             }
 
@@ -31707,7 +31707,7 @@ namespace Thetis
                     case DSPMode.CWL:
                     case DSPMode.LSB:
                     case DSPMode.DIGL:
-                        cwPitchShift = cw_pitch;
+                        cwPitchShift = _cw_pitch;
                         break;
                     case DSPMode.CWU:
                     case DSPMode.USB:
@@ -31717,9 +31717,9 @@ namespace Thetis
                     case DSPMode.FM:
                     case DSPMode.DSB:
                         if (RX1IsOn60mChannel() && current_region == FRSRegion.US)
-                            cwPitchShift = -(long)((ModeFreqOffset(_rx1_dsp_mode) * 1e6) + cw_pitch);
+                            cwPitchShift = -(long)((ModeFreqOffset(_rx1_dsp_mode) * 1e6) + _cw_pitch);
                         else
-                            cwPitchShift = -cw_pitch;
+                            cwPitchShift = -_cw_pitch;
                         break;
                 }
             }
@@ -31987,15 +31987,15 @@ namespace Thetis
 
             if (_rx1_dsp_mode == DSPMode.CWL)
             {
-                rx_freq += (double)cw_pitch * 0.0000010;
+                rx_freq += (double)_cw_pitch * 0.0000010;
                 if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                    tx_freq += (double)cw_pitch * 0.0000010;
+                    tx_freq += (double)_cw_pitch * 0.0000010;
             }
             else if (_rx1_dsp_mode == DSPMode.CWU)
             {
-                rx_freq -= (double)cw_pitch * 0.0000010;
+                rx_freq -= (double)_cw_pitch * 0.0000010;
                 if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                    tx_freq -= (double)cw_pitch * 0.0000010;
+                    tx_freq -= (double)_cw_pitch * 0.0000010;
             }
 
             switch (RX1DSPMode)
@@ -32003,7 +32003,7 @@ namespace Thetis
                 case DSPMode.AM:
                 case DSPMode.SAM:
                 case DSPMode.FM:
-                    if (chkTUN.Checked) tx_freq -= cw_pitch * 1e-6;
+                    if (chkTUN.Checked) tx_freq -= _cw_pitch * 1e-6;
                     break;
                 case DSPMode.USB:
                 case DSPMode.DIGU:
@@ -32011,14 +32011,14 @@ namespace Thetis
                     if (chkTUN.Checked)
                     {
                         if (RX1IsOn60mChannel() && current_region == FRSRegion.US)
-                            tx_freq -= (ModeFreqOffset(_rx1_dsp_mode) + cw_pitch * 1e-6);
+                            tx_freq -= (ModeFreqOffset(_rx1_dsp_mode) + _cw_pitch * 1e-6);
                         else
-                            tx_freq -= cw_pitch * 1e-6;
+                            tx_freq -= _cw_pitch * 1e-6;
                     }
                     break;
                 case DSPMode.LSB:
                 case DSPMode.DIGL:
-                    if (chkTUN.Checked) tx_freq += cw_pitch * 1e-6;
+                    if (chkTUN.Checked) tx_freq += _cw_pitch * 1e-6;
                     break;
             }
 
@@ -32327,7 +32327,7 @@ namespace Thetis
                     case DSPMode.CWL:
                     case DSPMode.LSB:
                     case DSPMode.DIGL:
-                        Display.VFOASub += cw_pitch;
+                        Display.VFOASub += _cw_pitch;
                         break;
                     case DSPMode.CWU:
                     case DSPMode.USB:
@@ -32336,7 +32336,7 @@ namespace Thetis
                     case DSPMode.SAM:
                     case DSPMode.FM:
                     case DSPMode.DSB:
-                        Display.VFOASub -= cw_pitch;
+                        Display.VFOASub -= _cw_pitch;
                         break;
                 }
             }
@@ -32417,17 +32417,17 @@ namespace Thetis
                     case DSPMode.FM:
                     case DSPMode.USB:
                     case DSPMode.DIGU:
-                        if (chkTUN.Checked) freq -= (double)cw_pitch * 1e-6;
+                        if (chkTUN.Checked) freq -= (double)_cw_pitch * 1e-6;
                         break;
                     case DSPMode.LSB:
                     case DSPMode.DIGL:
-                        if (chkTUN.Checked) freq += (double)cw_pitch * 1e-6;
+                        if (chkTUN.Checked) freq += (double)_cw_pitch * 1e-6;
                         break;
                     case DSPMode.CWL:
-                        freq += (double)cw_pitch * 0.0000010;
+                        freq += (double)_cw_pitch * 0.0000010;
                         break;
                     case DSPMode.CWU:
-                        freq -= (double)cw_pitch * 0.0000010;
+                        freq -= (double)_cw_pitch * 0.0000010;
                         break;
                 }
 
@@ -32715,7 +32715,7 @@ namespace Thetis
                         case DSPMode.CWL:
                         case DSPMode.LSB:
                         case DSPMode.DIGL:
-                            Display.VFOB += cw_pitch;
+                            Display.VFOB += _cw_pitch;
                             break;
                         case DSPMode.CWU:
                         case DSPMode.USB:
@@ -32724,7 +32724,7 @@ namespace Thetis
                         case DSPMode.SAM:
                         case DSPMode.FM:
                         case DSPMode.DSB:
-                            Display.VFOB -= cw_pitch;
+                            Display.VFOB -= _cw_pitch;
                             break;
                     }
                 }
@@ -32828,8 +32828,8 @@ namespace Thetis
                         case DSPMode.CWL:
                         case DSPMode.LSB:
                         case DSPMode.DIGL:
-                            Display.VFOA += cw_pitch;
-                            Display.VFOASub += cw_pitch; // needed if only rx1 in use, and we are split. Display uses VFOASub to display split freq MW0LGE_21k8
+                            Display.VFOA += _cw_pitch;
+                            Display.VFOASub += _cw_pitch; // needed if only rx1 in use, and we are split. Display uses VFOASub to display split freq MW0LGE_21k8
                             break;
                         case DSPMode.CWU:
                         case DSPMode.USB:
@@ -32838,8 +32838,8 @@ namespace Thetis
                         case DSPMode.SAM:
                         case DSPMode.FM:
                         case DSPMode.DSB:
-                            Display.VFOA -= cw_pitch;
-                            Display.VFOASub -= cw_pitch;
+                            Display.VFOA -= _cw_pitch;
+                            Display.VFOASub -= _cw_pitch;
                             break;
                     }
                 }
@@ -32995,19 +32995,19 @@ namespace Thetis
                 case DSPMode.USB:
                 case DSPMode.DIGU:
                 case DSPMode.DSB:
-                    if (chkTUN.Checked) tx_freq -= (double)cw_pitch * 1e-6;
+                    if (chkTUN.Checked) tx_freq -= (double)_cw_pitch * 1e-6;
                     break;
                 case DSPMode.LSB:
                 case DSPMode.DIGL:
-                    if (chkTUN.Checked) tx_freq += (double)cw_pitch * 1e-6;
+                    if (chkTUN.Checked) tx_freq += (double)_cw_pitch * 1e-6;
                     break;
                 case DSPMode.CWL:
                     if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                        tx_freq += (double)cw_pitch * 0.0000010;
+                        tx_freq += (double)_cw_pitch * 0.0000010;
                     break;
                 case DSPMode.CWU:
                     if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                        tx_freq -= (double)cw_pitch * 0.0000010;
+                        tx_freq -= (double)_cw_pitch * 0.0000010;
                     break;
             }
 
@@ -33086,9 +33086,9 @@ namespace Thetis
             else if (freq > max_freq) freq = max_freq;
 
             if (_rx2_dsp_mode == DSPMode.CWL)
-                freq += (double)cw_pitch * 0.0000010;
+                freq += (double)_cw_pitch * 0.0000010;
             else if (_rx2_dsp_mode == DSPMode.CWU)
-                freq -= (double)cw_pitch * 0.0000010;
+                freq -= (double)_cw_pitch * 0.0000010;
 
             if (!_click_tune_rx2_display || set_rx2_freq)
                 RX2DDSFreq = freq;
@@ -33146,8 +33146,9 @@ namespace Thetis
                     oldBand = BandByFreq(dOldFreq, rx1_xvtr_index, current_region);
                     Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
 
+                    double offset = Math.Round((CentreFrequency - VFOBFreq) * 1e6);
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, old_vfob_freq_rounded, VFOBFreq,
-                        oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
+                        oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, /*radio.GetDSPRX(0, 0).RXOsc*/ offset, 1);
                 }
             }
 
@@ -33702,8 +33703,8 @@ namespace Thetis
 
                 switch (_rx2_dsp_mode)
                 {
-                    case DSPMode.CWU: dFreq -= cw_pitch; break;
-                    case DSPMode.CWL: dFreq += cw_pitch; break;
+                    case DSPMode.CWU: dFreq -= _cw_pitch; break;
+                    case DSPMode.CWL: dFreq += _cw_pitch; break;
                 }
             }
             else
@@ -33718,8 +33719,8 @@ namespace Thetis
                 }
                 switch (_rx1_dsp_mode)
                 {
-                    case DSPMode.CWU: dFreq -= cw_pitch; break;
-                    case DSPMode.CWL: dFreq += cw_pitch; break;
+                    case DSPMode.CWU: dFreq -= _cw_pitch; break;
+                    case DSPMode.CWL: dFreq += _cw_pitch; break;
                 }
             }
 
@@ -33851,9 +33852,9 @@ namespace Thetis
                 {
                     // shift to align for CW
                     if (_rx1_dsp_mode == DSPMode.CWL)
-                        centre -= (double)cw_pitch * 0.0000010;
+                        centre -= (double)_cw_pitch * 0.0000010;
                     else if (_rx1_dsp_mode == DSPMode.CWU)
-                        centre += (double)cw_pitch * 0.0000010;
+                        centre += (double)_cw_pitch * 0.0000010;
 
                     CentreFrequency = centre;
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
@@ -33862,9 +33863,9 @@ namespace Thetis
                 {
                     // shift to align for CW
                     if (_rx2_dsp_mode == DSPMode.CWL)
-                        centre -= (double)cw_pitch * 0.0000010;
+                        centre -= (double)_cw_pitch * 0.0000010;
                     else if (_rx2_dsp_mode == DSPMode.CWU)
-                        centre += (double)cw_pitch * 0.0000010;
+                        centre += (double)_cw_pitch * 0.0000010;
 
                     CentreRX2Frequency = centre;
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -34251,12 +34252,12 @@ namespace Thetis
                         switch (new_mode)
                         {
                             case DSPMode.USB:
-                                rx1_freq -= (cw_pitch * 0.0000010);
+                                rx1_freq -= (_cw_pitch * 0.0000010);
                                 break;
                             case DSPMode.CWU:
                                 break;
                             default:
-                                rx1_freq += (cw_pitch * 0.0000010);
+                                rx1_freq += (_cw_pitch * 0.0000010);
                                 break;
                         }
 
@@ -34287,12 +34288,12 @@ namespace Thetis
                         switch (new_mode)
                         {
                             case DSPMode.LSB:
-                                rx1_freq += (cw_pitch * 0.0000010);
+                                rx1_freq += (_cw_pitch * 0.0000010);
                                 break;
                             case DSPMode.CWL:
                                 break;
                             default:
-                                rx1_freq -= (cw_pitch * 0.0000010);
+                                rx1_freq -= (_cw_pitch * 0.0000010);
                                 break;
                         }
 
@@ -34454,7 +34455,7 @@ namespace Thetis
                     if (chkVFOATX.Checked || !rx2_enabled)
                     {
 
-                        CWPitch = cw_pitch;
+                        CWPitch = _cw_pitch;
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         if (!_rx_only && chkPower.Checked)
                         {
@@ -34475,12 +34476,12 @@ namespace Thetis
                         switch (_rx1_dsp_mode)
                         {
                             case DSPMode.USB:
-                                rx1_freq += (cw_pitch * 1e-6);
+                                rx1_freq += (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWU:
                                 break;
                             default:
-                                rx1_freq -= (cw_pitch * 1e-6);
+                                rx1_freq -= (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -34501,7 +34502,7 @@ namespace Thetis
 
                     if (chkVFOATX.Checked || !rx2_enabled)
                     {
-                        CWPitch = cw_pitch;
+                        CWPitch = _cw_pitch;
                         radio.GetDSPTX(0).TXOsc = 0.0;
 
                         if (!_rx_only && chkPower.Checked)
@@ -34523,12 +34524,12 @@ namespace Thetis
                         switch (_rx1_dsp_mode)
                         {
                             case DSPMode.LSB:
-                                rx1_freq -= (cw_pitch * 1e-6);
+                                rx1_freq -= (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWL:
                                 break;
                             default:
-                                rx1_freq += (cw_pitch * 1e-6);
+                                rx1_freq += (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -35347,10 +35348,10 @@ namespace Thetis
                     default_center = -default_low_cut - bw / 2;
                     break;
                 case DSPMode.CWU:
-                    default_center = cw_pitch;
+                    default_center = _cw_pitch;
                     break;
                 case DSPMode.CWL:
-                    default_center = -cw_pitch;
+                    default_center = -_cw_pitch;
                     break;
                 case DSPMode.DIGU:
                     default_center = digu_click_tune_offset;
@@ -35423,10 +35424,10 @@ namespace Thetis
                     default_center = -default_low_cut - bw / 2;
                     break;
                 case DSPMode.CWU:
-                    default_center = cw_pitch;
+                    default_center = _cw_pitch;
                     break;
                 case DSPMode.CWL:
-                    default_center = -cw_pitch;
+                    default_center = -_cw_pitch;
                     break;
                 case DSPMode.DIGU:
                     default_center = digu_click_tune_offset;
@@ -36576,7 +36577,7 @@ namespace Thetis
                 int new_center;
                 if (is_cw_mode)
                 {
-                    new_center = cw_pitch;
+                    new_center = _cw_pitch;
                 }
                 else  // sideband mode
                 {
@@ -37974,12 +37975,12 @@ namespace Thetis
                         switch (new_mode)
                         {
                             case DSPMode.USB:
-                                rx2_freq -= (cw_pitch * 1e-6);
+                                rx2_freq -= (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWU:
                                 break;
                             default:
-                                rx2_freq += (cw_pitch * 1e-6);
+                                rx2_freq += (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -37998,12 +37999,12 @@ namespace Thetis
                         switch (new_mode)
                         {
                             case DSPMode.LSB:
-                                rx2_freq += (cw_pitch * 1e-6);
+                                rx2_freq += (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWL:
                                 break;
                             default:
-                                rx2_freq -= (cw_pitch * 1e-6);
+                                rx2_freq -= (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -38147,7 +38148,7 @@ namespace Thetis
                     {
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                        CWPitch = cw_pitch;
+                        CWPitch = _cw_pitch;
                     }
 
                     if (!RX2IsIn60mChannel())
@@ -38155,12 +38156,12 @@ namespace Thetis
                         switch (_rx2_dsp_mode)
                         {
                             case DSPMode.USB:
-                                rx2_freq += (cw_pitch * 1e-6);
+                                rx2_freq += (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWU:
                                 break;
                             default:
-                                rx2_freq -= (cw_pitch * 1e-6);
+                                rx2_freq -= (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -38177,7 +38178,7 @@ namespace Thetis
                     {
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                        CWPitch = cw_pitch;
+                        CWPitch = _cw_pitch;
                     }
 
                     if (!RX2IsIn60mChannel())
@@ -38185,12 +38186,12 @@ namespace Thetis
                         switch (_rx2_dsp_mode)
                         {
                             case DSPMode.LSB:
-                                rx2_freq -= (cw_pitch * 1e-6);
+                                rx2_freq -= (_cw_pitch * 1e-6);
                                 break;
                             case DSPMode.CWL:
                                 break;
                             default:
-                                rx2_freq += (cw_pitch * 1e-6);
+                                rx2_freq += (_cw_pitch * 1e-6);
                                 break;
                         }
 
@@ -46330,26 +46331,24 @@ namespace Thetis
                 unsafe { WDSP.GetRXAAGCTop(WDSP.id(2, 0), &agc_top); }
             }
 
-            agc_top = Math.Round(agc_top);
-            if (agc_top > 120) agc_top = 120;
-            if (agc_top < -20.0) agc_top = -20.0;
-
-            AGCMode amode = rx == 1 ? RX1AGCMode : RX2AGCMode;
-            switch (amode)
+            if (!IsSetupFormNull)
             {
-                case AGCMode.FIXD:
-                    if (!IsSetupFormNull) {
-                        if (rx == 1) SetupForm.AGCFixedGain = (int)agc_top;
-                        else if (rx == 2) SetupForm.AGCRX2FixedGain = (int)agc_top; 
-                    }
-                    break;
-                default:
-                    if (!IsSetupFormNull)
-                    {
-                        if (rx == 1) SetupForm.AGCMaxGain = (int)agc_top;
-                        else if (rx == 2) SetupForm.AGCRX2MaxGain = (int)agc_top;
-                    }
-                    break;
+                int nAgcTop = (int)Math.Round(agc_top);
+                if (nAgcTop > 120) nAgcTop = 120;
+                if (nAgcTop < -20) nAgcTop = -20;
+
+                AGCMode amode = rx == 1 ? RX1AGCMode : RX2AGCMode;
+                switch (amode)
+                {
+                    case AGCMode.FIXD:
+                        if (rx == 1) SetupForm.AGCFixedGain = nAgcTop;
+                        else if (rx == 2) SetupForm.AGCRX2FixedGain = nAgcTop;
+                        break;
+                    default:
+                        if (rx == 1) SetupForm.AGCMaxGain = nAgcTop;
+                        else if (rx == 2) SetupForm.AGCRX2MaxGain = nAgcTop;
+                        break;
+                }
             }
         }
         private bool _maintainNFAdjustDeltaRX1 = false;
@@ -46606,9 +46605,9 @@ namespace Thetis
                     centre = ztb_data_by_band[rx][(int)band].CentreFrequency;
 
                     if (dsp == DSPMode.CWL)
-                        centre -= (double)cw_pitch * 0.0000010;
+                        centre -= (double)_cw_pitch * 0.0000010;
                     else if (dsp == DSPMode.CWU)
-                        centre += (double)cw_pitch * 0.0000010;
+                        centre += (double)_cw_pitch * 0.0000010;
 
                     m_bIgnoreLimitsForZTB = true;
 
@@ -49275,18 +49274,18 @@ namespace Thetis
                                 dCentreFreq = CentreFrequency * 1e6;
                                 dMouseVFO = dCentreFreq + PixelToHz(e.X, 1);
                                 if (_rx1_dsp_mode == DSPMode.CWL)
-                                    dCWoffset = (double)cw_pitch;
+                                    dCWoffset = (double)_cw_pitch;
                                 else if (_rx1_dsp_mode == DSPMode.CWU)
-                                    dCWoffset = -(double)cw_pitch;
+                                    dCWoffset = -(double)_cw_pitch;
                             }
                             else
                             {
                                 dCentreFreq = CentreRX2Frequency * 1e6;
                                 dMouseVFO = dCentreFreq + PixelToHz(e.X, 2);
                                 if (_rx2_dsp_mode == DSPMode.CWL)
-                                    dCWoffset = (double)cw_pitch;
+                                    dCWoffset = (double)_cw_pitch;
                                 else if (_rx2_dsp_mode == DSPMode.CWU)
-                                    dCWoffset = -(double)cw_pitch;
+                                    dCWoffset = -(double)_cw_pitch;
                             }
                             dMouseVFO += dCWoffset;
 
@@ -49551,10 +49550,10 @@ namespace Thetis
                                         switch (_rx2_dsp_mode)
                                         {
                                             case DSPMode.CWL:
-                                                freq += (float)cw_pitch * 0.0000010;
+                                                freq += (float)_cw_pitch * 0.0000010;
                                                 break;
                                             case DSPMode.CWU:
-                                                freq -= (float)cw_pitch * 0.0000010;
+                                                freq -= (float)_cw_pitch * 0.0000010;
                                                 break;
                                             case DSPMode.DIGL:
                                                 freq += (float)digl_click_tune_offset * 0.0000010;
@@ -49587,10 +49586,10 @@ namespace Thetis
                                         switch (_rx1_dsp_mode)
                                         {
                                             case DSPMode.CWL:
-                                                freq += (float)cw_pitch * 0.0000010;
+                                                freq += (float)_cw_pitch * 0.0000010;
                                                 break;
                                             case DSPMode.CWU:
-                                                freq -= (float)cw_pitch * 0.0000010;
+                                                freq -= (float)_cw_pitch * 0.0000010;
                                                 break;
                                             case DSPMode.DIGL:
                                                 if (!ClickTuneFilter) freq += (float)digl_click_tune_offset * 0.0000010;
@@ -50167,9 +50166,9 @@ namespace Thetis
                             nL = Display.RXDisplayLow;
                             nH = Display.RXDisplayHigh;
                             if (_rx1_dsp_mode == DSPMode.CWL)
-                                dVfo += (double)cw_pitch;
+                                dVfo += (double)_cw_pitch;
                             else if (_rx1_dsp_mode == DSPMode.CWU)
-                                dVfo -= (double)cw_pitch;
+                                dVfo -= (double)_cw_pitch;
                         }
                         else if (nRX == 2)
                         {
@@ -50178,9 +50177,9 @@ namespace Thetis
                             nL = Display.RX2DisplayLow;
                             nH = Display.RX2DisplayHigh;
                             if (_rx2_dsp_mode == DSPMode.CWL)
-                                dVfo += (double)cw_pitch;
+                                dVfo += (double)_cw_pitch;
                             else if (_rx2_dsp_mode == DSPMode.CWU)
-                                dVfo -= (double)cw_pitch;
+                                dVfo -= (double)_cw_pitch;
                         }
 
                         if (nRX != 0)  // we are over a RX with the mouse
@@ -51123,10 +51122,10 @@ namespace Thetis
                     switch (localDSPMode)
                     {
                         case DSPMode.CWL:
-                            rf_freq += cw_pitch * 1e-6;
+                            rf_freq += _cw_pitch * 1e-6;
                             break;
                         case DSPMode.CWU:
-                            rf_freq -= cw_pitch * 1e-6;
+                            rf_freq -= _cw_pitch * 1e-6;
                             break;
                         case DSPMode.AM:
                         case DSPMode.SAM:
@@ -54163,6 +54162,11 @@ namespace Thetis
                 _ok_to_update_zoom_pan = false;
             }
         }
+
+        //private void buttonTS1_Click(object sender, EventArgs e)
+        //{
+        //    Environment.FailFast("Intentional crash");
+        //}
     }
 
     public class DigiMode

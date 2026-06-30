@@ -219,6 +219,7 @@
             this.grpOzyType = new System.Windows.Forms.GroupBoxTS();
             this.btnDiscoverRadios = new System.Windows.Forms.ButtonTS();
             this.ucRadioList_Radios = new Thetis.ucRadioList();
+            this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.chkAdvancedNetworkingSettings = new System.Windows.Forms.CheckBoxTS();
             this.pnlAdvancedNetworkSettings = new System.Windows.Forms.PanelTS();
             this.chkLimitInterfacesToEthernetWifi = new System.Windows.Forms.CheckBoxTS();
@@ -234,7 +235,6 @@
             this.panelTS14 = new System.Windows.Forms.PanelTS();
             this.radViaAllNics = new System.Windows.Forms.RadioButtonTS();
             this.radViaSpecificNic = new System.Windows.Forms.RadioButtonTS();
-            this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.panelTS7 = new System.Windows.Forms.PanelTS();
             this.txtSpecificRadio = new System.Windows.Forms.TextBoxTS();
             this.radSpecificRadio = new System.Windows.Forms.RadioButtonTS();
@@ -8218,6 +8218,19 @@
             this.ucRadioList_Radios.SelectedRadioChanged += new System.EventHandler(this.ucRadioList_Radios_SelectedRadioChanged);
             this.ucRadioList_Radios.RadioListChanged += new System.EventHandler(this.ucRadioList_Radios_RadioListChanged);
             // 
+            // chkNetworkWDT
+            // 
+            this.chkNetworkWDT.Checked = true;
+            this.chkNetworkWDT.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNetworkWDT.Image = null;
+            this.chkNetworkWDT.Location = new System.Drawing.Point(312, 18);
+            this.chkNetworkWDT.Name = "chkNetworkWDT";
+            this.chkNetworkWDT.Size = new System.Drawing.Size(120, 17);
+            this.chkNetworkWDT.TabIndex = 16;
+            this.chkNetworkWDT.Text = "Network Watchdog";
+            this.toolTip1.SetToolTip(this.chkNetworkWDT, "Resets software/firmware if network becomes inactive.");
+            this.chkNetworkWDT.CheckedChanged += new System.EventHandler(this.chkNetworkWDT_CheckedChanged);
+            // 
             // chkAdvancedNetworkingSettings
             // 
             this.chkAdvancedNetworkingSettings.AutoSize = true;
@@ -8434,19 +8447,6 @@
             this.toolTip1.SetToolTip(this.radViaSpecificNic, "Discover via a specific NIC");
             this.radViaSpecificNic.UseVisualStyleBackColor = true;
             this.radViaSpecificNic.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
-            // 
-            // chkNetworkWDT
-            // 
-            this.chkNetworkWDT.Checked = true;
-            this.chkNetworkWDT.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNetworkWDT.Image = null;
-            this.chkNetworkWDT.Location = new System.Drawing.Point(312, 18);
-            this.chkNetworkWDT.Name = "chkNetworkWDT";
-            this.chkNetworkWDT.Size = new System.Drawing.Size(120, 17);
-            this.chkNetworkWDT.TabIndex = 16;
-            this.chkNetworkWDT.Text = "Network Watchdog";
-            this.toolTip1.SetToolTip(this.chkNetworkWDT, "Resets software/firmware if network becomes inactive.");
-            this.chkNetworkWDT.CheckedChanged += new System.EventHandler(this.chkNetworkWDT_CheckedChanged);
             // 
             // panelTS7
             // 

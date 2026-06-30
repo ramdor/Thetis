@@ -1365,6 +1365,11 @@ namespace Thetis
             if (m_disconnected) return;
             sendMicGain(rx, muted, gain_db, min_db, max_db);
         }
+        public void CwPitchChanged(int pitch)
+        {
+            if (m_disconnected) return;
+            sendCwPitch(pitch);
+        }
         public void MONChanged(bool newState)
         {
             if (m_disconnected) return;
@@ -2403,8 +2408,7 @@ namespace Thetis
                     offset = (int)consoleThreadSafe.radio.GetDSPRX(1, 0).RXOsc;
             }
 
-            //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
-            //offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
+            offset += -consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1);
 
             string s = "if:" + rx.ToString() + "," + chan.ToString() + "," + offset.ToString() + ";";
             sendTextFrame(s);
@@ -2612,6 +2616,22 @@ namespace Thetis
                 min_db.ToString() + "," + max_db.ToString() + ";";
             sendTextFrame(s);
         }
+        private void sendCwPitch(int pitch)
+        {
+            //From theits only, no handler for inboud
+            //This can be used by a client to adjust its overlays to align with display stream
+            //frequencies. Thetis keeps dds+if at 10MHz and 0If if in CWU or CWL and a 10Mhz freq is requested.
+            //That 10Mhz tone is placed at cwpitch so it would sound as a 600hz tone, consequently filters have to now
+            //alihn on that.
+            //Thetis sends shift to the display engine to offet all overlays and we need to also do that on a remote client.
+            //The cw shift is already used by the SecttrumProcessor that the TCI display stream uses, so that is
+            //already shifted correctly, however any client filter overlay etc would need to be shifted by cwpitch
+            //to correctly align with the frequency in question.
+            //Also to note, that if you enter 10MHz in CWL you will hear that tone @600hz. If you then switch to LSB
+            //that tone will also be placed as 600hz in your filter, so the vfo frequency will adjust by 600hz.
+            string s = "cw_pitch:" + pitch.ToString() + ";";
+            sendTextFrame(s);
+        }
         private void sendMONEnable(bool enable)
         {
             string s = "mon_enable:" + enable.ToString().ToLower() + ";";
@@ -2813,7 +2833,7 @@ namespace Thetis
         private void sendTxSensors(int rx, double micLevelDbm, double rmsPowerWatts, double peakPowerWatts, double swr)
         {
             string message = string.Format(
-                "tx_sensors:{0},{1:F1},{2:F1},{3:F1},{4:F1};",
+                "tx_sensors:{0},{1:F1},{2:F1},{3:F1},{4:F2};",
                 rx,
                 micLevelDbm,
                 rmsPowerWatts,
@@ -2831,8 +2851,7 @@ namespace Thetis
                     ddsFreq = (long)(consoleThreadSafe.CentreRX2Frequency * 1e6);
             }
 
-            //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
-            //ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7]
+            ddsFreq += consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1);
 
             string s = "dds:" + rx.ToString() + "," + ddsFreq.ToString() + ";";
             sendTextFrame(s);
@@ -2952,6 +2971,8 @@ namespace Thetis
 
             sendMode(0);
             sendMode(1);
+
+            sendCwPitch(consoleThreadSafe.CWPitch);
 
             sendFilterBand(0, consoleThreadSafe.RX1FilterLow, consoleThreadSafe.RX1FilterHigh);
             sendFilterBand(1, consoleThreadSafe.RX2FilterLow, consoleThreadSafe.RX2FilterHigh);
@@ -4619,10 +4640,9 @@ namespace Thetis
                     bOK = long.TryParse(args[1], out ddsLong);
                 if (bOK)
                 {
-                    //[2.10.3.16]MW0LGE removed to fix the TCI dds/if data so that it matches thetis data
-                    ////[2.10.3.16]MW0LGE we need to adjust dds here by cw pitch shift if in cw mode because it gets reapplied by code that is in move spectrum
-                    ////If we dont do this, and we are requested for a dds of X, the outbound after we apply will be X + cwShift, which would be incorrect
-                    //ddsLong -= consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1);
+                    //[2.10.3.16]MW0LGE we need to adjust dds here by cw pitch. Outbound dds messages are modified by cw offset if in cw mode,
+                    //so we need to do the revers in an inbound
+                    ddsLong -= consoleThreadSafe.GetDSPcwPitchShiftToZero(rx + 1);
 
                     double dds = ddsLong / 1e6;
 
@@ -10093,6 +10113,8 @@ namespace Thetis
 
                     console.MicGainChangedHandlers += OnMicGainChanged;
 
+                    console.CWPitchChangedHandlers += OnCwPitchChanged;
+
                     m_bDelegatesAdded = true;
                 }
 
@@ -10284,6 +10306,8 @@ namespace Thetis
                     console.Rx6mOffsetChangedHandlers -= OnCalibrationChanged;
 
                     console.MicGainChangedHandlers -= OnMicGainChanged;
+
+                    console.CWPitchChangedHandlers -= OnCwPitchChanged;
 
                     m_bDelegatesAdded = false;
                 }
@@ -10871,6 +10895,29 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.ModeChange(rx, oldMode, newMode, oldBand, newBand);
+
+                    //[2.10.3.16]MW0LGE if mode is cw or we are leaving cw then we also need to cause a reparse of dds due to mode based pitch offset changes                    
+                    if (newMode == DSPMode.CWL || newMode == DSPMode.CWU ||
+                        oldMode == DSPMode.CWL || oldMode == DSPMode.CWU)
+                    {
+                        double cf;
+                        Band b;
+                        double offset = 0;
+                        switch (rx)
+                        {
+                            case 1:
+                                cf = console.CentreFrequency;
+                                b = console.RX1Band;
+                                break;
+                            case 2:
+                                cf = console.CentreRX2Frequency;
+                                b = console.RX2Band;
+                                break;
+                            default:
+                                continue;
+                        }
+                        OnCentreFrequencyChanged(rx, cf, cf, b, offset);
+                    }
                 }
             }
         }
@@ -11400,6 +11447,53 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MicGainChanged(rx - 1, new_mute, new_gain_db, new_gain_scalar, min_db, max_db);
+                }
+            }
+        }
+        private void OnCwPitchChanged(int old_pitch, int new_pitch, bool show_cwzero)
+        {
+            lock (m_objLocker)
+            {
+                if (m_server == null || m_socketListenersList == null) return;
+
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.CwPitchChanged(new_pitch);
+
+                    for (int rx = 1; rx <= 2; rx++)
+                    {
+                        //[2.10.3.16]MW0LGE if mode is cw then we also need to cause a reparse of dds due to mode based pitch offset changes
+                        DSPMode m = DSPMode.FIRST;
+                        switch (rx)
+                        {
+                            case 1:
+                                m = console.RX1DSPMode;
+                                break;
+                            case 2:
+                                m = console.RX2DSPMode;
+                                break;
+                        }
+                        if (m == DSPMode.CWL || m == DSPMode.CWU)
+                        {
+                            double cf;
+                            Band b;
+                            double offset = 0;
+                            switch (rx)
+                            {
+                                case 1:
+                                    cf = console.CentreFrequency;
+                                    b = console.RX1Band;
+                                    break;
+                                case 2:
+                                    cf = console.CentreRX2Frequency;
+                                    b = console.RX2Band;
+                                    break;
+                                default:
+                                    continue;
+                            }
+                            OnCentreFrequencyChanged(rx, cf, cf, b, offset);
+                        }
+                    }
                 }
             }
         }

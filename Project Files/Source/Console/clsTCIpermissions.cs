@@ -514,6 +514,9 @@ namespace Thetis
                 case "if":
                 case "vfo":
                 case "vfo_swap_ex":
+                case "vfo_control":
+                case "subvfo":
+                case "0beat":
                     return CHANGE_FREQUENCY;
                 case "rx_filter_band":
                     return CHANGE_RX_FILTER;
@@ -575,6 +578,7 @@ namespace Thetis
                 case "rx_volume":
                 case "rx_balance":
                 case "sql_enable":
+                case "sql_enable_ex":
                 case "sql_level":
                     return CHANGE_RX_AUDIO;
                 case "rx_nr_enable":
@@ -598,6 +602,7 @@ namespace Thetis
                 case "vfo_sync_ex":
                 case "fm_deviation_ex":
                 case "rx_ctun_ex":
+                case "subrx":
                     return CHANGE_RX_FRONTEND;
                 case "trx":
                     return TX_PTT;
@@ -610,6 +615,8 @@ namespace Thetis
                 case "split_enable":
                 case "tx_filter_band_ex":
                 case "tx_profile_ex":
+                case "mic_gain":
+                case "vfo_tx":
                 case "ps-a":
                     return TX_SETTINGS;
                 case "binary_tx_audio":
@@ -624,7 +631,6 @@ namespace Thetis
                 case "cw_msg":
                 case "keyer":
                 case "cw_macros_stop":
-                case "callsign_send":
                     return CW_KEYER;
                 case "spot":
                 case "spot_delete":
@@ -670,19 +676,19 @@ namespace Thetis
             permissions.Add(createSetupPermission(VIEW_STATUS, "View Status", "Read radio and server status.", new string[] { "rit_enable", "xit_enable", "rit_offset", "xit_offset", "lock", "vfo_lock", "set_in_focus", "rx_sensors_enable", "rx_sensors_enable_ex", "tx_sensors_enable", "tx_profiles_ex", "calibration_ex", "rt", "digl_offset read", "digu_offset read" }));
             permissions.Add(createSetupPermission(VIEW_SPECTRUM, "View Spectrum", "Receive spectrum and IQ display data.", new string[] { "display_start", "display_stop", "iq_start", "iq_stop" }));
             permissions.Add(createSetupPermission(LISTEN_RX_AUDIO, "Listen RX Audio", "Receive RX and line out audio streams.", new string[] { "audio_start", "audio_stop", "line_out_start", "line_out_stop" }));
-            permissions.Add(createSetupPermission(CHANGE_RX_AUDIO, "Change RX Audio", "Change RX audio, monitor, squelch, mute, balance and codec settings.", new string[] { "audio_samplerate", "audio_codec", "audio_reconfigure_begin", "audio_reconfigure_end", "audio_stream_sample_type", "audio_stream_channels", "audio_stream_samples", "audio_opus_application", "audio_opus_signal", "audio_opus_bandwidth", "audio_opus_bitrate", "audio_opus_vbr", "audio_opus_cvbr", "audio_opus_complexity", "audio_opus_fec", "audio_opus_dtx", "audio_opus_packet_loss", "audio_opus_frame_ms", "tx_stream_audio_buffering", "mute", "volume", "rx_mute", "mon_volume", "mon_enable", "rx_volume", "rx_balance", "sql_enable", "sql_level" }));
-            permissions.Add(createSetupPermission(CHANGE_FREQUENCY, "Change Frequency", "Change VFO, DDS, IF and frequency related settings.", new string[] { "dds", "if", "vfo", "vfo_swap_ex", "digl_offset write", "digu_offset write" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_AUDIO, "Change RX Audio", "Change RX audio, monitor, squelch, mute, balance and codec settings.", new string[] { "audio_samplerate", "audio_codec", "audio_reconfigure_begin", "audio_reconfigure_end", "audio_stream_sample_type", "audio_stream_channels", "audio_stream_samples", "audio_opus_application", "audio_opus_signal", "audio_opus_bandwidth", "audio_opus_bitrate", "audio_opus_vbr", "audio_opus_cvbr", "audio_opus_complexity", "audio_opus_fec", "audio_opus_dtx", "audio_opus_packet_loss", "audio_opus_frame_ms", "tx_stream_audio_buffering", "mute", "volume", "rx_mute", "mon_volume", "mon_enable", "rx_volume", "rx_balance", "sql_enable", "sql_enable_ex", "sql_level" }));
+            permissions.Add(createSetupPermission(CHANGE_FREQUENCY, "Change Frequency", "Change VFO, DDS, IF and frequency related settings.", new string[] { "dds", "if", "vfo", "vfo_swap_ex", "vfo_control", "subvfo", "0beat", "digl_offset write", "digu_offset write" }));
             permissions.Add(createSetupPermission(CHANGE_MODE, "Change Mode", "Change modulation mode.", new string[] { "modulation" }));
             permissions.Add(createSetupPermission(CHANGE_RX_FILTER, "Change RX Filter", "Change RX filter edges.", new string[] { "rx_filter_band" }));
             permissions.Add(createSetupPermission(CHANGE_RX_DSP, "Change RX DSP", "Change RX DSP features such as NR, NB, ANF, APF and AGC.", new string[] { "rx_nr_enable", "rx_nr_enable_ex", "rx_nb_enable", "rx_nb_enable_ex", "rx_snb_enable", "rx_anf_enable", "rx_bin_enable", "rx_apf_enable", "rx_nf_enable", "agc_auto_ex", "agc_mode", "agc_gain" }));
-            permissions.Add(createSetupPermission(CHANGE_RX_FRONTEND, "Change RX Frontend", "Change RX enable, channels, preamp, attenuation and frontend settings.", new string[] { "rx_enable", "rx_channel_enable", "rx_step_att_enabled_ex", "rx_step_att_ex", "rx_preamp_att_ex", "vfo_sync_ex", "fm_deviation_ex", "rx_ctun_ex" }));
+            permissions.Add(createSetupPermission(CHANGE_RX_FRONTEND, "Change RX Frontend", "Change RX enable, channels, preamp, attenuation and frontend settings.", new string[] { "rx_enable", "rx_channel_enable", "rx_step_att_enabled_ex", "rx_step_att_ex", "rx_preamp_att_ex", "vfo_sync_ex", "fm_deviation_ex", "rx_ctun_ex", "subrx" }));
             permissions.Add(createSetupPermission(CHANGE_DISPLAY, "Change Display", "Change display, IQ and spectrum stream settings.", new string[] { "display_zoom", "display_pan", "display_pixels", "display_delta_mode", "display_block_delta_mode", "display_accuracy_mode", "display_adaptive_blocks", "display_keyframe_interval", "display_quant_bits", "display_framerate", "display_fftsize", "display_window", "display_detector", "display_averaging", "display_average_time", "display_one_hz", "display_dbm_range", "iq_samplerate", "duplex" }));
             permissions.Add(createSetupPermission(TX_PTT, "TX PTT", "Control transmit PTT.", new string[] { "trx" }));
             permissions.Add(createSetupPermission(TX_TUNE, "TX Tune", "Control tune transmit mode.", new string[] { "tune" }));
             permissions.Add(createSetupPermission(TX_POWER, "TX Power", "Change drive and tune power.", new string[] { "drive", "tune_drive", "tune_twotone" }));
-            permissions.Add(createSetupPermission(TX_SETTINGS, "TX Settings", "Change TX filter, TX profile, split and PureSignal settings.", new string[] { "split_enable", "tx_filter_band_ex", "tx_profile_ex", "ps-a" }));
+            permissions.Add(createSetupPermission(TX_SETTINGS, "TX Settings", "Change TX filter, TX profile, split, mic gain, VFO TX and PureSignal settings.", new string[] { "split_enable", "tx_filter_band_ex", "tx_profile_ex", "mic_gain", "vfo_tx", "ps-a" }));
             permissions.Add(createSetupPermission(TX_AUDIO, "TX Audio", "Send TX audio streams.", new string[] { "binary_tx_audio" }));
-            permissions.Add(createSetupPermission(CW_KEYER, "CW Keyer", "Control CW keyer, terminal and macros.", new string[] { "cw_macros_speed", "cw_macros_delay", "cw_keyer_speed", "cw_macros_speed_up", "cw_macros_speed_down", "cw_macros", "cw_terminal", "cw_msg", "keyer", "cw_macros_stop", "callsign_send" }));
+            permissions.Add(createSetupPermission(CW_KEYER, "CW Keyer", "Control CW keyer, terminal and macros.", new string[] { "cw_macros_speed", "cw_macros_delay", "cw_keyer_speed", "cw_macros_speed_up", "cw_macros_speed_down", "cw_macros", "cw_terminal", "cw_msg", "keyer", "cw_macros_stop" }));
             permissions.Add(createSetupPermission(SPOTS, "Spots", "Create, delete and clear spots.", new string[] { "spot", "spot_delete", "spot_clear", "spot_simulate_click" }));
             permissions.Add(createSetupPermission(RADIO_POWER, "Radio Power", "Start and stop the radio.", new string[] { "start", "stop" }));
             permissions.Add(createSetupPermission(ADMIN, "Admin", "Run administrative TCI commands.", new string[] { "shutdown_ex", "run_cat_ex" }));
