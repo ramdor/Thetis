@@ -6486,12 +6486,6 @@ namespace Thetis
                     case "audio_codec":
                         handleAudioCodec(args);
                         break;
-                    case "audio_reconfigure_begin":
-                        handleAudioReconfigureBegin(args);
-                        break;
-                    case "audio_reconfigure_end":
-                        handleAudioReconfigureEnd(args);
-                        break;
                     case "iq_start":
                         handleIQStart(args, true);
                         break;
@@ -6880,6 +6874,12 @@ namespace Thetis
                             handleVfoTx(tmpArgs);
                             break;
                         }
+                    case "audio_reconfigure_begin":
+                        handleAudioReconfigureBegin();
+                        break;
+                    case "audio_reconfigure_end":
+                        handleAudioReconfigureEnd();
+                        break;
                 }
             }
         }
@@ -7012,12 +7012,12 @@ namespace Thetis
             }
         }
 
-        private void handleAudioReconfigureBegin(string[] args)
+        private void handleAudioReconfigureBegin()
         {
             beginAudioReconfiguration();
         }
 
-        private void handleAudioReconfigureEnd(string[] args)
+        private void handleAudioReconfigureEnd()
         {
             endAudioReconfiguration();
         }
@@ -8457,10 +8457,19 @@ namespace Thetis
 
             lock (m_objStreamLock)
             {
-                if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver) && m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
+                //if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver) && m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
+                if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver))
                 {
-                    noiseFloor = noiseFloorDbm;
-                    return true;
+                    if (m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
+                    {
+                        noiseFloor = noiseFloorDbm;
+                        return true;
+                    }
+                    else
+                    {
+                        noiseFloor = -999;
+                        return true; // display client should ignore this, and use last value etc
+                    }
                 }
             }
 

@@ -285,14 +285,14 @@
 
     <div class="cover-title-row">
       <h1 class="cover-title">TCI Thetis Protocol</h1>
-      <div class="cover-version">Ver. 1.11</div>
+      <div class="cover-version">Ver. 1.12</div>
     </div>
 
     <div class="series">
       Series: Thetis SDR TCI interoperability supplement referencing TCI Protocol Ver. 2.0
     </div>
 
-    <div class="cover-date">14 June 2026</div>
+    <div class="cover-date">30 June 2026</div>
 
     <div class="notice-block">
       <div class="notice-title">Reference Notice</div>
@@ -326,7 +326,7 @@
         </tr>
         <tr>
           <td><strong>Implementation basis</strong></td>
-          <td>Thetis TCI server behaviour as of 14 June 2026, based on the supplied current Thetis TCI source and the uploaded Expert Electronics TCI Protocol Ver. 2.0 text</td>
+          <td>Thetis TCI server behaviour as of 30 June 2026, based on the supplied current Thetis TCI source and the uploaded Expert Electronics TCI Protocol Ver. 2.0 text</td>
         </tr>
         <tr>
           <td><strong>Coverage</strong></td>
@@ -344,6 +344,11 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>1.12</td>
+          <td>Added <code>cw_pitch</code> notification. Added <code>ps-a</code> query coverage. Updated permission mapping for <code>vfo_control</code>, <code>subvfo</code>, <code>0beat</code>, <code>sql_enable_ex</code>, <code>subrx</code>, <code>mic_gain</code>, <code>vfo_tx</code>, and <code>ps-a</code>. Removed <code>callsign_send</code> from the <code>cw_keyer</code> permission mapping.</td>
+          <td>30 June 2026</td>
+        </tr>
         <tr>
           <td>1.11</td>
           <td>Added mic gain, extended squelch state, VFO TX selection, VFO control actions, sub receiver state/frequency, zero beat, WSS handshake timeout, and startup account details.</td>
@@ -571,7 +576,7 @@
     </div>
 
     <h3>2.3 Permissions, Roles, And Startup State</h3>
-    <p>Permissions are enforced only when authentication is enabled for the connection type being used. When authentication is disabled, the current parser accepts all implemented commands without permission checks.</p>
+    <p>Permissions are enforced only when authentication is enabled for the connection type being used. When authentication is disabled, the current Thetis implementation accepts all implemented commands without permission checks.</p>
 
     <table class="cmd-table">
       <thead>
@@ -594,7 +599,7 @@
         <tr><td><code>tx_ptt</code></td><td>Control transmit PTT.</td></tr>
         <tr><td><code>tx_tune</code></td><td>Control tune.</td></tr>
         <tr><td><code>tx_power</code></td><td>Change drive and tune drive.</td></tr>
-        <tr><td><code>tx_settings</code></td><td>Change split, TX filter, and TX profile settings.</td></tr>
+        <tr><td><code>tx_settings</code></td><td>Change split, TX filter, TX profile, mic gain, VFO TX, and PureSignal settings.</td></tr>
         <tr><td><code>tx_audio</code></td><td>Send binary TX audio frames.</td></tr>
         <tr><td><code>cw_keyer</code></td><td>Use CW macro, message, and keyer controls.</td></tr>
         <tr><td><code>spots</code></td><td>Add, delete, clear, or manage spots.</td></tr>
@@ -622,12 +627,12 @@
 
     <div class="box">
       <h3>Default Permission Configuration</h3>
-      <p class="small">The permissions class default configuration creates a <code>guest</code> user assigned to the Listener role with access code <code>123456</code>. Current Thetis startup also creates or updates an enabled <code>admin</code> user with access code <code>6789</code> and an enabled <code>rx_only</code> user with access code <code>1234</code>. Access codes are stored as PBKDF2 SHA256 hashes using 100000 iterations, 16 byte salts, and 32 byte hashes. A deployed system should replace the default access codes before exposing authenticated TCI access.</p>
+      <p class="small">The permissions class default configuration creates a disabled <code>guest</code> user assigned to the Listener role with access code <code>123456</code>. Access codes are stored as PBKDF2 SHA256 hashes using 100000 iterations, 16 byte salts, and 32 byte hashes. A deployed system should replace the default access codes before exposing authenticated TCI access.</p>
     </div>
 
     <div class="box">
       <h3>Startup State After Authentication</h3>
-      <p class="small">After successful authentication, or immediately when authentication is disabled, Thetis sends the normal initialisation and state snapshot. The current startup begins with <code>protocol</code>, <code>device</code>, <code>receive_only</code>, <code>trx_count</code>, <code>channels_count</code>, <code>vfo_limits</code>, <code>if_limits</code>, and <code>modulations_list</code>, then sends the current radio state, audio settings, display related defaults, RX/TX enable state, lock state, sensors related state, TX profile/calibration extensions, <code>mic_gain</code>, <code>sql_enable_ex</code>, <code>vfo_tx</code>, <code>subrx</code>, <code>subvfo</code>, and finally <code>ready;</code>.</p>
+      <p class="small">After successful authentication, or immediately when authentication is disabled, Thetis sends the normal initialisation and state snapshot. The current startup begins with <code>protocol</code>, <code>device</code>, <code>receive_only</code>, <code>trx_count</code>, <code>channels_count</code>, <code>vfo_limits</code>, <code>if_limits</code>, and <code>modulations_list</code>, then sends the current radio state, audio settings, display related defaults, RX/TX enable state, lock state, sensors related state, TX profile/calibration extensions, <code>cw_pitch</code>, <code>mic_gain</code>, <code>sql_enable_ex</code>, <code>vfo_tx</code>, <code>subrx</code>, <code>subvfo</code>, and finally <code>ready;</code>.</p>
     </div>
   </section>
 
@@ -687,7 +692,7 @@
         <tr>
           <td>RX_APF_ENABLE</td>
           <td>Bidirectional</td>
-          <td>Applies to RX1 main and RX2 main only, and only in CW use.</td>
+          <td>Queries or sets the Thetis APF enable state for RX1 or RX2 when the setup form is available.</td>
           <td><code>rx_apf_enable:1,true;</code></td>
         </tr>
       </tbody>
@@ -961,7 +966,6 @@
       <h3>Display Stream Notes</h3>
       <ul>
         <li>Thetis exposes display subscriptions for receiver indexes <code>0</code> and <code>1</code> only.</li>
-        <li>The current <code>display_start</code> handler requires exactly 11 arguments. The older 6-field form is no longer accepted by this implementation.</li>
         <li>Changing pixels, frame rate, FFT size, window, detector, averaging, average time, one hertz state, dBm range, zoom, pan, or display compression settings resets the saved prior frame, so the next update is sent as a raw compact display payload.</li>
         <li>When the display frequency span or left edge changes, Thetis resets display compression state and sends a raw compact display payload.</li>
         <li>All display compression controls apply to an existing active subscription. Start the display stream before setting compression controls.</li>
@@ -1028,7 +1032,7 @@
         <tr>
           <td><code>6..9</code></td>
           <td>Hz left</td>
-          <td>Little endian unsigned 32 bit value for the left edge of the display span</td>
+          <td>Little endian signed 32 bit value for the left edge of the display span, in Hz offset from the current receiver <code>dds</code> value. Absolute left edge = <code>dds + Hz left</code>.</td>
         </tr>
         <tr>
           <td><code>10..13</code></td>
@@ -1151,13 +1155,13 @@
         <tr>
           <td>AUDIO_RECONFIGURE_BEGIN</td>
           <td>Control</td>
-          <td>Begins a grouped audio reconfiguration. In the current parser this is handled by the colon form <code>audio_reconfigure_begin:;</code>; the bare <code>audio_reconfigure_begin;</code> form is not in the bare command switch. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
+          <td>Begins a grouped audio reconfiguration. Use <code>audio_reconfigure_begin:;</code>. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
           <td><code>audio_reconfigure_begin:;</code></td>
         </tr>
         <tr>
           <td>AUDIO_RECONFIGURE_END</td>
           <td>Control</td>
-          <td>Ends a grouped audio reconfiguration. In the current parser this is handled by the colon form <code>audio_reconfigure_end:;</code>; the bare <code>audio_reconfigure_end;</code> form is not in the bare command switch. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
+          <td>Ends a grouped audio reconfiguration. Use <code>audio_reconfigure_end:;</code>. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
           <td><code>audio_reconfigure_end:;</code></td>
         </tr>
         <tr>
@@ -1217,7 +1221,7 @@
         <tr>
           <td>AUDIO_OPUS_BITRATE</td>
           <td>Bidirectional</td>
-          <td>Sets Opus target bitrate in bits per second. Thetis works within <code>6000</code> through <code>510000</code> bps.</td>
+          <td>Sets Opus target bitrate in bits per second. Thetis works within <code>6000</code> through <code>512000</code> bps.</td>
           <td><code>audio_opus_bitrate:64000;</code></td>
         </tr>
         <tr>
@@ -1481,7 +1485,7 @@
       <thead>
         <tr>
           <th style="width:28%;">Official command</th>
-          <th>Thetis status in current source</th>
+          <th>Thetis status in current implementation</th>
         </tr>
       </thead>
       <tbody>
@@ -1548,6 +1552,12 @@
           <td>Notification</td>
           <td>Extended TX frequency notification. Fields are TX frequency in Hz, Thetis band token, RX2 enabled flag, and TX on VFO B flag.</td>
           <td><code>tx_frequency_ex:7070468,b40m,false,false;</code></td>
+        </tr>
+        <tr>
+          <td>CW_PITCH</td>
+          <td>Notification</td>
+          <td>Thetis CW pitch notification. The value is the current CW pitch in Hz. Thetis sends it during startup and when the CW pitch changes. There is no inbound client command for this message. Clients that draw their own CW filter or zero beat overlays should use this value when aligning overlays in CW modes.</td>
+          <td><code>cw_pitch:600;</code></td>
         </tr>
         <tr>
           <td>RX_NR_ENABLE_EX</td>
@@ -1834,7 +1844,7 @@
         <tr>
           <td>DUPLEX</td>
           <td>Send / reply</td>
-          <td>Thetis display duplex state. The implemented protocol command is <code>duplex</code>; there is no <code>display_duplex</code> command. Zero based receiver <code>0</code> can be queried with <code>duplex:0;</code> or set with <code>duplex:0,&lt;bool&gt;;</code>. Receiver <code>1</code> queries return <code>false</code> and set requests are ignored. When authentication is enabled, this command requires <code>change_display</code>.</td>
+          <td>Thetis display duplex state. Zero based receiver <code>0</code> can be queried with <code>duplex:0;</code> or set with <code>duplex:0,&lt;bool&gt;;</code>. Receiver <code>1</code> queries return <code>false</code> and set requests are ignored. When authentication is enabled, this command requires <code>change_display</code>.</td>
           <td><code>duplex:0,true;</code></td>
         </tr>
         <tr>
@@ -1845,9 +1855,9 @@
         </tr>
         <tr>
           <td>PS-A</td>
-          <td>Send / reply</td>
-          <td>Thetis PureSignal auto state. Set with <code>ps-a:&lt;bool&gt;;</code>. Although the handler contains a zero argument query branch, the current parser has no bare <code>ps-a;</code> case and <code>ps-a:;</code> is parsed as one empty argument, so there is no working client query command in the current source. The state is still sent by Thetis during initial state and when PureSignal auto changes. When authentication is enabled, this command requires <code>tx_settings</code>.</td>
-          <td><code>ps-a:true;</code></td>
+          <td>Send / reply / notification</td>
+          <td>Thetis PureSignal auto state. Query with <code>ps-a;</code>; Thetis replies with <code>ps-a:&lt;bool&gt;;</code>. Set with <code>ps-a:&lt;bool&gt;;</code>. Thetis also sends <code>ps-a:&lt;bool&gt;;</code> during initial state and when PureSignal auto changes. When authentication is enabled, this command requires <code>tx_settings</code>.</td>
+          <td><code>ps-a;</code><br><code>ps-a:true;</code></td>
         </tr>
         <tr>
           <td>SQL_ENABLE_EX</td>
@@ -1972,7 +1982,7 @@
         </tr>
         <tr>
           <td><code>change_frequency</code></td>
-          <td><code>dds</code>, <code>if</code>, <code>vfo</code>, <code>vfo_swap_ex</code>, set forms of <code>digl_offset</code> and <code>digu_offset</code></td>
+          <td><code>dds</code>, <code>if</code>, <code>vfo</code>, <code>vfo_swap_ex</code>, <code>vfo_control</code>, <code>subvfo</code>, <code>0beat</code>, set forms of <code>digl_offset</code> and <code>digu_offset</code></td>
           <td>For <code>digl_offset</code> and <code>digu_offset</code>, the permission depends on whether arguments are supplied.</td>
         </tr>
         <tr>
@@ -1997,7 +2007,7 @@
         </tr>
         <tr>
           <td><code>change_rx_audio</code></td>
-          <td><code>audio_samplerate</code>, <code>audio_codec</code>, <code>audio_reconfigure_begin</code>, <code>audio_reconfigure_end</code>, <code>audio_stream_sample_type</code>, <code>audio_stream_channels</code>, <code>audio_stream_samples</code>, all <code>audio_opus_*</code> controls, <code>tx_stream_audio_buffering</code>, <code>mute</code>, <code>volume</code>, <code>rx_mute</code>, <code>mon_volume</code>, <code>mon_enable</code>, <code>rx_volume</code>, <code>rx_balance</code>, <code>sql_enable</code>, <code>sql_level</code></td>
+          <td><code>audio_samplerate</code>, <code>audio_codec</code>, <code>audio_reconfigure_begin</code>, <code>audio_reconfigure_end</code>, <code>audio_stream_sample_type</code>, <code>audio_stream_channels</code>, <code>audio_stream_samples</code>, all <code>audio_opus_*</code> controls, <code>tx_stream_audio_buffering</code>, <code>mute</code>, <code>volume</code>, <code>rx_mute</code>, <code>mon_volume</code>, <code>mon_enable</code>, <code>rx_volume</code>, <code>rx_balance</code>, <code>sql_enable</code>, <code>sql_enable_ex</code>, <code>sql_level</code></td>
           <td>Audio format and audio control settings.</td>
         </tr>
         <tr>
@@ -2007,7 +2017,7 @@
         </tr>
         <tr>
           <td><code>change_rx_frontend</code></td>
-          <td><code>rx_enable</code>, <code>rx_channel_enable</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>vfo_sync_ex</code>, <code>fm_deviation_ex</code>, <code>rx_ctun_ex</code></td>
+          <td><code>rx_enable</code>, <code>rx_channel_enable</code>, <code>rx_step_att_enabled_ex</code>, <code>rx_step_att_ex</code>, <code>rx_preamp_att_ex</code>, <code>vfo_sync_ex</code>, <code>fm_deviation_ex</code>, <code>rx_ctun_ex</code>, <code>subrx</code></td>
           <td>RX frontend and receiver state controls.</td>
         </tr>
         <tr>
@@ -2027,8 +2037,8 @@
         </tr>
         <tr>
           <td><code>tx_settings</code></td>
-          <td><code>split_enable</code>, <code>tx_filter_band_ex</code>, <code>tx_profile_ex</code>, <code>ps-a</code></td>
-          <td>TX profile, split, filter, and PureSignal auto settings.</td>
+          <td><code>split_enable</code>, <code>tx_filter_band_ex</code>, <code>tx_profile_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>ps-a</code></td>
+          <td>TX profile, split, filter, mic gain, VFO TX, and PureSignal auto settings.</td>
         </tr>
         <tr>
           <td><code>tx_audio</code></td>
@@ -2037,8 +2047,8 @@
         </tr>
         <tr>
           <td><code>cw_keyer</code></td>
-          <td><code>cw_macros_speed</code>, <code>cw_macros_delay</code>, <code>cw_keyer_speed</code>, <code>cw_macros_speed_up</code>, <code>cw_macros_speed_down</code>, <code>cw_macros</code>, <code>cw_terminal</code>, <code>cw_msg</code>, <code>keyer</code>, <code>cw_macros_stop</code>, <code>callsign_send</code></td>
-          <td><code>callsign_send</code> is mapped even though the current server emits it as a notification.</td>
+          <td><code>cw_macros_speed</code>, <code>cw_macros_delay</code>, <code>cw_keyer_speed</code>, <code>cw_macros_speed_up</code>, <code>cw_macros_speed_down</code>, <code>cw_macros</code>, <code>cw_terminal</code>, <code>cw_msg</code>, <code>keyer</code>, <code>cw_macros_stop</code></td>
+          <td>CW keying and macro controls.</td>
         </tr>
         <tr>
           <td><code>spots</code></td>
@@ -2052,11 +2062,6 @@
         </tr>
       </tbody>
     </table>
-
-    <div class="box">
-      <h3>Parsed Commands Without A Current Permission Mapping</h3>
-      <p class="small">The current parser recognises <code>sql_enable_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code>, but the supplied current <code>clsTCIpermissions.cs</code> does not map them to a permission token. When authentication is enabled, client control/query forms for these commands are denied before reaching their handlers. Server initiated notifications for these states can still be sent as part of startup or state changes.</p>
-    </div>
 
     <h3>SPOT JSON Payload In Arg5</h3>
     <p>Thetis accepts a structured JSON payload in the fifth <code>spot</code> argument by appending <code>[json]</code> immediately before the JSON object. The parser treats the JSON block as part of the same <code>spot</code> command even when it contains commas, quotes, or nested braces.</p>
@@ -2153,7 +2158,7 @@
 
     <h3>5.2 Display Client Guidance</h3>
     <ul>
-      <li>Use the 11-field <code>display_start</code> form. The older 6-field form is not accepted by the current Thetis implementation.</li>
+      <li>Use the current 11-field <code>display_start</code> form documented in section 3.3.</li>
       <li>Detect display binary frames by the leading bytes <code>84,68,1</code>, which represent <code>TD</code> version <code>1</code>.</li>
       <li>Keep a decoded previous frame for each receiver because delta, block delta, and use previous frame payloads depend on it.</li>
       <li>Ignore delta payloads until a raw payload has been received for that receiver.</li>
@@ -2175,11 +2180,9 @@
 
     <h3>5.6 Implementation Notes</h3>
     <ul>
-      <li>The duplex command is <code>duplex</code>. There is no <code>display_duplex</code> text command.</li>
+      <li>The duplex command is <code>duplex</code>.</li>
       <li><code>duplex</code> requires <code>change_display</code>, <code>rx_snb_enable</code> requires <code>change_rx_dsp</code>, <code>tune_twotone</code> requires <code>tx_power</code>, and <code>ps-a</code> requires <code>tx_settings</code> when authentication is enabled.</li>
-      <li><code>sql_enable_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code> are parsed by the server but are not currently permission mapped.</li>
-      <li><code>audio_reconfigure_begin</code> and <code>audio_reconfigure_end</code> are handled in the colon command branch. Use <code>audio_reconfigure_begin:;</code> and <code>audio_reconfigure_end:;</code>.</li>
-      <li><code>ps-a</code> can be set, and is sent by the server, but the current parser does not expose a working client query form.</li>
+      <li><code>sql_enable_ex</code>, <code>mic_gain</code>, <code>vfo_tx</code>, <code>vfo_control</code>, <code>subrx</code>, <code>subvfo</code>, and <code>0beat</code> are permission mapped in the current Thetis implementation.</li>
       <li><code>vfo_tx</code> uses different client control and server notification forms: clients select a TX VFO with <code>vfo_tx:&lt;channel&gt;;</code>, while Thetis reports <code>vfo_tx:&lt;channel&gt;,&lt;enabled&gt;;</code>.</li>
       <li><code>subrx</code> and <code>subvfo</code> also use compact client control forms and wider server notification forms.</li>
     </ul>
@@ -2188,7 +2191,6 @@
     <ul>
       <li>Use the official Expert Electronics 2.0 document for generic command grammar and message sequencing, but prefer the validated ExpertSDR 3 v1.1.7 CW terminal forms when they differ from the PDF.</li>
       <li>Use this supplement for Thetis routing, AGC mapping, CW/CWX behaviour, sensor negotiation, compact <code>sr</code> reports, stream negotiation, VFO sync/swap/TX/sub receiver helpers, display compression, round trip <code>rt</code> echo checks, official command deviations, and Thetis extension messages.</li>
-      <li>Prefer <code>tx_frequency_ex</code> rather than the retired <code>tx_frequency_thetis</code> extension when you need Thetis band and TX routing context.</li>
       <li>Treat CW ownership as exclusive in Thetis.</li>
       <li>Do not assume that all TCI receivers in Thetis map directly to independent hardware or DSP chains.</li>
     </ul>
