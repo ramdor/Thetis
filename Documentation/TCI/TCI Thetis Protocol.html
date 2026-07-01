@@ -1155,14 +1155,14 @@
         <tr>
           <td>AUDIO_RECONFIGURE_BEGIN</td>
           <td>Control</td>
-          <td>Begins a grouped audio reconfiguration. Use <code>audio_reconfigure_begin:;</code>. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
-          <td><code>audio_reconfigure_begin:;</code></td>
+          <td>Begins a grouped audio reconfiguration. Use <code>audio_reconfigure_begin;</code>. Audio compression reset and queued TX audio clearing are deferred until the matching end command unwinds the reconfiguration depth to zero.</td>
+          <td><code>audio_reconfigure_begin;</code></td>
         </tr>
         <tr>
           <td>AUDIO_RECONFIGURE_END</td>
           <td>Control</td>
-          <td>Ends a grouped audio reconfiguration. Use <code>audio_reconfigure_end:;</code>. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
-          <td><code>audio_reconfigure_end:;</code></td>
+          <td>Ends a grouped audio reconfiguration. Use <code>audio_reconfigure_end;</code>. When the nesting depth returns to zero, any deferred RX audio reset and TX audio queue clear are applied.</td>
+          <td><code>audio_reconfigure_end;</code></td>
         </tr>
         <tr>
           <td>AUDIO_SAMPLERATE</td>
@@ -1271,8 +1271,8 @@
 
     <div class="box">
       <h3>Grouped Audio Reconfiguration</h3>
-      <p>Clients can wrap several audio negotiation commands between <code>audio_reconfigure_begin:;</code> and <code>audio_reconfigure_end:;</code>. This lets Thetis defer RX audio compression reset and queued TX audio clearing until all related settings have been applied.</p>
-      <p class="small"><code>audio_reconfigure_begin:;</code> can be nested. The deferred reset only occurs when matching <code>audio_reconfigure_end:;</code> calls reduce the depth back to zero.</p>
+      <p>Clients can wrap several audio negotiation commands between <code>audio_reconfigure_begin;</code> and <code>audio_reconfigure_end;</code>. This lets Thetis defer RX audio compression reset and queued TX audio clearing until all related settings have been applied.</p>
+      <p class="small"><code>audio_reconfigure_begin;</code> can be nested. The deferred reset only occurs when matching <code>audio_reconfigure_end;</code> calls reduce the depth back to zero.</p>
     </div>
 
     <div class="box">
@@ -1826,14 +1826,14 @@
         <tr>
           <td>AUDIO_RECONFIGURE_BEGIN</td>
           <td>Send</td>
-          <td>Begins grouped audio reconfiguration. Use <code>audio_reconfigure_begin:;</code>. Thetis defers audio reset and queued TX audio clearing while the reconfiguration depth is above zero.</td>
-          <td><code>audio_reconfigure_begin:;</code></td>
+          <td>Begins grouped audio reconfiguration. Use <code>audio_reconfigure_begin;</code>. Thetis defers audio reset and queued TX audio clearing while the reconfiguration depth is above zero.</td>
+          <td><code>audio_reconfigure_begin;</code></td>
         </tr>
         <tr>
           <td>AUDIO_RECONFIGURE_END</td>
           <td>Send</td>
-          <td>Ends grouped audio reconfiguration. Use <code>audio_reconfigure_end:;</code>. Deferred reset is applied when the nesting depth returns to zero.</td>
-          <td><code>audio_reconfigure_end:;</code></td>
+          <td>Ends grouped audio reconfiguration. Use <code>audio_reconfigure_end;</code>. Deferred reset is applied when the nesting depth returns to zero.</td>
+          <td><code>audio_reconfigure_end;</code></td>
         </tr>
         <tr>
           <td>RX_SNB_ENABLE</td>
