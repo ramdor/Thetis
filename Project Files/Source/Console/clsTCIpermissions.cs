@@ -820,10 +820,23 @@ namespace Thetis
 
                 List<TCIUser> users = new List<TCIUser>();
                 Dictionary<string, bool> userIds = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                List<SetupUser> setupUserList = new List<SetupUser>();
+                Dictionary<string, bool> submittedUserIds = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
                 if (setupUsers != null)
                 {
                     foreach (SetupUser setupUser in setupUsers)
+                    {
+                        if (setupUser == null) continue;
+                        setupUserList.Add(setupUser);
+                        string id = normaliseId(setupUser.Id);
+                        if (!string.IsNullOrEmpty(id) && !submittedUserIds.ContainsKey(id)) submittedUserIds[id] = true;
+                    }
+                }
+
+                if (setupUserList.Count > 0)
+                {
+                    foreach (SetupUser setupUser in setupUserList)
                     {
                         if (setupUser == null) continue;
                         string id = normaliseId(setupUser.Id);
@@ -864,7 +877,9 @@ namespace Thetis
                             foreach (TCIUser existingCandidate in _config.Users)
                             {
                                 if (existingCandidate == null) continue;
-                                if (string.Equals(existingCandidate.Id, id, StringComparison.OrdinalIgnoreCase)) continue;
+                                string existingCandidateId = normaliseId(existingCandidate.Id);
+                                if (!submittedUserIds.ContainsKey(existingCandidateId)) continue;
+                                if (string.Equals(existingCandidateId, id, StringComparison.OrdinalIgnoreCase)) continue;
                                 if (hasStoredAccessCode(existingCandidate) && verifyAccessCode(existingCandidate, setupUser.AccessCode))
                                 {
                                     errorMessage = "PIN " + user.DisplayName + " has the same number as PIN " + cleanDisplayName(existingCandidate.DisplayName, existingCandidate.Id) + ".";

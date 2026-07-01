@@ -8457,7 +8457,6 @@ namespace Thetis
 
             lock (m_objStreamLock)
             {
-                //if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver) && m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
                 if (m_spectrumProcessor != null && m_displaySubscriptions.ContainsKey(receiver))
                 {
                     if (m_spectrumProcessor.TryGetReceiverNoiseFloor(receiver, out noiseFloorDbm))
