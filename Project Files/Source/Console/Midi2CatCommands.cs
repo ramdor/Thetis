@@ -39,6 +39,10 @@ by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
 
+//////////////
+// 2023-26 : modified by MI0BOT for HL2 support. Please see any code commented with my callsign for details
+//////////////
+
 using Midi2Cat;
 using Midi2Cat.Data; 
 using System;
@@ -6376,6 +6380,34 @@ namespace Thetis
                 }
             }
             return CmdState.NoChange;
+        }
+        
+        public void CWXKey(int msg, MidiDevice device)  //MI0BOT: CW keying via MIDI
+        {
+            if (127 == msg)
+            {
+                NetworkIO.SetCWX(1);
+            }
+            else
+            {
+                NetworkIO.SetCWX(0);
+            }
+
+            return;
+        }
+
+        public void CWXPTT(int msg, MidiDevice device)  //MI0BOT: CW PTT via MIDI
+        {
+            if (127 == msg)
+            {
+                NetworkIO.SetCWXPTT(1);
+            }
+            else
+            {
+                NetworkIO.SetCWXPTT(0);
+            }
+
+            return;
         }
 
         //MW0LGE_21k9d

@@ -38,6 +38,10 @@ mw0lge@grange-lane.co.uk
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
 
+//////////////
+// 2023-26 : modified by MI0BOT for HL2 support. Please see any code commented with my callsign for details
+//////////////
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -301,6 +305,13 @@ namespace Thetis
                                     version += " p2app=" + radio.BetaVersion.ToString() + "";
                                 }
                                 break;
+
+                            case HPSDRHW.HermesLite:
+                                version = (radio.CodeVersion / 10.0f).ToString("F1");
+                                if (radio.BetaVersion > 0)
+                                    version += "." + radio.BetaVersion.ToString();
+                                break;
+
                             default:
                                 version = (radio.CodeVersion / 10.0f).ToString("F1");
                                 if(radio.Protocol == RadioDiscoveryRadioProtocol.P2 && radio.BetaVersion > 0)

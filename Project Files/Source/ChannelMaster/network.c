@@ -17,6 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+ 
+ //////////////
+// 2023-26 : modified by MI0BOT for HL2 support. Please see any code commented with my callsign for details
+//////////////
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -79,7 +83,7 @@ void DeInitMetisSockets() {
 	}
 }
 
-/* returns 0 on success, != 0 otherwise */
+/* returns 0 on success, != 0 otherwise */	// MI0BOT: Added remotePort to allow remote access to several HL2s by different port number
 PORT
 int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id, int p2hw_uses_differnt_ports)
 {
@@ -219,6 +223,8 @@ int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int
 		printf("destination addr: 0x%08x\n", DestIp);
 		fflush(stdout);
 
+		//RemotePort = remotePort;	// MI0BOT: Remote access over WAN using different port
+
 		memset(&MacAddr, 0xff, sizeof(MacAddr));
 		SendARP(DestIp, SrcIp, &MacAddr, &PhysAddrLen);
 		return 0;
@@ -342,21 +348,6 @@ int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int
 PORT
 int GetMetisIPAddr(void) {
 	return MetisAddr;
-}
-
-PORT
-void GetMACAddr(unsigned char addr_bytes[]) {
-	memcpy(addr_bytes, prn->discovery.MACAddr, 6);
-}
-
-PORT
-void GetCodeVersion(unsigned char addr_bytes[]) {
-	memcpy(addr_bytes, &(prn->discovery.fwCodeVersion), 1);
-}
-
-PORT
-void GetBoardID(char addr_bytes[]) {
-	memcpy(addr_bytes, &(prn->discovery.BoardType), 1);
 }
 
 int SendStart(void) {
@@ -1450,7 +1441,19 @@ int IOThreadStop() {
 	}
 	io_keep_running = 0;  // flag to stop
 
-	WaitForSingleObject(prn->hReadThreadMain, INFINITE);
+	if (HPSDRModel == HPSDRModel_HERMESLITE)
+	{
+		// MI0BOT: Thread locking up, so timeout added.
+		if (WAIT_TIMEOUT == WaitForSingleObject(prn->hReadThreadMain, 1000))
+		{
+			// Thread has stopped, so let everybody know
+			IOThreadRunning = 0;
+		}
+	}
+	else
+	{
+		WaitForSingleObject(prn->hReadThreadMain, INFINITE);
+	}
 
 	CloseHandle(prn->hReadThreadMain);
 	CloseHandle(prn->hReadThreadInitSem);

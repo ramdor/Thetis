@@ -25,6 +25,10 @@ by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
 
 */
 
+//////////////
+// 2023-26 : modified by MI0BOT for HL2 support. Please see any code commented with my callsign for details
+//////////////
+
 using Midi2Cat.Helpers;
 using System;
 using System.Collections.Generic;
@@ -530,6 +534,10 @@ namespace Midi2Cat.Data
         APFType_biquad = 315,
 
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
-        ToggleVFOWheel = 700
+        ToggleVFOWheel = 700,
+        [CatCommandAttribute("CWX Key ", ControlType.Button)]  //MI0BOT: Added ability to key via MIDI
+        CWXKey = 800,
+        [CatCommandAttribute("CWX PTT ", ControlType.Button)]  //MI0BOT: Added ability to PTT via MIDI
+        CWXPTT = 801
     }
 }// namespace

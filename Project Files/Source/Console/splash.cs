@@ -39,6 +39,10 @@
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
 
+//////////////
+// 2023-26 : modified by MI0BOT for HL2 support. Please see any code commented with my callsign for details
+//////////////
+
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -329,7 +333,7 @@ namespace Thetis
         // ************ Private methods ************
         private void setVersion(string version)
         {
-			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(16);
+			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(32);   // MI0BOT: HL2
         }
         private void setBackground(string splash_screen_folder)
         {
