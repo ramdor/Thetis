@@ -4503,6 +4503,10 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             this.btnCFCConfig = new System.Windows.Forms.ButtonTS();
+            this.ucSetupSplitter1 = new Thetis.ucSetupSplitter();
+            this.ucSetupSplitter2 = new Thetis.ucSetupSplitter();
+            this.ucSetupSplitter3 = new Thetis.ucSetupSplitter();
+            this.ucSetupSplitter4 = new Thetis.ucSetupSplitter();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -58240,6 +58244,10 @@
             // 
             this.scrollableControl3.AutoScroll = true;
             this.scrollableControl3.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.scrollableControl3.Controls.Add(this.ucSetupSplitter4);
+            this.scrollableControl3.Controls.Add(this.ucSetupSplitter3);
+            this.scrollableControl3.Controls.Add(this.ucSetupSplitter2);
+            this.scrollableControl3.Controls.Add(this.ucSetupSplitter1);
             this.scrollableControl3.Controls.Add(this.txtTCIServer_wssport);
             this.scrollableControl3.Controls.Add(this.txtTCIServer_wsport);
             this.scrollableControl3.Controls.Add(this.btnAuthPermissions);
@@ -58356,7 +58364,7 @@
             this.radTCITXchannel_both.AutoSize = true;
             this.radTCITXchannel_both.Checked = true;
             this.radTCITXchannel_both.Image = null;
-            this.radTCITXchannel_both.Location = new System.Drawing.Point(194, 468);
+            this.radTCITXchannel_both.Location = new System.Drawing.Point(194, 620);
             this.radTCITXchannel_both.Name = "radTCITXchannel_both";
             this.radTCITXchannel_both.Size = new System.Drawing.Size(47, 17);
             this.radTCITXchannel_both.TabIndex = 118;
@@ -58372,11 +58380,11 @@
             this.chkTCI_distant_dds.Checked = true;
             this.chkTCI_distant_dds.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTCI_distant_dds.Image = null;
-            this.chkTCI_distant_dds.Location = new System.Drawing.Point(227, 148);
+            this.chkTCI_distant_dds.Location = new System.Drawing.Point(6, 180);
             this.chkTCI_distant_dds.Name = "chkTCI_distant_dds";
-            this.chkTCI_distant_dds.Size = new System.Drawing.Size(85, 30);
+            this.chkTCI_distant_dds.Size = new System.Drawing.Size(143, 17);
             this.chkTCI_distant_dds.TabIndex = 118;
-            this.chkTCI_distant_dds.Text = "Distant DDS\r\nmoves VFO";
+            this.chkTCI_distant_dds.Text = "Distant DDS moves VFO\r\n";
             this.toolTip1.SetToolTip(this.chkTCI_distant_dds, "Disant DDS frequencies via TCI messages will\r\ncause the vfo to move if those DDS " +
         "frequencies are\r\noutside the hardware sample range for the recevier.\r\n\r\n(default" +
         " on)");
@@ -58387,7 +58395,7 @@
             // 
             this.radTCITXchannel_R.AutoSize = true;
             this.radTCITXchannel_R.Image = null;
-            this.radTCITXchannel_R.Location = new System.Drawing.Point(155, 468);
+            this.radTCITXchannel_R.Location = new System.Drawing.Point(155, 620);
             this.radTCITXchannel_R.Name = "radTCITXchannel_R";
             this.radTCITXchannel_R.Size = new System.Drawing.Size(33, 17);
             this.radTCITXchannel_R.TabIndex = 117;
@@ -58410,7 +58418,7 @@
             // 
             this.radTCITXchannel_L.AutoSize = true;
             this.radTCITXchannel_L.Image = null;
-            this.radTCITXchannel_L.Location = new System.Drawing.Point(118, 468);
+            this.radTCITXchannel_L.Location = new System.Drawing.Point(118, 620);
             this.radTCITXchannel_L.Name = "radTCITXchannel_L";
             this.radTCITXchannel_L.Size = new System.Drawing.Size(31, 17);
             this.radTCITXchannel_L.TabIndex = 116;
@@ -58422,7 +58430,7 @@
             // tbTCISpotBackPanel_alpha
             // 
             this.tbTCISpotBackPanel_alpha.AutoSize = false;
-            this.tbTCISpotBackPanel_alpha.Location = new System.Drawing.Point(150, 339);
+            this.tbTCISpotBackPanel_alpha.Location = new System.Drawing.Point(150, 415);
             this.tbTCISpotBackPanel_alpha.Maximum = 255;
             this.tbTCISpotBackPanel_alpha.Name = "tbTCISpotBackPanel_alpha";
             this.tbTCISpotBackPanel_alpha.Size = new System.Drawing.Size(66, 18);
@@ -58436,7 +58444,7 @@
             // 
             this.labelTS661.AutoSize = true;
             this.labelTS661.Image = null;
-            this.labelTS661.Location = new System.Drawing.Point(7, 470);
+            this.labelTS661.Location = new System.Drawing.Point(7, 622);
             this.labelTS661.Name = "labelTS661";
             this.labelTS661.Size = new System.Drawing.Size(97, 13);
             this.labelTS661.TabIndex = 115;
@@ -58458,7 +58466,7 @@
             this.chkTCISwapIQ.Checked = true;
             this.chkTCISwapIQ.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTCISwapIQ.Image = null;
-            this.chkTCISwapIQ.Location = new System.Drawing.Point(6, 431);
+            this.chkTCISwapIQ.Location = new System.Drawing.Point(6, 556);
             this.chkTCISwapIQ.Name = "chkTCISwapIQ";
             this.chkTCISwapIQ.Size = new System.Drawing.Size(67, 17);
             this.chkTCISwapIQ.TabIndex = 113;
@@ -58471,13 +58479,13 @@
             // 
             this.chkTCIAlwaysStreamIQ.AutoSize = true;
             this.chkTCIAlwaysStreamIQ.Image = null;
-            this.chkTCIAlwaysStreamIQ.Location = new System.Drawing.Point(6, 450);
+            this.chkTCIAlwaysStreamIQ.Location = new System.Drawing.Point(6, 575);
             this.chkTCIAlwaysStreamIQ.Name = "chkTCIAlwaysStreamIQ";
             this.chkTCIAlwaysStreamIQ.Size = new System.Drawing.Size(107, 17);
             this.chkTCIAlwaysStreamIQ.TabIndex = 114;
             this.chkTCIAlwaysStreamIQ.Text = "Always stream IQ";
-            this.toolTip1.SetToolTip(this.chkTCIAlwaysStreamIQ, "Some older software do ot sent IQ_START so IQ streaming will not start.\r\nUse this" +
-        " option to always stream it.");
+            this.toolTip1.SetToolTip(this.chkTCIAlwaysStreamIQ, "Some older 3rd party software does not send IQ_START so IQ streaming will not sta" +
+        "rt.\r\nUse this option to always stream it.");
             this.chkTCIAlwaysStreamIQ.UseVisualStyleBackColor = true;
             this.chkTCIAlwaysStreamIQ.CheckedChanged += new System.EventHandler(this.chkTCIAlwaysStreamIQ_CheckedChanged);
             // 
@@ -58485,7 +58493,7 @@
             // 
             this.labelTS662.AutoSize = true;
             this.labelTS662.Image = null;
-            this.labelTS662.Location = new System.Drawing.Point(24, 342);
+            this.labelTS662.Location = new System.Drawing.Point(24, 418);
             this.labelTS662.Name = "labelTS662";
             this.labelTS662.Size = new System.Drawing.Size(120, 13);
             this.labelTS662.TabIndex = 117;
@@ -58510,7 +58518,7 @@
             this.chkTCI_spot_flags.Checked = true;
             this.chkTCI_spot_flags.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTCI_spot_flags.Image = null;
-            this.chkTCI_spot_flags.Location = new System.Drawing.Point(300, 275);
+            this.chkTCI_spot_flags.Location = new System.Drawing.Point(300, 351);
             this.chkTCI_spot_flags.Name = "chkTCI_spot_flags";
             this.chkTCI_spot_flags.Size = new System.Drawing.Size(51, 17);
             this.chkTCI_spot_flags.TabIndex = 116;
@@ -58577,7 +58585,7 @@
             // 
             this.chkCopyRX2VFObToVFOa.AutoSize = true;
             this.chkCopyRX2VFObToVFOa.Image = null;
-            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(6, 190);
+            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(6, 222);
             this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
             this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
             this.chkCopyRX2VFObToVFOa.TabIndex = 18;
@@ -58604,7 +58612,7 @@
             // 
             this.chkUseRX1vfoaForRX2vfoa.AutoSize = true;
             this.chkUseRX1vfoaForRX2vfoa.Image = null;
-            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(6, 169);
+            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(6, 201);
             this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
             this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
             this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
@@ -58629,7 +58637,7 @@
             // 
             this.chkTCIsendInitialStateOnConnect.AutoSize = true;
             this.chkTCIsendInitialStateOnConnect.Image = null;
-            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(6, 148);
+            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(6, 160);
             this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
             this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
             this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
@@ -58646,7 +58654,7 @@
             this.panelTS13.Controls.Add(this.labelTS644);
             this.panelTS13.Controls.Add(this.radTCI_spot_force_cwl);
             this.panelTS13.Controls.Add(this.radTCI_spot_force_cwu);
-            this.panelTS13.Location = new System.Drawing.Point(6, 385);
+            this.panelTS13.Location = new System.Drawing.Point(6, 491);
             this.panelTS13.Name = "panelTS13";
             this.panelTS13.Size = new System.Drawing.Size(271, 40);
             this.panelTS13.TabIndex = 112;
@@ -58710,7 +58718,7 @@
             // 
             this.labelTS613.AutoSize = true;
             this.labelTS613.Image = null;
-            this.labelTS613.Location = new System.Drawing.Point(21, 296);
+            this.labelTS613.Location = new System.Drawing.Point(21, 372);
             this.labelTS613.Name = "labelTS613";
             this.labelTS613.Size = new System.Drawing.Size(63, 13);
             this.labelTS613.TabIndex = 21;
@@ -58720,10 +58728,11 @@
             // 
             this.chkOverrideSpotFlashColour.AutoSize = true;
             this.chkOverrideSpotFlashColour.Image = null;
-            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(292, 320);
+            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(122, 442);
             this.chkOverrideSpotFlashColour.Name = "chkOverrideSpotFlashColour";
-            this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(15, 14);
+            this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(124, 17);
             this.chkOverrideSpotFlashColour.TabIndex = 112;
+            this.chkOverrideSpotFlashColour.Text = "Flash with this colour";
             this.toolTip1.SetToolTip(this.chkOverrideSpotFlashColour, "Override the flash colour");
             this.chkOverrideSpotFlashColour.UseVisualStyleBackColor = true;
             this.chkOverrideSpotFlashColour.CheckedChanged += new System.EventHandler(this.chkOverrideSpotFlashColour_CheckedChanged);
@@ -58732,7 +58741,7 @@
             // 
             this.labelTS614.AutoSize = true;
             this.labelTS614.Image = null;
-            this.labelTS614.Location = new System.Drawing.Point(21, 319);
+            this.labelTS614.Location = new System.Drawing.Point(21, 395);
             this.labelTS614.Name = "labelTS614";
             this.labelTS614.Size = new System.Drawing.Size(74, 13);
             this.labelTS614.TabIndex = 22;
@@ -58743,7 +58752,7 @@
             this.clrbtnSpotFlashColour.Automatic = "Automatic";
             this.clrbtnSpotFlashColour.Color = System.Drawing.Color.Yellow;
             this.clrbtnSpotFlashColour.Image = null;
-            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(313, 315);
+            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(252, 437);
             this.clrbtnSpotFlashColour.MoreColors = "More Colors...";
             this.clrbtnSpotFlashColour.Name = "clrbtnSpotFlashColour";
             this.clrbtnSpotFlashColour.Selectable = true;
@@ -58759,7 +58768,7 @@
             0,
             0,
             0});
-            this.udMaxTCISpots.Location = new System.Drawing.Point(101, 294);
+            this.udMaxTCISpots.Location = new System.Drawing.Point(101, 370);
             this.udMaxTCISpots.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -58785,11 +58794,11 @@
             // 
             this.chkFlashNewTCISpots.AutoSize = true;
             this.chkFlashNewTCISpots.Image = null;
-            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(205, 319);
+            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(6, 441);
             this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
-            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(74, 17);
+            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(102, 17);
             this.chkFlashNewTCISpots.TabIndex = 103;
-            this.chkFlashNewTCISpots.Text = "Flash new";
+            this.chkFlashNewTCISpots.Text = "Flash new spots";
             this.toolTip1.SetToolTip(this.chkFlashNewTCISpots, "New spots will flash (newer than 2 mins)");
             this.chkFlashNewTCISpots.UseVisualStyleBackColor = true;
             this.chkFlashNewTCISpots.CheckedChanged += new System.EventHandler(this.chkFlashNewTCISpots_CheckedChanged);
@@ -58801,7 +58810,7 @@
             0,
             0,
             0});
-            this.udTCISpotLifetime.Location = new System.Drawing.Point(101, 317);
+            this.udTCISpotLifetime.Location = new System.Drawing.Point(101, 393);
             this.udTCISpotLifetime.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -58826,7 +58835,7 @@
             // btnClearTCISpotsSWL
             // 
             this.btnClearTCISpotsSWL.Image = null;
-            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(238, 275);
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(238, 351);
             this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
             this.btnClearTCISpotsSWL.Selectable = true;
             this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(56, 39);
@@ -58839,7 +58848,7 @@
             // 
             this.labelTS615.AutoSize = true;
             this.labelTS615.Image = null;
-            this.labelTS615.Location = new System.Drawing.Point(167, 319);
+            this.labelTS615.Location = new System.Drawing.Point(167, 395);
             this.labelTS615.Name = "labelTS615";
             this.labelTS615.Size = new System.Drawing.Size(28, 13);
             this.labelTS615.TabIndex = 25;
@@ -58850,7 +58859,7 @@
             this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
             this.chkForgetRX2VfoBVFOinfo.Enabled = false;
             this.chkForgetRX2VfoBVFOinfo.Image = null;
-            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(227, 190);
+            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(233, 222);
             this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";
             this.chkForgetRX2VfoBVFOinfo.Size = new System.Drawing.Size(110, 17);
             this.chkForgetRX2VfoBVFOinfo.TabIndex = 101;
@@ -58863,7 +58872,7 @@
             // 
             this.chkShowTCISpots.AutoSize = true;
             this.chkShowTCISpots.Image = null;
-            this.chkShowTCISpots.Location = new System.Drawing.Point(6, 275);
+            this.chkShowTCISpots.Location = new System.Drawing.Point(6, 351);
             this.chkShowTCISpots.Name = "chkShowTCISpots";
             this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
             this.chkShowTCISpots.TabIndex = 26;
@@ -58876,7 +58885,7 @@
             // 
             this.chkCWbecomesCWUabove10mhz.AutoSize = true;
             this.chkCWbecomesCWUabove10mhz.Image = null;
-            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(6, 231);
+            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(6, 263);
             this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
             this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
             this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
@@ -58889,7 +58898,7 @@
             // 
             this.chkSpotOwnCallAppearance.AutoSize = true;
             this.chkSpotOwnCallAppearance.Image = null;
-            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(6, 362);
+            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(6, 468);
             this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
             this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
             this.chkSpotOwnCallAppearance.TabIndex = 27;
@@ -58901,7 +58910,7 @@
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(168, 275);
+            this.btnClearTCISpots.Location = new System.Drawing.Point(168, 351);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
             this.btnClearTCISpots.Size = new System.Drawing.Size(68, 39);
@@ -58912,7 +58921,7 @@
             // 
             // txtOwnCallsign
             // 
-            this.txtOwnCallsign.Location = new System.Drawing.Point(168, 360);
+            this.txtOwnCallsign.Location = new System.Drawing.Point(168, 466);
             this.txtOwnCallsign.Name = "txtOwnCallsign";
             this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
             this.txtOwnCallsign.TabIndex = 28;
@@ -58925,7 +58934,7 @@
             this.chkEmulateExpertSDR3Protocol.Checked = true;
             this.chkEmulateExpertSDR3Protocol.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEmulateExpertSDR3Protocol.Image = null;
-            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(6, 252);
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(6, 284);
             this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
             this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
             this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
@@ -58939,7 +58948,7 @@
             this.clrbtnOwnCallApearance.Automatic = "Automatic";
             this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
             this.clrbtnOwnCallApearance.Image = null;
-            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(278, 359);
+            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(278, 465);
             this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
             this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
             this.clrbtnOwnCallApearance.Selectable = true;
@@ -58952,7 +58961,7 @@
             // 
             this.chkEmulateSunSDR2Pro.AutoSize = true;
             this.chkEmulateSunSDR2Pro.Image = null;
-            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(183, 252);
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(6, 307);
             this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
             this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
             this.chkEmulateSunSDR2Pro.TabIndex = 71;
@@ -58965,7 +58974,7 @@
             // 
             this.chkCWLUbecomesCW.AutoSize = true;
             this.chkCWLUbecomesCW.Image = null;
-            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(6, 211);
+            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(6, 243);
             this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
             this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
             this.chkCWLUbecomesCW.TabIndex = 68;
@@ -71304,6 +71313,49 @@
             this.btnCFCConfig.UseVisualStyleBackColor = true;
             this.btnCFCConfig.Click += new System.EventHandler(this.btnCFCConfig_Click);
             // 
+            // ucSetupSplitter1
+            // 
+            this.ucSetupSplitter1.BackColor = System.Drawing.Color.LightGray;
+            this.ucSetupSplitter1.BoldText = false;
+            this.ucSetupSplitter1.LineColor = System.Drawing.Color.DimGray;
+            this.ucSetupSplitter1.Location = new System.Drawing.Point(3, 139);
+            this.ucSetupSplitter1.Name = "ucSetupSplitter1";
+            this.ucSetupSplitter1.Size = new System.Drawing.Size(358, 13);
+            this.ucSetupSplitter1.TabIndex = 126;
+            // 
+            // ucSetupSplitter2
+            // 
+            this.ucSetupSplitter2.BackColor = System.Drawing.Color.LightGray;
+            this.ucSetupSplitter2.BoldText = false;
+            this.ucSetupSplitter2.LineColor = System.Drawing.Color.DimGray;
+            this.ucSetupSplitter2.Location = new System.Drawing.Point(3, 330);
+            this.ucSetupSplitter2.Name = "ucSetupSplitter2";
+            this.ucSetupSplitter2.SectionText = "SPOTS";
+            this.ucSetupSplitter2.Size = new System.Drawing.Size(358, 13);
+            this.ucSetupSplitter2.TabIndex = 127;
+            // 
+            // ucSetupSplitter3
+            // 
+            this.ucSetupSplitter3.BackColor = System.Drawing.Color.LightGray;
+            this.ucSetupSplitter3.BoldText = false;
+            this.ucSetupSplitter3.LineColor = System.Drawing.Color.DimGray;
+            this.ucSetupSplitter3.Location = new System.Drawing.Point(3, 537);
+            this.ucSetupSplitter3.Name = "ucSetupSplitter3";
+            this.ucSetupSplitter3.SectionText = "IQ DATA";
+            this.ucSetupSplitter3.Size = new System.Drawing.Size(358, 13);
+            this.ucSetupSplitter3.TabIndex = 128;
+            // 
+            // ucSetupSplitter4
+            // 
+            this.ucSetupSplitter4.BackColor = System.Drawing.Color.LightGray;
+            this.ucSetupSplitter4.BoldText = false;
+            this.ucSetupSplitter4.LineColor = System.Drawing.Color.DimGray;
+            this.ucSetupSplitter4.Location = new System.Drawing.Point(3, 598);
+            this.ucSetupSplitter4.Name = "ucSetupSplitter4";
+            this.ucSetupSplitter4.SectionText = "AUDIO";
+            this.ucSetupSplitter4.Size = new System.Drawing.Size(358, 13);
+            this.ucSetupSplitter4.TabIndex = 129;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -77209,5 +77261,9 @@
         private TextBoxTS txtTCIServer_wsport;
         private ButtonTS btnAuthPermissions;
         private LabelTS lblTCIServerHeader;
+        private ucSetupSplitter ucSetupSplitter1;
+        private ucSetupSplitter ucSetupSplitter2;
+        private ucSetupSplitter ucSetupSplitter4;
+        private ucSetupSplitter ucSetupSplitter3;
     }
 }

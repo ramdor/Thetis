@@ -858,6 +858,12 @@
     <Compile Include="ucRadioList.Designer.cs">
       <DependentUpon>ucRadioList.cs</DependentUpon>
     </Compile>
+    <Compile Include="ucSetupSplitter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucSetupSplitter.Designer.cs">
+      <DependentUpon>ucSetupSplitter.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucSignalSelect.cs">
       <SubType>UserControl</SubType>
     </Compile>
