@@ -528,7 +528,7 @@ namespace Thetis
 
         private bool _portAudioInitalising = false;
         private bool _portAudioIssue = false;
-        private bool _exitConsoleInDispose = true;
+        private bool _exitConsoleInDispose = true; 
 
         private bool _use_additional_sas = true; // use additional spectrum analysers
 
@@ -590,18 +590,22 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
-            //DialogResult drr = MessageBox.Show("This version will break stuff.\n" +
-            //    "There are lots of things that need testing/fixing. Ok to continue?",
-            //    "Eeeeeeek",
-            //    MessageBoxButtons.YesNo,
-            //    MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            DialogResult drr = MessageBox.Show("WARNING: This dev version is in a state of flux.\n" +
+                "Things are probably broken and may have undesired side effects. " +
+                "Continue entirely at your own risk.\n\n" +
+                "This github dev branch version is being used primarily as a code backup store for ongoing work.\n\n" +
+                "9th Sept'26 - Richie - MW0LGE\n\n" +
+                "Continue?",
+                "Eeeeeeek",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-            //if (drr == DialogResult.No)
-            //{
-            //    _exitConsoleInDispose = false;
-            //    Environment.Exit(1);
-            //    return;
-            //}
+            if (drr == DialogResult.No)
+            {
+                _exitConsoleInDispose = false;
+                Environment.Exit(1);
+                return;
+            }
 
             //run high, until we have completed, then set to configured value, see near end of function
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
@@ -1269,6 +1273,7 @@ namespace Thetis
             LogTool.Shutdown();
 
             if (_exitConsoleInDispose) // ignore this if the incorrect dlls are found. We wont have used anything
+                                       // or via other exit methods that do no require a clean up
                 ExitConsole();
 
             if (_frmShutDownForm != null)
