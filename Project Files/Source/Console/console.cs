@@ -1985,6 +1985,7 @@ namespace Thetis
             AndromedaSiolisten = new SIO5ListenerII(this);
             AriesSiolisten = new SIO6ListenerII(this);
             GanymedeSiolisten = new SIO7ListenerII(this);
+            CIVControllerInstance = new CIVController(this);
 
             EQForm = new EQForm(this);
 
@@ -5905,7 +5906,8 @@ namespace Thetis
 
             //MW0LGE_21d
             if (oldBand != RX1Band ||
-                oldFreq != VFOAFreq // or if the freq changes
+                oldFreq != VFOAFreq || // or if the freq changes
+                oldMode != RX1DSPMode // or if mode changes
                 )
                 SetBandChangeHanders?.Invoke(1, oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, oldFreq, VFOAFreq,
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value);
@@ -13278,6 +13280,7 @@ namespace Thetis
         public SIO5ListenerII AndromedaSiolisten { get; set; } = null;
         public SIO6ListenerII AriesSiolisten { get; set; } = null;
         public SIO7ListenerII GanymedeSiolisten { get; set; } = null;
+        public CIVController CIVControllerInstance { get; set; } = null;
 
         public bool HideTuneStep
         {
@@ -16828,15 +16831,38 @@ namespace Thetis
                 try
                 {
                     cat_enabled = value;
-                    if (Siolisten != null)  // if we've got a listener tell them about state change 
+                    if (cat_protocol == "Icom CI-V (IC-7100)")
                     {
-                        if (cat_enabled)
-                        {
-                            Siolisten.enableCAT();
-                        }
-                        else
-                        {
+                        if (Siolisten != null)
                             Siolisten.disableCAT();
+
+                        if (CIVControllerInstance != null)
+                        {
+                            if (cat_enabled)
+                            {
+                                CIVControllerInstance.Open("COM" + cat_port, cat_baud_rate, civ_address, civ_transceive, civ_sync_split, civ_sync_ptt);
+                            }
+                            else
+                            {
+                                CIVControllerInstance.Close();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+                            CIVControllerInstance.Close();
+
+                        if (Siolisten != null)  // if we've got a listener tell them about state change 
+                        {
+                            if (cat_enabled)
+                            {
+                                Siolisten.enableCAT();
+                            }
+                            else
+                            {
+                                Siolisten.disableCAT();
+                            }
                         }
                     }
                 }
@@ -16845,8 +16871,7 @@ namespace Thetis
                     MessageBox.Show("Error enabling CAT on COM" + cat_port + ".\n" +
                         "Please check CAT settings and try again.",
                         "CAT Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     if (!IsSetupFormNull) SetupForm.CATEnabled = false;
                 }
             }
@@ -17066,6 +17091,48 @@ namespace Thetis
                 }
             }
             get { return cat4_enabled; }
+        }
+
+        private string cat_protocol = "Kenwood TS-2000";
+        public string CATProtocol
+        {
+            get { return cat_protocol; }
+            set { cat_protocol = value; }
+        }
+
+        private byte civ_address = 0x88;
+        public byte CIVAddress
+        {
+            get { return civ_address; }
+            set { civ_address = value; }
+        }
+
+        private bool civ_transceive = true;
+        public bool CIVTransceive
+        {
+            get { return civ_transceive; }
+            set { civ_transceive = value; }
+        }
+
+        private bool civ_sync_split = true;
+        public bool CIVSyncSplit
+        {
+            get { return civ_sync_split; }
+            set { civ_sync_split = value; }
+        }
+
+        private bool civ_sync_ptt = false;
+        public bool CIVSyncPTT
+        {
+            get { return civ_sync_ptt; }
+            set
+            {
+                civ_sync_ptt = value;
+                if (CIVControllerInstance != null)
+                {
+                    CIVControllerInstance.SyncPTT = value;
+                }
+            }
         }
 
         private int cat_rig_type;
@@ -18303,6 +18370,15 @@ namespace Thetis
 
                 VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, old_vfoa_sub_freq_rounded, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
+            }
+
+            double old_tx_freq_rounded = Math.Round(_old_tx_freq, 6);
+            if (old_tx_freq_rounded != TXFreq || _old_tx_band != TXBand)
+            {
+                double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
+                TXFrequncyChangedHandlers?.Invoke(old_tx_freq_rounded, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
+                _old_tx_freq = TXFreq;
+                _old_tx_band = TXBand;
             }
         }
         public bool VFOASubInUse
@@ -19928,6 +20004,7 @@ namespace Thetis
                 if (!IsSetupFormNull)  //[2.10.3.5]MW0LGE added
                     Audio.ScopeTime = SetupForm.ScopeTime;
                 Display.SampleRateTX = value;
+
                 cmaster.SetXmtrChannelOutrate(0, value, cmaster.MONMixState);
 
                 switch (_rx1_dsp_mode)
@@ -27216,6 +27293,7 @@ namespace Thetis
                     chkPower.Checked = false;
                     return;
                 }
+
                 if (!IsSetupFormNull) SetupForm.BoardWarning = NetworkIO.BoardMismatch; //[2.10.3.9]MW0LGE show warning in setup if board does not match expected
 
                 //MW0LGE_21k9 these two moved after the audio start
@@ -32074,19 +32152,27 @@ namespace Thetis
                 return;
             }
 
-            double vfoa = VFOAFreq;
-
-            double freq;
             if (m_bVFOABandChangedByKeys)
             {
-                freq = VFOASubFreq;// double.Parse(txtVFOABand.Text); //MW0LGE //[2.10.3.6]freq changes.
-                m_dVFOASubFreq = freq;
                 m_bVFOABandChangedByKeys = false;
+                string text = txtVFOABand.Text.Trim();
+                double typedFreq;
+                string normalizedText = text.Replace(',', '.');
+                if (double.TryParse(normalizedText, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out typedFreq) ||
+                    double.TryParse(text, out typedFreq))
+                {
+                    VFOASubFreq = typedFreq;
+                    return;
+                }
+                else
+                {
+                    txtVFOABand.Text = VFOASubFreq.ToString("f6");
+                    return;
+                }
             }
-            else
-            {
-                freq = VFOASubFreq;
-            }
+
+            double vfoa = VFOAFreq;
+            double freq = VFOASubFreq;
 
             Display.VFOASub = (long)(freq * 1e6);
             if (chkTUN.Checked && chkVFOATX.Checked && chkVFOSplit.Checked)
@@ -32207,6 +32293,15 @@ namespace Thetis
                 }
                 last_tx_xvtr_index = tx_xvtr_index;
             }
+
+            double old_tx_freq_rounded = Math.Round(_old_tx_freq, 6);
+            if (old_tx_freq_rounded != TXFreq || _old_tx_band != TXBand)
+            {
+                double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
+                TXFrequncyChangedHandlers?.Invoke(old_tx_freq_rounded, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
+                _old_tx_freq = TXFreq;
+                _old_tx_band = TXBand;
+            }
         }
 
         private void txtVFOABand_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -32222,20 +32317,28 @@ namespace Thetis
             if ((KeyCode < 48 || KeyCode > 57) &&			// numeric keys
                 KeyCode != 8 &&								// backspace
                 !e.KeyChar.ToString().Equals(separator) &&	// decimal
+                !e.KeyChar.ToString().Equals(".") &&
+                !e.KeyChar.ToString().Equals(",") &&
                 KeyCode != 27)								// escape
             {
                 e.Handled = true;
             }
             else
             {
-                if (e.KeyChar.ToString().Equals(separator))
+                if (e.KeyChar.ToString().Equals(separator) || e.KeyChar == '.' || e.KeyChar == ',')
                 {
-                    e.Handled = (((TextBoxTS)sender).Text.IndexOf(separator) >= 0);
+                    e.Handled = (((TextBoxTS)sender).Text.IndexOf(separator) >= 0 || ((TextBoxTS)sender).Text.IndexOf('.') >= 0 || ((TextBoxTS)sender).Text.IndexOf(',') >= 0);
+                    if (!e.Handled) m_bVFOABandChangedByKeys = true;
                 }
                 else if (KeyCode == 27)
                 {
+                    m_bVFOABandChangedByKeys = false;
                     VFOASubFreq = saved_vfoa_sub_freq;
                     btnHidden.Focus();
+                }
+                else if ((KeyCode >= 48 && KeyCode <= 57) || KeyCode == 8)
+                {
+                    m_bVFOABandChangedByKeys = true;
                 }
             }
             if (e.KeyChar == (char)Keys.Enter)
@@ -35441,6 +35544,11 @@ namespace Thetis
                 vfob_dsp_mode = _rx1_dsp_mode;
                 vfob_filter = rx1_filter;
             }
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifyVFOAtoB();
+            }
         }
 
         public void CopyVFOBtoA()
@@ -35479,6 +35587,11 @@ namespace Thetis
                 }
 
                 comboAGC.Text = comboRX2AGC.Text;
+            }
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifyVFOBtoA();
             }
         }
 
@@ -35548,6 +35661,11 @@ namespace Thetis
                 string agc = comboAGC.Text;
                 comboAGC.Text = comboRX2AGC.Text;
                 comboRX2AGC.Text = agc;
+            }
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifyVFOSwap();
             }
         }
 
@@ -35621,6 +35739,15 @@ namespace Thetis
 
                 VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, old_vfoa_sub_freq_rounded, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
+            }
+
+            double old_tx_freq_rounded = Math.Round(_old_tx_freq, 6);
+            if (old_tx_freq_rounded != TXFreq || _old_tx_band != TXBand)
+            {
+                double centre_freq = RX2Enabled && VFOBTX ? CentreRX2Frequency : CentreFrequency;
+                TXFrequncyChangedHandlers?.Invoke(old_tx_freq_rounded, TXFreq, _old_tx_band, TXBand, RX2Enabled, VFOBTX, centre_freq);
+                _old_tx_freq = TXFreq;
+                _old_tx_band = TXBand;
             }
         }
         private bool _bOldVFOSplit = false; //MW0LGE_22a
@@ -36720,6 +36847,11 @@ namespace Thetis
 
                 if (current_click_tune_mode == ClickTuneMode.VFOB && !chkVFOSplit.Checked && !chkEnableMultiRX.Checked)
                     CurrentClickTuneMode = ClickTuneMode.VFOA;
+            }
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifySplitOrFullDuplexChanged();
             }
         }
 
@@ -39658,6 +39790,11 @@ namespace Thetis
             if (chkVFOATX.Checked) VFOTXChangedHandlers?.Invoke(false, m_bLastVFOATXsetting, true);  // MW0LGE_21k9c
 
             m_bLastVFOATXsetting = chkVFOATX.Checked; // MW0LGE_21k9d rc3
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifySplitOrFullDuplexChanged();
+            }
         }
 
         private bool psstate = false;
@@ -39768,6 +39905,11 @@ namespace Thetis
             if (chkVFOBTX.Checked) VFOTXChangedHandlers?.Invoke(true, m_bLastVFOBTXsetting, true); // MW0LGE_21k9c
 
             m_bLastVFOBTXsetting = chkVFOBTX.Checked; // MW0LGE_21k9d rc3
+
+            if (CIVControllerInstance != null && CIVControllerInstance.IsOpen)
+            {
+                CIVControllerInstance.NotifySplitOrFullDuplexChanged();
+            }
         }
 
         private void toolStripMenuItemRX1FilterConfigure_Click(object sender, EventArgs e)

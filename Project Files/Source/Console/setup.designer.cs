@@ -1,4 +1,4 @@
-﻿namespace Thetis
+namespace Thetis
 {
     using System.Windows.Forms;
 
@@ -3623,6 +3623,15 @@
             this.comboCATparity = new System.Windows.Forms.ComboBoxTS();
             this.comboCATdatabits = new System.Windows.Forms.ComboBoxTS();
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
+            this.grpCIVControl = new System.Windows.Forms.GroupBoxTS();
+            this.lblCAT1Protocol = new System.Windows.Forms.LabelTS();
+            this.comboCAT1Protocol = new System.Windows.Forms.ComboBoxTS();
+            this.lblCIVAddress = new System.Windows.Forms.LabelTS();
+            this.txtCIVAddress = new System.Windows.Forms.TextBoxTS();
+            this.chkCIVTransceive = new System.Windows.Forms.CheckBoxTS();
+            this.chkCIVSyncSplit = new System.Windows.Forms.CheckBoxTS();
+            this.chkCIVSyncPTT = new System.Windows.Forms.CheckBoxTS();
+            this.lblCIVInfo = new System.Windows.Forms.LabelTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
             this.tbTCISpotBackPanel_alpha = new System.Windows.Forms.TrackBarTS();
@@ -5400,6 +5409,7 @@
             this.grpCat3ControlBox.SuspendLayout();
             this.grpCat2ControlBox.SuspendLayout();
             this.grpCatControlBox.SuspendLayout();
+            this.grpCIVControl.SuspendLayout();
             this.tpTCITCPIPN1MM.SuspendLayout();
             this.grpTCIServer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbTCISpotBackPanel_alpha)).BeginInit();
@@ -57354,6 +57364,7 @@
             this.tpCATSerialPorts.Controls.Add(this.grpCat3ControlBox);
             this.tpCATSerialPorts.Controls.Add(this.grpCat2ControlBox);
             this.tpCATSerialPorts.Controls.Add(this.grpCatControlBox);
+            this.tpCATSerialPorts.Controls.Add(this.grpCIVControl);
             this.tpCATSerialPorts.Location = new System.Drawing.Point(4, 22);
             this.tpCATSerialPorts.Name = "tpCATSerialPorts";
             this.tpCATSerialPorts.Padding = new System.Windows.Forms.Padding(3);
@@ -58090,6 +58101,126 @@
             this.comboCATstopbits.Size = new System.Drawing.Size(72, 21);
             this.comboCATstopbits.TabIndex = 94;
             this.comboCATstopbits.SelectedIndexChanged += new System.EventHandler(this.comboCATstopbits_SelectedIndexChanged);
+            // 
+            // grpCIVControl
+            // 
+            this.grpCIVControl.Controls.Add(this.lblCAT1Protocol);
+            this.grpCIVControl.Controls.Add(this.comboCAT1Protocol);
+            this.grpCIVControl.Controls.Add(this.lblCIVAddress);
+            this.grpCIVControl.Controls.Add(this.txtCIVAddress);
+            this.grpCIVControl.Controls.Add(this.chkCIVTransceive);
+            this.grpCIVControl.Controls.Add(this.chkCIVSyncSplit);
+            this.grpCIVControl.Controls.Add(this.chkCIVSyncPTT);
+            this.grpCIVControl.Controls.Add(this.lblCIVInfo);
+            this.grpCIVControl.Location = new System.Drawing.Point(180, 289);
+            this.grpCIVControl.Name = "grpCIVControl";
+            this.grpCIVControl.Size = new System.Drawing.Size(520, 114);
+            this.grpCIVControl.TabIndex = 110;
+            this.grpCIVControl.TabStop = false;
+            this.grpCIVControl.Text = "CAT1 Protocol & CI-V Settings";
+            // 
+            // lblCAT1Protocol
+            // 
+            this.lblCAT1Protocol.AutoSize = true;
+            this.lblCAT1Protocol.Image = null;
+            this.lblCAT1Protocol.Location = new System.Drawing.Point(12, 22);
+            this.lblCAT1Protocol.Name = "lblCAT1Protocol";
+            this.lblCAT1Protocol.Size = new System.Drawing.Size(49, 13);
+            this.lblCAT1Protocol.TabIndex = 0;
+            this.lblCAT1Protocol.Text = "Protocol:";
+            // 
+            // comboCAT1Protocol
+            // 
+            this.comboCAT1Protocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCAT1Protocol.DropDownWidth = 140;
+            this.comboCAT1Protocol.Items.AddRange(new object[] {
+            "Kenwood TS-2000",
+            "Icom CI-V (IC-7100)"});
+            this.comboCAT1Protocol.Location = new System.Drawing.Point(67, 19);
+            this.comboCAT1Protocol.Name = "comboCAT1Protocol";
+            this.comboCAT1Protocol.Size = new System.Drawing.Size(145, 21);
+            this.comboCAT1Protocol.TabIndex = 1;
+            this.comboCAT1Protocol.SelectedIndexChanged += new System.EventHandler(this.comboCAT1Protocol_SelectedIndexChanged);
+            this.toolTip1.SetToolTip(this.comboCAT1Protocol, "Selects the rig-control protocol spoken on CAT1." + System.Environment.NewLine +
+                "\"Kenwood TS-2000\": classic Kenwood/Elecraft style ASCII commands." + System.Environment.NewLine +
+                "\"Icom CI-V (IC-7100)\": Icom CI-V bus - frequency, mode, split, VFO" + System.Environment.NewLine +
+                "tracking and PTT for the IC-7100 (and other CI-V rigs).");
+            // 
+            // lblCIVAddress
+            // 
+            this.lblCIVAddress.AutoSize = true;
+            this.lblCIVAddress.Image = null;
+            this.lblCIVAddress.Location = new System.Drawing.Point(240, 22);
+            this.lblCIVAddress.Name = "lblCIVAddress";
+            this.lblCIVAddress.Size = new System.Drawing.Size(89, 13);
+            this.lblCIVAddress.TabIndex = 2;
+            this.lblCIVAddress.Text = "CI-V Addr (Hex):";
+            // 
+            // txtCIVAddress
+            // 
+            this.txtCIVAddress.Location = new System.Drawing.Point(335, 19);
+            this.txtCIVAddress.MaxLength = 2;
+            this.txtCIVAddress.Name = "txtCIVAddress";
+            this.txtCIVAddress.Size = new System.Drawing.Size(35, 20);
+            this.txtCIVAddress.TabIndex = 3;
+            this.txtCIVAddress.Text = "88";
+            this.txtCIVAddress.TextChanged += new System.EventHandler(this.txtCIVAddress_TextChanged);
+            this.toolTip1.SetToolTip(this.txtCIVAddress, "The rig's CI-V bus address in hex (two digits)." + System.Environment.NewLine +
+                "IC-7100 factory default is 0x88; the PC (host) address is 0xE0." + System.Environment.NewLine +
+                "Must match the CI-V address set in the rig's own menu." + System.Environment.NewLine +
+                "Takes effect immediately on the next command sent.");
+            // 
+            // chkCIVTransceive
+            // 
+            this.chkCIVTransceive.Checked = true;
+            this.chkCIVTransceive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCIVTransceive.Image = null;
+            this.chkCIVTransceive.Location = new System.Drawing.Point(12, 45);
+            this.chkCIVTransceive.Name = "chkCIVTransceive";
+            this.chkCIVTransceive.Size = new System.Drawing.Size(210, 22);
+            this.chkCIVTransceive.TabIndex = 4;
+            this.chkCIVTransceive.Text = "CI-V Transceive (Auto-Report)";
+            this.toolTip1.SetToolTip(this.chkCIVTransceive, "When checked, IC-7100 VFO dial tuning and mode/filter changes are reported live to Thetis.");
+            this.chkCIVTransceive.CheckedChanged += new System.EventHandler(this.chkCIVTransceive_CheckedChanged);
+            // 
+            // chkCIVSyncSplit
+            // 
+            this.chkCIVSyncSplit.Checked = true;
+            this.chkCIVSyncSplit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCIVSyncSplit.Image = null;
+            this.chkCIVSyncSplit.Location = new System.Drawing.Point(240, 45);
+            this.chkCIVSyncSplit.Name = "chkCIVSyncSplit";
+            this.chkCIVSyncSplit.Size = new System.Drawing.Size(230, 22);
+            this.chkCIVSyncSplit.TabIndex = 5;
+            this.chkCIVSyncSplit.Text = "Sync Split / Full Duplex (VFO B)";
+            this.chkCIVSyncSplit.CheckedChanged += new System.EventHandler(this.chkCIVSyncSplit_CheckedChanged);
+            this.toolTip1.SetToolTip(this.chkCIVSyncSplit, "When checked, Thetis SPLIT, RX2 and VFO A/B changes are mirrored" + System.Environment.NewLine +
+                "to the IC-7100 over CI-V (split on/off, VFO B frequency, A/B swap)." + System.Environment.NewLine +
+                "When unchecked, the rig's own split/VFO state is left alone.");
+            // 
+            // chkCIVSyncPTT
+            // 
+            this.chkCIVSyncPTT.Checked = false;
+            this.chkCIVSyncPTT.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkCIVSyncPTT.Image = null;
+            this.chkCIVSyncPTT.Location = new System.Drawing.Point(12, 68);
+            this.chkCIVSyncPTT.Name = "chkCIVSyncPTT";
+            this.chkCIVSyncPTT.Size = new System.Drawing.Size(210, 22);
+            this.chkCIVSyncPTT.TabIndex = 6;
+            this.chkCIVSyncPTT.Text = "Follow IC-7100 Mic PTT";
+            this.toolTip1.SetToolTip(this.chkCIVSyncPTT, "When checked, keying the IC-7100 microphone engages Thetis MOX. When unchecked, Thetis is PTT master with zero polling overhead.");
+            this.chkCIVSyncPTT.CheckedChanged += new System.EventHandler(this.chkCIVSyncPTT_CheckedChanged);
+            // 
+            // lblCIVInfo
+            // 
+            this.lblCIVInfo.AutoSize = true;
+            this.lblCIVInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblCIVInfo.Image = null;
+            this.lblCIVInfo.Location = new System.Drawing.Point(12, 94);
+            this.lblCIVInfo.Name = "lblCIVInfo";
+            this.lblCIVInfo.Size = new System.Drawing.Size(490, 13);
+            this.lblCIVInfo.TabIndex = 7;
+            this.lblCIVInfo.Text = "CI-V IC-7100: Addr 0x88, Host 0xE0. VFO dial & mode tracking work with or without PTT sync.";
             // 
             // tpTCITCPIPN1MM
             // 
@@ -72357,6 +72488,8 @@
             this.grpCat2ControlBox.PerformLayout();
             this.grpCatControlBox.ResumeLayout(false);
             this.grpCatControlBox.PerformLayout();
+            this.grpCIVControl.ResumeLayout(false);
+            this.grpCIVControl.PerformLayout();
             this.tpTCITCPIPN1MM.ResumeLayout(false);
             this.grpTCIServer.ResumeLayout(false);
             this.grpTCIServer.PerformLayout();
@@ -72785,6 +72918,15 @@
         private ComboBoxTS comboCATparity;
         private ComboBoxTS comboCATdatabits;
         private ComboBoxTS comboCATstopbits;
+        private GroupBoxTS grpCIVControl;
+        private LabelTS lblCAT1Protocol;
+        private ComboBoxTS comboCAT1Protocol;
+        private LabelTS lblCIVAddress;
+        private TextBoxTS txtCIVAddress;
+        private CheckBoxTS chkCIVTransceive;
+        private CheckBoxTS chkCIVSyncSplit;
+        private CheckBoxTS chkCIVSyncPTT;
+        private LabelTS lblCIVInfo;
         private GroupBoxTS grpKBCW;
         private LabelTS lblKBCWDot;
         private LabelTS lblKBCWDash;

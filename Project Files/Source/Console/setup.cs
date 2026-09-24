@@ -353,6 +353,9 @@ namespace Thetis
             comboCATdatabits.Text = "8";
             comboCATstopbits.Text = "1";
             comboCATRigType.Text = "TS-2000";
+            if (comboCAT1Protocol.Text == "") comboCAT1Protocol.Text = "Kenwood TS-2000";
+            if (txtCIVAddress.Text == "") txtCIVAddress.Text = "88";
+            updateCIVControlsEnabled();
             comboFocusMasterMode.Text = "None";
 
             if (comboCAT2Port.Items.Count > 0) comboCAT2Port.SelectedIndex = 0;
@@ -4153,6 +4156,76 @@ namespace Thetis
             set
             {
                 if (chkCATEnable != null) chkCATEnable.Checked = value;
+            }
+        }
+
+        public string CATProtocol
+        {
+            get
+            {
+                if (comboCAT1Protocol != null) return comboCAT1Protocol.Text;
+                return "Kenwood TS-2000";
+            }
+            set
+            {
+                if (comboCAT1Protocol != null) comboCAT1Protocol.Text = value;
+            }
+        }
+
+        public byte CIVAddress
+        {
+            get
+            {
+                if (txtCIVAddress != null)
+                {
+                    byte a;
+                    if (byte.TryParse(txtCIVAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out a))
+                        return a;
+                }
+                return 0x88;
+            }
+            set
+            {
+                if (txtCIVAddress != null) txtCIVAddress.Text = value.ToString("X2");
+            }
+        }
+
+        public bool CIVTransceive
+        {
+            get
+            {
+                if (chkCIVTransceive != null) return chkCIVTransceive.Checked;
+                return true;
+            }
+            set
+            {
+                if (chkCIVTransceive != null) chkCIVTransceive.Checked = value;
+            }
+        }
+
+        public bool CIVSyncSplit
+        {
+            get
+            {
+                if (chkCIVSyncSplit != null) return chkCIVSyncSplit.Checked;
+                return true;
+            }
+            set
+            {
+                if (chkCIVSyncSplit != null) chkCIVSyncSplit.Checked = value;
+            }
+        }
+
+        public bool CIVSyncPTT
+        {
+            get
+            {
+                if (chkCIVSyncPTT != null) return chkCIVSyncPTT.Checked;
+                return false;
+            }
+            set
+            {
+                if (chkCIVSyncPTT != null) chkCIVSyncPTT.Checked = value;
             }
         }
 
@@ -10225,6 +10298,12 @@ namespace Thetis
             console.CATParity = SDRSerialPort.StringToParity((string)comboCATparity.SelectedItem);
             console.CATDataBits = int.Parse((string)comboCATdatabits.SelectedItem);
             console.CATStopBits = SDRSerialPort.StringToStopBits((string)comboCATstopbits.SelectedItem);
+            console.CATProtocol = comboCAT1Protocol.Text;
+            if (byte.TryParse(txtCIVAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out byte civAddr))
+                console.CIVAddress = civAddr;
+            console.CIVTransceive = chkCIVTransceive.Checked;
+            console.CIVSyncSplit = chkCIVSyncSplit.Checked;
+            console.CIVSyncPTT = chkCIVSyncPTT.Checked;
             console.CATEnabled = chkCATEnable.Checked;
 
             // make sure the enabled state of bitbang ptt is correct 
@@ -10291,7 +10370,12 @@ namespace Thetis
             port = "COM" + console.CATPTTBitBangPort.ToString();
             if (comboCATPTTPort.Items.Contains(port))
                 comboCATPTTPort.Text = port;
-
+            comboCAT1Protocol.Text = console.CATProtocol;
+            txtCIVAddress.Text = console.CIVAddress.ToString("X2");
+            chkCIVTransceive.Checked = console.CIVTransceive;
+            chkCIVSyncSplit.Checked = console.CIVSyncSplit;
+            chkCIVSyncPTT.Checked = console.CIVSyncPTT;
+            updateCIVControlsEnabled();
         }
 
 
@@ -10673,6 +10757,21 @@ namespace Thetis
             comboCATparity.Enabled = enable;
             comboCATdatabits.Enabled = enable;
             comboCATstopbits.Enabled = enable;
+            if (comboCAT1Protocol != null) comboCAT1Protocol.Enabled = true;
+            updateCIVControlsEnabled();
+        }
+
+        private void updateCIVControlsEnabled()
+        {
+            bool isCIV = comboCAT1Protocol != null && comboCAT1Protocol.Text == "Icom CI-V (IC-7100)";
+            if (lblCIVAddress != null) lblCIVAddress.Enabled = isCIV;
+            // the address is read live when each CI-V frame is built (and TextChanged pushes
+            // it into the running controller), so it stays editable even while CAT1 is open
+            if (txtCIVAddress != null) txtCIVAddress.Enabled = isCIV;
+            if (chkCIVTransceive != null) chkCIVTransceive.Enabled = isCIV;
+            if (chkCIVSyncSplit != null) chkCIVSyncSplit.Enabled = isCIV;
+            if (chkCIVSyncPTT != null) chkCIVSyncPTT.Enabled = isCIV;
+            if (lblCIVInfo != null) lblCIVInfo.Enabled = isCIV;
         }
 
         private void enableCAT2_HardwareFields(bool enable)
@@ -11049,6 +11148,79 @@ namespace Thetis
                 default:
                     console.CATRigType = 19;
                     break;
+            }
+        }
+
+        private void comboCAT1Protocol_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.CATProtocol = comboCAT1Protocol.Text;
+            updateCIVControlsEnabled();
+
+            // If CAT is currently running, cycle CAT enable to cleanly rebind port to selected protocol
+            if (chkCATEnable.Checked)
+            {
+                console.CATEnabled = false;
+                try
+                {
+                    console.CATEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    console.CATEnabled = false;
+                    chkCATEnable.Checked = false;
+                    MessageBox.Show("Could not re-initialize CAT control for selected protocol. Exception:\n\n" + ex.Message,
+                        "Error Initializing CAT control", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+        }
+
+        private void txtCIVAddress_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            string text = txtCIVAddress.Text.Trim();
+            if (byte.TryParse(text, System.Globalization.NumberStyles.HexNumber, null, out byte addr))
+            {
+                console.CIVAddress = addr;
+                if (console.CIVControllerInstance != null)
+                {
+                    console.CIVControllerInstance.RadioAddress = addr;
+                }
+            }
+        }
+
+        private void chkCIVTransceive_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.CIVTransceive = chkCIVTransceive.Checked;
+            if (console.CIVControllerInstance != null)
+            {
+                console.CIVControllerInstance.TransceiveEnabled = chkCIVTransceive.Checked;
+            }
+        }
+
+        private void chkCIVSyncSplit_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.CIVSyncSplit = chkCIVSyncSplit.Checked;
+            if (console.CIVControllerInstance != null)
+            {
+                console.CIVControllerInstance.SyncSplitAndFullDuplex = chkCIVSyncSplit.Checked;
+            }
+        }
+
+        private void chkCIVSyncPTT_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.CIVSyncPTT = chkCIVSyncPTT.Checked;
+            if (console.CIVControllerInstance != null)
+            {
+                console.CIVControllerInstance.SyncPTT = chkCIVSyncPTT.Checked;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -416,6 +416,7 @@
     <Reference Include="WindowsFirewallHelper, Version=2.2.0.85, Culture=neutral, PublicKeyToken=310fd07b25df79b3, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsFirewallHelper.2.2.0.86\lib\net40\WindowsFirewallHelper.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmpView.cs">
@@ -439,6 +440,8 @@
     <Compile Include="BasicAudio.cs" />
     <Compile Include="CAT\TCPIPcatServer.cs" />
     <Compile Include="CAT\UsbBCDCable.cs" />
+    <Compile Include="CAT\CIVProtocol.cs" />
+    <Compile Include="CAT\CIVController.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="clsAudioRecordPlayback.cs" />
     <Compile Include="clsBandStackManager.cs" />
