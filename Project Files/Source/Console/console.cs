@@ -12893,6 +12893,9 @@ namespace Thetis
                     ptbVACTXGain.Value = value;
                     ptbVACTXGain_Scroll(this, EventArgs.Empty);
                 }
+                // [linked MIC/VAC1 TX gain] when the Processed TX Output route is enabled
+                // the panel MIC slider mirrors this value (clamped to the slider's own range)
+                SyncMicToVacGain();
             }
         }
 
@@ -19928,7 +19931,20 @@ namespace Thetis
                 if (!IsSetupFormNull)  //[2.10.3.5]MW0LGE added
                     Audio.ScopeTime = SetupForm.ScopeTime;
                 Display.SampleRateTX = value;
+
+                bool restartProcessedTx = Audio.ProcessedTXOutputEnabled && PowerOn;
+                if (restartProcessedTx)
+                {
+                    ivac.SetIVACrun(cmaster.CMrcvr, 0);
+                    ivac.StopAudioIVAC(cmaster.CMrcvr);
+                }
+
                 cmaster.SetXmtrChannelOutrate(0, value, cmaster.MONMixState);
+
+                if (restartProcessedTx)
+                {
+                    Audio.EnableProcessedTXOutput(true);
+                }
 
                 switch (_rx1_dsp_mode)
                 {
@@ -27216,6 +27232,8 @@ namespace Thetis
                     chkPower.Checked = false;
                     return;
                 }
+
+                if (Audio.ProcessedTXOutputEnabled) Audio.EnableProcessedTXOutput(true);
                 if (!IsSetupFormNull) SetupForm.BoardWarning = NetworkIO.BoardMismatch; //[2.10.3.9]MW0LGE show warning in setup if board does not match expected
 
                 //MW0LGE_21k9 these two moved after the audio start
@@ -27457,6 +27475,12 @@ namespace Thetis
                 {
                     ivac.SetIVACrun(1, 0);
                     ivac.StopAudioIVAC(1);
+                }
+
+                if (Audio.ProcessedTXOutputEnabled)
+                {
+                    ivac.SetIVACrun(cmaster.CMrcvr, 0);
+                    ivac.StopAudioIVAC(cmaster.CMrcvr);
                 }
 
                 if (multimeter_thread != null)
@@ -28752,6 +28776,48 @@ namespace Thetis
             SetGeneralSetting(0, OtherButtonId.MIC, chkMicMute.Checked);
         }
 
+        // [linked MIC/VAC1 TX gain] one guard for both directions; re-entrancy is
+        // possible because the Setup numeric fires ValueChanged when written
+        private bool micVacSync = false;
+
+        public bool LinkMicToVacGain
+        {
+            get { return link_mic_to_vac_gain; }
+            set { link_mic_to_vac_gain = value; if (value) SyncMicToVacGain(); }
+        }
+        private bool link_mic_to_vac_gain = true;
+
+        // VAC1 TX gain -> MIC slider (called when the Processed TX Output is the active
+        // transmit-audio route, i.e. the rig is being driven from Thetis' TX audio)
+        public void SyncMicToVacGain()
+        {
+            if (!link_mic_to_vac_gain || micVacSync || !Audio.ProcessedTXOutputEnabled || IsSetupFormNull || ptbMic == null) return;
+            micVacSync = true;
+            try
+            {
+                int v = SetupForm.VACTXGain;
+                if (v == -99) return;   // gain control not ready (SetupForm sentinel)
+                if (v < mic_gain_min) v = mic_gain_min;
+                if (v > mic_gain_max) v = mic_gain_max;
+                if (ptbMic.Value != v) ptbMic.Value = v;   // no Scroll event fires from a Value write
+                lblMicVal.Text = v.ToString() + " dB";
+                setAudioMicGain((double)v);                 // keep MicPreamp truthful for when VAC1 goes off
+            }
+            finally { micVacSync = false; }
+        }
+
+        // MIC slider -> VAC1 TX gain (only while the Processed TX Output route is enabled)
+        private void SyncVacGainToMic(int micValue)
+        {
+            if (!link_mic_to_vac_gain || micVacSync || !Audio.ProcessedTXOutputEnabled || IsSetupFormNull) return;
+            micVacSync = true;
+            try
+            {
+                SetupForm.VACTXGain = micValue;             // ud setter fires ValueChanged -> Audio.VACPreamp
+            }
+            finally { micVacSync = false; }
+        }
+
         private void ptbMic_Scroll(object sender, System.EventArgs e)
         {
             ptbMic.Minimum = mic_gain_min;
@@ -28774,6 +28840,8 @@ namespace Thetis
 
                 //[2.10.3.9]MW0LGE fix for when mic is disabled
                 setAudioMicGain((double)ptbMic.Value);
+                // [linked MIC/VAC1 TX gain] with the TX output route on, this slider IS the VAC1 TX gain
+                SyncVacGainToMic(ptbMic.Value);
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -30907,6 +30975,8 @@ namespace Thetis
                 }
 
             }
+            // [linked MIC/VAC1 TX gain] re-show the slider for the new audio source
+            SyncMicToVacGain();
         }
 
         private void chkVAC2_CheckedChanged(object sender, EventArgs e)

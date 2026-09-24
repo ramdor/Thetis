@@ -1804,6 +1804,7 @@
             this.comboAudioInput3 = new System.Windows.Forms.ComboBoxTS();
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
+            this.tpProcessedTXOutput = new System.Windows.Forms.TabPage();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
             this.chkVAC2WillMute = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
@@ -27527,6 +27528,7 @@
             // 
             this.tcAudio.Controls.Add(this.tpVAC);
             this.tcAudio.Controls.Add(this.tpVAC2);
+            this.tcAudio.Controls.Add(this.tpProcessedTXOutput);
             this.tcAudio.Controls.Add(this.tpAudioOptions);
             this.tcAudio.Controls.Add(this.tpAdvancedAudio);
             this.tcAudio.Controls.Add(this.tpCMAsio);
@@ -27536,6 +27538,16 @@
             this.tcAudio.SelectedIndex = 0;
             this.tcAudio.Size = new System.Drawing.Size(720, 430);
             this.tcAudio.TabIndex = 35;
+            // 
+            // tpProcessedTXOutput
+            // 
+            this.tpProcessedTXOutput.Location = new System.Drawing.Point(4, 22);
+            this.tpProcessedTXOutput.Name = "tpProcessedTXOutput";
+            this.tpProcessedTXOutput.Padding = new System.Windows.Forms.Padding(3);
+            this.tpProcessedTXOutput.Size = new System.Drawing.Size(712, 404);
+            this.tpProcessedTXOutput.TabIndex = 6;
+            this.tpProcessedTXOutput.Text = "TX Output";
+            this.tpProcessedTXOutput.UseVisualStyleBackColor = true;
             // 
             // tpVAC
             // 
@@ -72802,6 +72814,7 @@
         private ComboBoxTS comboKBXITDown;
         private ButtonTS btnCATTest;
         private TabControl tcAudio;
+        private TabPage tpProcessedTXOutput;
         public ComboBoxTS comboAudioSampleRate1;
         private GroupBoxTS grpAudioSampleRate1;
         private GroupBoxTS grpAudioDetails2;

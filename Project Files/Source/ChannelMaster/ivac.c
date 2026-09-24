@@ -30,6 +30,34 @@ warren@wpratt.com
 
 __declspec (align (16))			IVAC pvac[MAX_EXT_VACS];
 
+static void apply_ivac_mixer_mode(IVAC a)
+{
+	if (a->output_only)
+	{
+		// Source 0 = RX audio, source 1 = TX monitor.  Only TX monitor is active
+		// in dedicated processed-TX mode, preventing any wait on RX timing.
+		SetAAudioMixStates(a->mixer, 0, 3, 2);
+		SetAAudioMixWhat(a->mixer, 0, 0, 0);
+		SetAAudioMixWhat(a->mixer, 0, 1, 1);
+	}
+	else
+	{
+		// Restore legacy VAC behaviour exactly: both sources remain active and
+		// MOX/MON determine which source(s) are actually mixed.
+		SetAAudioMixStates(a->mixer, 0, 3, 3);
+		if (!a->mox)
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 1);
+			SetAAudioMixWhat(a->mixer, 0, 1, a->mon ? 1 : 0);
+		}
+		else
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 0);
+			SetAAudioMixWhat(a->mixer, 0, 1, a->mon ? 1 : 0);
+		}
+	}
+}
+
 void create_resamps(IVAC a)
 {
 	a->INringsize = (int)(2 * a->mic_rate * a->in_latency);		// FROM VAC to mic
@@ -78,6 +106,7 @@ PORT void create_ivac(
 	a->run = run;
 	a->iq_type = iq_type;
 	a->stereo = stereo;
+	a->output_only = 0;
 	a->iq_rate = iq_rate;
 	a->mic_rate = mic_rate;
 	a->audio_rate = audio_rate;
@@ -104,6 +133,7 @@ PORT void create_ivac(
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
 		a->mixer = create_aamix(-1, id, a->audio_size, a->audio_size, 2, 3, 3, 1.0, 4096, inrate, a->audio_rate, xvac_out, 0.0, 0.0, 0.0, 0.0);
+		apply_ivac_mixer_mode(a);
 	}
 	pvac[id] = a;
 }
@@ -130,6 +160,13 @@ PORT void xvacIN(int id, double* in_tx, int bypass)
 {
 	// used for MIC data to TX
 	IVAC a = pvac[id];
+	if (a->output_only)
+	{
+		// This IVAC instance has no input stream.  Leave the shared TX input
+		// buffer untouched: pipe.c also calls xvacIN() for the inactive VAC,
+		// after the selected microphone source has already populated in_tx.
+		return;
+	}
 	if (a->run)
 		if (!a->vac_bypass && !bypass)
 		{
@@ -208,6 +245,11 @@ int CallbackIVAC(const void* input,
 	(void)statusFlags;
 
 	if (!a->run) return 0;
+	if (a->output_only)
+	{
+		xrmatchOUT(a->rmatchOUT, out_ptr);
+		return 0;
+	}
 									  // [2.10.3.12]MW0LGE handle mono input devices
 	if (a->inParam.channelCount == 1) // mono, dupe to stereo, some mics are mono only, and we require 2 channels
 	{
@@ -266,51 +308,52 @@ PORT int StartAudioIVAC(int id)
 {
 	IVAC a = pvac[id];
 	int error = 0;
-	int in_dev = Pa_HostApiDeviceIndexToDeviceIndex(a->host_api_index, a->input_dev_index);
+	int in_dev = paNoDevice;
 	int out_dev = Pa_HostApiDeviceIndexToDeviceIndex(a->host_api_index, a->output_dev_index);
 
 	int inChannelCount = 2;
 	int outChannelCount = 2;
 
 	const PaDeviceInfo* inDevInfo = NULL;
-	if (in_dev > 0) 
+	if (!a->output_only)
 	{
-		inDevInfo = Pa_GetDeviceInfo(in_dev);
-		if (inDevInfo != NULL) 
+		in_dev = Pa_HostApiDeviceIndexToDeviceIndex(a->host_api_index, a->input_dev_index);
+		if (in_dev >= 0)
 		{
-			inChannelCount = inDevInfo->maxInputChannels;
-			if (inChannelCount > 2) inChannelCount = 2;
+			inDevInfo = Pa_GetDeviceInfo(in_dev);
+			if (inDevInfo != NULL)
+			{
+				inChannelCount = inDevInfo->maxInputChannels;
+				if (inChannelCount > 2) inChannelCount = 2;
+			}
 		}
+		if (inDevInfo == NULL || inChannelCount < 1) return -1;
 	}
+
 	const PaDeviceInfo* outDevInfo = NULL;
-	if (out_dev > 0) 
-	{
+	if (out_dev >= 0)
 		outDevInfo = Pa_GetDeviceInfo(out_dev);
+	if (outDevInfo == NULL) return -1;
 
-		//[2.10.3.12]MW0LGE ignore handling of output channels for now, always use 2
-		//if (outDevInfo != NULL)
-		//{
-		//	outChannelCount = outDevInfo->maxOutputChannels;
-		//	if (outChannelCount > 2) outChannelCount = 2;
-		//}
+	if (!a->output_only)
+	{
+		a->inParam.device = in_dev;
+		a->inParam.channelCount = inChannelCount;
+		a->inParam.suggestedLatency = a->pa_in_latency;
+		a->inParam.sampleFormat = paFloat64;
+		a->inParam.hostApiSpecificStreamInfo = NULL;
 	}
 
-	a->inParam.device = in_dev;
-	a->inParam.channelCount = inChannelCount;
-	a->inParam.suggestedLatency = a->pa_in_latency;
-	a->inParam.sampleFormat = paFloat64;
-	a->inParam.hostApiSpecificStreamInfo = NULL;
-	
 	a->outParam.device = out_dev;
 	a->outParam.channelCount = outChannelCount;
 	a->outParam.suggestedLatency = a->pa_out_latency;
 	a->outParam.sampleFormat = paFloat64;
 	a->outParam.hostApiSpecificStreamInfo = NULL;
 
-	//attempt to get exlusive if wasapi devices
+	// Attempt exclusive mode for WASAPI devices.
 	PaWasapiStreamInfo wasapiInputInfo;
 	PaWasapiStreamInfo wasapiOutputInfo;
-	if (inDevInfo != NULL && a->exclusive_in)
+	if (!a->output_only && inDevInfo != NULL && a->exclusive_in)
 	{
 		const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(inDevInfo->hostApi);
 		if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
@@ -320,7 +363,6 @@ PORT int StartAudioIVAC(int id)
 			wasapiInputInfo.version = 1;
 			wasapiInputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
 			wasapiInputInfo.threadPriority = eThreadPriorityProAudio;
-
 			a->inParam.hostApiSpecificStreamInfo = &wasapiInputInfo;
 		}
 	}
@@ -334,26 +376,32 @@ PORT int StartAudioIVAC(int id)
 			wasapiOutputInfo.version = 1;
 			wasapiOutputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
 			wasapiOutputInfo.threadPriority = eThreadPriorityProAudio;
-
 			a->outParam.hostApiSpecificStreamInfo = &wasapiOutputInfo;
 		}
 	}
-	//
 
 	error = Pa_OpenStream(&a->Stream,
-		&a->inParam,
+		a->output_only ? NULL : &a->inParam,
 		&a->outParam,
 		a->vac_rate,
-		a->vac_size,	//paFramesPerBufferUnspecified, 
+		a->vac_size,
 		0,
 		CallbackIVAC,
-		(void*)id);	// pass 'id' as userData
+		(void*)id);
 
-	if (error != 0) return -1;
+	if (error != 0)
+	{
+		a->Stream = NULL;
+		return -1;
+	}
 
 	error = Pa_StartStream(a->Stream);
-
-	if (error != 0) return -1;
+	if (error != 0)
+	{
+		Pa_CloseStream(a->Stream);
+		a->Stream = NULL;
+		return -1;
+	}
 
 	return 1;
 }
@@ -367,7 +415,11 @@ PORT void SetIVACRBReset(int id, int reset)
 PORT void StopAudioIVAC(int id)
 {
 	IVAC a = pvac[id];
-	Pa_CloseStream(a->Stream);
+	if (a->Stream != NULL)
+	{
+		Pa_CloseStream(a->Stream);
+		a->Stream = NULL;
+	}
 }
 
 PORT void SetIVACrun(int id, int run)
@@ -432,6 +484,7 @@ PORT void SetIVACaudioRate(int id, int rate)
 		{
 			int inrate[2] = { a->audio_rate, a->txmon_rate };
 			a->mixer = create_aamix(-1, id, a->audio_size, a->audio_size, 2, 3, 3, 1.0, 4096, inrate, a->audio_rate, xvac_out, 0.0, 0.0, 0.0, 0.0);
+		apply_ivac_mixer_mode(a);
 		}
 		destroy_resamps(a);
 		create_resamps(a);
@@ -450,6 +503,7 @@ void SetIVACtxmonRate(int id, int rate)
 		{
 			int inrate[2] = { a->audio_rate, a->txmon_rate };
 			a->mixer = create_aamix(-1, id, a->audio_size, a->audio_size, 2, 3, 3, 1.0, 4096, inrate, a->audio_rate, xvac_out, 0.0, 0.0, 0.0, 0.0);
+		apply_ivac_mixer_mode(a);
 		}
 	}
 	LeaveCriticalSection(&a->cs_ivac);
@@ -507,6 +561,7 @@ PORT void SetIVACaudioSize(int id, int size)
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
 		a->mixer = create_aamix(-1, id, a->audio_size, a->audio_size, 2, 3, 3, 1.0, 4096, inrate, a->audio_rate, xvac_out, 0.0, 0.0, 0.0, 0.0);
+		apply_ivac_mixer_mode(a);
 	}
 	destroy_resamps(a);
 	create_resamps(a);
@@ -599,64 +654,21 @@ PORT void SetIVACmox(int id, int mox)
 {
 	IVAC a = pvac[id];
 	a->mox = mox;
-	if (!a->mox)
-	{
-		if (a->mon)
-		{
-			SetAAudioMixWhat(a->mixer, 0, 1, 1);
-			SetAAudioMixWhat(a->mixer, 0, 0, 1);
-		}
-		else
-		{
-			SetAAudioMixWhat(a->mixer, 0, 1, 0);
-			SetAAudioMixWhat(a->mixer, 0, 0, 1);
-		}
-	}
-	else
-	{
-		if (a->mon)
-		{
-			SetAAudioMixWhat(a->mixer, 0, 0, 0);
-			SetAAudioMixWhat(a->mixer, 0, 1, 1);
-		}
-		else
-		{
-			SetAAudioMixWhat(a->mixer, 0, 0, 0);
-			SetAAudioMixWhat(a->mixer, 0, 1, 0);
-		}
-	}
+	apply_ivac_mixer_mode(a);
 }
 
 PORT void SetIVACmon(int id, int mon)
 {
 	IVAC a = pvac[id];
 	a->mon = mon;
-	if (!a->mox)
-	{
-		if (a->mon)
-		{
-			SetAAudioMixWhat(a->mixer, 0, 1, 1);
-			SetAAudioMixWhat(a->mixer, 0, 0, 1);
-		}
-		else
-		{
-			SetAAudioMixWhat(a->mixer, 0, 1, 0);
-			SetAAudioMixWhat(a->mixer, 0, 0, 1);
-		}
-	}
-	else
-	{
-		if (a->mon)
-		{
-			SetAAudioMixWhat(a->mixer, 0, 0, 0);
-			SetAAudioMixWhat(a->mixer, 0, 1, 1);
-		}
-		else
-		{
-			SetAAudioMixWhat(a->mixer, 0, 0, 0);
-			SetAAudioMixWhat(a->mixer, 0, 1, 0);
-		}
-	}
+	apply_ivac_mixer_mode(a);
+}
+
+PORT void SetIVACOutputOnly(int id, int output_only)
+{
+	IVAC a = pvac[id];
+	a->output_only = output_only ? 1 : 0;
+	apply_ivac_mixer_mode(a);
 }
 
 PORT void SetIVACmonVol(int id, double vol)

@@ -38,6 +38,7 @@ typedef struct _ivac
 	int run;
 	int iq_type;					// 1 if using raw IQ data; 0 for audio
 	int stereo;						// 1 for stereo; 0 otherwise
+	int output_only;				// 1 for dedicated audio output with no PortAudio input
 	int iq_rate;
 	int mic_rate;
 	int audio_rate;
@@ -129,5 +130,6 @@ extern __declspec(dllexport) void SetIVACmicSize (int id, int size);
 extern __declspec(dllexport) void SetIVACmicRate (int id, int rate);
 extern __declspec(dllexport) void SetIVACaudioRate (int id, int rate);
 extern __declspec(dllexport) void SetIVACaudioSize (int id, int size);
+extern __declspec(dllexport) void SetIVACOutputOnly (int id, int output_only);
 
 #endif

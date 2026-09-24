@@ -862,6 +862,82 @@ namespace Thetis
             set { output_dev3 = value; }
         }
 
+        // Independent post-DSP transmit-audio output.  The native IVAC ID is
+        // the first one not associated with a software receiver, leaving VAC1
+        // and VAC2 completely unchanged and available for their normal roles.
+        private static bool processed_tx_output_enabled = false;
+        private static int processed_tx_output_host = 0;
+        private static int processed_tx_output_device = 0;
+        private static int processed_tx_output_sample_rate = 48000;
+        private static int processed_tx_output_block_size = 512;
+        private static int processed_tx_output_exclusive = 0;
+        private static double processed_tx_output_gain_db = 0.0;
+
+        private static int ProcessedTXOutputIVACID
+        {
+            get { return cmaster.CMrcvr; }
+        }
+
+        public static bool ProcessedTXOutputEnabled
+        {
+            get { return processed_tx_output_enabled; }
+            set
+            {
+                if (processed_tx_output_enabled == value) return;
+                processed_tx_output_enabled = value;
+                if (console != null && console.PowerOn)
+                    EnableProcessedTXOutput(value);
+            }
+        }
+
+        public static int ProcessedTXOutputHost
+        {
+            get { return processed_tx_output_host; }
+            set { processed_tx_output_host = value; }
+        }
+
+        public static int ProcessedTXOutputDevice
+        {
+            get { return processed_tx_output_device; }
+            set { processed_tx_output_device = value; }
+        }
+
+        public static int ProcessedTXOutputSampleRate
+        {
+            get { return processed_tx_output_sample_rate; }
+            set { processed_tx_output_sample_rate = value; }
+        }
+
+        public static int ProcessedTXOutputBlockSize
+        {
+            get { return processed_tx_output_block_size; }
+            set { processed_tx_output_block_size = value; }
+        }
+
+        public static int ProcessedTXOutputExclusive
+        {
+            get { return processed_tx_output_exclusive; }
+            set { processed_tx_output_exclusive = value; }
+        }
+
+        public static double ProcessedTXOutputGainDB
+        {
+            get { return processed_tx_output_gain_db; }
+            set
+            {
+                processed_tx_output_gain_db = value;
+                if (processed_tx_output_enabled && console != null && console.PowerOn)
+                    ivac.SetIVACmonVol(ProcessedTXOutputIVACID, Math.Pow(10.0, processed_tx_output_gain_db / 20.0));
+            }
+        }
+
+        public static void RestartProcessedTXOutput()
+        {
+            if (!processed_tx_output_enabled || console == null || !console.PowerOn) return;
+            EnableProcessedTXOutput(false);
+            EnableProcessedTXOutput(true);
+        }
+
         private static int latency2 = 120;
         public static int Latency2
         {
@@ -1742,6 +1818,86 @@ namespace Thetis
                 ivac.StopAudioIVAC(1);                
             }
             Thread.Sleep(10); // prevent ASIO exception
+        }
+
+        public static void EnableProcessedTXOutput(bool enable)
+        {
+            int id = ProcessedTXOutputIVACID;
+
+            if (enable)
+            {
+                if (console == null || !console.PowerOn) return;
+
+                int global_output = (int)PA19.PA_HostApiDeviceIndexToDeviceIndex(
+                    processed_tx_output_host, processed_tx_output_device);
+                if (global_output < 0)
+                {
+                    MessageBox.Show("The selected Processed TX Output device is unavailable.\n" +
+                        "Please select another output device on Setup -> Audio -> TX Output.",
+                        "Processed TX Output Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                PA19.PaDeviceInfo out_info = PA19.PA_GetDeviceInfo(global_output);
+                if (out_info.maxOutputChannels < 2)
+                {
+                    MessageBox.Show("The selected Processed TX Output device does not expose two output channels.\n" +
+                        "Please select another output device on Setup -> Audio -> TX Output.",
+                        "Processed TX Output Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                double out_latency = out_info.defaultLowOutputLatency;
+
+                // Stop any running stream first so PortAudio callback does not execute while resamplers are recreated
+                ivac.SetIVACrun(id, 0);
+                ivac.StopAudioIVAC(id);
+                ivac.SetIVACOutputOnly(id, 1);
+                ivac.SetIVACiqType(id, 0);
+                ivac.SetIVACstereo(id, 0);
+                ivac.SetIVAChostAPIindex(id, processed_tx_output_host);
+                ivac.SetIVACoutputDEVindex(id, processed_tx_output_device);
+                ivac.SetIVACnumChannels(id, 2);
+                ivac.SetIVACvacRate(id, processed_tx_output_sample_rate);
+                ivac.SetIVACvacSize(id, processed_tx_output_block_size);
+                ivac.SetIVACOutLatency(id, out_latency, 0);
+                ivac.SetIVACPAOutLatency(id, out_latency, 1);
+                ivac.SetIVACExclusiveIn(id, 0);
+                ivac.SetIVACExclusiveOut(id, processed_tx_output_exclusive);
+                ivac.SetIVACmonVol(id, Math.Pow(10.0, processed_tx_output_gain_db / 20.0));
+
+                try
+                {
+                    bool started = ivac.StartAudioIVAC(id) == 1;
+                    if (started && console.PowerOn)
+                        ivac.SetIVACrun(id, 1);
+                    else
+                        MessageBox.Show("The program could not start the Processed TX Output stream.\n" +
+                            "Please examine Setup -> Audio -> TX Output and try again.",
+                            "Processed TX Output Startup Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("The program is having trouble starting the Processed TX Output stream.\n" +
+                        "Please examine Setup -> Audio -> TX Output and try again.",
+                        "Processed TX Output Startup Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                ivac.SetIVACrun(id, 0);
+                ivac.StopAudioIVAC(id);
+            }
+
+            Thread.Sleep(10); // prevent PortAudio/WASAPI restart exceptions
         }
 
         private static RadioProtocol _lastRadioProtocol = RadioProtocol.None;

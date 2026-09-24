@@ -574,6 +574,10 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	SetIVACtxmonSize (0, size);												// set vacOUT0 size for tx monitor
 	SetIVACtxmonRate (1, rate);												// set vacOUT1 rate for tx monitor
 	SetIVACtxmonSize (1, size);												// set vacOUT1 size for tx monitor
+	SetIVACtxmonRate (pcm->cmRCVR, rate);									// dedicated processed TX output source rate
+	SetIVACtxmonSize (pcm->cmRCVR, size);									// dedicated processed TX output source size
+	SetIVACaudioRate (pcm->cmRCVR, rate);									// keep its output-only mixer at the TX rate
+	SetIVACaudioSize (pcm->cmRCVR, size);									// keep its output-only mixer at the TX size
 	for (i = 0; i < pcm->cmRCVR; i++)
 		SetTCITxMonitorRate (i, rate);
 	// PIPE - set Wave Recorder (leave in C# since recorder is there)

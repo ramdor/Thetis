@@ -112,6 +112,26 @@ void create_pipe()
 		ppip->rcvr[i].playwave_run = 0;			// playwave run
 		ppip->rcvr[i].recordwave_run = 0;		// recordwave run
 	}
+	// Receiver-backed IVAC instances occupy IDs 0 through cmRCVR - 1.
+	// Reserve the first unused ID for an independent output-only stream carrying
+	// processed TX monitor audio. Its mixer runs at the TX monitor rate and does
+	// not depend on any receiver stream.
+	create_ivac(
+		pcm->cmRCVR,							// first IVAC ID not owned by a receiver
+		0,									// run
+		0,									// audio, not raw I-Q
+		0,									// mono source
+		pcm->xcm_inrate[inid(0, 0)],		// unused I-Q rate
+		pcm->xcm_inrate[inid(1, 0)],		// unused mic rate
+		pcm->xmtr[0].ch_outrate,			// mixer/output rate
+		pcm->xmtr[0].ch_outrate,			// TX monitor rate
+		48000,								// sound-device rate
+		pcm->xcm_insize[inid(1, 0)],		// unused mic size
+		pcm->xcm_insize[inid(0, 0)],		// unused I-Q size
+		pcm->xmtr[0].ch_outsize,			// mixer/output size
+		pcm->xmtr[0].ch_outsize,			// TX monitor size
+		512);								// sound-device buffer size
+	SetIVACOutputOnly(pcm->cmRCVR, 1);
 	create_tci();
 	create_spc0();
 }
@@ -126,6 +146,7 @@ void destroy_pipe()
 		_aligned_free (ppip->rbuff[i]);
 		destroy_ivac (i);
 	}
+	destroy_ivac(pcm->cmRCVR);
 	_aligned_free (ppip->rbuff);
 	destroy_siphonEXT (0);
 }
@@ -233,6 +254,7 @@ void xpipe (int stream, int pos, double** buffs)
 			xscope(0, 1, buffs[2]);																// scope
 			xvacOUT(0, 2, buffs[2]);															// data to VAC 0
 			xvacOUT(1, 2, buffs[2]);															// data to VAC 1
+			xvacOUT(pcm->cmRCVR, 2, buffs[2]);										// data to dedicated processed TX output
 			for (i = 0; i < pcm->cmRCVR; i++)
 				xtciOUT(i, 2, buffs[2]);														// tx monitor into each TCI rx audio stream
 			xrecordwave(0, 1, 1, buffs[2]);														// wav recorder 0
