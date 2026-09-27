@@ -141,6 +141,13 @@ namespace Thetis
         public int ZoomSlider { get => zoomSlider; set { zoomSlider = value; } }
         public bool Locked { get => locked; set => locked = value; }
         public string Description { get => description; set => description = value; }
+
+        // the sub receiver's memory for this entry - on an RX1 entry this is
+        // the frequency of SubVFOA, the RX1 sub receiver
+        private double subVFOFreq;
+        private int subDSPMode;
+        public double SubVFOFreq { get => subVFOFreq; set { subVFOFreq = value; } }
+        public int SubDSPMode { get => subDSPMode; set { subDSPMode = value; } }
         // not stored, used for display rendering, and calculated on the fly
         public int LowFilter { get => lowFilter; set => lowFilter = value; }
         public int HighFilter { get => highFilter; set => highFilter = value; }
@@ -191,6 +198,8 @@ namespace Thetis
                 Locked = this.Locked,
                 Description = this.Description,
                 GUID = this.GUID,
+                SubVFOFreq = this.SubVFOFreq,
+                SubDSPMode = this.SubDSPMode,
             };
             if (bNewGUID) bse.GUID = Guid.NewGuid().ToString();
 
@@ -400,6 +409,8 @@ namespace Thetis
             bse.SubMode = m_lastVisited.SubMode;
             bse.ZoomFactor = m_lastVisited.ZoomFactor;
             bse.ZoomSlider = m_lastVisited.ZoomSlider;
+            bse.SubVFOFreq = m_lastVisited.SubVFOFreq;
+            bse.SubDSPMode = m_lastVisited.SubDSPMode;
 
             // remove from main list
             int n = BandStackManager.IndexFromGUID(bse.GUID);
@@ -870,8 +881,29 @@ namespace Thetis
                     bsf.FrequenciesToFilterOn.AddRange(bfds);
 
                     internalAddFilter(bsf);
+
+                    // RX2 keeps its own stack, so every band gets a second filter under its
+                    // own name. BandsToFilterOn is deliberately left empty: the band lookups
+                    // that RX1 uses must never find this one. RX2 asks for it by name.
+                    BandStackFilter bsfRX2 = new BandStackFilter();
+                    bsfRX2.FilterName = BandStackFilterNameRX2(b);
+                    bsfRX2.FilterDescription = "";
+                    bsfRX2.FilterOnBands = true;
+                    bsfRX2.FilterOnFrequencies = false;
+                    bsfRX2.FilterOnModes = false;
+                    bsfRX2.UserDefined = false;
+                    internalAddFilter(bsfRX2);
                 }
             }
+        }
+
+        // the band stack is per band and per receiver. RX1 keeps the plain band name,
+        // RX2 uses this suffix, so both stacks live in the same store and neither
+        // disturbs the other, including the stacks already saved.
+        private const string RX2_FILTER_SUFFIX = " RX2";
+        public static string BandStackFilterNameRX2(Band b)
+        {
+            return b.ToString() + RX2_FILTER_SUFFIX;
         }
         public static BandStackFilter GetFilter(string sFilterName, bool bIncludeUserDefined = true)
         {
@@ -886,6 +918,13 @@ namespace Thetis
         {
             string sFilterName = b.ToString();
             return GetFilter(sFilterName, bIncludeUserDefined);
+        }
+
+        // receiver aware lookup. rx 1 is RX1, rx 2 is RX2.
+        public static BandStackFilter GetFilter(Band b, int rx, bool bIncludeUserDefined = true)
+        {
+            if (rx == 2) return GetFilter(BandStackFilterNameRX2(b), bIncludeUserDefined);
+            return GetFilter(b, bIncludeUserDefined);
         }
         public static List<BandStackFilter> GetFilters(Band b, bool onlyFirst = false, bool bIncludeUserDefined = true)
         {
