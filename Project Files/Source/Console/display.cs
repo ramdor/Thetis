@@ -586,6 +586,20 @@ namespace Thetis
             set { rx2_filter_high = value; }
         }
 
+        private static int sub_rx1_filter_low;
+        public static int SubRX1FilterLow
+        {
+            get { return sub_rx1_filter_low; }
+            set { sub_rx1_filter_low = value; }
+        }
+
+        private static int sub_rx1_filter_high;
+        public static int SubRX1FilterHigh
+        {
+            get { return sub_rx1_filter_high; }
+            set { sub_rx1_filter_high = value; }
+        }
+
         private static int tx_filter_low;
         public static int TXFilterLow
         {
@@ -609,6 +623,14 @@ namespace Thetis
                 sub_rx1_enabled = value;
             }
         }
+
+        // the SubRX1 window's drawn bounds. The console reads these so the clickable
+        // region is exactly the drawn window, whatever the display's offset conventions
+        // do under CTUN.
+        private static int vfoa_sub_win_left = -1;
+        private static int vfoa_sub_win_right = -1;
+        public static int VFOASubWindowLeft { get { return vfoa_sub_win_left; } }
+        public static int VFOASubWindowRight { get { return vfoa_sub_win_right; } }
 
         private static bool split_enabled = false;
         public static bool SplitEnabled
@@ -9016,10 +9038,15 @@ namespace Thetis
                 int localRit = _rx1ClickDisplayCTUN ? rit_hz : 0;
                 if ((bIsWaterfall && m_bShowRXFilterOnWaterfall) || !bIsWaterfall)
                 {
-                    // draw Sub RX filter
+                    // draw Sub RX filter, at the sub's own passband width
                     // get filter screen coordinates
-                    int filter_left_x = (int)((float)(filter_low - Low + localSubDiff + localRit) / width * W);
-                    int filter_right_x = (int)((float)(filter_high - Low + localSubDiff + localRit) / width * W);
+                    int filter_left_x = (int)((float)(SubRX1FilterLow - Low + localSubDiff + localRit) / width * W);
+                    int filter_right_x = (int)((float)(SubRX1FilterHigh - Low + localSubDiff + localRit) / width * W);
+
+                    // record the drawn bounds, so the console's hit tests work on exactly
+                    // the window that is on screen
+                    vfoa_sub_win_left = Math.Min(filter_left_x, filter_right_x);
+                    vfoa_sub_win_right = Math.Max(filter_left_x, filter_right_x);
 
                     drawFilterOverlayDX2D(m_bDX2_sub_rx_filter_brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
                 }
