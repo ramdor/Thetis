@@ -48,6 +48,7 @@ extern void destroy_panel (PANEL a);
 extern void flush_panel (PANEL a);
 
 extern void xpanel (PANEL a);
+extern void xpanel_gain (PANEL a);
 
 extern void setBuffers_panel (PANEL a, double* in, double* out);
 

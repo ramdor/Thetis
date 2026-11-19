@@ -44597,7 +44597,7 @@ namespace Thetis
             }
             
             // wdsp.dll
-            // Version number is in version.c where it is 121.  *10 to match Versions.WDSP_VERSION
+            // Version number is in version.c where WDSP 2.11 returns 211.  *10 to match Versions.WDSP_VERSION
             try
             {
                 nWDSPVersion = WDSP.GetWDSPVersion() * 10; // see comment above

@@ -70,17 +70,13 @@ typedef struct _dp
 	double *window;											// pointer to buffer to hold window coefficients	
 	double *result[dMAX_STITCH];							// pointers to buffer to hold elimination results for each sub-span
 	dOUTREAL *pixels[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];		// pointers pixel output buffers
-
-															   // [2.10.3.13]MW0LGE
-	double pixel_ref;										   // A reference value as a double for newly generated pixel buffers, which can be used to index the results of GetPixels back to this value
-															   // Could be used to track a centre frequency that the GetPixels relate to for example
-	double pixel_refs[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];		   // storage for the referencing used by get pixels
-
 	double *t_pixels[dMAX_PIXOUTS];							// pointer to temporary pixel buffer									//pointer to temporary pixel buffer for non-averaged data
 	int w_pix_buff[dMAX_PIXOUTS];							// number of pixel buffer owned by writing process
 	int r_pix_buff[dMAX_PIXOUTS];							// number of pixel buffer owned by reading process
 	int last_pix_buff[dMAX_PIXOUTS];						// number of the last pixel buffer written
 	volatile LONG pb_ready[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];	// if value is 0, this data has already been read; 1 = fresh data to read
+	double pixel_ref;										// reference associated with the next produced frame
+	double pixel_refs[dMAX_PIXOUTS][dNUM_PIXEL_BUFFS];		// reference stored with each output frame
 	int num_average[dMAX_PIXOUTS];							// number of spans to average to create the pixels
 	int avail_frames[dMAX_PIXOUTS];							// number of pixel frames currently available to average
 	int av_in_idx[dMAX_PIXOUTS];							// input index in averaging pixel buffer ring
@@ -166,6 +162,10 @@ typedef struct _dp
 
 extern DP pdisp[];
 
+extern __declspec(dllexport) void SetPixelRef(int disp, double pixel_ref);
+extern __declspec(dllexport) void GetPixels(int disp, int pixout, dOUTREAL* pix, int* flag);
+extern __declspec(dllexport) void GetPixelsWithRef(int disp, int pixout, dOUTREAL* pix, int* flag, double* pixel_ref);
+
 extern __declspec( dllexport )
 void CreateAnalyzer (	int disp,
 						int *success,
@@ -211,22 +211,12 @@ void SnapSpectrum(	int disp,
 					int LO,
 					double *snap_buff);
 
-extern __declspec(dllexport)
-void SnapSpectrumTimeout(int disp,
-	int ss,
-	int LO,
-	double* snap_buff,
-	DWORD timeout,
-	int* flag);
-
-extern __declspec(dllexport)
-void SetPixelRef(int disp, double pixel_ref);
-
-extern __declspec(dllexport)
-void GetPixels(int disp,
-	int pixout,
-	dOUTREAL* pix,
-	int* flag,
-	double* pixel_ref);
+extern __declspec( dllexport )
+void SnapSpectrumTimeout (int disp,
+	                      int ss,
+	                      int LO,
+	                      double* snap_buff,
+	                      DWORD timeout,
+	                      int* flag);
 
 #endif

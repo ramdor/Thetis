@@ -60,7 +60,7 @@ FMMOD create_fmmod (int run, int size, double* in, double* out, int rate, double
 	a->mp = mp;
 	calc_fmmod (a);
 	impulse = fir_bandpass(a->nc, -a->bp_fc, +a->bp_fc, a->samplerate, 0, 1, 1.0 / (2 * a->size));
-	a->p = create_fircore (a->size, a->out, a->out, a->nc, a->mp, impulse);
+	a->p = create_fircore (a->size, a->out, a->out, a->nc, a->mp, 8, impulse);
 	_aligned_free (impulse);
 	return a;
 }

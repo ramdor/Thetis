@@ -300,7 +300,7 @@ BANDPASS create_bandpass (int run, int position, int size, int nc, int mp, doubl
 	a->wintype = wintype;
 	a->gain = gain;
 	impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
-	a->p = create_fircore (a->size, a->in, a->out, a->nc, a->mp, impulse);
+	a->p = create_fircore (a->size, a->in, a->out, a->nc, a->mp, 16, impulse);
 	_aligned_free (impulse);
 	return a;
 }

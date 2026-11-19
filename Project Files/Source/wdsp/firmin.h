@@ -135,6 +135,8 @@ extern void setFreqs_firopt (FIROPT a, double f_low, double f_high);
 #ifndef _fircore_h
 #define _fircore_h
 
+#include "fir.h"
+
 typedef struct _fircore
 {
 	int size;				// input/output buffer size, power of two
@@ -158,10 +160,12 @@ typedef struct _fircore
 	int cset;
 	int mp;
 	int masks_ready;
+	int pfactor;
+	MINPHASE pminphase;
 } fircore, *FIRCORE;
 
 extern FIRCORE create_fircore (int size, double* in, double* out, 
-	int nc, int mp, double* impulse);
+	int nc, int mp, int pfactor, double* impulse);
 
 extern void xfircore (FIRCORE a);
 

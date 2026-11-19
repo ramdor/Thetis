@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013-2025 Warren Pratt, NR0V
+Copyright (C) 2013-2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -45,9 +45,10 @@ int WDSPwisdom (char* directory)
 	double* fftin;
 	double* fftout;
 	char wisdom_file[1024];
-	const int maxsize = max (MAX_WISDOM_SIZE_DISPLAY, MAX_WISDOM_SIZE_FILTER + 1);
-	strcpy (wisdom_file, directory);
-	strncat (wisdom_file, "wdspWisdom00", 16);
+	const int maxsize = MAX_WISDOM_SIZE + 1;
+	if (directory == NULL) return -1;
+	int pathlen = snprintf(wisdom_file, sizeof(wisdom_file), "%s%s", directory, "wdspWisdom01");
+	if (pathlen < 0 || (size_t)pathlen >= sizeof(wisdom_file)) return -1;
 	if(!fftw_import_wisdom_from_filename(wisdom_file))
 	{
 		fftin =  (double *) malloc0 (maxsize * sizeof (complex));
@@ -58,7 +59,7 @@ int WDSPwisdom (char* directory)
 		fprintf(stdout, "Please do not close this window until wisdom plans are completed.\n\n");
 		sprintf(status, "Optimizing FFT sizes through %d", maxsize);
 		psize = 64;
-		while (psize <= MAX_WISDOM_SIZE_FILTER)
+		while (psize <= MAX_WISDOM_SIZE)
 		{
 			fprintf(stdout, "Planning COMPLEX FORWARD  FFT size %d\n", psize);
 			fflush(stdout);
@@ -81,21 +82,18 @@ int WDSPwisdom (char* directory)
 			psize *= 2;
 		}
 		psize = 64;
-		while (psize <= MAX_WISDOM_SIZE_DISPLAY)
+		while (psize <= MAX_WISDOM_SIZE)
 		{
-			if (psize > MAX_WISDOM_SIZE_FILTER)
-			{
-				fprintf(stdout, "Planning COMPLEX FORWARD  FFT size %d\n", psize);
-				fflush(stdout);
-				sprintf(status, "Planning COMPLEX FORWARD  FFT size %d\n", psize);
-				tplan = fftw_plan_dft_1d(psize, (fftw_complex *)fftin, (fftw_complex *)fftout, FFTW_FORWARD, FFTW_PATIENT);
-				fftw_execute (tplan);
-				fftw_destroy_plan (tplan);
-			}
 			fprintf(stdout, "Planning REAL    FORWARD  FFT size %d\n", psize);
 			fflush(stdout);
 			sprintf(status, "Planning REAL    FORWARD  FFT size %d\n", psize);
 			tplan = fftw_plan_dft_r2c_1d(psize, fftin, (fftw_complex *)fftout, FFTW_PATIENT);
+			fftw_execute (tplan);
+			fftw_destroy_plan (tplan);
+			fprintf(stdout, "Planning REAL    INVERSE  FFT size %d\n", psize);
+			fflush(stdout);
+			sprintf(status, "Planning REAL    INVERSE  FFT size %d\n", psize);
+			tplan = fftw_plan_dft_c2r_1d(psize, (fftw_complex *)fftin, fftout, FFTW_PATIENT);
 			fftw_execute (tplan);
 			fftw_destroy_plan (tplan);
 			psize *= 2;

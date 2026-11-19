@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2015, 2025 Warren Pratt, NR0V
+Copyright (C) 2015, 2025, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,7 +27,6 @@ warren@wpratt.com
 #include "comm.h"
 #include "calculus.h"
 #include "zetaHat.h"
-#include "FDnoiseIQ.h"
 
 /********************************************************************************************************
 *																										*
@@ -197,8 +196,8 @@ void interpM (double* res, double x, int nvals, double* xvals, double* yvals)
 		int idx = 1;
 		double xllow, xlhigh, frac;
 		while (x > xvals[idx])  idx++;
-		xllow = log10 (xvals[idx - 1]);
-		xlhigh = log10(xvals[idx]);
+		xllow  = log10 (xvals[idx - 1]);
+		xlhigh = log10 (xvals[idx]);
 		frac = (log10 (x) - xllow) / (xlhigh - xllow);
 		*res = yvals[idx - 1] + frac * (yvals[idx] - yvals[idx - 1]);
 	}
@@ -209,10 +208,10 @@ int readZetaHat(const char* zeta_file, int* rows, int* cols,
 {
 	char zetaBinary[256];
 	char bin[50] = ".bin";
-	sprintf(zetaBinary, "%s%s", zeta_file, bin);
+	int pathlen = zeta_file ? snprintf (zetaBinary, sizeof (zetaBinary), "%s%s", zeta_file, bin) : -1;
 	FILE* pzetaBinary;
 	int e = 0;
-	if (pzetaBinary = fopen (zetaBinary, "rb")) 
+	if (pathlen > 0 && pathlen < (int)sizeof (zetaBinary) && (pzetaBinary = fopen(zetaBinary, "rb")))
 	{
 		int nvals = 0;
 		// 'fread's executed only through first error
@@ -222,19 +221,20 @@ int readZetaHat(const char* zeta_file, int* rows, int* cols,
 		if (e == 0 && fread(gmax,      sizeof(double), 1,     pzetaBinary) != 1) e = 1;
 		if (e == 0 && fread(ximin,     sizeof(double), 1,     pzetaBinary) != 1) e = 1;
 		if (e == 0 && fread(ximax,     sizeof(double), 1,     pzetaBinary) != 1) e = 1;
+		if (e == 0 && (*rows != 60 || *cols != 60)) e = 1;
 		if (e == 0)   nvals = (*rows) * (*cols);
 		if (e == 0 && fread(zetaHat,   sizeof(double), nvals, pzetaBinary) != nvals) e = 1;
 		if (e == 0 && fread(zetaValid, sizeof(int),    nvals, pzetaBinary) != nvals) e = 1;
 		fclose(pzetaBinary);
 	}
-	else
+	else 
 		e = 1;
 	if (e)
 	{
-		*rows = CzetaRows;
-		*cols = CzetaCols;
-		*gmin = CzetaGmin;
-		*gmax = CzetaGmax;
+		*rows  = CzetaRows;
+		*cols  = CzetaCols;
+		*gmin  = CzetaGmin;
+		*gmax  = CzetaGmax;
 		*ximin = CzetaXimin;
 		*ximax = CzetaXimax;
 		int nvals = (*rows) * (*cols);
@@ -254,48 +254,49 @@ void CwriteZetaHat(const char* cfile, int zetaHat_rows, int zetaHat_cols,
 	FILE* pcfile;
 	if (pcfile = fopen(cfilename, "w"))
 	{
-	fprintf(pcfile, "int CzetaRows = %d;\n", zetaHat_rows);
-	fprintf(pcfile, "int CzetaCols = %d;\n", zetaHat_cols);
-	fprintf(pcfile, "double CzetaGmin = %lf;\n", zetaHat_gmin);
-	fprintf(pcfile, "double CzetaGmax = %lf;\n", zetaHat_gmax);
-	fprintf(pcfile, "double CzetaXimin = %lf;\n", zetaHat_ximin);
-	fprintf(pcfile, "double CzetaXimax = %lf;\n\n", zetaHat_ximax);
-	n = zetaHat_rows * zetaHat_cols;
-	fprintf(pcfile, "double CzetaHat [%d] =\n", n);
-	fprintf(pcfile, "{\n");
-	i = 0;
-	j = 0;
-	while (i < n)
-	{
-		fprintf(pcfile, "%.17e,  ", zetaHat[i++]);
-		if (++j == 4)
+		fprintf(pcfile, "int CzetaRows = %d;\n",        zetaHat_rows);
+		fprintf(pcfile, "int CzetaCols = %d;\n",        zetaHat_cols);
+		fprintf(pcfile, "double CzetaGmin = %lf;\n",    zetaHat_gmin);
+		fprintf(pcfile, "double CzetaGmax = %lf;\n",    zetaHat_gmax);
+		fprintf(pcfile, "double CzetaXimin = %lf;\n",   zetaHat_ximin);
+		fprintf(pcfile, "double CzetaXimax = %lf;\n\n", zetaHat_ximax);
+		n = zetaHat_rows * zetaHat_cols;
+		fprintf(pcfile, "double CzetaHat [%d] =\n", n);
+		fprintf(pcfile, "{\n");
+		i = 0;
+		j = 0;
+		while (i < n)
 		{
-			fprintf(pcfile, "\n");
-			j = 0;
+			fprintf(pcfile, "%.17e,  ", zetaHat[i++]);
+			if (++j == 4)
+			{
+				fprintf(pcfile, "\n");
+				j = 0;
+			}
 		}
-	}
-	if (j != 0) fprintf(pcfile, "\n");
-	fprintf(pcfile, "};\n\n");
-	fprintf(pcfile, "int CzetaValid [%d] =\n", n);
-	fprintf(pcfile, "{\n");
-	i = 0;
-	j = 0;
-	while (i < n)
-	{
-		fprintf(pcfile, "%d,  ", zetaValid[i++]);
-		if (++j == 4)
+		if (j != 0) fprintf(pcfile, "\n");
+		fprintf(pcfile, "};\n\n");
+		fprintf(pcfile, "int CzetaValid [%d] =\n", n);
+		fprintf(pcfile, "{\n");
+		i = 0;
+		j = 0;
+		while (i < n)
 		{
-			fprintf(pcfile, "\n");
-			j = 0;
+			fprintf(pcfile, "%d,  ", zetaValid[i++]);
+			if (++j == 4)
+			{
+				fprintf(pcfile, "\n");
+				j = 0;
+			}
 		}
+		if (j != 0) fprintf(pcfile, "\n");
+		fprintf(pcfile, "};\n");
+		fflush(pcfile);
+		fclose(pcfile);
 	}
-	if (j != 0) fprintf(pcfile, "\n");
-	fprintf(pcfile, "};\n");
-	fflush(pcfile);
-	fclose(pcfile);
-}
 }
 void post2_calc_w(EMNR a);
+void post2_init_table(void);
 
 void calc_emnr(EMNR a)
 {
@@ -566,9 +567,9 @@ void calc_emnr(EMNR a)
 	a->post2.rate_decay = exp(-a->fsize / (a->post2.tc_decay * a->rate * a->ovrlp));
 	a->post2.taper = 0.12;
 	a->post2.w = (double*)malloc0(a->msize * sizeof(double));
-	a->post2.noise_frames = FDnoise_frames;
-	a->post2.noise_frame_index = 0;
-	a->post2.noise_frame = (double*)malloc0(2 * a->msize * sizeof(double));
+	post2_init_table ();
+	a->post2.rngstate = 2463534242u + 2654435761u * (unsigned int)(size_t)a;
+	if (a->post2.rngstate == 0) a->post2.rngstate = 2463534242u;
 	a->post2.olddmag = 0.0;
 	post2_calc_w(a);
 }
@@ -577,7 +578,6 @@ void decalc_emnr(EMNR a)
 {
 	int i;
 	// post2
-	_aligned_free(a->post2.noise_frame);
 	_aligned_free(a->post2.w);
 	// ae
 	_aligned_free(a->ae.nmask);
@@ -895,11 +895,41 @@ void aepf(EMNR a)
 			a->mask[k] *= 0.05;
 }
 
+#define POST2_NTAB			1024
+#define POST2_NOISE_MAG		113.98
+
+static double post2_cs[POST2_NTAB];
+static double post2_sn[POST2_NTAB];
+static int post2_tab_ready = 0;
+
+void post2_init_table (void)
+{
+	int i;
+	if (post2_tab_ready) return;
+	for (i = 0; i < POST2_NTAB; i++)
+	{
+		double th = 2.0 * PI * (double)i / (double)POST2_NTAB;
+		post2_cs[i] = POST2_NOISE_MAG * cos (th);
+		post2_sn[i] = POST2_NOISE_MAG * sin (th);
+	}
+	post2_tab_ready = 1;
+}
+
+static unsigned int post2_rand (EMNR a)
+{
+	unsigned int x = a->post2.rngstate;
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 5;
+	a->post2.rngstate = x;
+	return x;
+}
+
 void post2_calc_w(EMNR a)
 {
 	int i;
 	int ilim = (int)(a->post2.taper * a->msize);
-	memset(a->post2.w, a->msize, sizeof(double));
+	memset(a->post2.w, 0, a->msize * sizeof(double));
 	for (i = 0; i < ilim; i++)
 	{
 		a->post2.w[i] = 0.75 - 0.25 * cos(PI * (ilim - 1 - i) / (ilim - 1));
@@ -928,15 +958,13 @@ void post2(EMNR a)
 		else a->post2.olddmag *= rate_decay;
 		dmag = fmax(dmag, a->post2.olddmag);
 		dmult = dmag * 4.0 * a->gain;
-		memcpy(a->post2.noise_frame, FDnoise + 2 * a->msize * a->post2.noise_frame_index, 
-			2 * ilim * sizeof(double));
-		a->post2.noise_frame_index = (a->post2.noise_frame_index + 1) % a->post2.noise_frames;
 		for (i = 1; i < ilim; i++)
 		{
+			unsigned int ph = post2_rand (a) & (POST2_NTAB - 1);
 			Irem = a->gain * a->forfftout[2 * i + 0] - a->revfftin[2 * i + 0];
 			Qrem = a->gain * a->forfftout[2 * i + 1] - a->revfftin[2 * i + 1];
-			Iwhite = dmult * a->post2.noise_frame[2 * i + 0];
-			Qwhite = dmult * a->post2.noise_frame[2 * i + 1];
+			Iwhite = dmult * post2_cs[ph];
+			Qwhite = dmult * post2_sn[ph];
 			Inoise = (1.0 - factor) * Irem + factor * Iwhite;
 			Qnoise = (1.0 - factor) * Qrem + factor * Qwhite;
 			a->revfftin[2 * i + 0] = w[i] * (a->revfftin[2 * i + 0] + nlevel * Inoise);
@@ -1055,7 +1083,7 @@ int getZeta( EMNR a, double gamma, double eps, double* zeta)
 	i_gamma = (int)floor((gamma_dB - a->g.z_gamma_min) / gamma_per_cell);
 	i_xi    = (int)floor((xi_dB    - a->g.z_xihat_min) / xi_per_cell);
 	if (i_gamma < 0 || i_gamma >= a->g.dim_zeta ||
-		i_xi < 0 || xi_dB  >= a->g.dim_zeta)
+		i_xi < 0 || i_xi >= a->g.dim_zeta)
 		return -1;
 	index = i_gamma * a->g.dim_zeta + i_xi;
 	int ztvalue = a->g.zeta_true[index];
@@ -1285,10 +1313,9 @@ void SetRXAEMNRRun (int channel, int run)
 	EMNR a = rxa[channel].emnr.p;
 	if (a->run != run)
 	{
-        RXAbp1Check (channel, rxa[channel].amd.p->run, rxa[channel].snba.p->run,
-                        run, rxa[channel].anf.p->run, rxa[channel].anr.p->run,
-                        rxa[channel].rnnr.p->run, rxa[channel].sbnr.p->run); // NR3 + NR4 support
-
+		RXAbp1Check (channel, rxa[channel].amd.p->run, rxa[channel].snba.p->run,
+			run, getRun_nnrbypass (rxa[channel].nnrbypass.p), 
+			rxa[channel].anf.p->run, rxa[channel].anr.p->run);
 		EnterCriticalSection (&ch[channel].csDSP);
 		a->run = run;
 		RXAbp1Set (channel);
@@ -1326,8 +1353,8 @@ void SetRXAEMNRPosition (int channel, int position)
 	EMNR a = rxa[channel].emnr.p;
 	EnterCriticalSection (&ch[channel].csDSP);
 	a->position = position;
-	rxa[channel].bp1.p->position  = position;
-	flush_emnr(a);
+	RXAbp1Set (channel);
+	flush_emnr (a);
 	a->post2.olddmag = 0.0;
 	LeaveCriticalSection (&ch[channel].csDSP);
 }

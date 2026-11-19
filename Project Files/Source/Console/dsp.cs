@@ -92,6 +92,12 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXAMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAMode(int channel, DSPMode mode);
 
+        [DllImport("wdsp.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAFMBroadcast(int channel, int run);
+
+        [DllImport("wdsp.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAWBFMdmph(int channel, int run, int use50Microseconds);
+
         [DllImport("wdsp.dll", EntryPoint = "SetTXAMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAMode(int channel, DSPMode mode);
 
@@ -242,6 +248,16 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetRXAEMNRRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAEMNRRun(int channel, int run);
+
+        // WDSP 2.11 neural noise reduction (distinct from Thetis NR3/RNNoise).
+        [DllImport("wdsp.dll", EntryPoint = "SetRXANNRRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXANNRRun(int channel, int run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXANNRModel", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetRXANNRModel(int channel, int slot);
+
+        [DllImport("wdsp.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXANNRMaskFloor(int channel, double floorDb);
 
         // rnnoise
         [DllImport("wdsp.dll", EntryPoint = "SetRXARNNRRun", CallingConvention = CallingConvention.Cdecl)]
@@ -627,7 +643,8 @@ namespace Thetis
         public static extern void destroy_eerEXT(int id);
 
         [DllImport("wdsp.dll", EntryPoint = "xeerEXTF", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void xeerEXTF(int id, float* inI, float* inQ, float* outI, float* outQ, float* outM);
+        public static extern void xeerEXTF(int id, float* inI, float* inQ, float* outI, float* outQ,
+            float* outMI, float* outMQ, int mox, int size);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetEERRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetEERRun(int id, bool run);
@@ -755,7 +772,7 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFCOMPRun(int channel, int run);
 
-        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPprofile", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPprofileQ", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E, double* Gq, double* Eq);
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPosition", CallingConvention = CallingConvention.Cdecl)]
@@ -784,16 +801,12 @@ namespace Thetis
         public static extern void SetTXAPHROTReverse(int channel, int reverse);
 
         // TXEQ
-        [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfileQ", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G, double* Q);
 
         // RXEQ
-        [DllImport("wdsp.dll", EntryPoint = "SetRXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetRXAEQProfileQ", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAEQProfile(int channel, int nfreqs, double* F, double* G, double* Q);
-
-        // GetTXACFCOMPGainAndMask
-        [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPGainAndMask", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetTXACFCOMPGainAndMask(int channel, double* gain_values, double* mask_values, int* ready);
 
         // GetTXACFCOMPDisplayCompression
         [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPDisplayCompression", CallingConvention = CallingConvention.Cdecl)]

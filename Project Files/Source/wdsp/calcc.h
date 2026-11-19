@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016, 2023 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2023, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,121 +20,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
 #ifndef _calcc_h
 #define _calcc_h
-#include "delay.h"
-#include "lmath.h"
-typedef struct _calcc
-{
-	int channel;
-	int runcal;
-	int size;
-	volatile long mox;
-	volatile long solidmox;
-	int rate;
-	int ints;
-	int spi;
-	int nsamps;
-	int npsamps;
-	int pin;
-	int map;
-	int convex;
-	int stbl;
-	int scOK;
-	double hw_scale;
-	double rx_scale;
-	double alpha;
 
-	int tsamps;
-	double* env_TX;
-	double* env_RX;
-	double* x;
-	double* ym;
-	double* yc;
-	double* ys;
-	double* cat;
+typedef struct _calcc* CALCC;
 
-	double* t;
-	double* tmap;
-	double* cm;
-	double* cc;
-	double* cs;
-	double* cm_old;
-	double* rxs;
-	double* txs;
-	double ptol;
-	int* info;
-	int* binfo;
-	double txdel;
-	BLDR ccbld;
-	volatile long savecorr_bypass;
-	HANDLE Sem_SaveCorr;
-	volatile long restcorr_bypass;
-	HANDLE Sem_RestCorr;
-	volatile long calccorr_bypass;
-	HANDLE Sem_CalcCorr;
-	volatile long turnoff_bypass;
-	HANDLE Sem_TurnOff;
-	struct _ctrl
-	{
-		double moxdelay;
-		double loopdelay;
-		int state;
-		int reset;
-		int automode;
-		int mancal;
-		int turnon;
-		int moxsamps;
-		int moxcount;
-		int count;
-		int* cpi;
-		int* sindex;
-		int* sbase;
-		int full_ints;
-		int calcinprogress;
-		volatile LONG calcdone;
-		int waitsamps;
-		int waitcount;
-		double env_maxtx;
-		volatile long running;
-		int bs_count;
-		volatile long current_state;
-		CRITICAL_SECTION cs_SafeToEnd;
-	} ctrl;
-	struct _disp
-	{
-		double* x;
-		double* ym;
-		double* yc;
-		double* ys;
-		double* cm;
-		double* cc;
-		double* cs;
-		CRITICAL_SECTION cs_disp;
-	} disp;
-	DELAY rxdelay;
-	DELAY txdelay;
-	struct _util
-	{
-		char savefile[256];
-		char restfile[256];
-		int ints;
-		int channel;
-		double* pm;
-		double* pc;
-		double* ps;
-	} util;
-	double* temptx;				//////////////////////////////////////////////////// temporary tx complex buffer - remove with new callback3port()
-	double* temprx;				//////////////////////////////////////////////////// temporary rx complex buffer - remove with new callback3port()
-} calcc, *CALCC;
-
-extern CALCC create_calcc (int channel, int runcal, int size, int rate, int ints, int spi, double hw_scale, 
-	double moxdelay, double loopdelay, double ptol, int mox, int solidmox, int pin, int map, int stbl,
-	int npsamps, double alpha);
+extern CALCC create_calcc(int channel, int runcal, int size, int rate, double hw_scale,
+	double moxdelay, double loopdelay, int mox);
 
 extern void destroy_calcc (CALCC a);
 
@@ -142,26 +38,44 @@ extern void flush_calcc (CALCC a);
 
 extern __declspec(dllexport) void pscc (int channel, int size, double* tx, double* rx);
 
-extern void __cdecl PSSaveCorrection(void* pargs);
-
-extern void __cdecl PSRestoreCorrection(void* pargs);
-
-extern void __cdecl doPSCalcCorrection(void* arg);
-
-extern void __cdecl doPSTurnoff(void* arg);
-
 #endif
 
 // 'info' assignments:
 //		 0 - builder for rx_scale
+//				0b0001 = Extrapolate_Res.confidence  ('0' good; '1' reverted to linear)
 //		 1 - builder for cm
+//				0b0001 = nf_fit() Failed.		 [NURB Curve]
+//				0b0010 = nf_fit() Quality bad.   [NURB Curve] 
+//              0b0100 = ns_build() Failed.      [Spline]
+//              0b1000 = ns_build() Quality bad. [Spline]
+//          0b00010000 = count_extrema() Failed. 
+//          0b00100000 = MAG Cold Start Error
 //		 2 - builder for cc
+//              0b0001 = nf_fit() Failed.		 [NURB Curve]
+// 			    0b0010 = nf_fit() Quality bad.   [NURB Curve]
+//              0b0100 = ns_build() Failed.      [Spline]
+//              0b1000 = ns_build() Quality bad. [Spline]
+//          0b00010000 = sin^2 + cos^2 Error.
+//          0b00100000 = COS Cold Start Error
 //		 3 - builder for cs
-//		 4 - feedback level warning
-//		 5 - count of attempted calibrations
-//		 6 - results from scheck()
-//       7 - results from rxscheck()
-//
-//		13 - dogcount
+//              0b0001 = nf_fit() Failed.		 [NURB Curve]
+// 			    0b0010 = nf_fit() Quality bad.   [NURB Curve]
+//              0b0100 = ns_build() Failed.      [Spline]
+//              0b1000 = ns_build() Quality bad. [Spline]
+//          0b00010000 = sin^2 + cos^2 Error.
+//          0b00100000 = SIN Cold Start Error
+//		 4 - feedback level
+//		 5 - count of successful calibrations
+//		 6 - scheck() - Final Solution Checks
+//              0b0001 = New-Old Soln Compare Check
+// 			    0b0010 = Can't FIll Buckets, Probable Over-Drive
+//		 7 - count of attempted calibrations
+// 
+//      12 - file write/read error
+//		13 - 
 //		14 - indicates iqc_Run = 1
 //		15 - control state
+//
+//
+//      ** => A non-zero value in binfo[0], binfo[1], binfo[2], binfo[3], or binfo[6]
+//            sets a->scOK==0 and the solution is rejected.

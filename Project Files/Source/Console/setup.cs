@@ -2437,6 +2437,10 @@ namespace Thetis
             radANFPreAGC_CheckedChanged(this, e);
             radANF2PreAGC_CheckedChanged(this, e);
             chkNR3_RNNoiseFixedGain_CheckedChanged(this, e);
+            cmbWDSP211NNRModel_SelectedIndexChanged(this, e);
+            nudWDSP211NNRFloor_ValueChanged(this, e);
+            chkWDSP211NNR_CheckedChanged(this, e);
+            BroadcastFMSettingsChanged(this, e);
             chkMNFAutoIncrease_CheckedChanged(this, e);
             udCWEdgeLength_ValueChanged(this, e);
             chkShowAGC_CheckedChanged(this, e);
@@ -35660,6 +35664,56 @@ namespace Thetis
             console.radio.GetDSPRX(0, 0).RXANR3FixedGain = fixed_gain;
             console.radio.GetDSPRX(0, 1).RXANR3FixedGain = fixed_gain;
             console.radio.GetDSPRX(1, 0).RXANR3FixedGain = fixed_gain;
+        }
+
+        private void chkWDSP211NNR_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing || console == null || console.radio == null) return;
+
+            int run = chkWDSP211NNR.Checked ? 1 : 0;
+            for (int thread = 0; thread < 2; thread++)
+            {
+                for (int subrx = 0; subrx < 2; subrx++)
+                    console.radio.GetDSPRX(thread, subrx).RXANNRRun = run;
+            }
+        }
+
+        private void cmbWDSP211NNRModel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing || console == null || console.radio == null || cmbWDSP211NNRModel.SelectedIndex < 0) return;
+
+            int model = cmbWDSP211NNRModel.SelectedIndex;
+            for (int thread = 0; thread < 2; thread++)
+            {
+                for (int subrx = 0; subrx < 2; subrx++)
+                    console.radio.GetDSPRX(thread, subrx).RXANNRModel = model;
+            }
+        }
+
+        private void BroadcastFMSettingsChanged(object sender, EventArgs e)
+        {
+            if (initializing || console == null || console.radio == null) return;
+
+            bool enabled = chkBroadcastFM.Checked;
+            comboBroadcastFMDeemphasis.Enabled = enabled;
+            int deemphasis = Math.Max(0, comboBroadcastFMDeemphasis.SelectedIndex);
+            for (int receiver = 0; receiver < 2; receiver++)
+            {
+                for (int subreceiver = 0; subreceiver < 2; subreceiver++)
+                    console.radio.GetDSPRX(receiver, subreceiver).SetBroadcastFM(enabled, deemphasis);
+            }
+        }
+
+        private void nudWDSP211NNRFloor_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing || console == null || console.radio == null) return;
+
+            double floor = (double)nudWDSP211NNRFloor.Value;
+            for (int receiver = 0; receiver < 2; receiver++)
+            {
+                for (int subreceiver = 0; subreceiver < 2; subreceiver++)
+                    console.radio.GetDSPRX(receiver, subreceiver).RXANNRMaskFloor = floor;
+            }
         }
 
         private void pbCMasio_InOut_Info_Click(object sender, EventArgs e)

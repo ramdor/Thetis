@@ -2451,6 +2451,10 @@
             this.radRX2LSB = new System.Windows.Forms.RadioButtonTS();
             this.radRX2LSBUSB = new System.Windows.Forms.RadioButtonTS();
             this.tpDSPFM = new System.Windows.Forms.TabPage();
+            this.grpBroadcastFM = new System.Windows.Forms.GroupBoxTS();
+            this.chkBroadcastFM = new System.Windows.Forms.CheckBoxTS();
+            this.labelBroadcastFMDeemphasis = new System.Windows.Forms.LabelTS();
+            this.comboBroadcastFMDeemphasis = new System.Windows.Forms.ComboBoxTS();
             this.grpFMRX = new System.Windows.Forms.GroupBoxTS();
             this.btnResetFMAF_rx = new System.Windows.Forms.ButtonTS();
             this.labelTS187 = new System.Windows.Forms.LabelTS();
@@ -2599,6 +2603,11 @@
             this.labelTS446 = new System.Windows.Forms.LabelTS();
             this.nudNR4_red_rx1 = new System.Windows.Forms.NumericUpDownTS();
             this.grpRNnoise = new System.Windows.Forms.GroupBoxTS();
+            this.grpWDSP211NNR = new System.Windows.Forms.GroupBoxTS();
+            this.chkWDSP211NNR = new System.Windows.Forms.CheckBoxTS();
+            this.cmbWDSP211NNRModel = new System.Windows.Forms.ComboBoxTS();
+            this.lblWDSP211NNRFloor = new System.Windows.Forms.LabelTS();
+            this.nudWDSP211NNRFloor = new System.Windows.Forms.NumericUpDownTS();
             this.chkNR3_RNNoiseFixedGain = new System.Windows.Forms.CheckBoxTS();
             this.btnNR3_model_default = new System.Windows.Forms.ButtonTS();
             this.btnNR3_model_load = new System.Windows.Forms.ButtonTS();
@@ -5021,6 +5030,7 @@
             this.panelTS9.SuspendLayout();
             this.grpRX2AMSBSEL.SuspendLayout();
             this.tpDSPFM.SuspendLayout();
+            this.grpBroadcastFM.SuspendLayout();
             this.grpFMRX.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutRX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFMLowCutRX)).BeginInit();
@@ -5073,6 +5083,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudNR4_smo_rx1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNR4_red_rx1)).BeginInit();
             this.grpRNnoise.SuspendLayout();
+            this.grpWDSP211NNR.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWDSP211NNRFloor)).BeginInit();
             this.grpDSPNR2RX2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudNR2PostProc_factor_rx2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNR2PostProc_level_rx2)).BeginInit();
@@ -40100,6 +40112,7 @@
             // tpDSPFM
             // 
             this.tpDSPFM.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPFM.Controls.Add(this.grpBroadcastFM);
             this.tpDSPFM.Controls.Add(this.grpFMRX);
             this.tpDSPFM.Controls.Add(this.grpFMTX);
             this.tpDSPFM.Location = new System.Drawing.Point(4, 22);
@@ -40108,6 +40121,43 @@
             this.tpDSPFM.Size = new System.Drawing.Size(724, 414);
             this.tpDSPFM.TabIndex = 5;
             this.tpDSPFM.Text = "FM";
+
+            this.grpBroadcastFM.Controls.Add(this.chkBroadcastFM);
+            this.grpBroadcastFM.Controls.Add(this.labelBroadcastFMDeemphasis);
+            this.grpBroadcastFM.Controls.Add(this.comboBroadcastFMDeemphasis);
+            this.grpBroadcastFM.Location = new System.Drawing.Point(448, 8);
+            this.grpBroadcastFM.Name = "grpBroadcastFM";
+            this.grpBroadcastFM.Size = new System.Drawing.Size(268, 89);
+            this.grpBroadcastFM.TabIndex = 2;
+            this.grpBroadcastFM.TabStop = false;
+            this.grpBroadcastFM.Text = "Broadcast FM Receiver";
+
+            this.chkBroadcastFM.AutoSize = true;
+            this.chkBroadcastFM.Image = null;
+            this.chkBroadcastFM.Location = new System.Drawing.Point(9, 22);
+            this.chkBroadcastFM.Name = "chkBroadcastFM";
+            this.chkBroadcastFM.TabIndex = 0;
+            this.chkBroadcastFM.Text = "Use for FM receive at 192 kHz or above";
+            this.chkBroadcastFM.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.chkBroadcastFM, "Uses the WDSP 2.11 stereo broadcast demodulator when the FM receiver has sufficient input bandwidth.");
+            this.chkBroadcastFM.CheckedChanged += new System.EventHandler(this.BroadcastFMSettingsChanged);
+
+            this.labelBroadcastFMDeemphasis.AutoSize = true;
+            this.labelBroadcastFMDeemphasis.Image = null;
+            this.labelBroadcastFMDeemphasis.Location = new System.Drawing.Point(9, 55);
+            this.labelBroadcastFMDeemphasis.Name = "labelBroadcastFMDeemphasis";
+            this.labelBroadcastFMDeemphasis.Text = "De-emphasis";
+
+            this.comboBroadcastFMDeemphasis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBroadcastFMDeemphasis.Enabled = false;
+            this.comboBroadcastFMDeemphasis.FormattingEnabled = true;
+            this.comboBroadcastFMDeemphasis.Items.AddRange(new object[] { "75 µs", "50 µs", "Off" });
+            this.comboBroadcastFMDeemphasis.Location = new System.Drawing.Point(98, 52);
+            this.comboBroadcastFMDeemphasis.Name = "comboBroadcastFMDeemphasis";
+            this.comboBroadcastFMDeemphasis.Size = new System.Drawing.Size(80, 21);
+            this.comboBroadcastFMDeemphasis.TabIndex = 1;
+            this.comboBroadcastFMDeemphasis.SelectedIndex = 0;
+            this.comboBroadcastFMDeemphasis.SelectedIndexChanged += new System.EventHandler(this.BroadcastFMSettingsChanged);
             // 
             // grpFMRX
             // 
@@ -41756,6 +41806,7 @@
             this.tpDSPNR.Controls.Add(this.groupBoxTS56);
             this.tpDSPNR.Controls.Add(this.groupBoxTS55);
             this.tpDSPNR.Controls.Add(this.grpRNnoise);
+            this.tpDSPNR.Controls.Add(this.grpWDSP211NNR);
             this.tpDSPNR.Controls.Add(this.grpDSPNR2RX2);
             this.tpDSPNR.Controls.Add(this.groupBoxTS5);
             this.tpDSPNR.Controls.Add(this.grpDSPNR2);
@@ -42430,6 +42481,59 @@
             this.grpRNnoise.TabIndex = 43;
             this.grpRNnoise.TabStop = false;
             this.grpRNnoise.Text = "NR3";
+
+            this.grpWDSP211NNR.Controls.Add(this.chkWDSP211NNR);
+            this.grpWDSP211NNR.Controls.Add(this.cmbWDSP211NNRModel);
+            this.grpWDSP211NNR.Controls.Add(this.lblWDSP211NNRFloor);
+            this.grpWDSP211NNR.Controls.Add(this.nudWDSP211NNRFloor);
+            this.grpWDSP211NNR.Location = new System.Drawing.Point(8, 371);
+            this.grpWDSP211NNR.Name = "grpWDSP211NNR";
+            this.grpWDSP211NNR.Size = new System.Drawing.Size(231, 40);
+            this.grpWDSP211NNR.TabIndex = 46;
+            this.grpWDSP211NNR.TabStop = false;
+            this.grpWDSP211NNR.Text = "WDSP NNR";
+
+            this.chkWDSP211NNR.AutoSize = true;
+            this.chkWDSP211NNR.Image = null;
+            this.chkWDSP211NNR.Location = new System.Drawing.Point(6, 17);
+            this.chkWDSP211NNR.Name = "chkWDSP211NNR";
+            this.chkWDSP211NNR.TabIndex = 0;
+            this.chkWDSP211NNR.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkWDSP211NNR, "Enables the built-in neural noise reducer added in WDSP 2.11. This is separate from NR3/RNNoise.");
+            this.chkWDSP211NNR.UseVisualStyleBackColor = true;
+            this.chkWDSP211NNR.CheckedChanged += new System.EventHandler(this.chkWDSP211NNR_CheckedChanged);
+
+            this.cmbWDSP211NNRModel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbWDSP211NNRModel.FormattingEnabled = true;
+            this.cmbWDSP211NNRModel.Items.AddRange(new object[] {
+            "0: SW1",
+            "1: Large48",
+            "2: CWF fixed",
+            "3: CWF Ovl4"});
+            this.cmbWDSP211NNRModel.DropDownWidth = 110;
+            this.cmbWDSP211NNRModel.Location = new System.Drawing.Point(72, 15);
+            this.cmbWDSP211NNRModel.Name = "cmbWDSP211NNRModel";
+            this.cmbWDSP211NNRModel.Size = new System.Drawing.Size(50, 21);
+            this.cmbWDSP211NNRModel.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.cmbWDSP211NNRModel, "Selects a built-in WDSP 2.11 NNR model. The engine chooses the first compatible slot by default.");
+            this.cmbWDSP211NNRModel.SelectedIndex = 0;
+            this.cmbWDSP211NNRModel.SelectedIndexChanged += new System.EventHandler(this.cmbWDSP211NNRModel_SelectedIndexChanged);
+
+            this.lblWDSP211NNRFloor.AutoSize = true;
+            this.lblWDSP211NNRFloor.Image = null;
+            this.lblWDSP211NNRFloor.Location = new System.Drawing.Point(126, 18);
+            this.lblWDSP211NNRFloor.Name = "lblWDSP211NNRFloor";
+            this.lblWDSP211NNRFloor.Text = "Floor (dB)";
+
+            this.nudWDSP211NNRFloor.Location = new System.Drawing.Point(180, 15);
+            this.nudWDSP211NNRFloor.Maximum = 0;
+            this.nudWDSP211NNRFloor.Minimum = -60;
+            this.nudWDSP211NNRFloor.Name = "nudWDSP211NNRFloor";
+            this.nudWDSP211NNRFloor.Size = new System.Drawing.Size(45, 20);
+            this.nudWDSP211NNRFloor.TabIndex = 2;
+            this.nudWDSP211NNRFloor.Value = -25;
+            this.toolTip1.SetToolTip(this.nudWDSP211NNRFloor, "Minimum signal gain. Lower values allow more noise reduction.");
+            this.nudWDSP211NNRFloor.ValueChanged += new System.EventHandler(this.nudWDSP211NNRFloor_ValueChanged);
             // 
             // chkNR3_RNNoiseFixedGain
             // 
@@ -71899,6 +72003,8 @@
             this.grpRX2AMSBSEL.ResumeLayout(false);
             this.grpRX2AMSBSEL.PerformLayout();
             this.tpDSPFM.ResumeLayout(false);
+            this.grpBroadcastFM.ResumeLayout(false);
+            this.grpBroadcastFM.PerformLayout();
             this.grpFMRX.ResumeLayout(false);
             this.grpFMRX.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutRX)).EndInit();
@@ -71965,6 +72071,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudNR4_red_rx1)).EndInit();
             this.grpRNnoise.ResumeLayout(false);
             this.grpRNnoise.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWDSP211NNRFloor)).EndInit();
+            this.grpWDSP211NNR.ResumeLayout(false);
+            this.grpWDSP211NNR.PerformLayout();
             this.grpDSPNR2RX2.ResumeLayout(false);
             this.grpDSPNR2RX2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudNR2PostProc_factor_rx2)).EndInit();
@@ -74194,6 +74303,10 @@
         private System.Windows.Forms.NumericUpDownTS udTXGenPulseTransition;
         private System.Windows.Forms.LabelTS labelTS317;
         private System.Windows.Forms.TabPage tpDSPFM;
+        private GroupBoxTS grpBroadcastFM;
+        private CheckBoxTS chkBroadcastFM;
+        private LabelTS labelBroadcastFMDeemphasis;
+        private ComboBoxTS comboBroadcastFMDeemphasis;
         private System.Windows.Forms.GroupBoxTS grpFMTX;
         private System.Windows.Forms.CheckBoxTS chkEmphPos;
         private System.Windows.Forms.GroupBoxTS grpFMRX;
@@ -76948,6 +77061,11 @@
         private ComboBoxTS comboAPF_type_rx2;
         private CheckBoxTS chkIgnoreATTOffset;
         private ButtonTS btnShowBandwidth;
+        private CheckBoxTS chkWDSP211NNR;
+        private ComboBoxTS cmbWDSP211NNRModel;
+        private GroupBoxTS grpWDSP211NNR;
+        private LabelTS lblWDSP211NNRFloor;
+        private NumericUpDownTS nudWDSP211NNRFloor;
         private CheckBoxTS chkNR3_RNNoiseFixedGain;
         private LabelTS labelTS136;
         private ComboBoxTS comboCMASIO_outpair;

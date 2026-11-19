@@ -289,7 +289,7 @@ void setFreqs_firopt (FIROPT a, double f_low, double f_high)
 
 void plan_fircore (FIRCORE a)
 {
-	// must call for change in 'nc', 'size', 'out'
+	// must call for change in 'nc', 'size', 'out', 'pfactor'
 	int i;
 	a->nfor = a->nc / a->size;
 	a->cset = 0;
@@ -317,6 +317,7 @@ void plan_fircore (FIRCORE a)
 	a->accum = (double *) malloc0 (2 * a->size * sizeof (complex));
 	a->crev = fftw_plan_dft_1d(2 * a->size, (fftw_complex *)a->accum, (fftw_complex *)a->out, FFTW_BACKWARD, FFTW_PATIENT);
 	a->masks_ready = 0;
+	a->pminphase = create_minphase (a->nc, a->pfactor);
 }
 
 void calc_fircore (FIRCORE a, int flip)
@@ -325,7 +326,7 @@ void calc_fircore (FIRCORE a, int flip)
 	// must also call after a call to plan_firopt()
 	int i;
 	if (a->mp)
-		mp_imp (a->nc, a->impulse, a->imp, 16, 0);
+		mp_imp_exec (a->pminphase, a->impulse, a->imp);
 	else
 		memcpy (a->imp, a->impulse, a->nc * sizeof (complex));
 	for (i = 0; i < a->nfor; i++)
@@ -345,7 +346,8 @@ void calc_fircore (FIRCORE a, int flip)
 	}
 }
 
-FIRCORE create_fircore (int size, double* in, double* out, int nc, int mp, double* impulse)
+FIRCORE create_fircore (int size, double* in, double* out, int nc, 
+	int mp, int pfactor, double* impulse)
 {
 	FIRCORE a = (FIRCORE) malloc0 (sizeof (fircore));
 	a->size = size;
@@ -353,6 +355,7 @@ FIRCORE create_fircore (int size, double* in, double* out, int nc, int mp, doubl
 	a->out = out;
 	a->nc = nc;
 	a->mp = mp;
+	a->pfactor = pfactor;
 	InitializeCriticalSectionAndSpinCount (&a->update, 2500);
 	plan_fircore (a);
 	a->impulse = (double *) malloc0 (a->nc * sizeof (complex));
@@ -364,10 +367,10 @@ FIRCORE create_fircore (int size, double* in, double* out, int nc, int mp, doubl
 
 void deplan_fircore (FIRCORE a)
 {
-	int i;
+	destroy_minphase(a->pminphase);
 	fftw_destroy_plan (a->crev);
 	_aligned_free (a->accum);
-	for (i = 0; i < a->nfor; i++)
+	for (int i = 0; i < a->nfor; i++)
 	{
 		_aligned_free (a->fftout[i]);
 		_aligned_free (a->fmask[0][i]);
@@ -406,15 +409,14 @@ void flush_fircore (FIRCORE a)
 	a->buffidx = 0;
 }
 
-void xfircore(FIRCORE a)
+void xfircore (FIRCORE a)
 {
 	int i, j, k;
-	memcpy(&(a->fftin[2 * a->size]), a->in, a->size * sizeof(complex));
-	fftw_execute(a->pcfor[a->buffidx]);
+	memcpy (&(a->fftin[2 * a->size]), a->in, a->size * sizeof (complex));
+	fftw_execute (a->pcfor[a->buffidx]);
 	k = a->buffidx;
-	memset(a->accum, 0, 2 * a->size * sizeof(complex));
-
-	EnterCriticalSection(&a->update);
+	memset (a->accum, 0, 2 * a->size * sizeof (complex));
+	EnterCriticalSection (&a->update);
 	double* accum = a->accum;
 	double** fftout = a->fftout;
 	double*** fmask = a->fmask;
@@ -431,11 +433,10 @@ void xfircore(FIRCORE a)
 		}
 		k = (k + idxmask) & idxmask;
 	}
-	LeaveCriticalSection(&a->update);
-
+	LeaveCriticalSection (&a->update);
 	a->buffidx = (a->buffidx + 1) & idxmask;
-	fftw_execute(a->crev);
-	memcpy(a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
+	fftw_execute (a->crev);
+	memcpy (a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
 }
 
 void setBuffers_fircore (FIRCORE a, double* in, double* out)

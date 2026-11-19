@@ -160,7 +160,7 @@ void calc_filter (DEXP a)
 	//    that for any reasonable use of the filter there will be a reduction in trigger signal.
 	impulse = fir_bandpass (a->nc, a->low_cut, a->high_cut, a->rate, a->wintype, 1, 2.0/(double)(2 * a->size));
 	// print_impulse ("scf.txt", a->nc, impulse, 1, 0);
-	a->p = create_fircore (a->size, a->in, a->trigsig, a->nc, 1, impulse);
+	a->p = create_fircore (a->size, a->in, a->trigsig, a->nc, 1, 4, impulse);
 	_aligned_free (impulse);
 	a->scdring = calc_delring (a->size + a->nc / 2, a->size, a->nc / 64, a->in, a->delsig);
 }

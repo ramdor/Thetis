@@ -219,6 +219,30 @@
     </DirectoryRef>
 	  
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <?if $(var.Platform) = x64 ?>
+      <Component Guid="*">
+        <File Id="WdspCalculusFile" Source="$(var.FilesPath)calculus" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="MicrosoftBclHashCodeDLL" Source="$(var.FilesPath)Microsoft.Bcl.HashCode.dll" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="MicrosoftBclMemoryDLL" Source="$(var.FilesPath)Microsoft.Bcl.Memory.dll" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="MicrosoftNetStringToolsDLL" Source="$(var.FilesPath)Microsoft.NET.StringTools.dll" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="SystemFormatsNrbfDLL" Source="$(var.FilesPath)System.Formats.Nrbf.dll" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="SystemLinqAsyncEnumerableDLL" Source="$(var.FilesPath)System.Linq.AsyncEnumerable.dll" KeyPath="yes" />
+      </Component>
+      <Component Guid="*">
+        <File Id="SystemResourcesExtensionsDLL" Source="$(var.FilesPath)System.Resources.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <?endif?>
+
       
       <Component Id="fwException" Guid="*" Transitive="yes">
         <Condition>Privileged</Condition>

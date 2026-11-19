@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -29,7 +29,6 @@ warren@wpratt.com
 void calc_fmsq (FMSQ a)
 {
 	double delta, theta;
-	double* impulse;
 	int i;
 	// noise filter
 	a->noise = (double *)malloc0(2 * a->size * sizeof(complex));
@@ -41,9 +40,11 @@ void calc_fmsq (FMSQ a)
 	a->G[1] = 0.0;
 	a->G[2] = 3.0;
 	a->G[3] = +20.0 * log10(20000.0 / *a->pllpole);
-	impulse = eq_impulse (a->nc, 3, a->F, a->G, NULL, a->rate, 1.0 / (2.0 * a->size), 0, 0);
-	a->p = create_fircore (a->size, a->trigger, a->noise, a->nc, a->mp, impulse);
-	_aligned_free (impulse);
+	a->peqimp = create_eqimp (3, a->nc, 2, 16);
+	a->impulse = (double*) malloc0 (a->nc * sizeof (complex));
+	eq_impulse (a->peqimp, a->nc, 3, a->F, a->G, a->rate, 1.0 / (2.0 * a->size), 0, 0, 0, 
+		a->impulse);
+	a->p = create_fircore (a->size, a->trigger, a->noise, a->nc, a->mp, 4, a->impulse);
 	// noise averaging
 	a->avm = exp(-1.0 / (a->rate * a->avtau));
 	a->onem_avm = 1.0 - a->avm;
@@ -81,7 +82,9 @@ void decalc_fmsq (FMSQ a)
 {
 	_aligned_free(a->cdown);
 	_aligned_free(a->cup);
+	_aligned_free(a->impulse);
 	destroy_fircore (a->p);
+	destroy_eqimp(a->peqimp);
 	_aligned_free(a->noise);
 }
 
@@ -253,15 +256,18 @@ PORT
 void SetRXAFMSQNC (int channel, int nc)
 {
 	FMSQ a;
-	double* impulse;
 	EnterCriticalSection (&ch[channel].csDSP);
 	a = rxa[channel].fmsq.p;
 	if (a->nc != nc)
 	{
 		a->nc = nc;
-		impulse = eq_impulse (a->nc, 3, a->F, a->G, NULL, a->rate, 1.0 / (2.0 * a->size), 0, 0);
-		setNc_fircore (a->p, a->nc, impulse);
-		_aligned_free (impulse);
+		destroy_eqimp(a->peqimp);
+		_aligned_free(a->impulse);
+		a->impulse = (double*)malloc0(a->nc * sizeof(complex));
+		a->peqimp = create_eqimp(3, a->nc, 2, 16);
+		eq_impulse(a->peqimp, a->nc, 3, a->F, a->G, a->rate, 1.0 / (2.0 * a->size), 0, 0, 0,
+			a->impulse);
+		setNc_fircore (a->p, a->nc, a->impulse);
 	}
 	LeaveCriticalSection (&ch[channel].csDSP);
 }

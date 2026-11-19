@@ -98,12 +98,13 @@ namespace Thetis
 
 	public class RadioDSP
 	{
+        private const string ImpulseCacheFile = "impulse_cache_wdsp211.dat";
 		#region Static Properties and Routines
 
 		public static void CreateDSP()
 		{
-            //check for old wdspWisdom00 file - [2.10.3.9]MW0LGE
-            string filePath = Path.Combine(Path.GetDirectoryName(app_data_path), "wdspWisdom00");
+            // Check the WDSP 2.11 wisdom file, which is stored in the configured data folder.
+            string filePath = Path.Combine(app_data_path, "wdspWisdom01");
             if (File.Exists(filePath))
             {
                 if (File.GetLastWriteTime(filePath) < DateTime.Now.AddMonths(-3))
@@ -132,15 +133,21 @@ namespace Thetis
             }
 
             // restore or rebuild wisdom as needed
-            bool rebuilt = WDSP.WDSPwisdom(app_data_path) == 1;
+            int wisdom_status = WDSP.WDSPwisdom(app_data_path);
+            if (wisdom_status < 0)
+            {
+                MessageBox.Show("WDSP could not load or create FFTW wisdom for the configured data folder. DSP initialization may be incomplete.",
+                    "WDSP Wisdom Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            bool rebuilt = wisdom_status == 1;
             
             if (rebuilt)
             {
-                // wisdom00 rebuilt, so remove any existing impulse cache as it is now invalid
+                // Wisdom rebuilt, so remove any existing impulse cache as it is now invalid.
                 // best that we start afresh, because depending on config this may be left behind
                 try
                 {
-                    string file = Path.Combine(app_data_path, "impulse_cache.dat");
+                    string file = Path.Combine(app_data_path, ImpulseCacheFile);
                     if (File.Exists(file)) File.Delete(file);
                 }
                 catch { }
@@ -151,10 +158,10 @@ namespace Thetis
 
             WDSP.init_impulse_cache(_cache_impulse ? 1 : 0);
 
-            if (_cache_impulse_save_restore && !rebuilt)
+            if (wisdom_status >= 0 && _cache_impulse_save_restore && !rebuilt)
             {
-                // read any impulse cache if we have previously saved it. Ignored if wisdom00 is rebuilt
-                WDSP.read_impulse_cache(Path.Combine(app_data_path, "impulse_cache.dat"));
+                // Read any saved impulse cache only when wisdom loaded successfully.
+                WDSP.read_impulse_cache(Path.Combine(app_data_path, ImpulseCacheFile));
             }
 
             cmaster.CMCreateCMaster();            
@@ -164,14 +171,14 @@ namespace Thetis
 		{
             if (_cache_impulse && _cache_impulse_save_restore)
             {
-                WDSP.save_impulse_cache(Path.Combine(app_data_path, "impulse_cache.dat"));
+                WDSP.save_impulse_cache(Path.Combine(app_data_path, ImpulseCacheFile));
             }
             else
             {
                 // try to remove file if exists
                 try
                 {
-                    string file = Path.Combine(app_data_path, "impulse_cache.dat");
+                    string file = Path.Combine(app_data_path, ImpulseCacheFile);
                     if (File.Exists(file)) File.Delete(file);
                 }
                 catch { }
@@ -332,6 +339,7 @@ namespace Thetis
             this.RXFMCTCSSFilter = rx.rx_fm_ctcss_filter;
             this.RXFMDETLIMRUN = rx.rx_fm_detector_limiter;
             this.RXFMDETLIMGAIN = rx.rx_fm_limiter_gain;
+            SetBroadcastFM(rx.broadcastFM, rx.broadcastFMDeemphasis);
             this.RXANFPosition = rx.rx_anf_position;
             this.RXANRPosition = rx.rx_anr_position;
             this.RXCBLRun = rx.rx_cbl_run;
@@ -372,6 +380,9 @@ namespace Thetis
             this.RXANR3Run = rx.rx_nr3_run;
             this.RXANR3Position = rx.rx_nr3_position;
             this.RXANR3FixedGain = rx.rx_nr3_fixed_gain;
+            this.RXANNRModel = rx.rx_nnr_model;
+            this.RXANNRMaskFloor = rx.nnrMaskFloor;
+            this.RXANNRRun = rx.rx_nnr_run;
             this.RXANR4Run = rx.rx_nr4_run;
             this.RXANR4Position = rx.rx_nr4_position;
             this.RXASBNRreductionAmount = rx.rx_nr4_reductionAmount;
@@ -434,6 +445,7 @@ namespace Thetis
             RXFMDeviation = rx_fm_deviation;
             RXFMDETLIMRUN = rx_fm_detector_limiter;
             RXFMDETLIMGAIN = rx_fm_limiter_gain;
+            SetBroadcastFM(broadcastFM, broadcastFMDeemphasis);
             RXFMCTCSSFilter = rx_fm_ctcss_filter;
             RXANFPosition = rx_anf_position;
             RXANRPosition = rx_anr_position;
@@ -475,6 +487,9 @@ namespace Thetis
             RXANR3Run = rx_nr3_run;
             RXANR3Position = rx_nr3_position;
             RXANR3FixedGain = rx_nr3_fixed_gain;
+            RXANNRModel = rx_nnr_model;
+            RXANNRMaskFloor = nnrMaskFloor;
+            RXANNRRun = rx_nnr_run;
             RXANR4Run = rx_nr4_run;
             RXANR4Position = rx_nr4_position;
             RXASBNRreductionAmount = rx_nr4_reductionAmount;
@@ -577,6 +592,20 @@ namespace Thetis
 
 		private DSPMode dsp_mode_dsp = DSPMode.USB;
 		private DSPMode dsp_mode = DSPMode.USB;
+        private bool broadcastFM;
+        private int broadcastFMDeemphasis;
+
+        internal void SetBroadcastFM(bool enabled, int deemphasis)
+        {
+            broadcastFM = enabled;
+            broadcastFMDeemphasis = deemphasis;
+            if (!update) return;
+
+            int channel = WDSP.id(thread, subrx);
+            WDSP.SetRXAWBFMdmph(channel, deemphasis == 2 ? 0 : 1, deemphasis == 1 ? 1 : 0);
+            WDSP.SetRXAFMBroadcast(channel, enabled ? 1 : 0);
+        }
+
 		public DSPMode DSPMode
 		{
 			get { return dsp_mode; }
@@ -587,7 +616,9 @@ namespace Thetis
 				{
 					if(value != dsp_mode_dsp || force)
 					{
-                        WDSP.SetRXAMode(WDSP.id(thread, subrx), value);
+                        DSPMode nativeMode = value == DSPMode.AM_LSB || value == DSPMode.AM_USB
+                            ? DSPMode.AM : value;
+                        WDSP.SetRXAMode(WDSP.id(thread, subrx), nativeMode);
 						dsp_mode_dsp = value;
 					}
 				}
@@ -2308,6 +2339,51 @@ namespace Thetis
                 }
             }
         }
+
+        // WDSP 2.11 NNR is separate from Thetis's NR3/RNNoise block.
+        private int rx_nnr_run = 0;
+        private int rx_nnr_run_dsp = 0;
+        public int RXANNRRun
+        {
+            get { return rx_nnr_run; }
+            set
+            {
+                rx_nnr_run = value;
+                if (update && (value != rx_nnr_run_dsp || force))
+                {
+                    WDSP.SetRXANNRRun(WDSP.id(thread, subrx), value);
+                    rx_nnr_run_dsp = value;
+                }
+            }
+        }
+
+        private int rx_nnr_model = 0;
+        private int rx_nnr_model_dsp = -1;
+        public int RXANNRModel
+        {
+            get { return rx_nnr_model; }
+            set
+            {
+                rx_nnr_model = value;
+                if (update && (value != rx_nnr_model_dsp || force))
+                {
+                    rx_nnr_model_dsp = WDSP.SetRXANNRModel(WDSP.id(thread, subrx), value);
+                }
+            }
+        }
+
+        private double nnrMaskFloor = -25.0;
+        public double RXANNRMaskFloor
+        {
+            get { return nnrMaskFloor; }
+            set
+            {
+                nnrMaskFloor = value;
+                if (update)
+                    WDSP.SetRXANNRMaskFloor(WDSP.id(thread, subrx), value);
+            }
+        }
+
         //libspecbleach
         private int rx_nr4_run = 0;
         private int rx_nr4_run_dsp = 0;

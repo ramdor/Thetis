@@ -560,6 +560,10 @@ void stitch(int disp)
 	double pixel_ref;
 	double* ptr;
 
+	EnterCriticalSection(&a->PixelRefSection);
+	pixel_ref = a->pixel_ref;
+	LeaveCriticalSection(&a->PixelRefSection);
+
 	// stitch
 	m = 0;
 	ptr = a->pre_av_out;
@@ -569,11 +573,6 @@ void stitch(int disp)
 		ptr += a->ss_bins[n];
 		m += a->ss_bins[n];
 	}
-
-	EnterCriticalSection(&a->PixelRefSection);
-	pixel_ref = a->pixel_ref;
-	LeaveCriticalSection(&a->PixelRefSection);
-
 	for (i = 0; i < a->num_pixout; i++)	// for each output
 	{
 		EnterCriticalSection(&a->ResampleSection);
@@ -602,8 +601,8 @@ void stitch(int disp)
 		EnterCriticalSection(&a->PixelRefSection);
 		a->pixel_refs[i][a->w_pix_buff[i]] = pixel_ref;
 		LeaveCriticalSection(&a->PixelRefSection);
-		a->last_pix_buff[i] = a->w_pix_buff[i];	
-		while ((a->w_pix_buff[i] = (a->w_pix_buff[i] + 1) % dNUM_PIXEL_BUFFS) == a->r_pix_buff[i]);
+			a->last_pix_buff[i] = a->w_pix_buff[i];	
+			while ((a->w_pix_buff[i] = (a->w_pix_buff[i] + 1) % dNUM_PIXEL_BUFFS) == a->r_pix_buff[i]);
 		LeaveCriticalSection(&a->PB_ControlsSection[i]);
 		InterlockedBitTestAndSet(&(a->pb_ready[i][a->last_pix_buff[i]]), 0);
 	}
@@ -880,6 +879,7 @@ DWORD WINAPI Cspectra (void *pargs)
 		// 
 
 	}
+
 	if (a->stop)
 	{
 		InterlockedDecrement(a->pnum_threads);
@@ -1118,7 +1118,7 @@ void ResetPixelBuffers(int disp)
 	a->pixel_ref = 0.0;
 	LeaveCriticalSection(&a->PixelRefSection);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
-	{				
+	{
 		for (j = 0; j < dMAX_PIXELS; j++)
 			a->t_pixels[i][j] = 0.0;
 		for (j = 0; j < dMAX_AVERAGE; j++)
@@ -1148,14 +1148,14 @@ void ResetPixelBuffers(int disp)
 		a->av_in_idx[i] = 0;
 		a->av_out_idx[i] = 0;
 		EnterCriticalSection(&a->PB_ControlsSection[i]);
+		EnterCriticalSection(&a->PixelRefSection);
 		a->w_pix_buff[i] = 0;
 		a->r_pix_buff[i] = 0;
 		a->last_pix_buff[i] = 0;
-		EnterCriticalSection(&a->PixelRefSection);
 		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
 		{
-			a->pixel_refs[i][j] = 0.0;
 			a->pb_ready[i][j] = 0;
+			a->pixel_refs[i][j] = 0.0;
 		}
 		LeaveCriticalSection(&a->PixelRefSection);
 		LeaveCriticalSection(&a->PB_ControlsSection[i]);
@@ -1170,7 +1170,7 @@ void ResetPixelBuffers(int disp)
 		a->spec_flag[i] = 0;
 	a->stitch_flag = 0;
 	a->ss = 0;
-	a->LO = 0;	
+	a->LO = 0;
 	for (i = 0; i < dMAX_STITCH; i++)
 		for (j = 0; j < dMAX_NUM_FFT; j++)
 		{
@@ -1180,7 +1180,7 @@ void ResetPixelBuffers(int disp)
 			a->IQin_index[i][j] = 0;
 			a->IQout_index[i][j] = 0;
 			LeaveCriticalSection(&(a->BufferControlSection[i][j]));
-		}	
+		}
 	LeaveCriticalSection(&a->StitchSection);
 	LeaveCriticalSection(&a->SetAnalyzerSection);
 }
@@ -1307,19 +1307,14 @@ void SetAnalyzer (	int disp,			// display identifier
 	for (i = 0; i < dMAX_STITCH; i++)
 		a->spec_flag[i] = 0;
 	a->stitch_flag = 0;
-	EnterCriticalSection(&a->PixelRefSection);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
-	{		
+	{
 		a->w_pix_buff[i] = 0;
 		a->r_pix_buff[i] = 0;
 		a->last_pix_buff[i] = 0;
 		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
-		{
-			a->pixel_refs[i][j] = 0.0;
 			a->pb_ready[i][j] = 0;
-		}
 	}
-	LeaveCriticalSection(&a->PixelRefSection);
 	a->ss = 0;
 	a->LO = 0;
 	for (i = 0; i < dMAX_STITCH; i++)
@@ -1362,8 +1357,8 @@ void XCreateAnalyzer(	int disp,
 			a->hSnapEvent[i][j] = CreateEvent(NULL, FALSE, FALSE, TEXT("snap"));
 			a->snap[i][j] = 0;
 		}
-	InitializeCriticalSectionAndSpinCount(&a->PixelRefSection, 0);
 	InitializeCriticalSectionAndSpinCount(&a->ResampleSection, 0);
+	InitializeCriticalSectionAndSpinCount(&a->PixelRefSection, 0);
 	InitializeCriticalSectionAndSpinCount(&a->SetAnalyzerSection, 0);
 	InitializeCriticalSectionAndSpinCount(&a->StitchSection, 0);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
@@ -1425,9 +1420,7 @@ void XCreateAnalyzer(	int disp,
 	a->cal_set = -1;
 	a->f_min = -1.0;
 	a->f_max = -1.0;
-	EnterCriticalSection(&a->PixelRefSection);
-	a->pixel_ref = 0.0;
-	LeaveCriticalSection(&a->PixelRefSection);
+
 	a->bsize = a->max_size * dSAMP_BUFF_MULT;
 	for (i = 0; i < a->max_stitch; i++)
 		for (j = 0; j < a->max_num_fft; j++)
@@ -1526,40 +1519,26 @@ void DestroyAnalyzer(int disp)
 	_aligned_free (a);
 }
 
-PORT   
+
+PORT
 void SetPixelRef(int disp, double pixel_ref)
 {
-	// [2.10.3.13]MW0LGE
-	// returned via GetPixels. This can be used by a client to index the results of GetPixels
-	// For example be called with the DDC centre frequency, whenever it changes, so that a client
-	// when calling GetPixels can index these pixels to a deterministic frequency
 	DP a = pdisp[disp];
-	if (a == 0)
-		return;
-
+	if (a == 0) return;
 	EnterCriticalSection(&a->PixelRefSection);
 	a->pixel_ref = pixel_ref;
 	LeaveCriticalSection(&a->PixelRefSection);
 }
 
 PORT
-void GetPixels	(	int disp,
+void GetPixelsWithRef	(	int disp,
 					int pixout,
 					dOUTREAL *pix,		//if new pixel values avail, copies to pix and sets flag = 1
 					int *flag,			//else, returns 0 (try again later)
-					double *center_mhz
+					double *pixel_ref
 				)
 {
 	DP a = pdisp[disp];
-	if (a == 0)
-	{
-		*flag = 0;
-		if (center_mhz != 0)
-			*center_mhz = 0.0;
-		return;
-	}
-
-	EnterCriticalSection(&a->SetAnalyzerSection);
 	EnterCriticalSection(&a->PB_ControlsSection[pixout]);
 		a->r_pix_buff[pixout] = a->last_pix_buff[pixout];
 	LeaveCriticalSection(&a->PB_ControlsSection[pixout]);
@@ -1568,10 +1547,10 @@ void GetPixels	(	int disp,
 	{
 		memcpy (pix, a->pixels[pixout][a->r_pix_buff[pixout]], a->num_pixels * sizeof(dOUTREAL));
 		*flag = 1;
-		if (center_mhz != 0) 
+		if (pixel_ref != 0)
 		{
 			EnterCriticalSection(&a->PixelRefSection);
-			*center_mhz = a->pixel_refs[pixout][a->r_pix_buff[pixout]];
+			*pixel_ref = a->pixel_refs[pixout][a->r_pix_buff[pixout]];
 			LeaveCriticalSection(&a->PixelRefSection);
 		}
 		InterlockedBitTestAndReset(&(a->pb_ready[pixout][a->r_pix_buff[pixout]]), 0);
@@ -1579,10 +1558,14 @@ void GetPixels	(	int disp,
 	else
 	{
 		*flag = 0;
-		if (center_mhz != 0)
-			*center_mhz = 0.0;
+		if (pixel_ref != 0) *pixel_ref = 0.0;
 	}
-	LeaveCriticalSection(&a->SetAnalyzerSection);
+}
+
+PORT
+void GetPixels (int disp, int pixout, dOUTREAL* pix, int* flag)
+{
+	GetPixelsWithRef (disp, pixout, pix, flag, 0);
 }
 
 PORT
@@ -1598,12 +1581,12 @@ void SnapSpectrum(	int disp,
 }
 
 PORT
-void SnapSpectrumTimeout(int disp,
-	int ss,
-	int LO,
-	double* snap_buff,
-	DWORD timeout,
-	int* flag)
+void SnapSpectrumTimeout(	int disp,
+							int ss,
+							int LO,
+							double* snap_buff,
+							DWORD timeout,
+							int* flag)
 {
 	DP a = pdisp[disp];
 	a->snap_buff[ss][LO] = snap_buff;

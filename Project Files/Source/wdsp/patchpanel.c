@@ -53,50 +53,65 @@ void flush_panel (PANEL a)
 }
 
 void xpanel (PANEL a)
-{
+{	
 	int i;
 	double I, Q;
+	if (a->run)
+	{
+		// inselect is either 0(neither), 1(Q), 2(I), or 3(both)
+		switch (a->copy)
+		{
+		case 0:	// no copy
+			for (i = 0; i < a->size; i++)
+			{
+				I = a->in[2 * i + 0] * (a->inselect >> 1);
+				Q = a->in[2 * i + 1] * (a->inselect & 1);
+				a->out[2 * i + 0] = I;
+				a->out[2 * i + 1] = Q;
+			}
+			break;
+		case 1:	// copy I to Q (then Q == I)
+			for (i = 0; i < a->size; i++)
+			{
+				I = a->in[2 * i + 0] * (a->inselect >> 1);
+				Q = I;
+				a->out[2 * i + 0] = I;
+				a->out[2 * i + 1] = Q;
+			}
+			break;
+		case 2:	// copy Q to I (then I == Q)
+			for (i = 0; i < a->size; i++)
+			{
+				Q = a->in[2 * i + 1] * (a->inselect & 1);
+				I = Q;
+				a->out[2 * i + 0] = I;
+				a->out[2 * i + 1] = Q;
+			}
+			break;
+		case 3:	// reverse (I=>Q and Q=>I)
+			for (i = 0; i < a->size; i++)
+			{
+				Q = a->in[2 * i + 0] * (a->inselect >> 1);
+				I = a->in[2 * i + 1] * (a->inselect & 1);
+				a->out[2 * i + 0] = I;
+				a->out[2 * i + 1] = Q;
+			}
+			break;
+		}
+	}
+	else if (a->out != a->in)
+		memcpy(a->out, a->in, a->size * sizeof(complex));
+	xpanel_gain (a);
+}
+
+void xpanel_gain (PANEL a)
+{
 	double gainI = a->gain1 * a->gain2I;
 	double gainQ = a->gain1 * a->gain2Q;
-	// inselect is either 0(neither), 1(Q), 2(I), or 3(both)
-	switch (a->copy)
+	for (int i = 0; i < a->size; i++)
 	{
-	case 0:	// no copy
-		for (i = 0; i < a->size; i++)
-		{
-			I = a->in[2 * i + 0] * (a->inselect >> 1);		
-			Q = a->in[2 * i + 1] * (a->inselect &  1);
-			a->out[2 * i + 0] = gainI * I;
-			a->out[2 * i + 1] = gainQ * Q;
-		}
-		break;
-	case 1:	// copy I to Q (then Q == I)
-		for (i = 0; i < a->size; i++)
-		{
-			I = a->in[2 * i + 0] * (a->inselect >> 1);
-			Q = I;
-			a->out[2 * i + 0] = gainI * I;
-			a->out[2 * i + 1] = gainQ * Q;
-		}
-		break;
-	case 2:	// copy Q to I (then I == Q)
-		for (i = 0; i < a->size; i++)
-		{
-			Q = a->in[2 * i + 1] * (a->inselect &  1);
-			I = Q;
-			a->out[2 * i + 0] = gainI * I;
-			a->out[2 * i + 1] = gainQ * Q;
-		}
-		break;
-	case 3:	// reverse (I=>Q and Q=>I)
-		for (i = 0; i < a->size; i++)
-		{
-			Q = a->in[2 * i + 0] * (a->inselect >> 1);
-			I = a->in[2 * i + 1] * (a->inselect &  1);
-			a->out[2 * i + 0] = gainI * I;
-			a->out[2 * i + 1] = gainQ * Q;
-		}
-		break;
+		a->out[2 * i + 0] *= gainI;
+		a->out[2 * i + 1] *= gainQ;
 	}
 }
 

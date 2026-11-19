@@ -73,6 +73,15 @@ namespace Thetis
             
             Common.RestoreForm(this, "PureSignal", false); // will also restore txtPSpeak //MW0LGE_21k9rc5
 
+            // These controls configured the retired WDSP 1.x PureSignal fitter.
+            // WDSP 2.11 uses its adaptive NURBS calibration and fixed sample collection.
+            chkPSRelaxPtol.Visible = false;
+            chkPSPin.Visible = false;
+            chkPSMap.Visible = false;
+            chkPSStbl.Visible = false;
+            comboPSTint.Visible = false;
+            lblPSTint.Text = "Adaptive";
+
             _advancedON = chkAdvancedViewHidden.Checked; //MW0LGE_[2.9.0.6]
 
             console.PowerChangeHanders += onPowerOn;
@@ -91,6 +100,8 @@ namespace Thetis
         private static bool _autoON = false;
         private static bool _singlecalON = false;
         private static bool _restoreON = false;
+        private string _pendingRestoreFile;
+        private bool _restoreSubmitted;
         private static bool _OFF = true;
         //private int oldCalCount = 0;
         //private int red, green, blue;
@@ -445,7 +456,7 @@ namespace Thetis
         }
         public void RunAmpv()
         {
-            ampv = new AmpView(this);
+            ampv = new AmpView();
             ampv.Opacity = 0f;
             Application.Run(ampv);
             _ampViewDone.Set();
@@ -540,8 +551,10 @@ namespace Thetis
             {
                 console.ForcePureSignalAutoCalDisable();
                 _OFF = false;
-                puresignal.PSRestoreCorr(_txachannel, openfile1.FileName);
+                _pendingRestoreFile = openfile1.FileName;
+                _restoreSubmitted = false;
                 _restoreON = true;
+                btnPSRestore.Enabled = false;
             }
         }
         public void SetDefaultPeaks()
@@ -716,12 +729,29 @@ namespace Thetis
                     break;
                 case eCMDState.IntiateRestoredCorrection://7:     // Initiate Restored Correction
                     _autoON = false;
-                    puresignal.SetPSControl(_txachannel, 0, 0, 0, 1);
                     if (!PSEnabled) PSEnabled = true;
                     btnPSCalibrate.BackColor = SystemColors.Control;
-                    _restoreON = false;
-                    if (puresignal.State == puresignal.EngineState.LSTAYON)
-                        _cmdstate = eCMDState.StayON;//5;
+                    if (!_restoreSubmitted)
+                    {
+                        puresignal.SetPSControl(_txachannel, 0, 0, 0, 0);
+                        puresignal.PSRestoreCorr(_txachannel, _pendingRestoreFile);
+                        _pendingRestoreFile = null;
+                        _restoreSubmitted = true;
+                    }
+                    else if (puresignal.CorrectionRestoreFailed)
+                    {
+                        _restoreON = false;
+                        btnPSRestore.Enabled = true;
+                        _cmdstate = puresignal.CorrectionsBeingApplied ? eCMDState.StayON : eCMDState.TurnOFF;
+                        MessageBox.Show(this, "WDSP could not restore this correction. Select a valid PureSignal 3.0 correction file or run a new calibration.",
+                            "PureSignal Restore", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else if (puresignal.CorrectionRestoreReady && puresignal.State == puresignal.EngineState.LSTAYON)
+                    {
+                        _restoreON = false;
+                        btnPSRestore.Enabled = true;
+                        _cmdstate = eCMDState.StayON;
+                    }
                     break;
             }
         }
@@ -804,10 +834,7 @@ namespace Thetis
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkPSRelaxPtol.Checked)
-                puresignal.SetPSPtol(_txachannel, 0.400);
-            else
-                puresignal.SetPSPtol(_txachannel, 0.800);
+            // WDSP 2.11 no longer exposes the WDSP 1.x ptol control.
         }
 
         private void chkPSAutoAttenuate_CheckedChanged(object sender, EventArgs e)
@@ -832,57 +859,24 @@ namespace Thetis
 
         private void chkPSPin_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkPSPin.Checked)
-                puresignal.SetPSPinMode(_txachannel, 1);
-            else
-                puresignal.SetPSPinMode(_txachannel, 0);
+            // WDSP 2.11's NURBS calibration owns its endpoint handling.
         }
 
         private void chkPSMap_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkPSMap.Checked)
-                puresignal.SetPSMapMode(_txachannel, 1);
-            else
-                puresignal.SetPSMapMode(_txachannel, 0);
+            // The WDSP 1.x map mode is not part of the 2.11 calibration API.
         }
 
         private void chkPSStbl_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkPSStbl.Checked)
-                puresignal.SetPSStabilize(_txachannel, 1);
-            else
-                puresignal.SetPSStabilize(_txachannel, 0);
+            // WDSP 2.11 handles calibration smoothing internally.
         }
 
         private void comboPSTint_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboPSTint.SelectedIndex)
-            {
-                case 0:
-                    puresignal.SetPSIntsAndSpi(_txachannel, 16, 256);
-                    _ints = 16;
-                    _spi = 256;
-                    btnPSSave.Enabled = btnPSRestore.Enabled = true;
-                    break;
-                case 1:
-                    puresignal.SetPSIntsAndSpi(_txachannel, 8, 512);
-                    _ints = 8;
-                    _spi = 512;
-                    btnPSSave.Enabled = btnPSRestore.Enabled = false;
-                    break;
-                case 2:
-                    puresignal.SetPSIntsAndSpi(_txachannel, 4, 1024);
-                    _ints = 4;
-                    _spi = 1024;
-                    btnPSSave.Enabled = btnPSRestore.Enabled = false;
-                    break;
-                default:
-                    puresignal.SetPSIntsAndSpi(_txachannel, 16, 256);
-                    _ints = 16;
-                    _spi = 256;
-                    btnPSSave.Enabled = btnPSRestore.Enabled = true;
-                    break;
-            }
+            _ints = 16;
+            _spi = 256;
+            btnPSSave.Enabled = btnPSRestore.Enabled = true;
         }
 
         private bool _advancedON = false; //MW0LGE_[2.9.0.7]
@@ -1016,9 +1010,6 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetPSTXDelay", CallingConvention = CallingConvention.Cdecl)]
         public static extern double SetPSTXDelay(int channel, double delay);
 
-        [DllImport("wdsp.dll", EntryPoint = "psccF", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void psccF(int channel, int size, float* Itxbuff, float* Qtxbuff, float* Irxbuff, float* Qrxbuff, bool mox, bool solidmox);
-
         [DllImport("wdsp.dll", EntryPoint = "PSSaveCorr", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PSSaveCorr(int channel, string filename);
 
@@ -1034,26 +1025,13 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "GetPSMaxTX", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSMaxTX(int channel, double* maxtx);
 
-        [DllImport("wdsp.dll", EntryPoint = "SetPSPtol", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSPtol(int channel, double ptol);
-
         [DllImport("wdsp.dll", EntryPoint = "GetPSDisp", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetPSDisp(int channel, IntPtr x, IntPtr ym, IntPtr yc, IntPtr ys, IntPtr cm, IntPtr cc, IntPtr cs);
+        public static extern void GetPSDisp(int channel, IntPtr x, IntPtr ym, IntPtr yc, IntPtr ys,
+            IntPtr xm_cor, IntPtr ym_cor, IntPtr xa_cor, IntPtr ya_cor,
+            out int nsamps_out, out int cpts_out, out double phs_ref_deg_out);
 
         [DllImport("wdsp.dll", EntryPoint = "SetPSFeedbackRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSFeedbackRate(int channel, int rate);
-
-        [DllImport("wdsp.dll", EntryPoint = "SetPSPinMode", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSPinMode(int channel, int pin);
-
-        [DllImport("wdsp.dll", EntryPoint = "SetPSMapMode", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSMapMode(int channel, int map);
-
-        [DllImport("wdsp.dll", EntryPoint = "SetPSStabilize", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSStabilize(int channel, int stbl);
-
-        [DllImport("wdsp.dll", EntryPoint = "SetPSIntsAndSpi", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSIntsAndSpi(int channel, int ints, int spi);
 
         #endregion
 
@@ -1095,8 +1073,10 @@ namespace Thetis
             }
         }
         public static bool CalibrationAttemptsChanged {
-            get { return _info[5] != _oldInfo[5]; }
+            get { return _info[7] != _oldInfo[7]; }
         }
+        internal static bool CorrectionRestoreFailed => (_info[12] & 2) != 0;
+        internal static bool CorrectionRestoreReady => (_info[12] & 4) != 0;
         public static bool CorrectionsBeingApplied {
             get { return _info[14] == 1; }
         }

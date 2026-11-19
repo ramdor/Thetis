@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,43 +20,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
 #ifndef _iqc_h
 #define _iqc_h
-
+#include "nurbs_spline.h"
 typedef struct _iqc
 {
+	NS_Spline   *m_spline[2], *c_spline[2], *s_spline[2];
+	CurveEMA    m_calavg[2], c_calavg[2], s_calavg[2];
+	double      m_prev_y[2], c_prev_y[2], s_prev_y[2];
+
 	volatile long run;
 	volatile long busy;
 	int size;
 	double* in;
 	double* out;
 	double rate;
-	int ints;
-	double* t;
 	int cset;
-	double* cm[2];
-	double* cc[2];
-	double* cs[2];
 	double tup;
 	double* cup;
 	int count;
 	int ntup;
 	int state;
-	struct
-	{
-		int spi;
-		int* cpi;
-		int full_ints;
-		int count;
-		CRITICAL_SECTION cs;
-	} dog;
+	
 } iqc, *IQC;
 
-extern IQC create_iqc (int run, int size, double* in, double* out, double rate, int ints, double tup, int spi);
+extern IQC create_iqc(int run, int size, double* in, double* out, double rate, double tup);
 
 extern void destroy_iqc (IQC a);
 
@@ -70,24 +62,23 @@ extern void setSamplerate_iqc (IQC a, int rate);
 
 extern void setSize_iqc (IQC a, int size);
 
-extern void size_iqc (IQC a);
-
-extern void desize_iqc (IQC a);
-
 // TXA Properties
 
-extern __declspec (dllexport)  void GetTXAiqcValues (int channel, double* cm, double* cc, double* cs);
+extern void GetTXAiqcValues(int channel, 
+	NS_Spline** m_spline, CurveEMA* m_calavg, double* m_prev_y,
+	NS_Spline** c_spline, CurveEMA* c_calavg, double* c_prev_y,
+	NS_Spline** s_spline, CurveEMA* s_calavg, double* s_prev_y);
 
-extern __declspec (dllexport)  void SetTXAiqcValues (int channel, double* cm, double* cc, double* cs);
+extern void SetTXAiqcSwap(int channel, 
+	NS_Spline* m_spline, CurveEMA* m_calavg, double m_prev_y,
+	NS_Spline* c_spline, CurveEMA* c_calavg, double c_prev_y,
+	NS_Spline* s_spline, CurveEMA* s_calavg, double s_prev_y, int wait_for_ramp);
 
-extern __declspec (dllexport)  void SetTXAiqcSwap (int channel, double* cm, double* cc, double* cs);
+extern void SetTXAiqcStart(int channel, 
+	NS_Spline* m_spline, CurveEMA* m_calavg, double m_prev_y,
+	NS_Spline* c_spline, CurveEMA* c_calavg, double c_prev_y,
+	NS_Spline* s_spline, CurveEMA* s_calavg, double s_prev_y, int wait_for_ramp);
 
-extern __declspec (dllexport)  void SetTXAiqcStart (int channel, double* cm, double* cc, double* cs);
-
-extern __declspec (dllexport)  void SetTXAiqcEnd (int channel);
-
-void GetTXAiqcDogCount (int channel, int* count);
-
-void SetTXAiqcDogCount (int channel, int  count);
+extern void SetTXAiqcEnd (int channel);
 
 #endif

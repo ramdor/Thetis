@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2025 Warren Pratt, NR0V
+Copyright (C) 2025-2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,9 +27,10 @@ warren@pratt.one
 
 #include "comm.h"
 
-static int calc_size (int nc)
+static int calc_size (double rate, double fwhm)
 {
-	// round up to a power of two
+	double nc_d = 1.2067 * rate / fwhm;
+	int nc = (int)(round(nc_d * 0.5) * 2.0);
 	nc--;
 	nc |= nc >> 1;
 	nc |= nc >> 2;
@@ -41,10 +42,10 @@ static int calc_size (int nc)
 	return nc;
 }
 
-double* build_matched(int* imp_size, double rate, double f, double fwhm, double scale, int imp_pos)
+double* build_matched (int nc, double rate, double f, double fwhm, double scale, int imp_pos)
 {
-	// *imp_size - number of impulse response values, POWER OF TWO; Computed in this function!
-	//     NOT to be confused with 'nc', the number of non-zero impulse response values needed
+	// nc - number of impulse response values, POWER OF TWO
+	//     NOT to be confused with 'ncoef', the number of non-zero impulse response values needed.
 	// rate - sample_rate (samples/second)
 	// f - center frequency (Hz)
 	// fwhm - bandwidth (Hz)
@@ -52,12 +53,10 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 	// position - '0' places the impulse response in the left side of the output field;
 	//    '1' centers the impulse response in the output field
 	double nc_d = 1.2067 * rate / fwhm;
-	int nc = (int)(round (nc_d * 0.5) * 2.0);
-	int fsize = calc_size (nc);
-	double* c_impulse = (double*)malloc0 (fsize * sizeof(complex));
+	int ncoef = (int)(round(nc_d * 0.5) * 2.0);
+	double* c_impulse = (double*)malloc0 (nc * sizeof(complex));
 	double w_osc = -2.0 * PI * f / rate;
-	double m = 0.5 * (double)(fsize - 1);
-	double posi, posj;
+	double posi, posj, m;
 	double coef = 1.0;
 	double sum = 0.0;
 	double norm;
@@ -66,7 +65,8 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 	{
 	case 0:
 	default:
-		for (i = (nc + 1) / 2, j = (nc / 2) - 1, k = 0; k < nc / 2; i++, j--, k++)
+		m = 0.5 * (double)(nc - 1);
+		for (i = (ncoef + 1) / 2, j = (ncoef / 2) - 1, k = 0; k < ncoef / 2; i++, j--, k++)
 		{
 			posi = (double)i - m;
 			posj = (double)j - m;
@@ -78,7 +78,7 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 				sqrt(c_impulse[2 * j + 0] * c_impulse[2 * j + 0] + c_impulse[2 * j + 1] * c_impulse[2 * j + 1]);
 		}
 		norm = scale / sum;
-		for (i = (nc + 1) / 2, j = (nc / 2) - 1, k = 0; k < nc / 2; i++, j--, k++)
+		for (i = (ncoef + 1) / 2, j = (ncoef / 2) - 1, k = 0; k < ncoef / 2; i++, j--, k++)
 		{
 			c_impulse[2 * i + 0] *= norm;
 			c_impulse[2 * i + 1] *= norm;
@@ -87,7 +87,8 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 		}
 		break;
 	case 1:
-		for (i = (fsize + 1) / 2, j = (fsize / 2) - 1, k = 0; k < nc / 2; i++, j--, k++)
+		m = 0.5 * (double)(nc - 1);
+		for (i = (nc + 1) / 2, j = (nc / 2) - 1, k = 0; k < ncoef / 2; i++, j--, k++)
 		{
 			posi = (double)i - m;
 			posj = (double)j - m;
@@ -99,7 +100,7 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 				sqrt(c_impulse[2 * j + 0] * c_impulse[2 * j + 0] + c_impulse[2 * j + 1] * c_impulse[2 * j + 1]);
 		}
 		norm = scale / sum;
-		for (i = (fsize + 1) / 2, j = (fsize / 2) - 1, k = 0; k < nc / 2; i++, j--, k++)
+		for (i = (nc + 1) / 2, j = (nc / 2) - 1, k = 0; k < ncoef / 2; i++, j--, k++)
 		{
 			c_impulse[2 * i + 0] *= norm;
 			c_impulse[2 * i + 1] *= norm;
@@ -108,8 +109,7 @@ double* build_matched(int* imp_size, double rate, double f, double fwhm, double 
 		}
 		break;
 	}
-	// print_impulse("c_matched.txt", fsize, c_impulse, 1, 0);
-	*imp_size = fsize;
+	// print_impulse("c_matched.txt", nc, c_impulse, 1, 0);
 	return c_impulse;
 }
 
@@ -136,8 +136,10 @@ MATCHED create_matched (int run, int position, int size, double* in, double* out
 	a->gain = gain;
 	a->scale = a->gain / (double)(2 * a->size);
 	a->mode = mode;
-	impulse = build_matched (&a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
-	a->p = create_fircore (a->size, a->in, a->out, a->nc, 0, impulse);
+	a->nc = calc_size (a->samplerate, a->bandwidth);
+	if (a->size > a->nc) a->nc = a->size;
+	impulse = build_matched (a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
+	a->p = create_fircore (a->size, a->in, a->out, a->nc, 0, 4, impulse);
 	_aligned_free (impulse);
 	return a;
 }
@@ -183,54 +185,53 @@ void setBuffers_matched (MATCHED a, double* in, double* out)
 
 void setSamplerate_matched (MATCHED a, int rate)
 {
-	double* impulse;
-	int nc = a->nc;
 	a->samplerate = rate;
-	impulse = build_matched (&a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
-	if (nc == a->nc)
-		setImpulse_fircore (a->p, impulse, 1);
-	else
-		setNc_fircore (a->p, a->nc, impulse);
+	int nc = a->nc;
+	a->nc = calc_size (a->samplerate, a->bandwidth);
+	if (a->size > a->nc) a->nc = a->size;
+	double* impulse = build_matched (a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
+	if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+	else             setNc_fircore (a->p, a->nc, impulse);
 	_aligned_free(impulse);
 }
 
 void setSize_matched (MATCHED a, int size)
 {
-	// NOTE:  'size' must be <= 'nc'
 	a->size = size;
 	setSize_fircore (a->p, a->size);
-	// recalc impulse because scale factor is a function of size
 	a->scale = a->gain / (double)(2 * a->size);
-	double* impulse = build_matched (&a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
-	setImpulse_fircore (a->p, impulse, 1);
+	int nc = a->nc;
+	a->nc = calc_size (a->samplerate, a->bandwidth);
+	if (a->size > a->nc) a->nc = a->size;
+	double* impulse = build_matched (a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
+	if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+	else             setNc_fircore (a->p, a->nc, impulse);
 	_aligned_free (impulse);
 }
 
 void setGain_matched (MATCHED a, double gain)
 {
-	double* impulse;
 	a->gain = gain;
 	a->scale = a->gain / (double)(2 * a->size);
-	impulse = build_matched (&a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
+	double* impulse = build_matched (a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
 
 void CalcMatchedFilter (MATCHED a, double f_center, double bandwidth, double gain)
 {
-	double* impulse;
 	if ((a->f_center != f_center) || (a->bandwidth != bandwidth) || (a->gain != gain))
 	{
-		int nc = a->nc;
 		a->f_center = f_center;
 		a->bandwidth = bandwidth;
 		a->gain = gain;
 		a->scale = a->gain / (double)(2 * a->size);
-		impulse = build_matched (&a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
-		if (nc == a->nc)
-			setImpulse_fircore (a->p, impulse, 1);
-		else
-			setNc_fircore (a->p, a->nc, impulse);
+		int nc = a->nc;
+		a->nc = calc_size (a->samplerate, a->bandwidth);
+		if (a->size > a->nc) a->nc = a->size;
+		double* impulse = build_matched (a->nc, a->samplerate, a->f_center, a->bandwidth, a->scale, 0);
+		if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+		else             setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}
 }

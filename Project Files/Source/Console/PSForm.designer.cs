@@ -895,7 +895,7 @@
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PSForm";
-            this.Text = "PureSignal 2.0";
+            this.Text = "PureSignal 3.0 (WDSP 2.11)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PSForm_Closing);
             this.Load += new System.EventHandler(this.PSForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).EndInit();

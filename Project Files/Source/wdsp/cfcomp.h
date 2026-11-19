@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2017, 2021 Warren Pratt, NR0V 
+Copyright (C) 2017, 2021, 2026 Warren Pratt, NR0V 
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,12 +20,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
 #ifndef _cfcomp_h
 #define _cfcomp_h
+
+#include "nurbs.h"
 
 typedef struct _cfcomp
 {
@@ -66,14 +68,21 @@ typedef struct _cfcomp
 	fftw_plan Rfor;
 	fftw_plan Rrev;
 
+	// G/g refer to compressor; E/e refer to equalizer
 	int comp_method;
-	int nfreqs;
-	double* F;
+	int max_freqs;
+	int nfreqsG;
+	int nfreqsE;
+	double* Fg;
+	double* Fe;
 	double* G;
 	double* E;
 	double* Qg;
 	double* Qe;
-	double* fp;
+	int use_qg;
+	int use_qe;
+	double* fpG;
+	double* fpE;
 	double* gp;
 	double* ep;
 	double* comp;
@@ -84,6 +93,8 @@ typedef struct _cfcomp
 	double prepeq;
 	double prepeqlin;
 	double winfudge;
+	double* saryG;
+	double* saryE;
 
 	double gain;
 	double mtau;
@@ -94,10 +105,18 @@ typedef struct _cfcomp
 	double* delta;
 	double* delta_copy;
 	double* cfc_gain_copy;
+
+	// nurbs stuff
+	int gdeg;
+	int edeg;
+	NURBS png;
+	NURBS pne;
+
 }cfcomp, *CFCOMP;
 
 extern CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau, double dtau);
+	int rate, int wintype, int comp_method, int nfreqsG, int nfreqsE, double precomp, double prepeq, 
+	double* Fg, double* G, double* Fe, double* E, double mtau, double dtau);
 
 extern void destroy_cfcomp (CFCOMP a);
 

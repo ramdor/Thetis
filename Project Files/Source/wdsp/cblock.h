@@ -27,22 +27,7 @@ warren@wpratt.com
 #ifndef _cblock_h
 #define _cblock_h
 
-typedef struct _cbl
-{
-	int run;							//run
-	int buff_size;						//buffer size
-	double *in_buff;					//pointer to input buffer
-	double *out_buff;					//pointer to output buffer
-	int mode;
-	double sample_rate;					//sample rate
-	double prevIin;
-	double prevQin;
-	double prevIout;
-	double prevQout;
-	double tau;							//carrier removal time constant
-	double mtau;						//carrier removal multiplier
-	double position;					//0 before AGC, 1 after AGC
-} cbl, *CBL;
+typedef struct _cbl* CBL;
 
 extern CBL create_cbl
 	(
@@ -52,15 +37,16 @@ extern CBL create_cbl
 	double *out_buff,
 	int mode,
 	int sample_rate,
-	double tau,
-	int position
+	double tau
 	);
 
 extern void destroy_cbl (CBL a);
 
 extern void flush_cbl (CBL a);
 
-extern void xcbl (CBL a, int position);
+extern void xcbl (CBL a);
+
+extern void xcbl_at (CBL a, int position);
 
 extern void setBuffers_cbl (CBL a, double* in, double* out);
 

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -286,11 +286,37 @@ int SetChannelState (int channel, int state, int dmode)
 			}
 			break;
 		case 1:
+			// if a turn-off is still in progress, wait for it to complete before beginning the turn-on
+			while (_InterlockedAnd (&ch[channel].flushflag, 1) && count < timeout)
+			{
+				Sleep(1);
+				count++;
+			}
+			if (count >= timeout)
+			{
+				InterlockedBitTestAndReset (&ch[channel].exchange, 0);
+				InterlockedBitTestAndReset (&ch[channel].flushflag, 0);
+				InterlockedBitTestAndReset (&a->slew.downflag, 0);
+			}
 			InterlockedBitTestAndSet (&a->slew.upflag, 0);
 			InterlockedBitTestAndSet (&ch[channel].iob.ch_upslew, 0);
 			InterlockedBitTestAndReset (&ch[channel].iob.pc->exec_bypass, 0);
 			InterlockedBitTestAndSet (&ch[channel].exchange, 0);
 			break;
+		}
+	}
+	else if (state == 0 && dmode)
+	{	// already OFF; if a turn-off begun with dmode == 0 is still in progress, wait for it to complete
+		while (_InterlockedAnd (&ch[channel].flushflag, 1) && count < timeout)
+		{
+			Sleep(1);
+			count++;
+		}
+		if (count >= timeout)
+		{
+			InterlockedBitTestAndReset (&ch[channel].exchange, 0);
+			InterlockedBitTestAndReset (&ch[channel].flushflag, 0);
+			InterlockedBitTestAndReset (&a->slew.downflag, 0);
 		}
 	}
 	return prior_state;

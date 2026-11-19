@@ -124,14 +124,16 @@ void asioIN(double* in_tx)
 	{
 		if (WaitForSingleObject(pcma->bufferFull, 2) == WAIT_TIMEOUT) { ++pcma->underFlowsIn; return; }
 		memcpy(in_tx, pcma->input, pcma->blocksize * sizeof(complex));
-		combinebuff(pcma->blocksize, in_tx, in_tx);
 		ReleaseSemaphore(pcma->bufferEmpty, 1, NULL);
 	}
 	else
 	{
 		xrmatchOUT(pcma->rmatchIN, in_tx);
-		combinebuff(pcma->blocksize, in_tx, in_tx);
 	}
+
+	// CallbackASIO already copies a selected mono input to both buffer lanes.
+	if (pcma->input_mode != IM_LEFT && pcma->input_mode != IM_RIGHT)
+		combinebuff(pcma->blocksize, in_tx, in_tx);
 }
 
 void asioOUT(int id, int nsamples, double* buff)

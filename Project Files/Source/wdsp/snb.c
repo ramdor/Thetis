@@ -582,11 +582,9 @@ PORT void SetRXASNBARun (int channel, int run)
 	if (a->run != run)
 	{
 		RXAbpsnbaCheck (channel, rxa[channel].mode, rxa[channel].ndb.p->master_run);
-
-		RXAbp1Check (channel, rxa[channel].amd.p->run, run, rxa[channel].emnr.p->run,
-                             rxa[channel].anf.p->run, rxa[channel].anr.p->run,
-                             rxa[channel].rnnr.p->run, rxa[channel].sbnr.p->run); // NR3 + NR4 support
-
+		RXAbp1Check (channel, rxa[channel].amd.p->run, run, rxa[channel].emnr.p->run, 
+			getRun_nnrbypass (rxa[channel].nnrbypass.p), 
+			rxa[channel].anf.p->run, rxa[channel].anr.p->run);
 		EnterCriticalSection (&ch[channel].csDSP);
 		a->run = run;
 		RXAbp1Set (channel);

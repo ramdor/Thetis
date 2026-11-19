@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2025 Warren Pratt, NR0V
+Copyright (C) 2025-2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,10 +27,12 @@ warren@pratt.one
 
 #include "comm.h"
 
-static int calc_nc (double sigma, double nsigma, double rate)
+static int calc_nc (double fwhm, double nsigma, double rate)
 {
 	int nc;
-	nc = (int)ceil(2.0 * nsigma * sigma * rate);
+	double fsigma = fwhm / 2.35482;
+	double sigma = 1.0 / (2.0 * PI * fsigma);
+	nc = (int)ceil (2.0 * nsigma * sigma * rate);
 	nc--;
 	nc |= nc >> 1;
 	nc |= nc >> 2;
@@ -42,30 +44,27 @@ static int calc_nc (double sigma, double nsigma, double rate)
 	return nc;
 }
 
-double* build_gaussian(int* pnc, double rate, double f, double fwhm, double scale, double nsigma)
+double* build_gaussian(int nc, double rate, double f, double fwhm, double scale, double nsigma)
 {
 	// nc - number of impulse response values, IS EVEN FOR THE FOLLOWING CODE
-	//      IF 'nc' is entered as zero, it will be computed below.
 	// rate - sample_rate (samples/second)
 	// f - center frequency (Hz)
 	// fwhm - bandwidth (Hz)
 	// scale - scale factor to apply to impulse response
 	// nsigma - number of sigma to extend on each side of center
-	int nc = *pnc;
 	double fsigma = fwhm / 2.35482;
 	double sigma = 1.0 / (2.0 * PI * fsigma);
-	if (nc == 0) nc = calc_nc(sigma, nsigma, rate);
-	double* impulse = (double*)malloc0(nc * sizeof(double));
+	double* impulse = (double*)malloc0 (nc * sizeof(double));
 	double delta = 1.0 / rate;
 	int i, j;
 	double x, y;
-	double gmult = 1.0 / (sqrt(2.0 * PI) * sigma);
+	double gmult = 1.0 / (sqrt (2.0 * PI) * sigma);
 	double gdiv = 1.0 / (2.0 * sigma * sigma);
 	double sum = 0.0;
 	for (i = 0, y = -((double)(nc - 1) / 2.0); i < nc; i++, y += 1.0)
 	{
 		x = y * delta;
-		impulse[i] = gmult * exp(-(x * x) * gdiv);
+		impulse[i] = gmult * exp (-(x * x) * gdiv);
 		sum += impulse[i];
 	}
 	for (i = 0; i < nc; i++)
@@ -73,8 +72,7 @@ double* build_gaussian(int* pnc, double rate, double f, double fwhm, double scal
 		impulse[i] *= (scale / sum);
 	}
 	// print_impulse("gaussian.txt", nc, impulse, 0, 0);
-
-	double* c_impulse = (double*)malloc0(nc * sizeof(complex));
+	double* c_impulse = (double*)malloc0 (nc * sizeof(complex));
 	double w_osc = -2.0 * PI * f / rate;
 	double m = 0.5 * (double)(nc - 1);
 	double posi, posj;
@@ -90,8 +88,7 @@ double* build_gaussian(int* pnc, double rate, double f, double fwhm, double scal
 		c_impulse[2 * j + 1] = -coef * sin(posj * w_osc);
 	}
 	// print_impulse("c_gaussian.txt", nc, c_impulse, 1, 0);
-	_aligned_free(impulse);
-	*pnc = nc;
+	_aligned_free (impulse);
 	return c_impulse;
 }
 
@@ -105,7 +102,6 @@ double* build_gaussian(int* pnc, double rate, double f, double fwhm, double scal
 GAUSSIAN create_gaussian (int run, int position, int size, int nc, double* in, double* out,
 	double f_center, double bandwidth, int samplerate, double gain, double nsigma, int mode)
 {
-	// NOTE:  'nc' must be >= 'size'
 	GAUSSIAN a = (GAUSSIAN)malloc0 (sizeof(gaussian));
 	double* impulse;
 	a->run = run;
@@ -121,10 +117,11 @@ GAUSSIAN create_gaussian (int run, int position, int size, int nc, double* in, d
 	a->scale = a->gain / (double)(2 * a->size);
 	a->nsigma = nsigma;
 	a->mode = mode;
-	if (a->nc == 0) a->nc_var = 1;
-	else            a->nc_var = 0;
-	impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
-	a->p = create_fircore (a->size, a->in, a->out, a->nc, 0, impulse);
+	a->nc_default = a->nc;
+	if (a->nc == 0) a->nc = calc_nc (a->bandwidth, a->nsigma, a->samplerate);
+	if (a->size > a->nc) a->nc = a->size;
+	impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+	a->p = create_fircore (a->size, a->in, a->out, a->nc, 0, 4, impulse);
 	_aligned_free (impulse);
 	return a;
 }
@@ -170,37 +167,37 @@ void setBuffers_gaussian (GAUSSIAN a, double* in, double* out)
 
 void setSamplerate_gaussian (GAUSSIAN a, int rate)
 {
-	double* impulse;
-	int nc = a->nc;
 	a->samplerate = rate;
-	// if 'nc_var' is set, set 'nc' to '0' so that 'nc' will be re-calculated in 'build_gaussian()'
-	if (a->nc_var) a->nc = 0;
-	impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
-	if (nc == a->nc)
-		setImpulse_fircore (a->p, impulse, 1);
-	else
-		setNc_fircore (a->p, a->nc, impulse);
+	int nc = a->nc;
+	a->nc = a->nc_default;
+	if (a->nc == 0) a->nc = calc_nc (a->bandwidth, a->nsigma, a->samplerate);
+	if (a->size > a->nc) a->nc = a->size;
+	double* impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+	if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+	else             setNc_fircore (a->p, a->nc, impulse);
 	_aligned_free (impulse);
 }
 
 void setSize_gaussian (GAUSSIAN a, int size)
 {
-	// NOTE:  'size' must be <= 'nc'
 	a->size = size;
 	setSize_fircore (a->p, a->size);
-	// recalc impulse because scale factor is a function of size
 	a->scale = a->gain / (double)(2 * a->size);
-	double* impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
-	setImpulse_fircore (a->p, impulse, 1);
+	int nc = a->nc;
+	a->nc = a->nc_default;
+	if (a->nc == 0) a->nc = calc_nc (a->bandwidth, a->nsigma, a->samplerate);
+	if (a->size > a->nc)  a->nc = a->size;
+	double* impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+	if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+	else             setNc_fircore (a->p, a->nc, impulse);
 	_aligned_free (impulse);
 }
 
 void setGain_gaussian (GAUSSIAN a, double gain)
 {
-	double* impulse;
 	a->gain = gain;
 	a->scale = a->gain / (double)(2 * a->size);
-	impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+	double* impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -210,17 +207,17 @@ void CalcGaussianFilter (GAUSSIAN a, double f_center, double bandwidth, double g
 	double* impulse;
 	if ((a->f_center != f_center) || (a->bandwidth != bandwidth) || (a->gain != gain))
 	{
-		int nc = a->nc;
 		a->f_center = f_center;
 		a->bandwidth = bandwidth;
 		a->gain = gain;
 		a->scale = a->gain / (double)(2 * a->size);
-		if (a->nc_var) a->nc = 0;
-		impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
-		if (nc == a->nc)
-			setImpulse_fircore (a->p, impulse, 1);
-		else
-			setNc_fircore (a->p, a->nc, impulse);
+		int nc = a->nc;
+		a->nc = a->nc_default;
+		if (a->nc == 0) a->nc = calc_nc (a->bandwidth, a->nsigma, a->samplerate);
+		if (a->size > a->nc) a->nc = a->size;
+		impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+		if (nc == a->nc) setImpulse_fircore (a->p, impulse, 1);
+		else             setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}
 }
@@ -261,16 +258,16 @@ void SetRXAGaussianGain (int channel, double gain)
 PORT
 void SetRXAGaussianNC (int channel, int nc)
 {
-	// NOTE:  'nc' must be >= 'size'
 	double* impulse;
 	GAUSSIAN a = rxa[channel].gaussian.p;
 	EnterCriticalSection (&ch[channel].csDSP);
-	if (nc != a->nc)
+	if (nc != a->nc || nc == 0)
 	{
 		a->nc = nc;
-		if (a->nc == 0) a->nc_var = 1;
-		else            a->nc_var = 0;
-		impulse = build_gaussian (&a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
+		a->nc_default = a->nc;
+		if (a->nc == 0) a->nc = calc_nc (a->bandwidth, a->nsigma, a->samplerate);
+		if (a->size > a->nc) a->nc = a->size;
+		impulse = build_gaussian (a->nc, (double)a->samplerate, a->f_center, a->bandwidth, a->scale, a->nsigma);
 		setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}

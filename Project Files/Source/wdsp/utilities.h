@@ -28,8 +28,6 @@ __declspec (dllexport) void *malloc0 (int size);
 
 extern void print_impulse (const char* filename, int N, double* impulse, int rtype, int pr_mode);
 
-extern __declspec (dllexport) void analyze_bandpass_filter (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale);
-
 void print_peak_val(const char* filename, int N, double* buff, double thresh);
 
 void print_peak_env (const char* filename, int N, double* buff, double thresh);
@@ -46,11 +44,7 @@ extern void print_window_gain (const char* filename, int wintype, double inv_coh
 
 extern void print_deviation (const char* filename, double dpmax, double rate);
 
-extern void doCalccPrintSamples(int channel);
-
 __declspec (dllexport) void print_buffer_parameters (const char* filename, int channel);
-
-extern void print_anb_parms (const char* filename, ANB a);
 
 extern void WriteAudioWDSP(double seconds, int rate, int size, double* indata, int mode, double gain);
 
@@ -86,5 +80,9 @@ extern __declspec (dllexport) void getFilterCorners(int id, int* lower_index, in
 extern __declspec (dllexport) void getFilterCurve(int id, int size, int w_type, int index_low, int index_high, double* segment);
 
 extern void test_bfcu();
+
+extern void dprintf(const char* format, ...);
+
+extern char* uint32_to_bitstr(uint32_t n, char* buf);
 
 #endif

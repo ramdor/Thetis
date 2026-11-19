@@ -26,6 +26,23 @@ warren@wpratt.com
 
 #include "comm.h"
 
+typedef struct _cbl
+{
+	int run;							//run
+	int buff_size;						//buffer size
+	double* in_buff;					//pointer to input buffer
+	double* out_buff;					//pointer to output buffer
+	int mode;
+	int position;								//0 before AGC, 1 after AGC
+	double sample_rate;					//sample rate
+	double prevIin;
+	double prevQin;
+	double prevIout;
+	double prevQout;
+	double tau;							//carrier removal time constant
+	double mtau;						//carrier removal multiplier
+} cbl, * CBL;
+
 void calc_cbl (CBL a)
 {
 	a->prevIin  = 0.0;
@@ -43,8 +60,7 @@ CBL create_cbl
 	double *out_buff,
 	int mode,
 	int sample_rate,
-	double tau,
-	int position
+	double tau
 	)
 {
 	CBL a = (CBL) malloc0 (sizeof(cbl));
@@ -53,9 +69,9 @@ CBL create_cbl
 	a->in_buff = in_buff;
 	a->out_buff = out_buff;
 	a->mode = mode;
+	a->position = 1;
 	a->sample_rate = (double)sample_rate;
 	a->tau = tau;
-	a->position = position; // 0 = before agc, 1 = after agc
 	calc_cbl (a);
 	return a;
 }
@@ -73,10 +89,9 @@ void flush_cbl (CBL a)
 	a->prevQout = 0.0;
 }
 
-void xcbl (CBL a, int position)
+static void xcbl_process (CBL a, int position, int check_position)
 {
-	// position, 0=before agc, 1=after agc
-	if (a->run && (a->position == position))
+	if (a->run && (!check_position || a->position == position))
 	{
 		int i;
 		double tempI, tempQ;
@@ -94,6 +109,16 @@ void xcbl (CBL a, int position)
 	}
 	else if (a->in_buff != a->out_buff)
 		memcpy (a->out_buff, a->in_buff, a->buff_size * sizeof (complex));
+}
+
+void xcbl (CBL a)
+{
+	xcbl_process (a, 0, 0);
+}
+
+void xcbl_at (CBL a, int position)
+{
+	xcbl_process (a, position, 1);
 }
 
 void setBuffers_cbl (CBL a, double* in, double* out)
@@ -128,11 +153,12 @@ SetRXACBLRun(int channel, int setit)
 	LeaveCriticalSection (&ch[channel].csDSP);
 }
 
-PORT
-void SetRXACBLPosition(int channel, int position)
+PORT void
+SetRXACBLPosition(int channel, int position)
 {
-	//0=before AGC, 1=after
-	EnterCriticalSection(&ch[channel].csDSP);
+	if (position < 0 || position > 1) return;
+	EnterCriticalSection (&ch[channel].csDSP);
 	rxa[channel].cbl.p->position = position;
-	LeaveCriticalSection(&ch[channel].csDSP);
+	flush_cbl (rxa[channel].cbl.p);
+	LeaveCriticalSection (&ch[channel].csDSP);
 }

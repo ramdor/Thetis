@@ -118,14 +118,14 @@ void flush_resample (RESAMPLE a)
 }
 
 PORT
-int xresample(RESAMPLE a)
+int xresample (RESAMPLE a)
 {
 	int outsamps = 0;
 	if (a->run)
 	{
-	int i, j, n;
-	int idx_out;
-	double I, Q;
+		int i, j, n;
+		int idx_out;
+		double I, Q;
 
 		int cpp = a->cpp;
 		int idx_in = a->idx_in;
@@ -134,29 +134,29 @@ int xresample(RESAMPLE a)
 		double* ring = a->ring;
 
 		for (i = 0; i < a->size; i++)
-	{
+		{
 			ring[2 * idx_in + 0] = a->in[2 * i + 0];
 			ring[2 * idx_in + 1] = a->in[2 * i + 1];
 			while (a->phnum < a->L)
-		{
-			I = 0.0;
-			Q = 0.0;
-				n = cpp * a->phnum;
-			for (j = 0; j < cpp; j++)
 			{
-				if ((idx_out = idx_in + j) >= ringsize) idx_out -= ringsize;
-				I += h[n + j] * ring[2 * idx_out + 0];
-				Q += h[n + j] * ring[2 * idx_out + 1];
-			}
+				I = 0.0;
+				Q = 0.0;
+				n = cpp * a->phnum;
+				for (j = 0; j < cpp; j++)
+				{
+					if ((idx_out = idx_in + j) >= ringsize) idx_out -= ringsize;
+					I += h[n + j] * ring[2 * idx_out + 0];
+					Q += h[n + j] * ring[2 * idx_out + 1];
+				}
 				a->out[2 * outsamps + 0] = I;
 				a->out[2 * outsamps + 1] = Q;
-			outsamps++;
+				outsamps++;
 				a->phnum += a->M;
-		}
+			}
 			a->phnum -= a->L;
 			if (--idx_in < 0) idx_in = a->ringsize - 1;
-	}
-	a->idx_in = idx_in;
+		}
+		a->idx_in = idx_in;
 	}
 	else if (a->in != a->out)
 		memcpy (a->out, a->in, a->size * sizeof (complex));

@@ -845,7 +845,7 @@ namespace Thetis
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPixelRef(int disp, double pixel_ref);
 
-        [DllImport("WDSP.dll", EntryPoint = "GetPixels", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("WDSP.dll", EntryPoint = "GetPixelsWithRef", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GetPixelsNative(int disp, int pixout, float* pix, ref int flag, out double pixel_ref);
 
         public static void GetPixels(int disp, int pixout, float* pix, ref int flag)
@@ -860,7 +860,7 @@ namespace Thetis
         }
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void Spectrum(int disp, int ss, int LO, float* pI, float* pQ);
+        public static extern void Spectrum(int disp, int ss, int LO, double* pI, double* pQ);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCalibration(int disp, int set, int points, IntPtr cal);

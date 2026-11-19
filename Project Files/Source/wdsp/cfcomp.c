@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2017, 2021 Warren Pratt, NR0V
+Copyright (C) 2017, 2021, 2026 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,33 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
-mw0lge@grange-lane.co.uk - Richard Samphire (c) 2026
+warren@pratt.one
 
 */
-//
-//============================================================================================//
-// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
-// ------------------------------------------------------------------------------------------ //
-// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
-// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
-// right to use, license, and distribute such code under different terms, including           //
-// closed-source and proprietary licences, in addition to the GNU General Public License      //
-// granted above. Nothing in this statement restricts any rights granted to recipients under  //
-// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
-// its original terms and is not affected by this dual-licensing statement in any way.        //
-// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
-//============================================================================================//
 
 #include "comm.h"
-
-// -- used in the cfc parametric code - mw0lge@grange-lane.co.uk - Richard Samphire (c) 2026
-#define TAIL_MIX 0.08		// the blend between the main filter lobe and the tail
-#define TAIL_SCALE 2.5		// how wide the tail is relative to the main lobe
-#define BW_REF_HZ 1000.0	// reference bandwidth for Q factor calculations (Hz). Q of 1 spreads +-1000Hz
-#define MIN_SIGMA 1.0e-12	// minimum allowed bandwidth (sdev in Hz)
-#define FWHM_TO_SIGMA (1.0 / sqrt(2.0 * log(2.0)))  // ~0.425  // Full-Width Half-Maximum (FWHM) to standard deviation for a Gaussian
-// --
 
 void calc_cfcwindow (CFCOMP a)
 {
@@ -105,255 +83,199 @@ int fCOMPcompare (const void * a, const void * b)
 		return 1;
 }
 
-void calc_comp(CFCOMP a)
+#ifndef M_LN2_10
+#define M_LN2_10 3.32192809488736234787
+#endif
+
+void calc_compG (CFCOMP a)
 {
-	// modified for use with Q factor - Richard Samphire (c) 2026 - MW0LGE
-	// original implentation is commented out below
 	int i, j;
 	double f, frac, fincr, fmax;
-	double* sary;
-	int use_qg;
-	int use_qe;
-	int recsz;
-
-	a->precomplin = pow(10.0, 0.05 * a->precomp);
-	a->prepeqlin = pow(10.0, 0.05 * a->prepeq);
+	NURBS bg = a->png;
+	a->precomplin = pow (10.0, 0.05 * a->precomp);
 	fmax = 0.5 * a->rate;
-	use_qg = (a->Qg != NULL);
-	use_qe = (a->Qe != NULL);
-	recsz = 3 + use_qg + use_qe;
-
-	for (i = 0; i < a->nfreqs; i++)
+	if (a->use_qg)
 	{
-		a->F[i] = max(a->F[i], 0.0);
-		a->F[i] = min(a->F[i], fmax);
-		a->G[i] = max(a->G[i], 0.0);
-		if (use_qg) a->Qg[i] = max(a->Qg[i], 0.01);
-		if (use_qe) a->Qe[i] = max(a->Qe[i], 0.01);
-	}
-
-	sary = (double*)malloc0(recsz * a->nfreqs * sizeof(double));
-	if (sary == NULL)
-		return;
-
-	for (i = 0; i < a->nfreqs; i++)
-	{
-		sary[recsz * i + 0] = a->F[i];
-		sary[recsz * i + 1] = a->G[i];
-		sary[recsz * i + 2] = a->E[i];
-		if (use_qg) sary[recsz * i + 3] = a->Qg[i];
-		if (use_qe) sary[recsz * i + 3 + use_qg] = a->Qe[i];
-	}
-	qsort(sary, a->nfreqs, recsz * sizeof(double), fCOMPcompare);
-	for (i = 0; i < a->nfreqs; i++)
-	{
-		a->F[i] = sary[recsz * i + 0];
-		a->G[i] = sary[recsz * i + 1];
-		a->E[i] = sary[recsz * i + 2];
-		if (use_qg) a->Qg[i] = sary[recsz * i + 3];
-		if (use_qe) a->Qe[i] = sary[recsz * i + 3 + use_qg];
-	}
-	_aligned_free(sary);
-
-	a->fp[0] = 0.0;
-	a->fp[a->nfreqs + 1] = fmax;
-	a->gp[0] = a->G[0];
-	a->gp[a->nfreqs + 1] = a->G[a->nfreqs - 1];
-	a->ep[0] = a->E[0];
-	a->ep[a->nfreqs + 1] = a->E[a->nfreqs - 1];
-	for (i = 0, j = 1; i < a->nfreqs; i++, j++)
-	{
-		a->fp[j] = a->F[i];
-		a->gp[j] = a->G[i];
-		a->ep[j] = a->E[i];
-	}
-
-	fincr = a->rate / (double)a->fsize;
-
-	if (!use_qg && !use_qe)
-	{
-		j = 0;
+		for (i = 0; i < a->nfreqsG; i++)
+			a->G[i] = max (a->G[i], 0.0);
+		parametric_magnitude (a->comp, a->msize, a->rate / a->fsize, 0.0, fmax,
+			a->nfreqsG, a->Fg, a->G, a->Qg, 0.0, 1.0, 0.0, fmax, 0.08, 0.08 / 1.08);
 		for (i = 0; i < a->msize; i++)
+			a->cfc_gain[i] = a->precomplin * a->comp[i];
+		return;
+	}
+	for (i = 0; i < a->nfreqsG; i++)
+	{
+		a->Fg[i] = max (a->Fg[i], 0.0);
+		a->Fg[i] = min (a->Fg[i], fmax);
+		a->G[i] = max (a->G[i], 0.0);
+	}
+	for (i = 0; i < a->nfreqsG; i++)
+	{
+		a->saryG[2 * i + 0] = a->Fg[i];
+		a->saryG[2 * i + 1] = a->G[i];
+	}
+	qsort (a->saryG, a->nfreqsG, 2 * sizeof (double), fCOMPcompare);
+	for (i = 0; i < a->nfreqsG; i++)
+	{
+		a->Fg[i] = a->saryG[2 * i + 0];
+		a->G[i]  = a->saryG[2 * i + 1];
+	}
+	a->fpG[0] = 0.0;
+	a->fpG[a->nfreqsG + 1] = fmax;
+	a->gp[0] = a->G[0];
+	a->gp[a->nfreqsG + 1] = a->G[a->nfreqsG - 1];
+	for (i = 0, j = 1; i < a->nfreqsG; i++, j++)
+	{
+		a->fpG[j] = a->Fg[i];
+		a->gp[j] = a->G[i];
+	}
+	fincr = a->rate / (double)a->fsize;
+	if (a->gdeg == 0)
+	{
+		for (i = 0, j = 0; i < a->msize; i++)
 		{
 			f = fincr * (double)i;
-			while (f >= a->fp[j + 1] && j < a->nfreqs) j++;
-			frac = (f - a->fp[j]) / (a->fp[j + 1] - a->fp[j]);
-			a->comp[i] = pow(10.0, 0.05 * (frac * a->gp[j + 1] + (1.0 - frac) * a->gp[j]));
-			a->peq[i] = pow(10.0, 0.05 * (frac * a->ep[j + 1] + (1.0 - frac) * a->ep[j]));
+			while (f >= a->fpG[j + 1] && j < a->nfreqsG) j++;
+			frac = (f - a->fpG[j]) / (a->fpG[j + 1] - a->fpG[j]);
+			a->comp[i] = exp2(M_LN2_10 * 0.05 * (frac * a->gp[j + 1] + (1.0 - frac) * a->gp[j]));
 			a->cfc_gain[i] = a->precomplin * a->comp[i];
 		}
 	}
 	else
 	{
-		const double tail_norm = 1.0 / (1.0 + TAIL_MIX);
-		const double tail_coeff = TAIL_MIX * tail_norm;
-		const double tail_scale_inv = 1.0 / TAIL_SCALE;
-		const double min_fwhm_bins = 2.0;
-		const double q_sharpen = 1.0;
-		double* fc_hz = (double*)malloc0(a->nfreqs * sizeof(double));
-		double* sigma_inv_g = use_qg ? (double*)malloc0(a->nfreqs * sizeof(double)) : NULL;
-		double* sigma_inv_e = use_qe ? (double*)malloc0(a->nfreqs * sizeof(double)) : NULL;
-		double* gain_db = (double*)malloc0(a->nfreqs * sizeof(double));
-		double* peq_db = (double*)malloc0(a->nfreqs * sizeof(double));
-		int jg = 0;
-		int je = 0;
-
-		if (!fc_hz || !gain_db || !peq_db || (use_qg && !sigma_inv_g) || (use_qe && !sigma_inv_e))
+		int low = 0, high = 0;
+		double g_low  = exp2(M_LN2_10 * 0.05 * a->gp[0]);
+		double g_high = exp2(M_LN2_10 * 0.05 * a->gp[a->nfreqsG + 1]);
+		i = 0;
+		f = 0.0;
+		while (f <= a->fpG[1])
 		{
-			_aligned_free(peq_db);
-			_aligned_free(gain_db);
-			_aligned_free(sigma_inv_e);
-			_aligned_free(sigma_inv_g);
-			_aligned_free(fc_hz);
-			return;
+			a->comp[i] = g_low;
+			a->cfc_gain[i] = a->precomplin * a->comp[i];
+			f += fincr;
+			low = ++i;
 		}
-
-		for (i = 0; i < a->nfreqs; i++)
+		i = a->msize - 1;
+		f = a->fpG[a->nfreqsG + 1];
+		while (f >= a->fpG[a->nfreqsG])
 		{
-			double min_fwhm_hz = min_fwhm_bins * fincr;
-			fc_hz[i] = a->F[i];
-			gain_db[i] = a->G[i];
-			peq_db[i] = a->E[i];
-
-			if (use_qg)
-			{
-				double qi = (a->Qg[i] > 0.0) ? a->Qg[i] : 1.0;
-				double fwhm_hz = (q_sharpen * BW_REF_HZ) / qi;
-				double sig;
-
-				if (fwhm_hz < min_fwhm_hz) fwhm_hz = min_fwhm_hz;
-				sig = (0.5 * fwhm_hz) * FWHM_TO_SIGMA;
-				if (sig < MIN_SIGMA) sig = MIN_SIGMA;
-				sigma_inv_g[i] = 1.0 / sig;
-			}
-			if (use_qe)
-			{
-				double qi = (a->Qe[i] > 0.0) ? a->Qe[i] : 1.0;
-				double fwhm_hz = (q_sharpen * BW_REF_HZ) / qi;
-				double sig;
-
-				if (fwhm_hz < min_fwhm_hz) fwhm_hz = min_fwhm_hz;
-				sig = (0.5 * fwhm_hz) * FWHM_TO_SIGMA;
-				if (sig < MIN_SIGMA) sig = MIN_SIGMA;
-				sigma_inv_e[i] = 1.0 / sig;
-			}
+			a->comp[i] = g_high;
+			a->cfc_gain[i] = a->precomplin * a->comp[i];
+			f -= fincr;
+			high = --i;
 		}
-
-		for (i = 0; i < a->msize; i++)
+		bg->fpts = high - low + 1;
+		bg->n = a->nfreqsG - 1;
+		bg->p = a->gdeg;
+		if (bg->n >= bg->max_cp || bg->p > bg->max_p ||
+			bg->upts > bg->max_upts || bg->fpts > bg->max_fpts) return;
+		for (i = 0, j = 1; j <= a->nfreqsG; i += 2, j++)
 		{
-			double f_hz = fincr * (double)i;
-			double gdb = 0.0;
-			double edb = 0.0;
-
-			if (use_qg)
-			{
-				for (j = 0; j < a->nfreqs; j++)
-				{
-					double df = f_hz - fc_hz[j];
-					double x0 = df * sigma_inv_g[j];
-					double w0 = exp(-0.5 * x0 * x0);
-					double x1 = x0 * tail_scale_inv;
-					double w1 = exp(-0.5 * x1 * x1);
-					double w = (w0 + tail_coeff * w1) * tail_norm;
-					gdb += gain_db[j] * w;
-				}
-			}
-			else
-			{
-				while (f_hz >= a->fp[jg + 1] && jg < a->nfreqs) jg++;
-				frac = (f_hz - a->fp[jg]) / (a->fp[jg + 1] - a->fp[jg]);
-				gdb = frac * a->gp[jg + 1] + (1.0 - frac) * a->gp[jg];
-			}
-
-			if (use_qe)
-			{
-				for (j = 0; j < a->nfreqs; j++)
-				{
-					double df = f_hz - fc_hz[j];
-					double x0 = df * sigma_inv_e[j];
-					double w0 = exp(-0.5 * x0 * x0);
-					double x1 = x0 * tail_scale_inv;
-					double w1 = exp(-0.5 * x1 * x1);
-					double w = (w0 + tail_coeff * w1) * tail_norm;
-					edb += peq_db[j] * w;
-				}
-			}
-			else
-			{
-				while (f_hz >= a->fp[je + 1] && je < a->nfreqs) je++;
-				frac = (f_hz - a->fp[je]) / (a->fp[je + 1] - a->fp[je]);
-				edb = frac * a->ep[je + 1] + (1.0 - frac) * a->ep[je];
-			}
-
-			a->comp[i] = pow(10.0, 0.05 * gdb);
-			a->peq[i] = pow(10.0, 0.05 * edb);
+			bg->CP[i + 0] = a->fpG[j];
+			bg->CP[i + 1] = a->gp[j];
+		}
+		BuildSpline (bg->n, bg->p, bg->r, bg->umethod, bg->U, bg->CP, bg->W, bg->upts,
+			bg->Xs, bg->Ys, bg->Uout, bg->fpts, bg->Xf, bg->Yf);
+		for (i = low, j = 0; i <= high; i++, j++)
+		{
+			a->comp[i] = exp2(M_LN2_10 * 0.05 * bg->Yf[j]);
 			a->cfc_gain[i] = a->precomplin * a->comp[i];
 		}
-
-		_aligned_free(peq_db);
-		_aligned_free(gain_db);
-		_aligned_free(sigma_inv_e);
-		_aligned_free(sigma_inv_g);
-		_aligned_free(fc_hz);
 	}
+	// print_impulse ("comp.txt", a->msize, a->cfc_gain, 0, 0);
 }
 
-////original
-//void calc_comp (CFCOMP a)
-//{
-//	int i, j;
-//	double f, frac, fincr, fmax;
-//	double* sary;
-//	a->precomplin = pow (10.0, 0.05 * a->precomp);
-//	a->prepeqlin  = pow (10.0, 0.05 * a->prepeq);
-//	fmax = 0.5 * a->rate;
-//	for (i = 0; i < a->nfreqs; i++)
-//	{
-//		a->F[i] = max (a->F[i], 0.0);
-//		a->F[i] = min (a->F[i], fmax);
-//		a->G[i] = max (a->G[i], 0.0);
-//	}
-//	sary = (double *)malloc0 (3 * a->nfreqs * sizeof (double));
-//	for (i = 0; i < a->nfreqs; i++)
-//	{
-//		sary[3 * i + 0] = a->F[i];
-//		sary[3 * i + 1] = a->G[i];
-//		sary[3 * i + 2] = a->E[i];
-//	}
-//	qsort (sary, a->nfreqs, 3 * sizeof (double), fCOMPcompare);
-//	for (i = 0; i < a->nfreqs; i++)
-//	{
-//		a->F[i] = sary[3 * i + 0];
-//		a->G[i] = sary[3 * i + 1];
-//		a->E[i] = sary[3 * i + 2];
-//	}
-//	_aligned_free (sary);
-//	a->fp[0] = 0.0;
-//	a->fp[a->nfreqs + 1] = fmax;
-//	a->gp[0] = a->G[0];
-//	a->gp[a->nfreqs + 1] = a->G[a->nfreqs - 1];
-//	a->ep[0] = a->E[0];								// cutoff?
-//	a->ep[a->nfreqs + 1] = a->E[a->nfreqs - 1];		// cutoff?
-//	for (i = 0, j = 1; i < a->nfreqs; i++, j++)
-//	{
-//		a->fp[j] = a->F[i];
-//		a->gp[j] = a->G[i];
-//		a->ep[j] = a->E[i];
-//	}
-//	fincr = a->rate / (double)a->fsize;
-//	j = 0;
-//	// print_impulse ("gp.txt", a->nfreqs+2, a->gp, 0, 0);
-//	for (i = 0; i < a->msize; i++)
-//	{
-//		f = fincr * (double)i;
-//		while (f >= a->fp[j + 1] && j < a->nfreqs) j++;
-//		frac = (f - a->fp[j]) / (a->fp[j + 1] - a->fp[j]);
-//		a->comp[i] = pow (10.0, 0.05 * (frac * a->gp[j + 1] + (1.0 - frac) * a->gp[j]));
-//		a->peq[i]  = pow (10.0, 0.05 * (frac * a->ep[j + 1] + (1.0 - frac) * a->ep[j]));
-//		a->cfc_gain[i] = a->precomplin * a->comp[i];
-//	}
-//	// print_impulse ("comp.txt", a->msize, a->comp, 0, 0);
-//}
+void calc_compE(CFCOMP a)
+{
+	int i, j;
+	double f, frac, fincr, fmax;
+	NURBS be = a->pne;
+	a->prepeqlin = pow(10.0, 0.05 * a->prepeq);
+	fmax = 0.5 * a->rate;
+	if (a->use_qe)
+	{
+		parametric_magnitude (a->peq, a->msize, a->rate / a->fsize, 0.0, fmax,
+			a->nfreqsE, a->Fe, a->E, a->Qe, 0.0, 1.0, 0.0, fmax, 0.08, 0.08 / 1.08);
+		return;
+	}
+	for (i = 0; i < a->nfreqsE; i++)
+	{
+		a->Fe[i] = max(a->Fe[i], 0.0);
+		a->Fe[i] = min(a->Fe[i], fmax);
+	}
+	for (i = 0; i < a->nfreqsE; i++)
+	{
+		a->saryE[2 * i + 0] = a->Fe[i];
+		a->saryE[2 * i + 1] = a->E[i];
+	}
+	qsort(a->saryE, a->nfreqsE, 2 * sizeof(double), fCOMPcompare);
+	for (i = 0; i < a->nfreqsE; i++)
+	{
+		a->Fe[i] = a->saryE[2 * i + 0];
+		a->E[i]  = a->saryE[2 * i + 1];
+	}
+	a->fpE[0] = 0.0;
+	a->fpE[a->nfreqsE + 1] = fmax;
+	a->ep[0] = a->E[0];
+	a->ep[a->nfreqsE + 1] = a->E[a->nfreqsE - 1];
+	for (i = 0, j = 1; i < a->nfreqsE; i++, j++)
+	{
+		a->fpE[j] = a->Fe[i];
+		a->ep[j] = a->E[i];
+	}
+	fincr = a->rate / (double)a->fsize;
+	if (a->edeg == 0)
+	{
+		for (i = 0, j = 0; i < a->msize; i++)
+		{
+			f = fincr * (double)i;
+			while (f >= a->fpE[j + 1] && j < a->nfreqsE) j++;
+			frac = (f - a->fpE[j]) / (a->fpE[j + 1] - a->fpE[j]);
+			a->peq[i] = exp2(M_LN2_10 * 0.05 * (frac * a->ep[j + 1] + (1.0 - frac) * a->ep[j]));
+		}
+	}
+	else
+	{
+		int low = 0, high = 0;
+		double e_low = exp2(M_LN2_10 * 0.05 * a->ep[0]);
+		double e_high = exp2(M_LN2_10 * 0.05 * a->ep[a->nfreqsE + 1]);
+		i = 0;
+		f = 0.0;
+		while (f <= a->fpE[1])
+		{
+			a->peq[i] = e_low;
+			f += fincr;
+			low = ++i;
+		}
+		i = a->msize - 1;
+		f = a->fpE[a->nfreqsE + 1];
+		while (f >= a->fpE[a->nfreqsE])
+		{
+			a->peq[i] = e_high;
+			f -= fincr;
+			high = --i;
+		}
+		be->fpts = high - low + 1;
+		be->n = a->nfreqsE - 1;
+		be->p = a->edeg;
+		if (be->n >= be->max_cp || be->p > be->max_p ||
+			be->upts > be->max_upts || be->fpts > be->max_fpts) return;
+		for (i = 0, j = 1; j <= a->nfreqsE; i += 2, j++)
+		{
+			be->CP[i + 0] = a->fpE[j];
+			be->CP[i + 1] = a->ep[j];
+		}
+		BuildSpline(be->n, be->p, be->r, be->umethod, be->U, be->CP, be->W, be->upts,
+			be->Xs, be->Ys, be->Uout, be->fpts, be->Xf, be->Yf);
+		for (i = low, j = 0; i <= high; i++, j++)
+		{
+			a->peq[i] = exp2(M_LN2_10 * 0.05 * be->Yf[j]);
+		}
+	}
+	// print_impulse ("compeq.txt", a->msize, a->peq, 0, 0);
+}
+
 
 void calc_cfcomp(CFCOMP a)
 {
@@ -401,12 +323,14 @@ void calc_cfcomp(CFCOMP a)
 	a->pregain  = (2.0 * a->winfudge) / (double)a->fsize;
 	a->postgain = 0.5 / ((double)a->ovrlp * a->winfudge);
 
-	a->fp = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
-	a->gp = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
-	a->ep = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
+	a->fpG = (double *) malloc0 ((a->max_freqs + 2) * sizeof (double));
+	a->fpE = (double *) malloc0 ((a->max_freqs + 2) * sizeof(double));
+	a->gp  = (double *) malloc0 ((a->max_freqs + 2) * sizeof (double));
+	a->ep  = (double *) malloc0 ((a->max_freqs + 2) * sizeof (double));
 	a->comp = (double *) malloc0 (a->msize * sizeof (double));
 	a->peq  = (double *) malloc0 (a->msize * sizeof (double));
-	calc_comp (a);
+	calc_compG (a);
+	calc_compE (a);
 
 	a->gain = 0.0;
 	a->mmult = exp (-1.0 / (a->rate * a->ovrlp * a->mtau));
@@ -427,7 +351,8 @@ void decalc_cfcomp(CFCOMP a)
 	_aligned_free (a->comp);
 	_aligned_free (a->ep);
 	_aligned_free (a->gp);
-	_aligned_free (a->fp);
+	_aligned_free (a->fpE);
+	_aligned_free (a->fpG);
 
 	fftw_destroy_plan(a->Rrev);
 	fftw_destroy_plan(a->Rfor);
@@ -446,8 +371,9 @@ void decalc_cfcomp(CFCOMP a)
 	_aligned_free(a->window);
 }
 
-CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau, double dtau)
+CFCOMP create_cfcomp(int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp,
+	int rate, int wintype, int comp_method, int nfreqsG, int nfreqsE, double precomp, double prepeq,
+	double* Fg, double* G, double* Fe, double* E, double mtau, double dtau)
 {
 	CFCOMP a = (CFCOMP) malloc0 (sizeof (cfcomp));
 	
@@ -462,19 +388,37 @@ CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, 
 	a->rate = rate;
 	a->wintype = wintype;
 	a->comp_method = comp_method;
-	a->nfreqs = nfreqs;
+	a->max_freqs = 256;
+	a->nfreqsG = nfreqsG;
+	a->nfreqsE = nfreqsE;
 	a->precomp = precomp;
 	a->prepeq = prepeq;
-	a->mtau = mtau;					// compression metering time constant
-	a->dtau = dtau;					// compression display time constant
-	a->F = (double *)malloc0 (a->nfreqs * sizeof (double));
-	a->G = (double *)malloc0 (a->nfreqs * sizeof (double));
-	a->E = (double *)malloc0 (a->nfreqs * sizeof (double));
-	a->Qg = NULL;
-	a->Qe = NULL;
-	memcpy (a->F, F, a->nfreqs * sizeof (double));
-	memcpy (a->G, G, a->nfreqs * sizeof (double));
-	memcpy (a->E, E, a->nfreqs * sizeof (double));
+	a->mtau = mtau;
+	a->dtau = dtau;
+	a->Fg = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->Fe = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->G  = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->E  = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->Qg = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->Qe = (double *)malloc0 (a->max_freqs * sizeof (double));
+	a->saryG = (double*)malloc0 (2 * a->max_freqs * sizeof (double));
+	a->saryE = (double*)malloc0 (2 * a->max_freqs * sizeof (double));
+	memcpy (a->Fg, Fg, a->nfreqsG * sizeof (double));
+	memcpy (a->Fe, Fe, a->nfreqsE * sizeof(double));
+	memcpy (a->G,  G,  a->nfreqsG * sizeof (double));
+	memcpy (a->E,  E,  a->nfreqsE * sizeof (double));
+	a->gdeg = 0;
+	a->edeg = 0;
+	a->png = create_nurbs (nfreqsG - 1, 3, 0, 0, 1024,
+		EQ_MAXIMUM_CONTROL_POINTS,
+		EQ_MAXIMUM_DEGREE,
+		EQ_MAXIMUM_U_VALUES,
+		EQ_MAXIMUM_FPTS);
+	a->pne = create_nurbs (nfreqsE - 1, 3, 0, 0, 1024,
+		EQ_MAXIMUM_CONTROL_POINTS,
+		EQ_MAXIMUM_DEGREE,
+		EQ_MAXIMUM_U_VALUES,
+		EQ_MAXIMUM_FPTS);
 	calc_cfcomp (a);
 	return a;
 }
@@ -499,11 +443,16 @@ void flush_cfcomp (CFCOMP a)
 void destroy_cfcomp (CFCOMP a)
 {
 	decalc_cfcomp (a);
-	_aligned_free (a->E);
-	_aligned_free (a->G);
-	_aligned_free (a->F);
+	destroy_nurbs (a->pne);
+	destroy_nurbs (a->png);
+	_aligned_free (a->saryE);
+	_aligned_free (a->saryG);
 	_aligned_free (a->Qe);
 	_aligned_free (a->Qg);
+	_aligned_free (a->E);
+	_aligned_free (a->G);
+	_aligned_free (a->Fe);
+	_aligned_free (a->Fg);
 	_aligned_free (a);
 }
 
@@ -630,6 +579,10 @@ void setSize_cfcomp (CFCOMP a, int size)
 *																										*
 ********************************************************************************************************/
 
+// Use for both Compressor and Equalizer.  Per another call below, the Equalizer can be separately
+//    turned OFF/ON, as long as this is set to Run.  However, the Equalizer cannot run without this
+//    being set to Run and the Compressor also being enabled.  That should be OK as there is not much
+//    reason to have this second equalizer unless the compressor is running.
 PORT
 void SetTXACFCOMPRun (int channel, int run)
 {
@@ -642,6 +595,8 @@ void SetTXACFCOMPRun (int channel, int run)
 	}
 }
 
+// Both the compressor and post-equalizer must go the same place in the TX audio processing pipeline; hence
+//    there are NOT separate functions for them.
 PORT 
 void SetTXACFCOMPPosition (int channel, int pos)
 {
@@ -654,51 +609,87 @@ void SetTXACFCOMPPosition (int channel, int pos)
 	}
 }
 
-PORT
-void SetTXACFCOMPprofile (int channel, int nfreqs, double* F, double* G, double *E, double *Qg, double *Qe)
+static void set_cfcomp_profile (int channel, int nfreqs, const double* F, const double* G, const double* E,
+	const double* Qg, const double* Qe)
 {
 	CFCOMP a = txa[channel].cfcomp.p;
 	EnterCriticalSection (&ch[channel].csDSP);
-	a->nfreqs = nfreqs;
-	_aligned_free (a->E);
-	_aligned_free (a->F);
-	_aligned_free (a->G);
-	_aligned_free (a->Qg);
-	_aligned_free (a->Qe);
-	a->F = (double *)malloc0 (a->nfreqs * sizeof (double));
-	a->G = (double *)malloc0 (a->nfreqs * sizeof (double));
-	a->E = (double *)malloc0 (a->nfreqs * sizeof (double));
-	if (Qg != NULL) {
-		a->Qg = (double*)malloc0(a->nfreqs * sizeof(double));
+	if (nfreqs < 1 || nfreqs > a->max_freqs || F == 0 || G == 0 || E == 0)
+	{
+		LeaveCriticalSection (&ch[channel].csDSP);
+		return;
 	}
-	else {
-		a->Qg = NULL;
+	a->nfreqsG = nfreqs;
+	a->nfreqsE = nfreqs;
+	memcpy (a->Fg, F, a->nfreqsG * sizeof (double));
+	memcpy (a->Fe, F, a->nfreqsE * sizeof (double));
+	memcpy (a->G,  G, a->nfreqsG * sizeof (double));
+	memcpy (a->E,  E, a->nfreqsE * sizeof (double));
+	a->use_qg = Qg != 0;
+	a->use_qe = Qe != 0;
+	for (int i = 0; i < nfreqs; i++)
+	{
+		if (Qg) a->Qg[i] = fmax (Qg[i], 0.01);
+		if (Qe) a->Qe[i] = fmax (Qe[i], 0.01);
 	}
-	if (Qe != NULL) {
-		a->Qe = (double*)malloc0(a->nfreqs * sizeof(double));
-	}
-	else {
-		a->Qe = NULL;
-	}
-	memcpy (a->F, F, a->nfreqs * sizeof (double));
-	memcpy (a->G, G, a->nfreqs * sizeof (double));
-	memcpy (a->E, E, a->nfreqs * sizeof (double));
-	if (Qg != NULL) {
-		memcpy(a->Qg, Qg, a->nfreqs * sizeof(double));
-	}
-	if (Qe != NULL) {
-		memcpy(a->Qe, Qe, a->nfreqs * sizeof(double));
-	}
-	_aligned_free (a->ep);
-	_aligned_free (a->gp);
-	_aligned_free (a->fp);
-	a->fp = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
-	a->gp = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
-	a->ep = (double *) malloc0 ((a->nfreqs + 2) * sizeof (double));
-	calc_comp (a);
+	calc_compG(a);
+	calc_compE(a);
 	LeaveCriticalSection (&ch[channel].csDSP);
 }
 
+// Shared frequencies for the compressor and equalizer in the legacy profile API.
+PORT
+void SetTXACFCOMPprofile (int channel, int nfreqs, double* F, double* G, double* E)
+{
+	set_cfcomp_profile (channel, nfreqs, F, G, E, 0, 0);
+}
+
+PORT
+void SetTXACFCOMPprofileQ (int channel, int nfreqs, double* F, double* G, double* E, double* Qg, double* Qe)
+{
+	set_cfcomp_profile (channel, nfreqs, F, G, E, Qg, Qe);
+}
+
+// Sets Frequencies and Compression for Compressor only.
+PORT
+void SetTXACFCOMPGprofile(int channel, int nfreqs, double* F, double* G)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	EnterCriticalSection(&ch[channel].csDSP);
+	if (nfreqs < 1 || nfreqs > a->max_freqs || F == 0 || G == 0)
+	{
+		LeaveCriticalSection (&ch[channel].csDSP);
+		return;
+	}
+	a->nfreqsG = nfreqs;
+	a->use_qg = 0;
+	memcpy(a->Fg, F, a->nfreqsG * sizeof(double));
+	memcpy(a->G,  G, a->nfreqsG * sizeof(double));
+	calc_compG(a);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+// Sets Frequencies and Gain for Equalizer only.
+PORT
+void SetTXACFCOMPEprofile(int channel, int nfreqs, double* F, double* E)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	EnterCriticalSection(&ch[channel].csDSP);
+	if (nfreqs < 1 || nfreqs > a->max_freqs || F == 0 || E == 0)
+	{
+		LeaveCriticalSection (&ch[channel].csDSP);
+		return;
+	}
+	a->nfreqsE = nfreqs;
+	a->use_qe = 0;
+	memcpy(a->Fe, F, a->nfreqsE * sizeof(double));
+	memcpy(a->E,  E, a->nfreqsE * sizeof(double));
+	calc_compE(a);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+
+// Flat compression gain (pre-compression).
 PORT
 void SetTXACFCOMPPrecomp (int channel, double precomp)
 {
@@ -716,6 +707,7 @@ void SetTXACFCOMPPrecomp (int channel, double precomp)
 	}
 }
 
+// Turn Equalizer OFF/ON independently; but, Compressor must be enabled to use this Equalizer.
 PORT
 void SetTXACFCOMPPeqRun (int channel, int run)
 {
@@ -728,6 +720,7 @@ void SetTXACFCOMPPeqRun (int channel, int run)
 	}
 }
 
+// Preamp that goes with the Equalizer
 PORT
 void SetTXACFCOMPPrePeq (int channel, double prepeq)
 {
@@ -739,9 +732,8 @@ void SetTXACFCOMPPrePeq (int channel, double prepeq)
 }
 
 PORT
-void GetTXACFCOMPDisplayCompression (int channel, double* comp_values, int* ready)
+void GetTXACFCOMPDisplayCompression(int channel, double* comp_values, int* ready)
 {
-	int i;
 	CFCOMP a = txa[channel].cfcomp.p;
 	EnterCriticalSection(&ch[channel].csDSP);
 	if (*ready = a->mask_ready)
@@ -753,7 +745,116 @@ void GetTXACFCOMPDisplayCompression (int channel, double* comp_values, int* read
 	LeaveCriticalSection(&ch[channel].csDSP);
 	if (*ready)
 	{
-		for (i = 0; i < a->msize; i++)
-			comp_values[i] = 20.0 * mlog10 (a->cfc_gain_copy[i] / (a->cfc_gain_copy[i] - a->delta_copy[i]));
+		int step = (a->msize - 1) / 1024;
+		for (int i = 0, j = 0; i < 1025; i++, j += step)
+		{
+			double gain = a->cfc_gain_copy[j];
+			double delta = a->delta_copy[j];
+			if (delta <= 0.0 || gain <= 0.0)
+			{
+				comp_values[i] = 0.0;
+			}
+			else
+			{
+				double denom = gain - delta;
+				if (denom <= 1e-20)
+				{
+					comp_values[i] = 40.0;
+				}
+				else
+				{
+					comp_values[i] = 20.0 * mlog10(gain / denom);
+				}
+			}
+		}
 	}
 }
+
+PORT
+void SetTXACFCOMPCompCurve (int channel, int deg, int r, int umethod)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->png;
+	EnterCriticalSection (&ch[channel].csDSP);
+	a->gdeg = deg;
+	b->p = deg;
+	b->r = r;
+	if (umethod == 1) b->umethod = umethod;
+	else b->umethod = 0;
+	if (!checkSplineInputs (a->nfreqsG, b->p, b->r, b->umethod, b->W))
+	{
+		calc_compG (a);
+	}
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void SetTXACFCOMPCompWeights (int channel, int nfreq, double* weights)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->png;
+	EnterCriticalSection (&ch[channel].csDSP);
+	for (int i = 0; i < nfreq; i++)
+		b->W[i] = weights[i];
+	if (!checkSplineInputs (a->nfreqsG, b->p, b->r, b->umethod, b->W))
+	{
+		calc_compG (a);
+	}
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void GetTXACFCOMPCompDraw (int channel, double* X, double* Y)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->png;
+	EnterCriticalSection (&ch[channel].csDSP);
+	memcpy(X, b->Xs, b->upts * sizeof(double));
+	memcpy(Y, b->Ys, b->upts * sizeof(double));
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void SetTXACFCOMPPeqCurve (int channel, int deg, int r, int umethod)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->pne;
+	EnterCriticalSection (&ch[channel].csDSP);
+	a->edeg = deg;
+	b->p = deg;
+	b->r = r;
+	if (umethod == 1) b->umethod = umethod;
+	else b->umethod = 0;
+	if (!checkSplineInputs (a->nfreqsE, b->p, b->r, b->umethod, b->W))
+	{
+		calc_compE (a);
+	}
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void SetTXACFCOMPPeqWeights (int channel, int nfreq, double* weights)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->pne;
+	EnterCriticalSection (&ch[channel].csDSP);
+	for (int i = 0; i < nfreq; i++)
+		b->W[i] = weights[i];
+	if (!checkSplineInputs (a->nfreqsE, b->p, b->r, b->umethod, b->W))
+	{
+		calc_compE (a);
+	}
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void GetTXACFCOMPPeqDraw (int channel, double* X, double* Y)
+{
+	CFCOMP a = txa[channel].cfcomp.p;
+	NURBS b = a->pne;
+	EnterCriticalSection (&ch[channel].csDSP);
+	memcpy (X, b->Xs, b->upts * sizeof(double));
+	memcpy (Y, b->Ys, b->upts * sizeof(double));
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
